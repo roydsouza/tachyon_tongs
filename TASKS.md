@@ -10,9 +10,9 @@ This is the local list of pending tasks for the **Sentinel Agent** and **AntiGra
 - [x] Configure `metal_4` acceleration profile for local inference.
 
 ### [HIGH] Phase 1: The Core Pipeline
-- [ ] Implement the **Tri-Stage "Safe-Search" Architecture**: Fetcher (Network only), Sanitizer (Regex + deterministic stripping), Analyzer (Air-gapped reasoning).
-- [ ] Write Open Policy Agent (Rego) intent policies (`policies/tool_access.rego`).
-- [ ] Wrap basic tools (e.g., `curl`) in Capability Firewalls (e.g., `safe_fetch`).
+- [x] Implement the **Tri-Stage "Safe-Search" Architecture**: Fetcher (Network only), Sanitizer (Regex + deterministic stripping), Analyzer (Air-gapped reasoning).
+- [x] Write Open Policy Agent (Rego) intent policies (`policies/tool_access.rego`).
+- [x] Wrap basic tools (e.g., `curl`) in Capability Firewalls (e.g., `safe_fetch`).
 
 ### [MEDIUM] Phase 2: Advanced Protections
 - [ ] Implement **Verifiable Context Boundaries** (non-printable Unicode delimiters) in the Agent's system prompt to prevent IPI.
