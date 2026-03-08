@@ -38,6 +38,15 @@ We have successfully integrated the `google-adk` framework state graphs and esta
 - **Capability Degradation:** Geometric token mapping strips high-priority execution capabilities over time.
 - **Stage 4 Verifier:** A secondary parser checks the primary analyzer's JSON output for execution hijacking code blocks (`#!/bin/bash`, `os.system`) or steganographic Markdown command injection (`[click here](bad.com/drop.sh)`).
 
+### Phase 3: Future-Proofing (Implemented)
+
+The Tachyon Tongs architecture is designed to evolve. The following architectural prototypes are actively integrated:
+
+- **Autonomic Threat Scraping:** Scripts mimicking real-time ingestion of CISA/GitHub threat endpoints into internal databases (`cve_scraper.py`).
+- **WASM Profiling:** Lightweight containerization metrics bounding tools with specific `wasmtime` hardware budgets.
+- **PQC Hardware Cryptography:** Structural planning for `Hybrid ECC/PQC` Intent-Gate signatures protecting operators against "Harvest Now, Decrypt Later".
+- **LLM Behavior Isolation:** Strict Chain-of-Thought limiters tracking reasoning paths rather than purely output states preventing Action Fragmentation loops.
+
 ---
 
 ### Getting Involved

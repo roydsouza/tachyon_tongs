@@ -26,10 +26,10 @@ This is the local list of pending tasks for the **Sentinel Agent** and **AntiGra
 - [x] Orchestrate the Tri-Stage pipeline routing (Fetcher -> Sanitizer -> Analyzer) via ADK state graphs.
 
 ### [LOW] Phase 3: Future-Proofing
-- [ ] Set up the autonomous **Sentinel Agent** to scrape CVE feeds and GitHub advisories, updating this `TASKS.md` file with new threats.
-- [ ] Benchmark WASM tools (Wasmtime) for lightweight, capability-based tool execution inside the sandbox.
-- [ ] Investigate hybrid ECC/PQC signatures for hardware authentication.
-- [ ] Implement behavioral monitoring to detect unexpected reasoning chains.
+- [x] Set up the autonomous **Sentinel Agent** to scrape CVE feeds and GitHub advisories, updating this `TASKS.md` file with new threats.
+- [x] Benchmark WASM tools (Wasmtime) for lightweight, capability-based tool execution inside the sandbox.
+- [x] Investigate hybrid ECC/PQC signatures for hardware authentication.
+- [x] Implement behavioral monitoring to detect unexpected reasoning chains.
 
 ---
 
