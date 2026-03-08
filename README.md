@@ -29,9 +29,14 @@ We have laid the groundwork and implemented the foundation of the Tri-Stage arch
 - **Capability Firewalls:** Basic `safe_fetch` firewall wrapper implemented and governed by Open Policy Agent (`tool_access.rego`).
 - **Tri-Stage Objects:** Fetcher, Sanitizer, and Analyzer objects implemented and passing steganographic parsing tests.
 
-### Phase 2 & ADK Orchestration (In Progress)
+### Phase 2 & ADK Orchestration (Implemented)
 
-Currently implementing Google ADK state graphs to route the Tri-Stage pipeline and constructing the Contextual Intent Scoring engine to enforce token decay.
+We have successfully integrated the `google-adk` framework state graphs and established dynamic intent-gates.
+
+- **Google ADK Orchestration:** State graph implementation routes payload execution securely across Fetcher -> Sanitizer -> Analyzer -> Verifier.
+- **Contextual Intent Gates:** Dynamic assessment of risk anomalies (Time mapping, Data Sensitivity, Token Dormancy) resolving to L1 (`ALLOW`/`BLOCK`) or L2 (`CHALLENGE`).
+- **Capability Degradation:** Geometric token mapping strips high-priority execution capabilities over time.
+- **Stage 4 Verifier:** A secondary parser checks the primary analyzer's JSON output for execution hijacking code blocks (`#!/bin/bash`, `os.system`) or steganographic Markdown command injection (`[click here](bad.com/drop.sh)`).
 
 ---
 

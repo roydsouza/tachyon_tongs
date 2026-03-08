@@ -18,7 +18,7 @@ This is the local list of pending tasks for the **Sentinel Agent** and **AntiGra
 - [x] Implement **Verifiable Context Boundaries** (non-printable Unicode delimiters) in the Agent's system prompt to prevent IPI.
 - [x] Create **Capability Tokens** with action budgets and time-based decay.
 - [x] Establish **Contextual Intent Scoring** logic for the L1 and L2 Intent Gates.
-- [ ] Deploy the **Stage 4 Verifier** agent to check outputs before returning to the user.
+- [x] Deploy the **Stage 4 Verifier** agent to check outputs before returning to the user.
 
 ### [MEDIUM] Google ADK Implementation
 - [x] Instantiate the **Sentinel Agent** using the `google-adk` framework.

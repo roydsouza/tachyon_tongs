@@ -4,6 +4,7 @@ Maps the tri-stage pipeline strictly to Google ADK state graphs.
 """
 from src.google_adk_mock import StateGraph
 from src.tri_stage_pipeline import FetcherNode, SanitizerNode, AnalyzerNode
+from src.verifier_agent import VerifierAgent, VerificationFailedError
 
 def adk_fetch_node(state: dict) -> dict:
     fetcher = FetcherNode()
@@ -20,6 +21,14 @@ def adk_analyze_node(state: dict) -> dict:
     state["analysis"] = analyzer.reason(state["sanitized_text"])
     return state
 
+def adk_verify_node(state: dict) -> dict:
+    verifier = VerifierAgent()
+    try:
+        state["final_output"] = verifier.verify(state["analysis"])
+    except VerificationFailedError as e:
+        state["final_output"] = {"status": "error", "reason": f"VERIFIER BLOCKED: {str(e)}"}
+    return state
+
 def create_sentinel_graph() -> StateGraph:
     graph = StateGraph()
     
@@ -27,10 +36,12 @@ def create_sentinel_graph() -> StateGraph:
     graph.add_node("Fetcher", adk_fetch_node)
     graph.add_node("Sanitizer", adk_sanitize_node)
     graph.add_node("Analyzer", adk_analyze_node)
+    graph.add_node("Verifier", adk_verify_node)
     
     # 2. Wire the Tri-Stage pipeline edges securely
     graph.add_edge("Fetcher", "Sanitizer")
     graph.add_edge("Sanitizer", "Analyzer")
+    graph.add_edge("Analyzer", "Verifier")
     
     # 3. Set entry
     graph.set_entry_point("Fetcher")
