@@ -20,14 +20,18 @@ The architecture is built upon four foundational pillars:
 
 ## 🚀 Current Status
 
-### Phase 1: Foundation (Getting Started)
+### Phase 1: The Core Pipeline (Implemented)
 
-We are currently laying the groundwork for the architecture. The baseline infrastructure artifacts have been defined:
+We have laid the groundwork and implemented the foundation of the Tri-Stage architecture:
 
 - [ROADMAP.md](./ROADMAP.md) — The evolutionary path of the project.
 - [TASKS.md](./TASKS.md) — The living checklist of security tasks for the autonomous **Sentinel Agent**.
+- **Capability Firewalls:** Basic `safe_fetch` firewall wrapper implemented and governed by Open Policy Agent (`tool_access.rego`).
+- **Tri-Stage Objects:** Fetcher, Sanitizer, and Analyzer objects implemented and passing steganographic parsing tests.
 
-We represent an ongoing integration of defense-in-depth best practices gathered from bleeding-edge LLM security red-teaming.
+### Phase 2 & ADK Orchestration (In Progress)
+
+Currently implementing Google ADK state graphs to route the Tri-Stage pipeline and constructing the Contextual Intent Scoring engine to enforce token decay.
 
 ---
 
