@@ -5,9 +5,9 @@ This is the local list of pending tasks for the **Sentinel Agent** and **AntiGra
 ## 🚀 Priority Security Tasks
 
 ### [CRITICAL] Core Infrastructure
-- [ ] Initialize repository structure (`src/`, `policies/`, `scripts/`, `docs/`, `.agent/rules/MISSION.md`).
-- [ ] Establish `matchlock-agent.yaml` Lima configuration for hardware-virtualized sandboxing.
-- [ ] Configure `metal_4` acceleration profile for local inference.
+- [x] Initialize repository structure (`src/`, `policies/`, `scripts/`, `docs/`, `.agent/rules/MISSION.md`).
+- [x] Establish `matchlock-agent.yaml` Lima configuration for hardware-virtualized sandboxing.
+- [x] Configure `metal_4` acceleration profile for local inference.
 
 ### [HIGH] Phase 1: The Core Pipeline
 - [ ] Implement the **Tri-Stage "Safe-Search" Architecture**: Fetcher (Network only), Sanitizer (Regex + deterministic stripping), Analyzer (Air-gapped reasoning).

@@ -1,0 +1,23 @@
+# AntiGravity Metal 4 Configuration Profile
+# Ensures the Sentinel agent reasons securely and efficiently utilizing local hardware
+
+performance_profile:
+  backend: "metal_4"
+  acceleration: "hardware_neural_engine"
+  optimization_level: "ultra"
+  
+  # Metal 4 Specific Apple Silicon Flags
+  flags:
+    - ENABLE_MESH_SHADERS=true
+    - USE_UNIFIED_MEMORY_ARCHITECTURE=true
+    - PREFER_LOW_PRECISION_ACCUMULATION=fp16
+    
+  # Orchestration bounds
+  execution_mode: "sandboxed"
+  sandbox_provider: "matchlock"
+  
+  # Intent tracking
+  audit_logging:
+    enabled: true
+    destination: "sigstore"
+    format: "append_only"

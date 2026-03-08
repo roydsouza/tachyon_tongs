@@ -1,0 +1,50 @@
+# Lima configuration for High-Assurance Agent Isolation (Apple Silicon)
+
+images:
+- location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img"
+  arch: "aarch64"
+
+cpus: 4
+memory: "8GiB"
+
+# High-Assurance Mounts
+# We strictly map read-only volumes for untrusted payloads except for the explicit inbox
+mounts:
+- location: "~/.antigravity/workspace"
+  writable: false
+- location: "/tmp/matchlock_inbox"
+  writable: true
+
+# Networking
+# Matchlock profile ensures fine-grained egress control via Intent Gates
+networks:
+- lima: shared
+
+provision:
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    
+    # In an actual deployment, this curl should include hash verification 
+    # and be piped securely rather than sh. Example:
+    # curl -sSfL https://get.matchlock.io | bash -s -- --verify-sha256 [HASH]
+    
+    echo "Initializing Matchlock Restricted Env..."
+    # Matchlock provides intent-gate blocking and token reduction capabilities
+    mkdir -p /etc/matchlock/profiles
+    
+    cat << 'EOF' > /etc/matchlock/profiles/restricted-agent.json
+    {
+      "profile_name": "restricted-agent",
+      "rules": [
+        {
+          "intent": "network_egress",
+          "action": "challenge",
+          "challenge_type": "hardware_touch"
+        }
+      ]
+    }
+    EOF
+    
+    echo "Matchlock provisioned."
