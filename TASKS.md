@@ -20,6 +20,11 @@ This is the local list of pending tasks for the **Sentinel Agent** and **AntiGra
 - [ ] Establish **Contextual Intent Scoring** logic for the L1 and L2 Intent Gates.
 - [ ] Deploy the **Stage 4 Verifier** agent to check outputs before returning to the user.
 
+### [MEDIUM] Google ADK Implementation
+- [ ] Instantiate the **Sentinel Agent** using the `google-adk` framework.
+- [ ] Write ADK tool definitions for the `safe_fetch` firewall.
+- [ ] Orchestrate the Tri-Stage pipeline routing (Fetcher -> Sanitizer -> Analyzer) via ADK state graphs.
+
 ### [LOW] Phase 3: Future-Proofing
 - [ ] Set up the autonomous **Sentinel Agent** to scrape CVE feeds and GitHub advisories, updating this `TASKS.md` file with new threats.
 - [ ] Benchmark WASM tools (Wasmtime) for lightweight, capability-based tool execution inside the sandbox.
