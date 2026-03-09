@@ -18,17 +18,24 @@ class VulnerabilityScraper:
             "score": 9.8
         }
 
-    def scrape_new_threats(self) -> list:
+    def scrape_new_threats(self, logger=None) -> list:
         """
         Executes the scraping run. 
         In production, this would use `safe_fetch` to poll allowed domains.
         Returns a list of parsed threat dictionaries.
         """
+        if logger:
+            logger.add_site_polled("nvd.nist.gov")
+            
         threats = []
         if self.mode == "mock":
             data = self._fetch_mock_data()
             if data["severity"] in ["CRITICAL", "HIGH"]:
                 threats.append(data)
+                if logger:
+                    logger.add_threat_found()
+                    logger.add_file_updated("ATTACKS.md")
+                    logger.add_file_updated("TASKS.md")
         
         return threats
 

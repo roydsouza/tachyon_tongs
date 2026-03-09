@@ -19,6 +19,12 @@ def adk_sanitize_node(state: dict) -> dict:
 def adk_analyze_node(state: dict) -> dict:
     analyzer = AnalyzerNode()
     state["analysis"] = analyzer.reason(state["sanitized_text"])
+    
+    # Optional logic: if a logger is in state, and threats were found, log them
+    if "logger" in state and state["analysis"].get("threats_found"):
+        for _ in state["analysis"]["threats_found"]:
+            state["logger"].add_threat_found()
+            
     return state
 
 def adk_verify_node(state: dict) -> dict:
@@ -48,15 +54,19 @@ def create_sentinel_graph() -> StateGraph:
     
     return graph
 
-def run_sentinel(url: str) -> dict:
+def run_sentinel(url: str, logger=None) -> dict:
     """Executes the Sentinel payload."""
     app = create_sentinel_graph().compile()
     
+    if logger:
+        logger.add_site_polled(url)
+        
     initial_state = {
         "target_url": url,
         "raw_html": "",
         "sanitized_text": "",
-        "analysis": {}
+        "analysis": {},
+        "logger": logger
     }
     
     final_state = app.invoke(initial_state)

@@ -49,6 +49,16 @@ The Tachyon Tongs architecture is designed to evolve. The following architectura
 
 ---
 
-### Getting Involved
+## 🛠️ Quickstart (Manual Trigger)
 
-(Documentation on `init_bus.sh`, Sentinel deployment, and Rego policies is forthcoming).
+You can invoke the Sentinel payload manually or string it to a cron scheduler using the root executable:
+
+```bash
+# Trigger a manual execution run
+python3 sentinel.py --manual
+
+# Trigger a scheduled execution run (for use in Crontab)
+python3 sentinel.py --cron
+```
+
+The Sentinel maintains a verifiable cryptographic ledger of all autonomous runs, sites polled, and threats discovered in the local [RUN_LOG.md](./RUN_LOG.md) file.
