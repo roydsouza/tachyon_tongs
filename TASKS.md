@@ -31,6 +31,10 @@ This is the local list of pending tasks for the **Sentinel Agent** and **AntiGra
 - [x] Investigate hybrid ECC/PQC signatures for hardware authentication.
 - [x] Implement behavioral monitoring to detect unexpected reasoning chains.
 
+### [MEDIUM] Phase 4: Zero-Trust Networking
+- [ ] Integrate a **Tailscale** sidecar into the `matchlock-agent.yaml` Lima sandbox for cryptographic intra-node identity and MagicDNS routing. 
+- [ ] *(Rider)*: Upon completion or modification of the Tailscale integration, the executor **MUST recursively update** `docs/TAILSCALE.md` to ensure the design document maps perfectly to the live implementation architecture.
+
 ---
 
 *This file is continuously updated by the Sentinel Agent.*
