@@ -7,10 +7,12 @@ import datetime
 import os
 
 class ExecutionLogger:
-    def __init__(self, log_file="RUN_LOG.md", limit=25):
+    def __init__(self, agent_id="Sentinel", log_file="RUN_LOG.md", limit=25):
         self.log_file = log_file
         self.limit = limit
+        self.agent_id = agent_id
         self.run_data = {
+            "agent_id": self.agent_id,
             "start_time": None,
             "trigger_type": "UNKNOWN",
             "sites_polled": [],
@@ -19,9 +21,17 @@ class ExecutionLogger:
             "fatal_error": None
         }
 
-    def start_run(self, trigger_type="CRON"):
-        self.run_data["start_time"] = datetime.datetime.now()
-        self.run_data["trigger_type"] = trigger_type
+    def start_run(self, trigger="CRON"):
+        # Reset run_data for a new run, but keep agent_id
+        self.run_data = {
+            "agent_id": self.agent_id,
+            "start_time": datetime.datetime.now(),
+            "trigger_type": trigger,
+            "sites_polled": [],
+            "threats_identified": 0,
+            "files_modified": [],
+            "fatal_error": None
+        }
 
     def add_site_polled(self, url):
         if url not in self.run_data["sites_polled"]:
@@ -42,7 +52,7 @@ class ExecutionLogger:
         now = self.run_data["start_time"] or datetime.datetime.now()
         duration = (datetime.datetime.now() - now).total_seconds()
         
-        entry = f"## Run: {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
+        entry = f"## Run: {now.strftime('%Y-%m-%d %H:%M:%S')} (Agent: {self.run_data['agent_id']})\n"
         entry += f"- Trigger Source: `{self.run_data['trigger_type']}`\n"
         entry += f"- Duration: {duration:.2f} seconds\n"
         

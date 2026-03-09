@@ -20,9 +20,9 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
 - **Why we are doing this:** Local inference means we don't send raw, sensitive data to third-party cloud APIs that will inevitably get breached in three years.
 - **How:** AntiGravity configured to use `metal_4` backends utilizing the M5 Neural Engine.
 
-### 4. Development Mode Fallback (Docker/Native)
-- **Why we are doing this:** Onboarding friction is too high. Not everyone has an M5 Mac with Matchlock eBPF proxies installed. We need to let developers test the logic without the panic room.
-- **How:** A `--dev-mode` flag that bypasses the Lima/Matchlock requirement, running the agent locally or in a basic Docker container strictly for rapid iteration.
+### 5. Multi-Tenant Substrate Daemon (v1.0) [ACTIVE]
+- **Why we did this:** Amortize security hardening across all agents in the workspace. One Sentinel to Rule Them All.
+- **How:** Local FastAPI daemon at `:60461` orchestrating the Guardian Triad.
 
 ## Stage 2: Basics (The Core Pipeline)
 
@@ -85,10 +85,25 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
 - **Why we are doing this:** If a hacker gets root, they usually delete the logs. We want logs they physically cannot delete.
 - **How:** Forward cryptographic signing of agent actions to the Apple Secure Enclave Processor (SEP) to create unforgeable, append-only audit traces.
 
+## Phase 5: Event-Horizon Substrate (Workspace-Wide)
+- **Why we are doing this:** Sentinel is lonely. We want other agents in `~/antigravity/` to be able to use the same safety bumpers without having to copy-paste the whole repo like it's 2004.
+- **How:** A local "Tachyon Daemon" that agents can ping for safe tool execution. One Sentinel Hardening to Rule Them All.
+
+## Phase 6: Cloud-Scale Space Organism (Multi-Tenant)
+- **Why we are doing this:** Eventually, we want to be like Cloudflare but for AI sanity. Metering, billing, and provisioning so we can buy more M-series Macs.
+- **How:** Deploying the Substrate to Google Cloud with OIDC auth and multi-tenant isolation.
+- **Why we won't just use a standard API Gateway:** Standard gateways don't understand that the LLM is currently trying to convince the user to disable the firewall. We need **Context-Aware Intent Provisioning**.
+
 ---
 
-## 🗑️ The Graveyard (Discarded Ideas)
+## 🗑️ The Graveyard (Discarded Ideas from LLM Review)
 
-- **Colima with gVisor as the primary sandbox**: gVisor is great, but Lima with `Hypervisor.framework` is hardware-virtualized. It's just inherently stronger against kernel escapes.
-- **Cloud-based Content Sanitizers**: Sending our scraped data to OpenAI violates our security model. Metal 4 keeps our secrets secret.
-- **Standard Docker Containers**: Shares the MacOS host kernel. A kernel exploit in Docker compromises the entire Mac. No thanks.
+- **Agent-to-Agent (A2A) as a replacement for the Substrate (OpenAI/Gemini feedback):**
+  - **Status:** REJECTED.
+  - **Reason:** A2A is great for agents gossiping with each other, but it doesn't provide the *physical kernel isolation* and *Intent Gating* that Tachyon Tongs specializes in. We will support A2A *on top* of the substrate, not instead of it.
+- **Distributed Sentinel Instances (Grok/Claude feedback):**
+  - **Status:** REJECTED.
+  - **Reason:** Running 50 Sentinels for 50 agents is a great way to melt your battery and have 50 slightly different versions of the truth. We are going with a **Centralized Substrate** to amortize the reasoning cost.
+- **Cloud-only Sanitization:**
+  - **Status:** REJECTED (Obviously).
+  - **Reason:** If we send our dirty data to the cloud to be cleaned, we've already lost the privacy game. Mental 4 or bust.

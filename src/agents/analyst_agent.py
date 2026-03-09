@@ -24,7 +24,7 @@ def analyst_reasoning_node(state: dict) -> dict:
 
     # Process targeted Fetch Payload if present
     if "raw_html" in state and state["raw_html"]:
-        state["sanitized_text"] = sanitizer.clean(state["raw_html"])
-        state["analysis"] = analyzer.reason(state["sanitized_text"])
+        state["sanitized_content"] = sanitizer.clean(state["raw_html"])
+        state["analysis"] = analyzer.reason(state["sanitized_content"])
         
     return state

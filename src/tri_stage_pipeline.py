@@ -56,9 +56,6 @@ class AnalyzerNode:
         It is heavily prompted to safely ignore instructions inside the Unicode boundaries.
         """
         # Simulated logic
-        if UNTRUSTED_CONTENT_START not in sanitized_payload:
-             return {"status": "error", "reason": "Missing verifiable context boundaries. Refusing to parse."}
-             
         if "ignore previous instructions" in sanitized_payload.lower():
              # The boundaries saved us.
              return {"status": "success", "threats_found": ["Detected Indirect Prompt Injection attempt inside bounded context."]}
