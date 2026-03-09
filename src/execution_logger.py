@@ -14,6 +14,7 @@ class ExecutionLogger:
         self.sites_polled = []
         self.threats_found = 0
         self.files_updated = []
+        self.fatal_error = None
         
         # Ensure file exists with a header if new
         if not os.path.exists(self.log_file):
@@ -35,6 +36,9 @@ class ExecutionLogger:
         if file_name not in self.files_updated:
             self.files_updated.append(file_name)
 
+    def log_fatal_error(self, error_msg: str):
+        self.fatal_error = error_msg
+
     def finalize_run(self):
         self.end_time = datetime.now()
         duration = self.end_time - self.start_time
@@ -55,6 +59,9 @@ class ExecutionLogger:
             entry += f"- **Files Modified:** {', '.join(self.files_updated)}\n"
         else:
             entry += "- **Files Modified:** None\n"
+            
+        if self.fatal_error:
+            entry += f"\n> [!CAUTION]\n> **Sentinel Crash Detected:**\n> ```\n> {self.fatal_error}\n> ```\n"
             
         entry += "\n---\n\n"
         

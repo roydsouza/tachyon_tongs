@@ -50,7 +50,9 @@ def main():
              print("[Sentinel] Endpoint analysis completed securely.")
         
     except Exception as e:
-        print(f"[Sentinel] [FATAL] Execution failed: {str(e)}")
+        error_msg = str(e)
+        print(f"[Sentinel] [FATAL] Execution failed: {error_msg}")
+        logger.log_fatal_error(error_msg)
     finally:
         # Finalize the ledger regardless of crash
         logger.finalize_run()
