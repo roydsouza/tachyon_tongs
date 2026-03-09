@@ -2,6 +2,9 @@ import asyncio
 import abc
 import json
 import logging
+import feedparser
+import json
+import logging
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 from src.execution_logger import ExecutionLogger
@@ -107,6 +110,40 @@ class CISAKEVSource(IntelSource):
             "timestamp": datetime.utcnow().isoformat()
         }]
 
+import urllib.parse
+
+class ArxivResearchSource(IntelSource):
+    def name(self) -> str:
+        return "ArXiv-Research-Pulsar"
+
+    async def fetch_threats(self) -> List[Dict[str, Any]]:
+        query = '(abs:"agent hijacking" OR abs:"prompt injection" OR abs:"agentic security")'
+        categories = '(cat:cs.CR OR cat:cs.AI)'
+        full_query = f"{query} AND {categories}"
+        encoded_query = urllib.parse.quote_plus(full_query)
+        url = f'http://export.arxiv.org/api/query?search_query={encoded_query}&sortBy=submittedDate&sortOrder=descending&max_results=3'
+        
+        feed = feedparser.parse(url)
+        threats = []
+        for entry in feed.entries:
+            abstract = entry.summary.lower()
+            if any(k in abstract for k in ["exploit", "bypass", "attack", "vulnerability"]):
+                severity, tag = "HIGH", "[EXPLOIT]"
+            elif any(k in abstract for k in ["hijack", "consensus", "poisoning", "injection"]):
+                severity, tag = "CRITICAL", "[CRITICAL]"
+            else:
+                severity, tag = "MEDIUM", "[ARCHITECTURAL]"
+                
+            threats.append({
+                "id": entry.id.split('/')[-1] if '/' in entry.id else entry.id,
+                "source": self.name(),
+                "summary": f"{tag} {entry.title}",
+                "severity": severity,
+                "url": entry.link,
+                "timestamp": datetime.utcnow().isoformat()
+            })
+        return threats
+
 # --- Main Entry Point ---
 
 if __name__ == "__main__":
@@ -120,6 +157,7 @@ if __name__ == "__main__":
     ingestor.register_source(MockNVD())
     ingestor.register_source(GitHubAdvisorySource())
     ingestor.register_source(CISAKEVSource())
+    ingestor.register_source(ArxivResearchSource())
     
     # Simulate a failing source
     class FailingSource(IntelSource):

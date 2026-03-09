@@ -38,6 +38,8 @@ Welcome to the active execution backlog! This is where the autonomous **Sentinel
 - [x] Benchmark WASM tools (Wasmtime) for lightweight, capability-based tool execution inside the sandbox.
 - [x] Investigate hybrid ECC/PQC signatures for hardware authentication. *(Math that makes my head hurt).*
 - [x] Implement behavioral monitoring to detect unexpected reasoning chains. *(Catching the agent lying to itself).*
+- [ ] **Implement Research Pulsar:** Add arXiv (cs.CR, cs.AI) and OpenReview integration to the `intel_ingest.py` architecture for early-warning academic exploits.
+- [ ] **Agent Security Benchmarking:** Run local Sentinel policies against established adversarial benchmarks like WASP, VPI-Bench (Visual Prompt Injection), and BrowseSafe.
 
 ### 🟢 [MEDIUM] Phase 4: Zero-Trust Networking
 - [x] Integrate a **Tailscale** sidecar into the `matchlock-agent.yaml` Lima sandbox for cryptographic intra-node identity and MagicDNS routing. *(VPNs, but make them magic).*

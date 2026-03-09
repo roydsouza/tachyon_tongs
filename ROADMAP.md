@@ -85,6 +85,10 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
 - **Why we are doing this:** If a hacker gets root, they usually delete the logs. We want logs they physically cannot delete.
 - **How:** Forward cryptographic signing of agent actions to the Apple Secure Enclave Processor (SEP) to create unforgeable, append-only audit traces.
 
+### 5. Research Pulsar & Synthetic Attack Engine
+- **Why we are doing this:** To spot academic exploits (arXiv cs.CR, USENIX) 6-18 months before they become active CVEs in the wild.
+- **How:** An automated parser that distills Daily Preprint Signals into `EXPLOITATION_CATALOG.md` entries, augmented with a Synthetic Attack Engine (ZeroDayBench methodology) to auto-test policies against them.
+
 ## Phase 5: Event-Horizon Substrate (Workspace-Wide)
 - **Why we are doing this:** Sentinel is lonely. We want other agents in `~/antigravity/` to be able to use the same safety bumpers without having to copy-paste the whole repo like it's 2004.
 - **How:** A local "Tachyon Daemon" that agents can ping for safe tool execution. One Sentinel Hardening to Rule Them All.
@@ -95,6 +99,12 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
 - **Why we won't just use a standard API Gateway:** Standard gateways don't understand that the LLM is currently trying to convince the user to disable the firewall. We need **Context-Aware Intent Provisioning**.
 
 ---
+
+### 🏛️ Strategic Intel Archive (Archive from Stage 2)
+- **STIX/TAXII Integration:** For structured threat exchange in a multi-tenant cloud mesh.
+- **Onion-Gateway Isolation:** If dark-web scraping is ever legalized by our legal team, use a dedicated micro-VM with seccomp filters.
+- **ML-Based Anomaly Detection:** Using Isolation Forests to flag weird agent behaviors that don't match our `verified_traffic.json` baseline.
+- **Watermarking Prompts:** Using Diffusers-style watermarks for tracing the origin of an injection through multiple agent hops.
 
 ## 🗑️ The Graveyard (Discarded Ideas from LLM Review)
 

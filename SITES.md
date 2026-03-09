@@ -23,8 +23,10 @@ These are machine-ingestible feeds used for **Real-Time Policy Generation**. If 
 High-noise, high-value signals. Requires **Analyst Agent** reasoning to translate into rules.
 
 - **[AI Incident Database](https://incidentdatabase.ai/):** Learning from the mistakes of others so we don't make them ourselves.
-- **[AlienVault OTX](https://otx.alienvault.com/):** Community pulse on "Hey, has anyone seen this weird prompt pattern?"
-- **[arXiv cs.CR](https://arxiv.org/list/cs.CR/recent):** Pre-publication intelligence. Catching exploits before they're weaponized.
+- **[arXiv cs.CR / cs.AI](https://arxiv.org/list/cs.CR/recent):** Pre-publication intelligence. Catching exploits before they're weaponized (Now monitored by the Research Pulsar).
+- **Security Conferences (USENIX, IEEE S&P, ACM CCS, NDSS):** The highest quality adversarial research venues.
+- **Agent Security Benchmarks (WASP, VPI-Bench, BrowseSafe):** Operational datasets for testing prompt injection and UI steganography.
+- **Promptfoo LM Security Database:** A live tracker of documented vulnerabilities like 'Cascading Agent False Consensus'.
 
 ---
 
