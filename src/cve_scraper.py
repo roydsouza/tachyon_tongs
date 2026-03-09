@@ -67,7 +67,8 @@ class VulnerabilityScraper:
                 
         if logger:
             status = "FAIL" if error_msg else "SUCCESS"
-            logger.add_site_result(site_name, status=status, signals=signals_found, error=error_msg)
+            payload_str = json.dumps(results, indent=2) if results else None
+            logger.add_site_result(site_name, status=status, signals=signals_found, error=error_msg, payload=payload_str)
             
         # Deduplicate results
         unique_results = {r['cve_id']: r for r in results}.values()

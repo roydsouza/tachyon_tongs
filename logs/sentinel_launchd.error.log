@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Users/rds/antigravity/tachyon_tongs/sentinel.py", line 61, in <module>
+    main()
+    ~~~~^^
+  File "/Users/rds/antigravity/tachyon_tongs/sentinel.py", line 35, in main
+    logger = ExecutionLogger(log_file=args.log_file, verbose_level=args.verbose)
+TypeError: ExecutionLogger.__init__() got an unexpected keyword argument 'verbose_level'

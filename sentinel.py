@@ -19,6 +19,7 @@ def main():
     parser.add_argument("--manual", action="store_true", help="Trigger a manual execution run.")
     parser.add_argument("--cron", action="store_true", help="Trigger a scheduled (cron) execution run.")
     parser.add_argument("--log-file", type=str, default="RUN_LOG.md", help="Specify custom log file path.")
+    parser.add_argument("--verbose", type=int, choices=[0, 1, 2], default=2, help="Set verbosity level (0=Normal, 1=Details, 2=Full Content).")
     
     args = parser.parse_args()
     
@@ -31,7 +32,7 @@ def main():
     print(f"[Sentinel] Initializing run. Trigger source: {trigger_source}")
     
     # Initialize the ledger
-    logger = ExecutionLogger(log_file=args.log_file)
+    logger = ExecutionLogger(log_file=args.log_file, verbose_level=args.verbose)
     logger.start_run(trigger=trigger_source)
     
     try:

@@ -26,7 +26,8 @@ High-noise, high-value signals. Requires **Analyst Agent** reasoning to translat
 - **[arXiv cs.CR / cs.AI](https://arxiv.org/list/cs.CR/recent):** Pre-publication intelligence. Catching exploits before they're weaponized (Now monitored by the Research Pulsar).
 - **Security Conferences (USENIX, IEEE S&P, ACM CCS, NDSS):** The highest quality adversarial research venues.
 - **Agent Security Benchmarks (WASP, VPI-Bench, BrowseSafe):** Operational datasets for testing prompt injection and UI steganography.
-- **Promptfoo LM Security Database:** A live tracker of documented vulnerabilities like 'Cascading Agent False Consensus'.
+- **[Promptfoo LM Security Database](https://github.com/promptfoo/promptfoo):** A live tracker of documented vulnerabilities like 'Cascading Agent False Consensus'.
+- **[OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/):** A foundational strategic benchmark. We use this to manually derive policy boundaries rather than polling it as an automated intel feed, as its schema is categorical rather than chronological.
 
 ---
 

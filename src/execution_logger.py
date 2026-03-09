@@ -7,10 +7,11 @@ import datetime
 import os
 
 class ExecutionLogger:
-    def __init__(self, agent_id="Sentinel", log_file="RUN_LOG.md", limit=25):
+    def __init__(self, agent_id="Sentinel", log_file="RUN_LOG.md", limit=25, verbose_level=2):
         self.log_file = log_file
         self.limit = limit
         self.agent_id = agent_id
+        self.verbose_level = verbose_level
         self.run_data = {
             "agent_id": self.agent_id,
             "start_time": None,
@@ -39,23 +40,24 @@ class ExecutionLogger:
         if url not in self.run_data["sites_polled"]:
             self.run_data["sites_polled"].append(url)
 
-    def add_site_result(self, url, status="SUCCESS", signals=0, error=None):
+    def add_site_result(self, url, status="SUCCESS", signals=0, error=None, payload=None):
         self.add_site_polled(url)
         self.run_data["site_results"][url] = {
             "status": status,
             "signals": signals,
-            "error": error
+            "error": error,
+            "payload": payload
         }
 
     def add_threat_found(self):
         self.run_data["threats_identified"] += 1
 
-    def add_file_updated(self, file_path, details=None):
+    def add_file_updated(self, file_path, details=None, payload=None):
         basename = os.path.basename(file_path)
         if basename not in self.run_data["files_modified"]:
             self.run_data["files_modified"][basename] = []
-        if details:
-            self.run_data["files_modified"][basename].append(details)
+        if details or payload:
+            self.run_data["files_modified"][basename].append({"details": details, "payload": payload})
 
     def log_fatal_error(self, error_msg):
         self.run_data["fatal_error"] = error_msg
@@ -73,8 +75,10 @@ class ExecutionLogger:
             res = self.run_data["site_results"].get(url, {"status": "UNKNOWN", "signals": 0})
             status_icon = "✅" if res["status"] == "SUCCESS" else "❌"
             detail = f"{status_icon} `{url}` ({res['signals']} signals)"
-            if res.get("error"):
+            if self.verbose_level >= 1 and res.get("error"):
                 detail += f" - *Error: {res['error']}*"
+            if self.verbose_level >= 2 and res.get("payload"):
+                detail += f"\n    - **Extracted Payload:** {res['payload']}"
             sites.append(detail)
         
         sites_str = "\n  - ".join(sites) if sites else "None"
@@ -86,10 +90,14 @@ class ExecutionLogger:
         if not self.run_data["files_modified"]:
             files_section += "  - None\n"
         else:
-            for fname, details in self.run_data["files_modified"].items():
+            for fname, entries in self.run_data["files_modified"].items():
                 files_section += f"  - `{fname}`\n"
-                for detail in details:
-                    files_section += f"    - {detail}\n"
+                if self.verbose_level >= 1:
+                    for e in entries:
+                        if e.get("details"):
+                            files_section += f"    - {e['details']}\n"
+                        if self.verbose_level >= 2 and e.get("payload"):
+                            files_section += f"    - **Injected Content:**\n```json\n{e['payload']}\n```\n"
         entry += files_section
         
         if self.run_data["fatal_error"]:
