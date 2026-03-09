@@ -25,7 +25,10 @@ Welcome to the active execution backlog! This is where the autonomous **Sentinel
 - [x] Create **Capability Tokens** with action budgets and time-based decay. *(Tokens: The ultimate allowance system).*
 - [x] Establish **Contextual Intent Scoring** logic for the L1 and L2 Intent Gates.
 - [x] Deploy the **Stage 4 Verifier** agent to check outputs before returning to the user. *(The bouncer at the exit).*
-- [ ] **Action Broker Migration:** Centralize all tool execution through a single Action Broker instead of letting the agent call tools directly. Implement a strict "Capability" based permission model instead of just URL allowlists.
+- [x] **Action Broker/Substrate Migration:** Centralized tool execution through `substrate_daemon.py` using capability-based access.
+
+### 🟢 [MEDIUM] Phase 2.5: Guardian Triad Splitting
+- [x] **The Guardian Triad Split:** Break the Sentinel's privilege collapse. Split it into three sub-agents: *Scout*, *Analyst*, and *Engineer*. (Implemented in Phase 2)
 
 ### 🟢 [MEDIUM] Google ADK Implementation
 - [x] Instantiate the **Sentinel Agent** using the `google-adk` framework.
@@ -33,12 +36,13 @@ Welcome to the active execution backlog! This is where the autonomous **Sentinel
 - [x] Orchestrate the Tri-Stage pipeline routing (Fetcher -> Sanitizer -> Analyzer) via ADK state graphs.
 - [ ] **The Guardian Triad Split:** Break the Sentinel's privilege collapse. Split it into three sub-agents: *Scout* (finds threats limitlessly), *Analyst* (classifies them entirely air-gapped), and *Engineer/Broker* (safely proposes the policy updates).
 
-### 🟢 [LOW] Phase 3: Future-Proofing
+### 🟢 [LOW] Phase 3/4: Future-Proofing & Intelligence
 - [x] Set up the autonomous **Sentinel Agent** to scrape CVE feeds and GitHub advisories, updating this `TASKS.md` file with new threats. *(It's self-aware!)*
 - [x] Benchmark WASM tools (Wasmtime) for lightweight, capability-based tool execution inside the sandbox.
 - [x] Investigate hybrid ECC/PQC signatures for hardware authentication. *(Math that makes my head hurt).*
 - [x] Implement behavioral monitoring to detect unexpected reasoning chains. *(Catching the agent lying to itself).*
-- [ ] **Implement Research Pulsar:** Add arXiv (cs.CR, cs.AI) and OpenReview integration to the `intel_ingest.py` architecture for early-warning academic exploits.
+- [x] **Implement Research Pulsar:** Added arXiv (cs.CR, cs.AI) integration to the `intel_ingest.py` architecture for early-warning academic exploits.
+- [x] **Granular Agent Transparency & Verbose Logging:** Enforced strict JSON payload introspection into `RUN_LOG.md`.
 - [ ] **Agent Security Benchmarking:** Run local Sentinel policies against established adversarial benchmarks like WASP, VPI-Bench (Visual Prompt Injection), and BrowseSafe.
 
 ### 🟢 [MEDIUM] Phase 4: Zero-Trust Networking

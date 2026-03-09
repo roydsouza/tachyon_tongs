@@ -85,11 +85,11 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
 - **Why we are doing this:** If a hacker gets root, they usually delete the logs. We want logs they physically cannot delete.
 - **How:** Forward cryptographic signing of agent actions to the Apple Secure Enclave Processor (SEP) to create unforgeable, append-only audit traces.
 
-### 5. Research Pulsar & Synthetic Attack Engine
+### 5. Research Pulsar & Synthetic Attack Engine [OPERATIONAL]
 - **Why we are doing this:** To spot academic exploits (arXiv cs.CR, USENIX) 6-18 months before they become active CVEs in the wild.
-- **How:** An automated parser that distills Daily Preprint Signals into `EXPLOITATION_CATALOG.md` entries, augmented with a Synthetic Attack Engine (ZeroDayBench methodology) to auto-test policies against them.
+- **How:** An automated parser that distills Daily Preprint Signals into `EXPLOITATION_CATALOG.md` entries (completed Phase 4.2). *Pending:* Synthetic Attack Engine (ZeroDayBench methodology) to auto-test policies against them.
 
-## Phase 5: Event-Horizon Substrate (Workspace-Wide)
+## Phase 5: Event-Horizon Substrate (Workspace-Wide) [UP NEXT]
 - **Why we are doing this:** Sentinel is lonely. We want other agents in `~/antigravity/` to be able to use the same safety bumpers without having to copy-paste the whole repo like it's 2004.
 - **How:** A local "Tachyon Daemon" that agents can ping for safe tool execution. One Sentinel Hardening to Rule Them All.
 
