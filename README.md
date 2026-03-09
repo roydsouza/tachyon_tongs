@@ -25,9 +25,19 @@ If the Sentinel (or any other agent you build inside this framework) ever halluc
 Tachyon Tongs is aggressively optimized to run sensitive, unaligned LLM reasoning locally on Apple Silicon (M-Series processors) using Metal 4 acceleration, preventing private execution telemetry from leaking to cloud API providers.
 
 ### Prerequisites
-1. **macOS** on Apple Silicon (M1/M2/M3/M4/M5).
-2. **Lima** (Linux Macines) for hardware-virtualized sandboxing.
-3. **Python 3.10+**
+Tachyon Tongs relies on deep OS-level virtualization to hardware-isolate the agent. You will need [Homebrew](https://brew.sh/) to install the underlying infrastructure:
+
+```bash
+# 1. Install Lima (Linux Machines)
+# Provides the hardware-virtualized MicroVMs that act as the agent's air-gapped sandbox.
+brew install lima
+
+# 2. Install Matchlock
+# An eBPF-based security wrapper that aggressively proxies and restricts all network egress out of the Lima VM.
+brew tap roydsouza/matchlock  # Example tap, adjust if Matchlock is hosted elsewhere
+brew install matchlock
+```
+*(Python 3.10+ is also required for the Sentinel logic).*
 
 ### Setup
 ```bash
