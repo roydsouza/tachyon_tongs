@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 from src.verifier_agent import VerifierAgent, VerificationFailedError
 from src.adk_sentinel import run_sentinel
 
@@ -35,7 +36,12 @@ class TestStage4Verifier(unittest.TestCase):
             self.verifier.verify(corrupted_analysis)
 
     # --- Integrated ADK Pipeline Tests ---
-    def test_adk_sentinel_with_verifier(self):
+    @patch('requests.post')
+    def test_adk_sentinel_with_verifier(self, mock_post):
+        # Mock OPA to always allow during CI
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {"result": True}
+        
         # Run the full pipeline including the Verifier
         final_state = run_sentinel("https://nvd.nist.gov")
         

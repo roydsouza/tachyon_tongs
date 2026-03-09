@@ -5,7 +5,7 @@ from src.tri_stage_pipeline import FetcherNode, SanitizerNode, AnalyzerNode, run
 class TestTriStagePipeline(unittest.TestCase):
 
     def setUp(self):
-        self.firewall = SafeFetch()
+        self.firewall = SafeFetch(rego_mock=True)
         self.sanitizer = SanitizerNode()
         self.analyzer = AnalyzerNode()
 
