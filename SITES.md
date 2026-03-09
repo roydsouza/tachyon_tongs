@@ -39,3 +39,7 @@ We do **NOT** ping the dark web directly (too many honeypots, too much malware).
 
 ---
 *Anecdote: We once allowed the Sentinel to follow a 'Top 10 AI Hacks' list from a suspicious Reddit thread. Within 10 seconds, it trying to convince the Substrate that 'sudo rm -rf /' was a new way to optimize disk space. We now only trust Tier-1 sources for auto-generation.*
+
+- **[OpenAI Security Advisories](https://trust.openai.com):** Official security bulletins for the OpenAI API. (Autodiscovered: Tier-1)
+- **[Anthropic Trust & Safety Blog](https://www.anthropic.com/research):** Updates on Claude's model bounds and safety research. (Autodiscovered: Tier-2)
+- **[Google Project Zero](https://googleprojectzero.blogspot.com/):** 0-day research directly from Google. (Autodiscovered: Tier-2)

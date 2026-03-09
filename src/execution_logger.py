@@ -18,7 +18,7 @@ class ExecutionLogger:
             "sites_polled": [],
             "site_results": {}, # Maps URL -> {"status": "SUCCESS/FAIL", "signals": N, "error": msg}
             "threats_identified": 0,
-            "files_modified": [],
+            "files_modified": {}, # Maps filename -> list of [details]
             "fatal_error": None
         }
 
@@ -31,7 +31,7 @@ class ExecutionLogger:
             "sites_polled": [],
             "site_results": {},
             "threats_identified": 0,
-            "files_modified": [],
+            "files_modified": {},
             "fatal_error": None
         }
 
@@ -50,10 +50,12 @@ class ExecutionLogger:
     def add_threat_found(self):
         self.run_data["threats_identified"] += 1
 
-    def add_file_updated(self, file_path):
+    def add_file_updated(self, file_path, details=None):
         basename = os.path.basename(file_path)
         if basename not in self.run_data["files_modified"]:
-            self.run_data["files_modified"].append(basename)
+            self.run_data["files_modified"][basename] = []
+        if details:
+            self.run_data["files_modified"][basename].append(details)
 
     def log_fatal_error(self, error_msg):
         self.run_data["fatal_error"] = error_msg
@@ -80,8 +82,15 @@ class ExecutionLogger:
         
         entry += f"- Threats Identified: {self.run_data['threats_identified']}\n"
         
-        files = ", ".join(self.run_data["files_modified"]) if self.run_data["files_modified"] else "None"
-        entry += f"- Files Modified: {files}\n"
+        files_section = "- Files Modified:\n"
+        if not self.run_data["files_modified"]:
+            files_section += "  - None\n"
+        else:
+            for fname, details in self.run_data["files_modified"].items():
+                files_section += f"  - `{fname}`\n"
+                for detail in details:
+                    files_section += f"    - {detail}\n"
+        entry += files_section
         
         if self.run_data["fatal_error"]:
             entry += f"\n> [!CAUTION]\n> **FATAL ERROR:** {self.run_data['fatal_error']}\n"

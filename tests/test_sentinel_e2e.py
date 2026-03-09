@@ -36,7 +36,7 @@ class TestSentinelE2E(unittest.TestCase):
             content = f.read()
             
         self.assertIn("Trigger Source: `MANUAL_CLI`", content)
-        self.assertIn("Sites Polled: https://github.com/advisories", content)
+        self.assertIn("`https://github.com/advisories`", content)
 
     def test_sentinel_prepending_works(self):
         # Run once

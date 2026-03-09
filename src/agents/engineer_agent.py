@@ -29,8 +29,9 @@ def engineer_action_node(state: dict) -> dict:
                 
             # If these were CVEs scraped from the web, the Engineer formally adds them to the database
             if state.get("scraped_threats"):
-                logger.add_file_updated("EXPLOITATION_CATALOG.md")
-                logger.add_file_updated("TASKS.md")
+                num_threats = len(state.get("scraped_threats"))
+                logger.add_file_updated("EXPLOITATION_CATALOG.md", details=f"Appended {num_threats} validated threats.")
+                logger.add_file_updated("TASKS.md", details=f"Injected {num_threats} verification tasks to the backlog.")
                 
     except VerificationFailedError as e:
         # The Engineer caught the Analyst slipping. Refuse to execute write operations.

@@ -18,7 +18,7 @@ class TestLoggerManagement(unittest.TestCase):
         
         # Run 10 times
         for i in range(10):
-            logger.start_run(trigger_type=f"RUN_{i}")
+            logger.start_run(trigger=f"RUN_{i}")
             logger.finalize_run()
             
         with open(self.test_log, "r") as f:

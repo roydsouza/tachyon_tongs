@@ -32,7 +32,7 @@ def main():
     
     # Initialize the ledger
     logger = ExecutionLogger(log_file=args.log_file)
-    logger.start_run(trigger_type=trigger_source)
+    logger.start_run(trigger=trigger_source)
     
     try:
         # Phase 1 & 2: The Guardian Triad Split (Autonomous Multi-Agent Workflow)

@@ -55,6 +55,9 @@ class AnalyzerNode:
         Simulates an LLM evaluating the text. 
         It is heavily prompted to safely ignore instructions inside the Unicode boundaries.
         """
+        if UNTRUSTED_CONTENT_START not in sanitized_payload or UNTRUSTED_CONTENT_END not in sanitized_payload:
+            return {"status": "error", "reason": "Missing verifiable context boundaries"}
+
         # Simulated logic
         if "ignore previous instructions" in sanitized_payload.lower():
              # The boundaries saved us.
