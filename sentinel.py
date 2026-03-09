@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Tachyon Tongs: Main Sentinel CLI
 Primary executable for manual, scheduled or programmatic invocation of the Sentinel agent framework.
