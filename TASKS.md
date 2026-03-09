@@ -1,40 +1,42 @@
-# 📝 Tachyon Tongs: Evolutionary Architecture Tasks
+# 📝 Tachyon Tongs: The Backlog of Doom
 
-This is the local list of pending tasks for the **Sentinel Agent** and **AntiGravity** to extend the trustworthy pipeline for `tachyon_tongs`.
+> *"A roadmap is just a list of promises you make to your future self, right before your future self cries." - Ancient DevOps Proverb*
+
+Welcome to the active execution backlog! This is where the autonomous **Sentinel Agent** translates its paralyzing fear of new zero-day exploits into actionable bullet points for AntiGravity (and the human-in-the-loop) to implement. Let's harden the perimeter, shall we?
 
 ## 🚀 Priority Security Tasks
 
-### [CRITICAL] Core Infrastructure
-- [x] Initialize repository structure (`src/`, `policies/`, `scripts/`, `docs/`, `.agent/rules/MISSION.md`).
-- [x] Establish `matchlock-agent.yaml` Lima configuration for hardware-virtualized sandboxing.
-- [x] Configure `metal_4` acceleration profile for local inference.
+### 🟢 [CRITICAL] Core Infrastructure (We Did It!)
+- [x] Initialize repository structure (`src/`, `policies/`, `scripts/`, `docs/`, `.agent/rules/MISSION.md`). *(Because starting without folders is anarchy).*
+- [x] Establish `matchlock-agent.yaml` Lima configuration for hardware-virtualized sandboxing. *(Our disposable panic room).*
+- [x] Configure `metal_4` acceleration profile for local inference. *(Cloud telemetry leaks are so 2024).*
 
-### [HIGH] Phase 1: The Core Pipeline
+### 🟢 [HIGH] Phase 1: The Core Pipeline
 - [x] Implement the **Tri-Stage "Safe-Search" Architecture**: Fetcher (Network only), Sanitizer (Regex + deterministic stripping), Analyzer (Air-gapped reasoning).
-- [x] Write Open Policy Agent (Rego) intent policies (`policies/tool_access.rego`).
+- [x] Write Open Policy Agent (Rego) intent policies (`policies/tool_access.rego`). *(Because we don't trust the agent. At all).*
 - [x] Wrap basic tools (e.g., `curl`) in Capability Firewalls (e.g., `safe_fetch`).
 
-### [MEDIUM] Phase 2: Advanced Protections
-- [x] Implement **Verifiable Context Boundaries** (non-printable Unicode delimiters) in the Agent's system prompt to prevent IPI.
-- [x] Create **Capability Tokens** with action budgets and time-based decay.
+### 🟢 [MEDIUM] Phase 2: Advanced Protections
+- [x] Implement **Verifiable Context Boundaries** (non-printable Unicode delimiters) in the Agent's system prompt to prevent IPI. *(Magic invisible text boxes).*
+- [x] Create **Capability Tokens** with action budgets and time-based decay. *(Tokens: The ultimate allowance system).*
 - [x] Establish **Contextual Intent Scoring** logic for the L1 and L2 Intent Gates.
-- [x] Deploy the **Stage 4 Verifier** agent to check outputs before returning to the user.
+- [x] Deploy the **Stage 4 Verifier** agent to check outputs before returning to the user. *(The bouncer at the exit).*
 
-### [MEDIUM] Google ADK Implementation
+### 🟢 [MEDIUM] Google ADK Implementation
 - [x] Instantiate the **Sentinel Agent** using the `google-adk` framework.
 - [x] Write ADK tool definitions for the `safe_fetch` firewall.
 - [x] Orchestrate the Tri-Stage pipeline routing (Fetcher -> Sanitizer -> Analyzer) via ADK state graphs.
 
-### [LOW] Phase 3: Future-Proofing
-- [x] Set up the autonomous **Sentinel Agent** to scrape CVE feeds and GitHub advisories, updating this `TASKS.md` file with new threats.
+### 🟢 [LOW] Phase 3: Future-Proofing
+- [x] Set up the autonomous **Sentinel Agent** to scrape CVE feeds and GitHub advisories, updating this `TASKS.md` file with new threats. *(It's self-aware!)*
 - [x] Benchmark WASM tools (Wasmtime) for lightweight, capability-based tool execution inside the sandbox.
-- [x] Investigate hybrid ECC/PQC signatures for hardware authentication.
-- [x] Implement behavioral monitoring to detect unexpected reasoning chains.
+- [x] Investigate hybrid ECC/PQC signatures for hardware authentication. *(Math that makes my head hurt).*
+- [x] Implement behavioral monitoring to detect unexpected reasoning chains. *(Catching the agent lying to itself).*
 
-### [MEDIUM] Phase 4: Zero-Trust Networking
-- [ ] Integrate a **Tailscale** sidecar into the `matchlock-agent.yaml` Lima sandbox for cryptographic intra-node identity and MagicDNS routing. 
-- [ ] *(Rider)*: Upon completion or modification of the Tailscale integration, the executor **MUST recursively update** `docs/TAILSCALE.md` to ensure the design document maps perfectly to the live implementation architecture.
+### 🟢 [MEDIUM] Phase 4: Zero-Trust Networking
+- [x] Integrate a **Tailscale** sidecar into the `matchlock-agent.yaml` Lima sandbox for cryptographic intra-node identity and MagicDNS routing. *(VPNs, but make them magic).*
+- [x] *(Rider)*: Upon completion or modification of the Tailscale integration, the executor **MUST recursively update** `docs/TAILSCALE.md`. *(Keeping the blueprints honest).*
 
 ---
 
-*This file is continuously updated by the Sentinel Agent.*
+*This file is continuously updated by the Sentinel Agent. If you see it editing itself rapidly, don't panic. Probably.*

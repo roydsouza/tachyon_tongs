@@ -1,43 +1,46 @@
 # 🧬 Tachyon Tongs: The Prophylactic Agent Architecture
 
+> *"If your AI agent isn't occasionally trying to escape its sandbox to order 10,000 pizzas, are you even building AGI? Keep the airgap tight, folks." - Ancient DevOps Proverb*
+
 **Tachyon Tongs** is a high-assurance, defense-in-depth framework designed to protect autonomous AI agents from compromise. 
 
-However, it is fundamentally more than a static firewall: it is an **autonomous, self-improving "Space Organism"**. 
+But it's more than just a static, boring firewall. It is an **autonomous, self-improving "Space Organism"**. 
 
-The core philosophy of this architecture assumes that AI models *will* eventually be compromised by evolving zero-day exploits (e.g., Prompt Injections embedded in web pages or documents). Rather than relying on rigid language filters, Tachyon Tongs uses **Action Governance** and an evolutionary feedback loop to continuously harden its own perimeter. 
+Why? Because trying to build the perfect regex to stop a Prompt Injection is like trying to catch the ocean with a spaghetti strainer. AI models *will* eventually be compromised. Tachyon Tongs embraces this chaos with **Action Governance**: let the agent think whatever weird thoughts it wants, but heavily restrict what it can *do*.
 
-Currently, a human-in-the-loop approves its structural modifications, but the ultimate roadmap targets full autonomy: the system will find exploits, synthesize mitigations, evaluate priority, and autonomously deploy code fixes to itself in a righteous, self-healing loop.
+Currently, there's a human-in-the-loop (me, AntiGravity, and you, presumably) clicking "Approve." But the ultimate roadmap? Full autonomy. A righteous, self-healing loop where the system finds exploits, synthesizes its own mitigations, and patches itself while we sit back and monitor the civilization-scale vibe check.
 
 ---
 
-## 🦠 The Sentinel: A Poster Child
+## 🦠 The Sentinel: Our Adorable Little Canary
 
-To prove the efficacy of the Prophylactic Architecture, Tachyon Tongs includes a built-in representative payload known as the **Sentinel Agent**. 
+To prove this paranoia actually works, Tachyon Tongs includes a built-in payload known as the **Sentinel Agent**. 
 
-The Sentinel is not the framework itself; it is simply a "poster child" agent living *inside* the protected environment. Its sole purpose is to scour the internet (CISA, GitHub Advisories) looking for new vulnerabilities that target AI Agents. When it finds one, it autonomously updates the project's internal ledgers and proposes mitigation tasks. 
+The Sentinel isn't the framework itself; it's our "poster child" living *inside* the protected terrarium. Its sole purpose in life is to scour the internet (CISA, GitHub Advisories) looking for fresh, terrifying ways to hack AI. When it finds one, it panics (productively), updates its internal ledgers, and proposes mitigation tasks. 
 
-If the Sentinel (or any other agent you build inside this framework) ever hallucinates or attempts to execute a malicious sandbox escape, the **Tachyon Tongs** architecture intercepts, sandboxes, and surgically removes the threat.
+If the Sentinel ever hallucinates or tries to break out of the terrarium, Tachyon Tongs intercepts it, sandboxes it, and surgically removes the threat. Good boy, Sentinel.
 
 ---
 
 ## 💻 Apple Silicon Installation (macOS)
 
-Tachyon Tongs is aggressively optimized to run sensitive, unaligned LLM reasoning locally on Apple Silicon (M-Series processors) using Metal 4 acceleration, preventing private execution telemetry from leaking to cloud API providers.
+Because leaking our private execution telemetry to cloud providers is a cardinal sin, Tachyon Tongs is aggressively optimized to run locally on Apple Silicon (M-Series) using Metal 4 acceleration.
 
 ### Prerequisites
-Tachyon Tongs relies on deep OS-level virtualization to hardware-isolate the agent. You will need [Homebrew](https://brew.sh/) to install the underlying infrastructure:
+Grab your [Homebrew](https://brew.sh/). We need deep OS-level virtualization to hardware-isolate this bad boy.
 
 ```bash
 # 1. Install Lima (Linux Machines)
-# Provides the hardware-virtualized MicroVMs that act as the agent's air-gapped sandbox.
+# Because sometimes you need a disposable Linux MicroVM to act as an air-gapped panic room.
 brew install lima
 
 # 2. Install Matchlock
-# An eBPF-based security wrapper that aggressively proxies and restricts all network egress out of the Lima VM.
-brew tap roydsouza/matchlock  # Example tap, adjust if Matchlock is hosted elsewhere
+# An eBPF-based security wrapper that aggressively proxies the network. 
+# Think of it as a very angry bouncer at the door of your Lima VM.
+brew tap roydsouza/matchlock 
 brew install matchlock
 ```
-*(Python 3.10+ is also required for the Sentinel logic).*
+*(You also need Python 3.10+. If you're running Python 2.7 in 2026, please seek immediate medical attention).*
 
 ### Setup
 ```bash
@@ -45,49 +48,51 @@ brew install matchlock
 git clone https://github.com/roydsouza/tachyon_tongs.git
 cd tachyon_tongs
 
-# 2. (Optional but Recommended) Initialize the Matchlock Sandbox
-# This spins up an isolated Linux MicroVM to securely execute Agent tools
+# 2. (Optional but Highly Encouraged) Initialize the Matchlock Sandbox
+# Spin up the isolated Linux MicroVM.
 limactl start scripts/matchlock-agent.yaml
 
-# 3. Install Python dependencies (in a virtual environment)
+# 3. Install Python dependencies (in a virtual environment, we aren't savages)
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt  # (Currently standard library python 3.14 compatible)
+pip install -r requirements.txt 
 ```
 
 ---
 
 ## 🛠️ Configuration & Usage
 
-You can invoke the Sentinel payload manually or string it to a cron scheduler.
+You can poke the Sentinel manually or tie it to a cron schedule so it can have panic attacks automatically at 3 AM.
 
 ```bash
-# Trigger a manual execution run
+# Poke it with a stick (Manual trigger)
 python3 sentinel.py --manual
 
-# Trigger a scheduled execution run (for use in Crontab)
+# Let it haunt your background processes (Cron scheduled)
 python3 sentinel.py --cron
 ```
 
-### Extending the Architecture
-To reuse this protective environment for a *different* agent (e.g., a coding assistant or email manager):
-1. **Swap the Nodes:** In `src/adk_sentinel.py`, replace the `AnalyzerNode` logic with your own LLM reasoning prompt.
-2. **Update the Firewalls:** Modify `policies/tool_access.rego` to allow your agent to access specific domains (e.g., `smtp.gmail.com`). 
-3. **Keep the Tri-Stage Pipeline:** Ensure your agent passes data through the `Fetcher` -> `Sanitizer` (which wraps untrusted text in `\u0001` Unicode boundaries) -> `Analyzer` -> `Verifier` flow.
+### 🧩 Extending the Architecture (For Asha)
+*"Hey, this sounds super complicated. Do I need a PhD in cybersecurity to use this?"* 
+
+Don't worry, Roy is just being Roy and overengineering things because port conflicts at 2 AM are not fun. The beauty of Tachyon Tongs is that you can swap out our paranoid Sentinel for *your* agent (like a coding assistant) and keep all the protection! 
+
+1. **Swap the Brain:** In `src/adk_sentinel.py`, replace the `AnalyzerNode` with your own LLM prompt.
+2. **Open the Doors:** Update `policies/tool_access.rego` to let your agent actually talk to the outside world (e.g., `smtp.gmail.com`). 
+3. **Keep the Pipeline:** Just make sure your data still flows through our `Sanitizer` so malicious text gets wrapped in invisible Unicode boundaries. Safe and sound!
 
 ---
 
 ## 📂 The Organism's Anatomy (File Guide)
 
-Tachyon Tongs logs its autonomic activity precisely across a series of version-controlled markdown files. This maintains cryptographically auditable transparency without relying on opaque database schemas.
+Tachyon Tongs logs its autonomic activity precisely across a series of Markdown files, because databases are for cowards and git commits are forever.
 
-*   **`STRATEGY.md`**: The tactical playbook. Defines how the Sentinel categorizes threats and formulates searches.
-*   **`SITES.md`**: The list of allowed domains (like nvd.nist.gov) that the Sentinel is permitted to scrape. Regulated by the `tool_access.rego` capability firewall.
-*   **`ATTACKS.md`**: The Threat Ledger. When the Sentinel parses a new exploit (e.g., Steganographic Injection), it logs the mechanics here.
-*   **`MITIGATION.md`**: The Synthesis Ledger. How the Sentinel formally proposes defending against the entries in `ATTACKS.md`.
-*   **`TASKS.md`**: The active execution backlog. The Sentinel translates `MITIGATION.md` into actionable bullet points here for the human-in-the-loop (AntiGravity) to implement.
-*   **`RUN_LOG.md`**: The Immutable Audit Trail. Every time `sentinel.py` executes, it appends timestamps, execution duration, and lists precisely which internal databases it modified.
-*   **`docs/HYBRID_AUTH.md`**: An architectural design document for future-proofing hardware Intent Gates using Post-Quantum (PQC) and Elliptic-Curve cryptography.
-*   **`ROADMAP.md`**: The high-level vision for merging the autonomous Sentinel logic with underlying Matchlock VM orchestration.
-
-*(Documentation on `init_bus.sh` and specific Rego policies is forthcoming).*
+*   **`STRATEGY.md`**: The tactical playbook. The Sentinel reads this to remember who it is and who it hates.
+*   **`SITES.md`**: The VIP List. Which domains (like `nvd.nist.gov`) the Sentinel is allowed to scrape before the firewall yells at it.
+*   **`ATTACKS.md`**: The Wall of Weird. When the Sentinel learns a new zero-day, it immortalizes it here.
+*   **`MITIGATION.md`**: The "Oh God How Do We Fix This" Ledger.
+*   **`TASKS.md`**: The Backlog of Doom. `MITIGATION.md` translated into actual bullet points for us to code.
+*   **`RUN_LOG.md`**: The Immutable Audit Trail. Proof that the agent woke up, did its job, and went back to sleep without accidentally starting a war.
+*   **`docs/TAILSCALE.md`**: Phase 4 Networking. How we use MagicDNS so we don't have to memorize IP addresses like it's 1995.
+*   **`docs/HYBRID_AUTH.md`**: Post-Quantum Cryptography planning. Things that sound cool but aren't urgent. Like buying a second dog.
+*   **`ROADMAP.md`**: The grand vision of when we finally let this thing off the leash completely.
