@@ -20,6 +20,10 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
 - **Why we are doing this:** Local inference means we don't send raw, sensitive data to third-party cloud APIs that will inevitably get breached in three years.
 - **How:** AntiGravity configured to use `metal_4` backends utilizing the M5 Neural Engine.
 
+### 4. Development Mode Fallback (Docker/Native)
+- **Why we are doing this:** Onboarding friction is too high. Not everyone has an M5 Mac with Matchlock eBPF proxies installed. We need to let developers test the logic without the panic room.
+- **How:** A `--dev-mode` flag that bypasses the Lima/Matchlock requirement, running the agent locally or in a basic Docker container strictly for rapid iteration.
+
 ## Stage 2: Basics (The Core Pipeline)
 
 ### 1. Tri-Stage "Safe-Search" Architecture
@@ -62,9 +66,12 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
 
 ## Stage 4: Future (Next-Gen Adaptability)
 
-### 1. The Sentinel Agent (Self-Enhancing loop)
-- **Why we are doing this:** Security is a moving target. We are tired of updating firewalls manually.
-- **How:** A highly restricted agent that scours CVE feeds and proposes architectural updates to our local `TASKS.md`. It literally patches itself.
+### 1. The Sentinel Triad (Self-Enhancing loop)
+- **Why we are doing this:** The current Sentinel suffers from "Privilege Collapse." A single agent shouldn't hunt for threats *and* write the mitigation code simultaneously.
+- **How:** Split the Sentinel into a Guardian Agent Pattern:
+    - *Scout*: Network-enabled, monitors the internet.
+    - *Analyst*: Air-gapped, classifies the threats.
+    - *Engineer*: Proposes mitigations without network access.
 
 ### 2. Post-Quantum (PQC) Hybrid Authentication
 - **Why we are doing this:** Things that sound cool but aren't urgent. Also, because quantum computers will eventually break our YubiKeys.
