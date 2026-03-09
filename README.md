@@ -1,57 +1,55 @@
-# 🛸 tachyon_tongs
-### High-Assurance Prophylactic for Agentic Systems
+# 🧬 Tachyon Tongs: The Prophylactic Agent Architecture
 
-**tachyon_tongs** is a defense-in-depth framework for autonomous AI agents running on Apple Silicon. It is designed to proactively defend against **Agent Hijacking**, **Indirect Prompt Injection**, and **Memory Poisoning** by enforcing a "Zero-Trust Tool Bus" and verifiable execution boundaries.
+**Tachyon Tongs** is a high-assurance, defense-in-depth framework designed to protect autonomous AI agents from compromise. 
 
-## 🎯 Intent
+However, it is fundamentally more than a static firewall: it is an **autonomous, self-improving "Space Organism"**. 
 
-Autonomous systems that execute tools (terminal, browser, API calls) on your behalf represent an unprecedented security risk in 2026. If an agent is compromised by malicious instructions hidden in a webpage or email, it can be steered to exfiltrate private keys, delete repositories, or sign transactions. 
+The core philosophy of this architecture assumes that AI models *will* eventually be compromised by evolving zero-day exploits (e.g., Prompt Injections embedded in web pages or documents). Rather than relying on rigid language filters, Tachyon Tongs uses **Action Governance** and an evolutionary feedback loop to continuously harden its own perimeter. 
 
-The intent of **tachyon_tongs** is to shift the defensive paradigm from *Content Filtering* to **Action Governance**. We assume the model will be compromised, and instead focus on geometrically restricting the "blast radius" of its actions.
-
-## 🛡️ Approach
-
-The architecture is built upon four foundational pillars:
-
-1. **The Tri-Stage Pipeline:** Agents are physically isolated by function. The agent fetching untrusted internet data (Fetcher) is not the agent reasoning over it (Analyzer). 
-2. **Capability Firewalls:** Agents never receive raw shell tools like `curl`. Instead, they receive constrained policy-wrapped tools like `safe_fetch` that strictly limit destinations.
-3. **Intent Gates & Hardware Handshakes:** High-risk execution (like modifying system files or making crypto transactions) is suspended until physical authorization is provided via a **YubiKey** or equivalent FIDO2 device.
-4. **Hardware-Virtualized Sandboxing:** Agents run inside restricted Linux instances managed by **Lima** and **Matchlock**, completely separated from the host macOS kernel.
-
-## 🚀 Current Status
-
-### Phase 1: The Core Pipeline (Implemented)
-
-We have laid the groundwork and implemented the foundation of the Tri-Stage architecture:
-
-- [ROADMAP.md](./ROADMAP.md) — The evolutionary path of the project.
-- [TASKS.md](./TASKS.md) — The living checklist of security tasks for the autonomous **Sentinel Agent**.
-- **Capability Firewalls:** Basic `safe_fetch` firewall wrapper implemented and governed by Open Policy Agent (`tool_access.rego`).
-- **Tri-Stage Objects:** Fetcher, Sanitizer, and Analyzer objects implemented and passing steganographic parsing tests.
-
-### Phase 2 & ADK Orchestration (Implemented)
-
-We have successfully integrated the `google-adk` framework state graphs and established dynamic intent-gates.
-
-- **Google ADK Orchestration:** State graph implementation routes payload execution securely across Fetcher -> Sanitizer -> Analyzer -> Verifier.
-- **Contextual Intent Gates:** Dynamic assessment of risk anomalies (Time mapping, Data Sensitivity, Token Dormancy) resolving to L1 (`ALLOW`/`BLOCK`) or L2 (`CHALLENGE`).
-- **Capability Degradation:** Geometric token mapping strips high-priority execution capabilities over time.
-- **Stage 4 Verifier:** A secondary parser checks the primary analyzer's JSON output for execution hijacking code blocks (`#!/bin/bash`, `os.system`) or steganographic Markdown command injection (`[click here](bad.com/drop.sh)`).
-
-### Phase 3: Future-Proofing (Implemented)
-
-The Tachyon Tongs architecture is designed to evolve. The following architectural prototypes are actively integrated:
-
-- **Autonomic Threat Scraping:** Scripts mimicking real-time ingestion of CISA/GitHub threat endpoints into internal databases (`cve_scraper.py`).
-- **WASM Profiling:** Lightweight containerization metrics bounding tools with specific `wasmtime` hardware budgets.
-- **PQC Hardware Cryptography:** Structural planning for `Hybrid ECC/PQC` Intent-Gate signatures protecting operators against "Harvest Now, Decrypt Later".
-- **LLM Behavior Isolation:** Strict Chain-of-Thought limiters tracking reasoning paths rather than purely output states preventing Action Fragmentation loops.
+Currently, a human-in-the-loop approves its structural modifications, but the ultimate roadmap targets full autonomy: the system will find exploits, synthesize mitigations, evaluate priority, and autonomously deploy code fixes to itself in a righteous, self-healing loop.
 
 ---
 
-## 🛠️ Quickstart (Manual Trigger)
+## 🦠 The Sentinel: A Poster Child
 
-You can invoke the Sentinel payload manually or string it to a cron scheduler using the root executable:
+To prove the efficacy of the Prophylactic Architecture, Tachyon Tongs includes a built-in representative payload known as the **Sentinel Agent**. 
+
+The Sentinel is not the framework itself; it is simply a "poster child" agent living *inside* the protected environment. Its sole purpose is to scour the internet (CISA, GitHub Advisories) looking for new vulnerabilities that target AI Agents. When it finds one, it autonomously updates the project's internal ledgers and proposes mitigation tasks. 
+
+If the Sentinel (or any other agent you build inside this framework) ever hallucinates or attempts to execute a malicious sandbox escape, the **Tachyon Tongs** architecture intercepts, sandboxes, and surgically removes the threat.
+
+---
+
+## 💻 Apple Silicon Installation (macOS)
+
+Tachyon Tongs is aggressively optimized to run sensitive, unaligned LLM reasoning locally on Apple Silicon (M-Series processors) using Metal 4 acceleration, preventing private execution telemetry from leaking to cloud API providers.
+
+### Prerequisites
+1. **macOS** on Apple Silicon (M1/M2/M3/M4/M5).
+2. **Lima** (Linux Macines) for hardware-virtualized sandboxing.
+3. **Python 3.10+**
+
+### Setup
+```bash
+# 1. Clone the repository
+git clone https://github.com/roydsouza/tachyon_tongs.git
+cd tachyon_tongs
+
+# 2. (Optional but Recommended) Initialize the Matchlock Sandbox
+# This spins up an isolated Linux MicroVM to securely execute Agent tools
+limactl start scripts/matchlock-agent.yaml
+
+# 3. Install Python dependencies (in a virtual environment)
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt  # (Currently standard library python 3.14 compatible)
+```
+
+---
+
+## 🛠️ Configuration & Usage
+
+You can invoke the Sentinel payload manually or string it to a cron scheduler.
 
 ```bash
 # Trigger a manual execution run
@@ -61,4 +59,25 @@ python3 sentinel.py --manual
 python3 sentinel.py --cron
 ```
 
-The Sentinel maintains a verifiable cryptographic ledger of all autonomous runs, sites polled, and threats discovered in the local [RUN_LOG.md](./RUN_LOG.md) file.
+### Extending the Architecture
+To reuse this protective environment for a *different* agent (e.g., a coding assistant or email manager):
+1. **Swap the Nodes:** In `src/adk_sentinel.py`, replace the `AnalyzerNode` logic with your own LLM reasoning prompt.
+2. **Update the Firewalls:** Modify `policies/tool_access.rego` to allow your agent to access specific domains (e.g., `smtp.gmail.com`). 
+3. **Keep the Tri-Stage Pipeline:** Ensure your agent passes data through the `Fetcher` -> `Sanitizer` (which wraps untrusted text in `\u0001` Unicode boundaries) -> `Analyzer` -> `Verifier` flow.
+
+---
+
+## 📂 The Organism's Anatomy (File Guide)
+
+Tachyon Tongs logs its autonomic activity precisely across a series of version-controlled markdown files. This maintains cryptographically auditable transparency without relying on opaque database schemas.
+
+*   **`STRATEGY.md`**: The tactical playbook. Defines how the Sentinel categorizes threats and formulates searches.
+*   **`SITES.md`**: The list of allowed domains (like nvd.nist.gov) that the Sentinel is permitted to scrape. Regulated by the `tool_access.rego` capability firewall.
+*   **`ATTACKS.md`**: The Threat Ledger. When the Sentinel parses a new exploit (e.g., Steganographic Injection), it logs the mechanics here.
+*   **`MITIGATION.md`**: The Synthesis Ledger. How the Sentinel formally proposes defending against the entries in `ATTACKS.md`.
+*   **`TASKS.md`**: The active execution backlog. The Sentinel translates `MITIGATION.md` into actionable bullet points here for the human-in-the-loop (AntiGravity) to implement.
+*   **`RUN_LOG.md`**: The Immutable Audit Trail. Every time `sentinel.py` executes, it appends timestamps, execution duration, and lists precisely which internal databases it modified.
+*   **`docs/HYBRID_AUTH.md`**: An architectural design document for future-proofing hardware Intent Gates using Post-Quantum (PQC) and Elliptic-Curve cryptography.
+*   **`ROADMAP.md`**: The high-level vision for merging the autonomous Sentinel logic with underlying Matchlock VM orchestration.
+
+*(Documentation on `init_bus.sh` and specific Rego policies is forthcoming).*
