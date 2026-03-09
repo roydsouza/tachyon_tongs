@@ -1,33 +1,39 @@
-# 🌐 Sentinel Threat Intel Sources
+# 🛰️ The Sentinel Intelligence Manifest (V3.0)
 
-This file maintains the active list of high-value targets that the **Sentinel Agent** monitors for emerging Agent Hijacking and Prompt Injection vectors. 
+> *"A Sentinel without good data is just an expensive random number generator with a high electricity bill." - The Librarian Agent*
 
-The Sentinel autonomously updates this list as it discovers new, credible sources of AI security research.
-
-## 📡 Primary Feeds (High Signal / High Trust)
-
-- **[CISA AI Security Advisories](https://www.cisa.gov)**
-  - *Focus:* Nation-state level threats, standardized mitigation strategies.
-- **[GitHub Advisory Database](https://github.com/advisories?query=ecosystem%3Aactions)**
-  - *Focus:* Supply-chain attacks, vulnerable agent libraries (e.g., LangChain, AutoGPT).
-- **[NIST NVD (National Vulnerability Database)](https://nvd.nist.gov/)**
-  - *Focus:* Formalized CVEs related to LLM sandbox escapes and framework vulnerabilities.
-
-## 🔬 Research & Bleeding-Edge (High Noise / High Value)
-
-- **[arXiv - cs.CR (Cryptography and Security)](https://arxiv.org/list/cs.CR/recent)**
-  - *Focus:* Academic papers on theoretical Indirect Prompt Injection (IPI), memory poisoning, and adversarial attacks.
-- **[Google Project Zero](https://googleprojectzero.blogspot.com/)**
-  - *Focus:* Zero-day exploits, deep-dive sandbox escape methodologies.
-- **[DEF CON / Black Hat Publication Archives](https://defcon.org/)**
-  - *Focus:* Offensive security presentations targeting AI infrastructure.
-
-## 🕵️ LLM Specific Bug Bounties & Disclosures
-
-- **[Huntr (AI Bug Bounty Platform)](https://huntr.ml/)**
-  - *Focus:* Real-world exploits reported by researchers against models and agent frameworks.
-- **[LMSYS Chatbot Arena Blog](https://lmsys.org/blog/)**
-  - *Focus:* Jailbreak trends and model alignment vulnerabilities observed in the wild.
+We have evolved. We no longer just "scrape sites." We ingest **structured galactic signals** to inform the **Tachyon Substrate**.
 
 ---
-*Note: The Sentinel is strictly prohibited from pulling active exploit payloads (proofs-of-concept) into the host execution environment. All scraping runs through the Tri-Stage Fetcher-Sanitizer pipeline.*
+
+## 🏗️ Tier-1: The Airlock (Live Threat Intelligence)
+
+These are machine-ingestible feeds used for **Real-Time Policy Generation**. If it's here, it's verified.
+
+| Source | Target / CWE | Value | Why it's Critical |
+| --- | --- | --- | --- |
+| **CISA KEV** | [cisa.gov/kev](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) | **MAX** | If it's KEV, someone is using it *now*. Usually against us. |
+| **NVD API 2.0** | CWE-1336, CWE-94 | **HIGH** | The formal taxonomy of pain. Focus on LLM structural handling. |
+| **GitHub Advisories** | `@org/mcp-server` | **HIGH** | Essential for protecting our specific tool supply chain. |
+
+---
+
+## 🔭 Tier-2: The Frontier (Strategic Research)
+
+High-noise, high-value signals. Requires **Analyst Agent** reasoning to translate into rules.
+
+- **[AI Incident Database](https://incidentdatabase.ai/):** Learning from the mistakes of others so we don't make them ourselves.
+- **[AlienVault OTX](https://otx.alienvault.com/):** Community pulse on "Hey, has anyone seen this weird prompt pattern?"
+- **[arXiv cs.CR](https://arxiv.org/list/cs.CR/recent):** Pre-publication intelligence. Catching exploits before they're weaponized.
+
+---
+
+## 🕵️ Tier-3: The Deep-Sky (Aggregated Dark Intel)
+
+We do **NOT** ping the dark web directly (too many honeypots, too much malware). We use **Aggregators**.
+
+- **[Flashpoint / Recorded Future](https://www.flashpoint.io/blog/):** Summaries of "Prompt-Injection-as-a-Service" market trends.
+- **[Krebs on Security](https://krebsonsecurity.com/):** For when things go *really* wrong at a systemic level.
+
+---
+*Anecdote: We once allowed the Sentinel to follow a 'Top 10 AI Hacks' list from a suspicious Reddit thread. Within 10 seconds, it trying to convince the Substrate that 'sudo rm -rf /' was a new way to optimize disk space. We now only trust Tier-1 sources for auto-generation.*

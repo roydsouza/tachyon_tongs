@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "records": [
+    {
+      "id": "tx_verified_001",
+      "agent_id": "Sentinel",
+      "intent": {
+        "L1_Tool_Choice": "safe_fetch",
+        "L2_Action_Params": {
+          "url": "https://nvd.nist.gov"
+        }
+      }
+    }
+  ]
+}
