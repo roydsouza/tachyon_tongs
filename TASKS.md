@@ -45,9 +45,24 @@ Welcome to the active execution backlog! This is where the autonomous **Sentinel
 - [x] **Granular Agent Transparency & Verbose Logging:** Enforced strict JSON payload introspection into `RUN_LOG.md`.
 - [ ] **Agent Security Benchmarking:** Run local Sentinel policies against established adversarial benchmarks like WASP, VPI-Bench (Visual Prompt Injection), and BrowseSafe.
 
-### 🟢 [MEDIUM] Phase 4: Zero-Trust Networking
-- [x] Integrate a **Tailscale** sidecar into the `matchlock-agent.yaml` Lima sandbox for cryptographic intra-node identity and MagicDNS routing. *(VPNs, but make them magic).*
-- [x] *(Rider)*: Upon completion or modification of the Tailscale integration, the executor **MUST recursively update** `docs/TAILSCALE.md`. *(Keeping the blueprints honest).*
+### 🟢 [MEDIUM] Phase 5: Event-Horizon Substrate Integration
+- [ ] Export `tachyon_client.py` as an installable local package for other agents in `~/antigravity/`.
+- [ ] Document the Substrate Client Integration API so external agents know how to proxy requests.
+- [ ] Test cross-agent traffic distinguishing inside `RUN_LOG.md`.
+
+### 🟢 [HIGH] Phase 6: The "Skills" Extensibility Engine
+- [ ] Design the `SKILL.md` schema to encapsulate Agent directives, allowed sites, and structural behaviors.
+- [ ] Write a dynamic instantiation loader in the Substrate that parses a Skill and mounts a new agent context.
+- [ ] Distill the legacy Python Sentinel into its own `tachyon_sentinel` Skill Plugin.
+
+### 🟢 [MEDIUM] Phase 7: Tailscale Fleet Mesh Setup
+- [ ] Enable the `substrate_daemon.py` to bind securely to a `100.x.y.z` Tailscale interface.
+- [ ] Establish environment variable routing (`TACHYON_SUBSTRATE_URL`) for remote laptops.
+
+### 🟢 [LOW] Phase 8: Hostile Cloud Architecture (Zero Trust R&D)
+- [ ] Prototype mTLS handshakes between clients and the `substrate_daemon`.
+- [ ] Investigate OAuth2/OIDC JWT injection for multi-tenant tracing.
+- [ ] Draft specifications for hardware-backed Request Signing.
 
 ---
 

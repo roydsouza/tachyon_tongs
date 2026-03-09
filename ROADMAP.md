@@ -91,12 +91,22 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
 
 ## Phase 5: Event-Horizon Substrate (Workspace-Wide) [UP NEXT]
 - **Why we are doing this:** Sentinel is lonely. We want other agents in `~/antigravity/` to be able to use the same safety bumpers without having to copy-paste the whole repo like it's 2004.
-- **How:** A local "Tachyon Daemon" that agents can ping for safe tool execution. One Sentinel Hardening to Rule Them All.
+- **How:** A local "Tachyon Daemon" (`localhost:60461`) that agents can ping for safe tool execution. One Sentinel Hardening to Rule Them All.
 
-## Phase 6: Cloud-Scale Space Organism (Multi-Tenant)
-- **Why we are doing this:** Eventually, we want to be like Cloudflare but for AI sanity. Metering, billing, and provisioning so we can buy more M-series Macs.
-- **How:** Deploying the Substrate to Google Cloud with OIDC auth and multi-tenant isolation.
-- **Why we won't just use a standard API Gateway:** Standard gateways don't understand that the LLM is currently trying to convince the user to disable the firewall. We need **Context-Aware Intent Provisioning**.
+## Phase 6: The Data-Driven "Skills" Engine (Orthogonal Extensibility)
+- **Why we are doing this:** Hardcoding agent logic in Python is brittle. We want to be able to introspect, clone, and modify agent behaviors purely via text.
+- **How:** Distill the Sentinel (and future agents) into independent "Skills plugins" (e.g., `SKILL.md`). Tachyon Tongs will use these markdown configurations—which codify behaviors, structure, target sites, and actions—to dynamically materialize new agents within the Substrate.
+
+## Phase 7: The Private Fleet (Tailscale Mesh)
+- **Why we are doing this:** You want your travel laptop to benefit from the heavyweight Sentinel analysis running on the M2 Ultra Desktop without duplicating the entire compute pipeline.
+- **How:** Binding the Substrate Daemon to the VPN interface (`100.x.y.z`) to allow inter-device Publish/Discover/Subscribe capabilities over a trusted WireGuard backbone.
+
+## Phase 8: Hostile Cloud Organism (Zero-Trust Mesh)
+- **Why we are doing this:** Eventually, we want to scale. The network is untrusted, and hackers might actively try to poison the Intent Gates via Man-in-the-Middle or Replay attacks.
+- **How:** Evolving the Publish/Discover/Subscribe model into a Zero-Trust Gateway:
+  - **mTLS:** Cryptographic verification of client identity.
+  - **OAuth2/OIDC:** Identifying exactly *which* tenant and agent is making the request.
+  - **Hardware Signatures:** Bounding global threat reporting to YubiKey or Post-Quantum (PQC) Multi-Sig approvals.
 
 ---
 
