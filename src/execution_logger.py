@@ -16,6 +16,7 @@ class ExecutionLogger:
             "start_time": None,
             "trigger_type": "UNKNOWN",
             "sites_polled": [],
+            "site_results": {}, # Maps URL -> {"status": "SUCCESS/FAIL", "signals": N, "error": msg}
             "threats_identified": 0,
             "files_modified": [],
             "fatal_error": None
@@ -28,6 +29,7 @@ class ExecutionLogger:
             "start_time": datetime.datetime.now(),
             "trigger_type": trigger,
             "sites_polled": [],
+            "site_results": {},
             "threats_identified": 0,
             "files_modified": [],
             "fatal_error": None
@@ -36,6 +38,14 @@ class ExecutionLogger:
     def add_site_polled(self, url):
         if url not in self.run_data["sites_polled"]:
             self.run_data["sites_polled"].append(url)
+
+    def add_site_result(self, url, status="SUCCESS", signals=0, error=None):
+        self.add_site_polled(url)
+        self.run_data["site_results"][url] = {
+            "status": status,
+            "signals": signals,
+            "error": error
+        }
 
     def add_threat_found(self):
         self.run_data["threats_identified"] += 1
@@ -56,8 +66,17 @@ class ExecutionLogger:
         entry += f"- Trigger Source: `{self.run_data['trigger_type']}`\n"
         entry += f"- Duration: {duration:.2f} seconds\n"
         
-        sites = ", ".join(self.run_data["sites_polled"]) if self.run_data["sites_polled"] else "None"
-        entry += f"- Sites Polled: {sites}\n"
+        sites = []
+        for url in self.run_data["sites_polled"]:
+            res = self.run_data["site_results"].get(url, {"status": "UNKNOWN", "signals": 0})
+            status_icon = "✅" if res["status"] == "SUCCESS" else "❌"
+            detail = f"{status_icon} `{url}` ({res['signals']} signals)"
+            if res.get("error"):
+                detail += f" - *Error: {res['error']}*"
+            sites.append(detail)
+        
+        sites_str = "\n  - ".join(sites) if sites else "None"
+        entry += f"- Sites Audited:\n  - {sites_str}\n"
         
         entry += f"- Threats Identified: {self.run_data['threats_identified']}\n"
         

@@ -4,6 +4,7 @@ import json
 import logging
 from datetime import datetime
 from typing import List, Dict, Any, Optional
+from src.execution_logger import ExecutionLogger
 
 # --- Core Framework ---
 
@@ -23,26 +24,34 @@ class IntelSource(abc.ABC):
 class IntelIngestor:
     """The central orchestrator for gathering signals from multiple plugins."""
     
-    def __init__(self):
+    def __init__(self, logger_instance: Optional[ExecutionLogger] = None):
         self.sources: List[IntelSource] = []
-        self.logger = logging.getLogger("TachyonIngestor")
+        self.logger = logger_instance or ExecutionLogger(agent_id="TachyonIngestor")
+        self.sys_logger = logging.getLogger("TachyonIngestor")
         logging.basicConfig(level=logging.INFO)
 
     def register_source(self, source: IntelSource):
-        self.logger.info(f"🛰️  Source online: {source.name()}")
+        self.sys_logger.info(f"🛰️  Source online: {source.name()}")
         self.sources.append(source)
 
     async def run_all(self) -> List[Dict[str, Any]]:
-        self.logger.info("🚀 Starting global intelligence sweep...")
+        self.sys_logger.info("🚀 Starting global intelligence sweep...")
         tasks = [source.fetch_threats() for source in self.sources]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         
         all_threats = []
         for i, result in enumerate(results):
+            source_name = self.sources[i].name()
+            # Construct a URL-like identifier for logging if it's not a real URL
+            url_id = f"intel://{source_name}"
+            
             if isinstance(result, Exception):
-                self.logger.error(f"❌ Error in source {self.sources[i].name()}: {result}")
+                self.sys_logger.error(f"❌ Error in source {source_name}: {result}")
+                self.logger.add_site_result(url_id, status="FAIL", signals=0, error=str(result))
             else:
-                self.logger.info(f"✅ Received {len(result)} signals from {self.sources[i].name()}")
+                signals_count = len(result)
+                self.sys_logger.info(f"✅ Received {signals_count} signals from {source_name}")
+                self.logger.add_site_result(url_id, status="SUCCESS", signals=signals_count)
                 all_threats.extend(result)
         
         return all_threats
@@ -101,13 +110,30 @@ class CISAKEVSource(IntelSource):
 # --- Main Entry Point ---
 
 if __name__ == "__main__":
-    ingestor = IntelIngestor()
+    from src.execution_logger import ExecutionLogger
+    
+    # Initialize the audit logger
+    audit_logger = ExecutionLogger(agent_id="SentinelIngestor")
+    audit_logger.start_run(trigger="MANUAL_CLI")
+    
+    ingestor = IntelIngestor(logger_instance=audit_logger)
     ingestor.register_source(MockNVD())
     ingestor.register_source(GitHubAdvisorySource())
     ingestor.register_source(CISAKEVSource())
+    
+    # Simulate a failing source
+    class FailingSource(IntelSource):
+        def name(self): return "Broken-Feed"
+        async def fetch_threats(self): raise ConnectionError("Timeout connection to dark-net-blog.onion")
+    
+    ingestor.register_source(FailingSource())
     
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     threats = loop.run_until_complete(ingestor.run_all())
     
+    # Finalize the run to write to RUN_LOG.md
+    audit_logger.finalize_run()
+    
     print(f"\n📑 Intelligence Manifest (Consolidated):\n{json.dumps(threats, indent=2)}")
+    print(f"\n📜 Results have been logged to RUN_LOG.md")

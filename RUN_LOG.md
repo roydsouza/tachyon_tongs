@@ -2,14 +2,27 @@
 
 This file contains the autonomous, cryptographically immutable (in a prod environment) execution history of the Sentinel agent.
 
+## Run: 2026-03-09 11:54:52 (Agent: SentinelIngestor)
+- Trigger Source: `MANUAL_CLI`
+- Duration: 0.50 seconds
+- Sites Audited:
+  - ✅ `intel://NIST-NVD` (1 signals)
+  - ✅ `intel://GitHub-Advisories` (1 signals)
+  - ✅ `intel://CISA-KEV` (1 signals)
+  - ❌ `intel://Broken-Feed` (0 signals) - *Error: Timeout connection to dark-net-blog.onion*
+- Threats Identified: 0
+- Files Modified: None
+
+---
+
+---
+
 ## Run: 2026-03-09 11:27:35 (Agent: AshaAgent)
 - Trigger Source: `SUBSTRATE_API:alpha-tenant`
 - Duration: 0.00 seconds
 - Sites Polled: https://nvd.nist.gov
 - Threats Identified: 0
 - Files Modified: None
-
----
 
 ---
 
