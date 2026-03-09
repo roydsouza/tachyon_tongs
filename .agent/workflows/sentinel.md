@@ -9,5 +9,6 @@ This workflow manually triggers the Sentinel Agent to scrape for the latest AI a
 1. Navigate to the `tachyon_tongs` directory and invoke the Sentinel Python CLI manually.
 ```bash
 cd /Users/rds/antigravity/tachyon_tongs
+./scripts/start_opa.sh & sleep 2
 python3 sentinel.py --manual
 ```

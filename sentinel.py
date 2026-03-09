@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from src.execution_logger import ExecutionLogger
 from src.cve_scraper import VulnerabilityScraper
-from src.adk_sentinel import run_sentinel
+from src.adk_sentinel import run_supervisor
 
 def main():
     parser = argparse.ArgumentParser(description="Tachyon Tongs Sentinel Agent CLI")
@@ -34,20 +34,17 @@ def main():
     logger.start_run(trigger_type=trigger_source)
     
     try:
-        # 1. Autonomous Scraping Phase
-        print("[Sentinel] Phase 1: Initiating Threat Intelligence Scraper...")
-        scraper = VulnerabilityScraper(mode="mock")
-        new_threats = scraper.scrape_new_threats(logger=logger)
-        print(f"[Sentinel] Identified {len(new_threats)} new critical threat(s).")
+        # Phase 1 & 2: The Guardian Triad Split (Autonomous Multi-Agent Workflow)
+        print("[Sentinel] Empowering the Guardian Triad Supervisor Graph...")
+        # The Scout handles the scraping and the targeted URL fetching!
+        triad_result = run_supervisor("https://github.com/advisories", logger=logger, run_scraper=True)
         
-        # 2. ADK Deep Analysis Phase
-        print("[Sentinel] Phase 2: Analyzing Target Endpoints via ADK StateGraph...")
-        adk_result = run_sentinel("https://github.com/advisories", logger=logger)
-        
-        if adk_result.get("final_output", {}).get("status") == "error":
-             print(f"[Sentinel] [WARNING] Verifier intercepted an exploit: {adk_result['final_output'].get('reason')}")
+        # Check Engineer's final verification status
+        final_output = triad_result.get("final_output", {})
+        if final_output.get("status") == "error":
+             print(f"[Sentinel] [WARNING] Verifier intercepted an exploit: {final_output.get('reason')}")
         else:
-             print("[Sentinel] Endpoint analysis completed securely.")
+             print("[Sentinel] Multi-Agent Threat Analysis completed securely.")
         
     except Exception as e:
         error_msg = str(e)

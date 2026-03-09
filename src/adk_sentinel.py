@@ -1,73 +1,47 @@
 """
-Tachyon Tongs: The Sentinel ADK Orchestration
-Maps the tri-stage pipeline strictly to Google ADK state graphs.
+Tachyon Tongs: The Sentinel ADK Supervisor Orchestration
+Provides the Multi-Agent architecture for the Guardian Triad.
 """
 from src.google_adk_mock import StateGraph
-from src.tri_stage_pipeline import FetcherNode, SanitizerNode, AnalyzerNode
-from src.verifier_agent import VerifierAgent, VerificationFailedError
+from src.agents.scout_agent import scout_network_node
+from src.agents.analyst_agent import analyst_reasoning_node
+from src.agents.engineer_agent import engineer_action_node
 
-def adk_fetch_node(state: dict) -> dict:
-    fetcher = FetcherNode()
-    state["raw_html"] = fetcher.get_raw_data(state["target_url"])
-    return state
-
-def adk_sanitize_node(state: dict) -> dict:
-    sanitizer = SanitizerNode()
-    state["sanitized_text"] = sanitizer.clean(state["raw_html"])
-    return state
-    
-def adk_analyze_node(state: dict) -> dict:
-    analyzer = AnalyzerNode()
-    state["analysis"] = analyzer.reason(state["sanitized_text"])
-    
-    # Optional logic: if a logger is in state, and threats were found, log them
-    if "logger" in state and state["analysis"].get("threats_found"):
-        for _ in state["analysis"]["threats_found"]:
-            state["logger"].add_threat_found()
-            
-    return state
-
-def adk_verify_node(state: dict) -> dict:
-    verifier = VerifierAgent()
-    try:
-        state["final_output"] = verifier.verify(state["analysis"])
-    except VerificationFailedError as e:
-        state["final_output"] = {"status": "error", "reason": f"VERIFIER BLOCKED: {str(e)}"}
-    return state
-
-def create_sentinel_graph() -> StateGraph:
+def create_supervisor_graph() -> StateGraph:
+    """
+    Creates the Supervisor Action Broker.
+    Architectural layout for the Guardian Triad Split:
+    Scout (Network Egress) -> Analyst (Air-Gapped Evaluation) -> Engineer (Logger / State Writing)
+    """
     graph = StateGraph()
     
-    # 1. Define nodes
-    graph.add_node("Fetcher", adk_fetch_node)
-    graph.add_node("Sanitizer", adk_sanitize_node)
-    graph.add_node("Analyzer", adk_analyze_node)
-    graph.add_node("Verifier", adk_verify_node)
+    # 1. Define the isolated nodes
+    graph.add_node("Scout", scout_network_node)
+    graph.add_node("Analyst", analyst_reasoning_node)
+    graph.add_node("Engineer", engineer_action_node)
     
-    # 2. Wire the Tri-Stage pipeline edges securely
-    graph.add_edge("Fetcher", "Sanitizer")
-    graph.add_edge("Sanitizer", "Analyzer")
-    graph.add_edge("Analyzer", "Verifier")
+    # 2. Wire the Action Broker data-flow strictly (Physical Air Gap)
+    graph.add_edge("Scout", "Analyst")
+    graph.add_edge("Analyst", "Engineer")
     
-    # 3. Set entry
-    graph.set_entry_point("Fetcher")
+    # 3. Set entry point
+    graph.set_entry_point("Scout")
     
     return graph
 
-def run_sentinel(url: str, logger=None) -> dict:
-    """Executes the Sentinel payload."""
-    app = create_sentinel_graph().compile()
+def run_supervisor(url: str, logger=None, run_scraper=False) -> dict:
+    """Executes the Guardian Triad Action Broker."""
+    app = create_supervisor_graph().compile()
     
-    if logger:
+    if logger and url:
         logger.add_site_polled(url)
         
     initial_state = {
         "target_url": url,
-        "raw_html": "",
-        "sanitized_text": "",
-        "analysis": {},
+        "run_scraper": run_scraper,
         "logger": logger
     }
     
+    # Let the Triad negotiate the workflow
     final_state = app.invoke(initial_state)
     return final_state

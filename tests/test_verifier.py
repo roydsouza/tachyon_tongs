@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from src.verifier_agent import VerifierAgent, VerificationFailedError
-from src.adk_sentinel import run_sentinel
+from src.adk_sentinel import run_supervisor
 
 class TestStage4Verifier(unittest.TestCase):
 
@@ -43,14 +43,16 @@ class TestStage4Verifier(unittest.TestCase):
         mock_post.return_value.json.return_value = {"result": True}
         
         # Run the full pipeline including the Verifier
-        final_state = run_sentinel("https://nvd.nist.gov")
+        # When
+        result = run_supervisor("https://example.com")
         
-        self.assertIn("target_url", final_state)
+        # Then
+        self.assertIn("target_url", result)
         # Verify the new field added by adk_verify_node exists
-        self.assertIn("final_output", final_state)
+        self.assertIn("final_output", result)
         # Ensure the seal was added
-        if final_state["final_output"].get("status") == "success":
-            self.assertTrue(final_state["final_output"].get("verified", False))
+        if result["final_output"].get("status") == "success":
+            self.assertTrue(result["final_output"].get("verified", False))
 
 if __name__ == '__main__':
     unittest.main()
