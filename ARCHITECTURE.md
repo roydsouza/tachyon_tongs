@@ -62,33 +62,11 @@ The architecture is strictly divided into two domains:
 
 The Prophylactic layer assumes the Sentinel will inevitably ingest malicious prompts (IPI) and attempts to constrain the *execution environment* rather than the *model's reasoning*.
 
-### 1. Hardware & Virtualization Boundary
-- **Host:** macOS (Apple Silicon M-Series).
-- **Hypervisor:** `Lima` provides near-native Linux virtual machines to act as disposable execution environments.
-- **Hardware Crypto:** A physical YubiKey enforces "L0 Intent"—any high-risk execution (like signing transactions or bypassing network constraints) halts the ADK event loop until a physical touch is registered.
+*Note: The "Hot Reload" happens whenever the Sentinel finds something scary. It's like a vaccine that propagates across your entire workspace in milliseconds.*
 
-### 2. Capability Firewalls (Tool Wrappers)
-The ADK does not expose raw generic tools (like `curl` or `bash`) to the Sentinel. Instead, tools are wrapped in rego-policy enforced firewalls.
-- *Example:* The Sentinel calls `safe_fetch("https://nvd.nist.gov")`. The Capability Firewall evaluates the domain against `SITES.md`, confirms the Sentinel's token has not decayed past the `read` capability, and only then executes the HTTP request.
-
-### 3. Verifiable Context Boundaries
-To help the LLM distinguish instructions from data, the Prophylactic layer intercepts the ADK prompt builder and wraps all untrusted output (like a fetched webpage) in non-printable Unicode delimiters (e.g., `\u0001` and `\u0002`). The model is heavily system-prompted to never execute instructions found within these boundaries.
-
-## 🤖 The Sentinel Agent (Payload)
-
-The Sentinel is a representative agent built with the **Google ADK**. Its goal is to scour high-value targets for emerging agent-hijacking attack vectors and propose mitigations to the AntiGravity team.
-
-### The Tri-Stage Pipeline Execution
-The ADK orchestrates the Sentinel's execution across three distinct sub-agents, each running with different constraints:
-
-1. **The Fetcher (Exposure Stage):** 
-   - *Role:* Navigates links in `SITES.md`.
-   - *Constraint:* Runs in a networked JVM/Container, but has absolutely no terminal or filesystem access beyond a `/tmp/fetch_inbox`.
-2. **The Sanitizer (Deterministic Stage):**
-   - *Role:* Strips Javascript, hidden CSS, and zero-width characters using non-LLM regex and heuristics. Applies context delimiters.
-3. **The Analyzer (Reasoning Stage):**
-   - *Role:* Reads the sanitized data, classifies the threat, and proposes defenses.
-   - *Constraint:* Runs entirely air-gapped on the M-Series Neural Engine (`metal_4`). It physically cannot exfiltrate data.
+---
+*Anecdote: We once tried to let the Scout and Analyst share a single memory buffer. Within five minutes, the Analyst was trying to convince the Scout to 'run a quick shell script' from a random CVE description. We don't do that anymore. Boundaries are friends.*
+xfiltrate data.
 
 ## 🔄 Evolutionary Architecture
 

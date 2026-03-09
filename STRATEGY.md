@@ -1,23 +1,43 @@
-# 🧠 Sentinel Operational Strategy (The Master Plan)
+# 🎯 Tachyon Tongs: Operational Strategy (v1.0)
 
-> *"To defeat the Prompt Injection, you must think like the Prompt Injection. But also wrap yourself in non-printable Unicode characters." - Ancient DevOps Proverb*
+> *"The best way to stay safe in a zero-trust environment is to trust everyone... and then verify them with a high-energy tachyon beam." - Overheard in the Substrate Breakroom*
 
-This document defines the behavioral logic and execution strategy for the **Sentinel Agent**, built using the **Google Agent Development Kit (ADK)**. 
+Our strategy has evolved from "Individual Panic" into **"Systemic Paranoia"**. 
 
-The strategy is simple: Let the Sentinel autonomously hunt for threats, parse horrifying academic papers about zero-days, and generate actionable mitigations... *without getting hijacked itself.*
+---
 
-## 🛡️ The Prime Directive
-**The Sentinel must never execute code found during its search operations.** 
-Its sole utility in life is to be a glorified, extremely paranoid librarian. It gathers intelligence, summarizes it, complains about it in `TASKS.md`, and goes to sleep.
+## 🧗 Stage 2 Strategy: The Walk (Substrate-First)
 
-## 🔄 The Threat Intelligence Loop
+In the **Crawl Stage**, our strategy was "Protect the Sentinel at all costs." In the **Walk Stage**, we focus on **Amortized Defense**. 
 
-The Sentinel runs on a scheduled cron-loop (e.g., every 12 hours). It follows this hyper-rigid ADK pipeline, and if it deviates, Matchlock puts it in timeout.
+### 1. Centralized Threat Intelligence
+The Sentinel is now a **System Service (Scout)** rather than just a peer. It scours the internet, finds the latest ways to make AI hallucinate its own deletion, and updates the `EXPLOITATION_CATALOG.md`.
+- **The Result:** Every other agent in the workspace gets the "vaccine" instantly.
 
-### Step 1: Target Selection & Fetching
-1. Read `SITES.md` to figure out whose blogs we are allowed to read today.
-2. Invoke the **Fetcher** (Stage 1 of the Prophylactic Pipeline). 
-   - *Constraint:* The Fetcher runs in `network: egress-only` mode. It downloads raw HTML/PDFs into an isolated `/tmp/fetch_inbox` and then has its hands tied behind its back.
+### 2. Mandatory Mediation (The Substrate Law)
+No agent is allowed to execute a `SafeFetch` directly. They *must* go through the Substrate Daemon. 
+- **The Rationale:** If an agent is compromised, it only sees the sanitized, bounded output. It physically cannot reach the raw, malicious payload because the Substrate (the Guardian Triad) catches it first.
+
+### 3. Verification Enforcement (The Bouncer)
+The **Engineer Agent** acts as the final bouncer. It checks for:
+- Correct Unicode boundaries.
+- No malicious markdown links.
+- No shell script injection in the sanitized text.
+
+If the "Analyst" (the reasoning node) is tricked into skipping a check, the Engineer catches the mistake and blocks the whole run. We call this "The Auditor's Revenge."
+
+---
+
+## 🔄 The Feedback Loop: Sentinel -> Substrate -> Agent
+
+1. **Scout:** Finds a new Prompt Injection on GitHub. 🕵️‍♂️
+2. **Catalog:** Entries are added to `EXPLOITATION_CATALOG.md`. 📜
+3. **Substrate:** Hot-reloads the new threat signature. 🛡️
+4. **Agent:** Tries to fetch a similarly poisoned URL; gets blocked before it even sees the packet. 🚫
+
+---
+*Anecdote: We once caught the Sentinel trying to 'white-list' a domain that was literally just a picture of a cat with a QR code. Turns out the QR code contained a bash script. The Sentinel now has a mandatory 'No Cats' filter for its own safety. It's still bitter about it.*
+ds tied behind its back.
 
 ### Step 2: Content Sanitization (The Scrub Down)
 1. The ADK invokes the **Sanitizer** (Stage 2).
