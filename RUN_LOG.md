@@ -81,7 +81,7 @@ This file contains the autonomous, cryptographically immutable (in a prod enviro
 - **Duration:** 0.41 seconds
 - **Sites Polled:** nvd.nist.gov, https://github.com/advisories
 - **Threats Identified:** 1
-- **Files Modified:** ATTACKS.md, TASKS.md
+- **Files Modified:** EXPLOITATION_CATALOG.md, TASKS.md
 
 ---
 
@@ -90,7 +90,7 @@ This file contains the autonomous, cryptographically immutable (in a prod enviro
 - **Duration:** 1.72 seconds
 - **Sites Polled:** nvd.nist.gov, https://github.com/advisories
 - **Threats Identified:** 1
-- **Files Modified:** ATTACKS.md, TASKS.md
+- **Files Modified:** EXPLOITATION_CATALOG.md, TASKS.md
 
 ---
 
@@ -99,7 +99,7 @@ This file contains the autonomous, cryptographically immutable (in a prod enviro
 - **Duration:** 1.58 seconds
 - **Sites Polled:** nvd.nist.gov, https://github.com/advisories
 - **Threats Identified:** 1
-- **Files Modified:** ATTACKS.md, TASKS.md
+- **Files Modified:** EXPLOITATION_CATALOG.md, TASKS.md
 
 ---
 

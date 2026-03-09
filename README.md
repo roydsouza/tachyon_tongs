@@ -85,14 +85,16 @@ Don't worry, Roy is just being Roy and overengineering things because port confl
 
 ## 📂 The Organism's Anatomy (File Guide)
 
-Tachyon Tongs logs its autonomic activity precisely across a series of Markdown files, because databases are for cowards and git commits are forever.
+Tachyon Tongs logs its autonomic activity precisely across a series of Markdown files, because databases are for people who like paying AWS bills and git commits are essentially a legal affidavit.
 
-*   **`STRATEGY.md`**: The tactical playbook. The Sentinel reads this to remember who it is and who it hates.
-*   **`SITES.md`**: The VIP List. Which domains (like `nvd.nist.gov`) the Sentinel is allowed to scrape before the firewall yells at it.
-*   **`ATTACKS.md`**: The Wall of Weird. When the Sentinel learns a new zero-day, it immortalizes it here.
-*   **`MITIGATION.md`**: The "Oh God How Do We Fix This" Ledger.
-*   **`TASKS.md`**: The Backlog of Doom. `MITIGATION.md` translated into actual bullet points for us to code.
-*   **`RUN_LOG.md`**: The Immutable Audit Trail. Proof that the agent woke up, did its job, and went back to sleep without accidentally starting a war.
-*   **`docs/TAILSCALE.md`**: Phase 4 Networking. How we use MagicDNS so we don't have to memorize IP addresses like it's 1995.
-*   **`docs/HYBRID_AUTH.md`**: Post-Quantum Cryptography planning. Things that sound cool but aren't urgent. Like buying a second dog.
-*   **`ROADMAP.md`**: The grand vision of when we finally let this thing off the leash completely.
+*   **`STRATEGY.md`**: The tactical playbook. The Sentinel reads this to remember who it is and who it's currently blocking.
+*   **`SITES.md`**: The VIP Guest List. Which domains (like `nvd.nist.gov`) the Sentinel is allowed to scrape before the firewall tells it to "Go to its room."
+*   **`EXPLOITATION_CATALOG.md`** (Master File): The "Wall of Weird" + "The Panic Ledger". This is our single source of truth for every way the internet tried to kill us today, coupled with how we dodged the bullet.
+*   **`TASKS.md`**: The Backlog of Doom. The `EXPLOITATION_CATALOG.md` translated into actual work items for us to procrastinate on.
+*   **`RUN_LOG.md`**: The Audit Trail. Proof that the agent woke up, did its job, and didn't accidentally try to synthesize enriched uranium.
+*   **`docs/TAILSCALE.md`**: Phase 4 Networking. Using MagicDNS so we don't have to navigate via IP addresses like it's 1995.
+*   **`docs/HYBRID_AUTH.md`**: Post-Quantum Cryptography planning. Things that sound cool but might be complete hallucination. Like a second dog or a "stable" JS framework.
+*   **`ROADMAP.md`**: The grand vision of when we finally let this thing off the leash and go to the beach.
+
+---
+*Note: If `ATTACKS.md` or `MITIGATION.md` still exist on your drive, they are ghosts of a simpler time. Delete them. They are obsolete. We are efficient now.*

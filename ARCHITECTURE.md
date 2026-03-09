@@ -55,7 +55,7 @@ The architecture is strictly divided into two domains:
 │                               │             │
 └───────────────────────────────┼───────────────┘
                                 ▼
-         [Updates to SITES, ATTACKS, MITIGATION, TASKS]
+          [Updates to SITES, EXPLOITATION_CATALOG, TASKS]
 ```
 
 ## 🛡️ The Prophylactic Layer (Defensive Infrastructure)
@@ -92,7 +92,7 @@ The ADK orchestrates the Sentinel's execution across three distinct sub-agents, 
 
 ## 🔄 Evolutionary Architecture
 
-As the Sentinel discovers new attack vectors in the wild, it updates `ATTACKS.md` and generates actionable tickets in `TASKS.md`. The AntiGravity team (and authorized LLMs) then implement these defensive upgrades in the Prophylactic Layer, closing the self-improving security loop.
+As the Sentinel discovers new attack vectors in the wild, it updates the `EXPLOITATION_CATALOG.md` (our single source of truth for internet-born terror) and generates actionable tickets in `TASKS.md`. The AntiGravity team (and authorized LLMs with enough caffeine) then implement these defensive upgrades in the Prophylactic Layer, closing the self-improving security loop.
 
 ---
 *Status: Initial Architecture Definition - v1.0*

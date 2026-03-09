@@ -37,8 +37,7 @@ The Sentinel runs on a scheduled cron-loop (e.g., every 12 hours). It follows th
 ### Step 4: Verification & Synthesis (The Bouncer)
 1. The **Verifier Agent** (Stage 4) cross-references the Analyzer's output to make sure it didn't hallucinate or try to slip a `curl` command into the final report.
 2. If validated, the Sentinel patches the local knowledge base:
-   - Appends new nightmare fuel to `ATTACKS.md`.
-   - Appends proposed solutions to `MITIGATION.md`.
+   - Appends new nightmare fuel (attack vectors) and proposed biological-grade cures to `EXPLOITATION_CATALOG.md`.
 3. **Critical Step:** The Sentinel generates an actionable ticket in `TASKS.md` for AntiGravity (and Roy) to implement the defense so we don't all get hacked tomorrow.
 
 ## 🧬 Self-Improvement Protocol
