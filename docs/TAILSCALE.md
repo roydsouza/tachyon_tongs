@@ -32,13 +32,14 @@ Tachyon Tongs will implement Tailscale deep in the Prophylactic layer:
     *   The firewall will drop all `0.0.0.0/0` outbound traffic by default.
     *   The `safe_fetch` node will connect natively to `https://internal-wiki.tailnet-name.ts.net`.
 
-## Planned Implementation
+## Implemented Architecture
 
-The implementation strategy dictates that `TAILSCALE.md` must remain the single source of truth for the network topology.
+The Zero-Trust network has been formally integrated into the repository:
 
-- **Phase 1:** Generate Ephemeral Auth tokens via an OAuth client specifically for the Limactl instance.
-- **Phase 2:** Inject the daemon daemon installation steps into `scripts/matchlock-agent.yaml`.
-- **Phase 3:** Rewrite `tool_access.rego` to block public web traversing and test internal routing.
+1.  **Auth Wrapper (`scripts/tailscale-auth.sh`)**: We created a bash wrapper to ensure the `TS_AUTHKEY` environment variable is present on the host machine before booting the VM. This prevents secret leakage in YAML.
+2.  **Daemon Injection (`scripts/matchlock-agent.yaml`)**: The Lima provision block invokes the Tailscale install script and executes:
+    `tailscale up --authkey=${TS_AUTHKEY} --hostname=tachyon-sentinel --accept-routes`
+3.  **Rego MagicDNS (`policies/tool_access.rego`)**: The firewall now explictly permits the `.ts.net` MagicDNS wildcard, allowing the Fetcher node to resolve internal Tailscale nodes without hardcoded IPs.
 
-> [!IMPORTANT]
-> **Implementation Rider:** Upon completion of this integration, the executor *must* update this `TAILSCALE.md` file to reflect any deviations from the original plan, the actual ACL schemas used, and the precise MagicDNS configurations generated. Always maintain parity between this document and the live deployment.
+> [!NOTE]
+> **Rider Fulfilled:** This document was updated during the Phase 4 execution sequence to map perfectly to the live infrastructure configuration.

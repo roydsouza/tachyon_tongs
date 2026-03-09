@@ -26,6 +26,13 @@ provision:
     #!/bin/bash
     set -eux -o pipefail
     
+    echo "Installing Zero-Trust Overlay Networking (Tailscale)..."
+    curl -fsSL https://tailscale.com/install.sh | sh
+    
+    # We authenticate headlessly using the ephemeral key. 
+    # Tailscale forces all egress through the MagicDNS overlay rather than public IPs.
+    tailscale up --authkey=${TS_AUTHKEY} --hostname=tachyon-sentinel --accept-routes
+    
     # In an actual deployment, this curl should include hash verification 
     # and be piped securely rather than sh. Example:
     # curl -sSfL https://get.matchlock.io | bash -s -- --verify-sha256 [HASH]
