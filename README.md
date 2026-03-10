@@ -76,12 +76,11 @@ Because leaking our private execution telemetry to cloud providers is a cardinal
 
 ### Prerequisites (The "Panic Room" Setup)
 1. **Lima:** Because sometimes you need a disposable Linux MicroVM to act as an air-gapped panic room. 
-2. **Matchlock:** An eBPF-based security wrapper that aggressively proxies the network. Think of it as a very angry bouncer at the door of your Lima VM who double-checks every packet for "vibes."
+2. **Matchlock:** An eBPF-based security wrapper that aggressively proxies the network. Think of it as a very angry bouncer at the door of your Lima VM who double-checks every packet for "vibes." *(Note: Currently an internal component; deployment scripts pending public release).*
 
 ```bash
-# Install the tools that keep the monsters in the basement
+# Install Lima for the panic room
 brew install lima
-brew tap roydsouza/matchlock && brew install matchlock
 ```
 
 ### 🕰️ The Evolutionary Clash (launchctl)
