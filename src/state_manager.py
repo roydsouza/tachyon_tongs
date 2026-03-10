@@ -203,3 +203,43 @@ class StateManager:
                     entry += f"- **Date Discovered:** {row['date_added']}\n"
                     entry += f"- **Description:** {row['description']}\n\n"
                     f.write(entry)
+
+    def inject_tasks(self, threats, tasks_file="TASKS.md"):
+        """
+        Dynamically mutate the project backlog with actionable items derived from newly discovered threats.
+        This provides true self-evolution capability.
+        """
+        if not threats or not os.path.exists(tasks_file):
+            return
+
+        with self._lock:
+            try:
+                with open(tasks_file, 'r') as f:
+                    lines = f.readlines()
+
+                # Find injection point: Under "## Security Task Progression" or just the first active list item
+                injection_index = -1
+                for i, line in enumerate(lines):
+                    if "## Security Task Progression" in line:
+                        injection_index = i + 1
+                        break
+
+                if injection_index == -1:
+                    print(f"[{self.__class__.__name__}] Could not find injection point in {tasks_file}.")
+                    return
+
+                # Build the new task lines
+                new_tasks = []
+                for threat in threats:
+                    cve = threat.get('cve_id') or threat.get('id', 'UNKNOWN')
+                    source = threat.get('source', 'Unknown')
+                    new_tasks.append(f"- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against {cve} from {source}.\n")
+
+                if new_tasks:
+                    lines.insert(injection_index, "\n### 🚨 [URGENT] Autonomous Discoveries (Triad Scraped)\n")
+                    lines.insert(injection_index + 1, "".join(new_tasks) + "\n")
+
+                    with open(tasks_file, 'w') as f:
+                        f.writelines(lines)
+            except Exception as e:
+                print(f"[{self.__class__.__name__}] Failed to organically mutate {tasks_file}: {e}")

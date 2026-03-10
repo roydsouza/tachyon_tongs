@@ -36,9 +36,10 @@ def engineer_action_node(state: dict) -> dict:
                 # Write actually to the database
                 from src.state_manager import StateManager
                 StateManager().log_exploitation(state["scraped_threats"])
+                StateManager().inject_tasks(state["scraped_threats"])
                 
                 logger.add_file_updated("EXPLOITATION_CATALOG.md", details=f"Appended {num_threats} validated threats via StateManager.", payload=payload_str)
-                logger.add_file_updated("TASKS.md", details=f"Injected {num_threats} verification tasks to the backlog.")
+                logger.add_file_updated("TASKS.md", details=f"Injected {num_threats} verification tasks to the backlog via StateManager.")
                 
     except VerificationFailedError as e:
         # The Engineer caught the Analyst slipping. Refuse to execute write operations.

@@ -84,3 +84,29 @@ def test_state_manager_concurrency(state_manager):
         count = cursor.fetchone()[0]
         
     assert count == 20
+
+def test_state_manager_inject_tasks(state_manager):
+    manager, _, _ = state_manager
+    tasks_file = "/tmp/test_TASKS.md"
+    
+    # Create mock tasks file
+    with open(tasks_file, "w") as f:
+        f.write("# Project Backlog\n\n## Security Task Progression\n- [x] Old task\n")
+        
+    threats = [
+        {"id": "CVE-2026-TEST", "source": "Mock API"}
+    ]
+    
+    manager.inject_tasks(threats, tasks_file=tasks_file)
+    
+    with open(tasks_file, "r") as f:
+        content = f.read()
+        
+    assert "## Security Task Progression" in content
+    assert "### 🚨 [URGENT] Autonomous Discoveries" in content
+    assert "CVE-2026-TEST" in content
+    assert "Mock API" in content
+    
+    # Cleanup
+    if os.path.exists(tasks_file):
+        os.remove(tasks_file)
