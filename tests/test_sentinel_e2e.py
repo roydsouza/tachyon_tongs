@@ -1,4 +1,5 @@
 import unittest
+import unittest.mock
 import os
 import subprocess
 import time
@@ -11,19 +12,33 @@ class TestSentinelE2E(unittest.TestCase):
     
     def setUp(self):
         self.test_log = "test_e2e_log.md"
+        self.test_db = "test_tachyon_state.db"
         if os.path.exists(self.test_log):
             os.remove(self.test_log)
+        if os.path.exists(self.test_db):
+            os.remove(self.test_db)
+        
+        # Ensure StateManager singleton is reset or at least using the right DB if it exists in-process
+        # Actually since we run via subprocess, we just need to pass the env var
+        self.env = os.environ.copy()
+        self.env["TACHYON_DB_PATH"] = self.test_db
 
     def tearDown(self):
         if os.path.exists(self.test_log):
             os.remove(self.test_log)
+        if os.path.exists(self.test_db):
+            os.remove(self.test_db)
 
-    def test_sentinel_runs_from_cli_without_fatal_errors(self):
+    @unittest.mock.patch('requests.post')
+    def test_sentinel_runs_from_cli_without_fatal_errors(self, mock_post):
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {"result": True}
         # Trigger the sentinel via CLI manually
         result = subprocess.run(
             ["python3", "sentinel.py", "--manual", "--log-file", self.test_log],
             capture_output=True,
-            text=True
+            text=True,
+            env=self.env
         )
         
         # Should exit cleanly
@@ -38,12 +53,15 @@ class TestSentinelE2E(unittest.TestCase):
         self.assertIn("Trigger Source: `MANUAL_CLI`", content)
         self.assertIn("`https://github.com/advisories`", content)
 
-    def test_sentinel_prepending_works(self):
+    @unittest.mock.patch('requests.post')
+    def test_sentinel_prepending_works(self, mock_post):
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {"result": True}
         # Run once
-        subprocess.run(["python3", "sentinel.py", "--manual", "--log-file", self.test_log])
+        subprocess.run(["python3", "sentinel.py", "--manual", "--log-file", self.test_log], env=self.env)
         time.sleep(1.1)
         # Run again with a different source
-        subprocess.run(["python3", "sentinel.py", "--cron", "--log-file", self.test_log])
+        subprocess.run(["python3", "sentinel.py", "--cron", "--log-file", self.test_log], env=self.env)
         
         with open(self.test_log, "r") as f:
             lines = f.readlines()

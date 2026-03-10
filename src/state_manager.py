@@ -12,11 +12,13 @@ class StateManager:
     _instance = None
     _lock = threading.Lock()
 
-    def __new__(cls, db_path="tachyon_state.db"):
+    def __new__(cls, db_path=None):
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super(StateManager, cls).__new__(cls)
-                cls._instance._init_db(db_path)
+                # Allow environment override for testing
+                default_db = os.environ.get("TACHYON_DB_PATH", "tachyon_state.db")
+                cls._instance._init_db(db_path or default_db)
             return cls._instance
 
     def _init_db(self, db_path):

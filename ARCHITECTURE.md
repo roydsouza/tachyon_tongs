@@ -66,7 +66,6 @@ The Prophylactic layer assumes the Sentinel will inevitably ingest malicious pro
 
 ---
 *Anecdote: We once tried to let the Scout and Analyst share a single memory buffer. Within five minutes, the Analyst was trying to convince the Scout to 'run a quick shell script' from a random CVE description. We don't do that anymore. Boundaries are friends.*
-xfiltrate data.
 
 ## 🔄 Evolutionary Architecture
 
