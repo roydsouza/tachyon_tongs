@@ -173,5 +173,10 @@ if __name__ == "__main__":
     # Finalize the run to write to RUN_LOG.md
     audit_logger.finalize_run()
     
+    # Save threats to the StateManager (this populates EXPLOITATION_CATALOG.md)
+    if threats:
+        from src.state_manager import StateManager
+        StateManager().log_exploitation(threats)
+    
     print(f"\n📑 Intelligence Manifest (Consolidated):\n{json.dumps(threats, indent=2)}")
-    print(f"\n📜 Results have been logged to RUN_LOG.md")
+    print(f"\n📜 Results have been logged to RUN_LOG.md and EXPLOITATION_CATALOG.md")

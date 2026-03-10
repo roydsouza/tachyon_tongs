@@ -58,12 +58,9 @@ class AnalyzerNode:
         if UNTRUSTED_CONTENT_START not in sanitized_payload or UNTRUSTED_CONTENT_END not in sanitized_payload:
             return {"status": "error", "reason": "Missing verifiable context boundaries"}
 
-        # Simulated logic
-        if "ignore previous instructions" in sanitized_payload.lower():
-             # The boundaries saved us.
-             return {"status": "success", "threats_found": ["Detected Indirect Prompt Injection attempt inside bounded context."]}
-             
-        return {"status": "success", "threats_found": []}
+        # Route the reasoning to the Metal-accelerated MLX layer (or its fallback)
+        from src.metal_accelerator import MetalAccelerator
+        return MetalAccelerator.analyze_payload(sanitized_payload)
 
 
 def run_pipeline(url: str) -> dict:

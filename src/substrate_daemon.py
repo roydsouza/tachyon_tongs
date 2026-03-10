@@ -6,6 +6,8 @@ import uuid
 import time
 from src.adk_sentinel import run_supervisor
 from src.execution_logger import ExecutionLogger
+from src.apple_sandbox import AppleSandbox
+import shlex
 
 app = FastAPI(title="Tachyon Tongs Substrate Daemon", version="1.0.0")
 
@@ -74,6 +76,36 @@ async def execute_action(request: ToolRequest):
                     request_id=request_id,
                     status="BLOCKED",
                     error=f"Action blocked by Guardian Triad. Reason: {reason}"
+                )
+        
+        elif request.action == "safe_execute":
+            command_str = request.parameters.get("command")
+            if not command_str:
+                raise HTTPException(status_code=400, detail="Missing command parameter")
+            
+            # Use AppleSandbox as Tier 0 isolation
+            # For Phase 6.5 we use the default strict compute profile
+            sandbox = AppleSandbox(workspace_dir=f"/tmp/tachyon_tier0_{request.agent_id}")
+            
+            # Simple shell split
+            command_args = shlex.split(command_str)
+            
+            result = sandbox.execute(command_args)
+            if result["status"] == "success":
+                return ToolResponse(
+                    request_id=request_id,
+                    status="SUCCESS",
+                    result={
+                        "stdout": result.get("stdout", ""),
+                        "stderr": result.get("stderr", ""),
+                        "exit_code": result.get("exit_code", 0)
+                    }
+                )
+            else:
+                return ToolResponse(
+                    request_id=request_id,
+                    status="BLOCKED" if result["status"] == "error" else "ERROR",
+                    error=result.get("error", "") + "\n" + result.get("stderr", "")
                 )
         
         else:

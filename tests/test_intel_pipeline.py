@@ -24,7 +24,11 @@ class TestIntelPipeline(unittest.TestCase):
         self.logger.add_site_result("http://onesignal.com", status="SUCCESS", signals=5)
         self.logger.add_site_result("http://fail.com", status="FAIL", signals=0, error="404 Not Found")
         
-        entry = self.logger._format_entry()
+        self.logger.finalize_run()
+        
+        with open(self.test_log, "r") as f:
+            entry = f.read()
+
         self.assertIn("✅ `http://onesignal.com` (5 signals)", entry)
         self.assertIn("❌ `http://fail.com` (0 signals) - *Error: 404 Not Found*", entry)
         self.assertIn("Sites Audited:", entry)
