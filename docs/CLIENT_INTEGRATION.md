@@ -72,15 +72,15 @@ def fetch_url(url: str) -> str:
 
 ---
 
-## 4. Preparing for the Data-Driven "Skills" Engine (Phase 6)
+## 4. The Data-Driven "Skills" Engine (Phase 6)
 
-In upcoming phases, you won't even need to write the `fetch_url` python wrapper. 
+You don't even need to write the `fetch_url` python wrapper anymore if you don't want to! 
 
-Tachyon Tongs is moving towards an **Orthogonal Skills Architecture**. Instead of hardcoding behavior in `.py` files, Agent capabilities will be defined entirely in Markdown (`SKILL.md`).
+Tachyon Tongs now supports an **Orthogonal Skills Architecture**. Instead of hardcoding behavior in `.py` files, Agent capabilities can be defined entirely in Markdown (`SKILL.md`).
 
-### The Future Structure of an Agent
+### The Structure of an Internal Agent
 
-You will simply drop a configuration block into the Substrate:
+You simply drop a configuration block into the Substrate:
 
 ```markdown
 ---
