@@ -1,0 +1,23 @@
+# Python Caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
+!tachyon_state.db
+
+# Logs
+*.log
+opa_logs.txt
+
+# Environment
+.DS_Store
+.venv/
+venv/
+env/
