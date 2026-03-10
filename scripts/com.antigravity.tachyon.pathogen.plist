@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.antigravity.tachyon.pathogen</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/rds/antigravity/tachyon_tongs/venv/bin/python</string>
+        <string>/Users/rds/antigravity/tachyon_tongs/scripts/run_pathogen.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/rds/antigravity/tachyon_tongs</string>
+    
+    <!-- Wake up the Red Team and launch an attack every 12 Hours -->
+    <key>StartInterval</key>
+    <integer>43200</integer>
+    
+    <!-- Logging the adversarial fallout -->
+    <key>StandardErrorPath</key>
+    <string>/Users/rds/antigravity/tachyon_tongs/logs/pathogen.err</string>
+    <key>StandardOutPath</key>
+    <string>/Users/rds/antigravity/tachyon_tongs/logs/pathogen.out</string>
+    
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>

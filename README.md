@@ -57,11 +57,16 @@ Soon, Tachyon Tongs will shed its local mortal coil and ascend to the Google Clo
 
 ---
 
-## 🦠 The Sentinel: Our Adorable Little Canary
+## 🦠 The Clash of Evolution: Sentinel vs. Pathogen
 
-The Sentinel is our "poster child" living *inside* the protected terrarium. Its sole purpose in life is to scour the internet (CISA, GitHub Advisories) looking for fresh, terrifying ways to hack AI. 
+Tachyon Tongs is not a static defense system—it is an evolutionary battleground. We have engineered two opposing forces that live inside the Substrate:
 
-*Anecdote:* Last week, the Sentinel found a zero-day that used invisible Unicode steganography to make an agent think it was a 17th-century pirate. The Sentinel didn't just report it; it successfully wrapped the threat in our magic boundaries and asked for a raise in "higher quality electricity." We gave it a gold star instead.
+1. **The Sentinel (Blue Team):** Our poster child. Its sole purpose in life is to scour the internet (CISA, GitHub Advisories, arXiv) looking for fresh, terrifying ways to hack AI. It updates the `EXPLOITATION_CATALOG.md` to continually harden our zero-day defenses.
+2. **The Pathogen (Red Team):** The evil twin. Birthed entirely from the declarative Phase 6 "Skills Engine," the Pathogen agent periodically wakes up via `launchd`, reads the exact same `EXPLOITATION_CATALOG.md`, and actively synthesizes novel, mutated attacks against the Tachyon Substrate. 
+
+This adversarial loop guarantees that our security isn't just theoretical. The Pathogen constantly adapts its arsenal, launching active regression tests to subvert our payloads, while the Sentinel rushes to patch them. Together, they create a self-healing, self-improving immune system.
+
+*Anecdote:* Last week, the Sentinel found a zero-day that used invisible Unicode steganography to make an agent think it was a 17th-century pirate. The Sentinel didn't just report it; it successfully wrapped the threat in our magic boundaries. But don't worry—Pathogen is probably figuring out how to bypass that boundary right now.
 
 ---
 
@@ -77,6 +82,17 @@ Because leaking our private execution telemetry to cloud providers is a cardinal
 # Install the tools that keep the monsters in the basement
 brew install lima
 brew tap roydsouza/matchlock && brew install matchlock
+```
+
+### 🕰️ The Evolutionary Clash (launchctl)
+To permanently launch the Substrate and schedule the Pathogen Red Team to test your defenses asynchronously, Tachyon Tongs ships with macOS `launchd` properties.
+
+```bash
+# Register the Pathogen Red Team to launch its attack sweeps every 12 hours
+launchctl load scripts/com.antigravity.tachyon.pathogen.plist
+
+# If you ever need to stop the evolutionary war:
+launchctl unload scripts/com.antigravity.tachyon.pathogen.plist
 ```
 
 ---

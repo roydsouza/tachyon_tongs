@@ -55,10 +55,12 @@ Welcome to the active execution backlog! This is where the autonomous **Sentinel
 - [ ] Update `substrate_daemon.py` to route `network_constraints` from client payload to the OPA server.
 - [ ] Upgrade `tachyon_client.py` and `test_client.py` to allow client agents to declare `strict_whitelist` or `filtering_only` tracking.
 
-### 🟢 [HIGH] Phase 6: The "Skills" Extensibility Engine
+### 🟢 [HIGH] Phase 6: The "Skills" Extensibility Engine & The Pathogen Agent
 - [ ] Design the `SKILL.md` schema to encapsulate Agent directives, allowed sites, and structural behaviors.
 - [ ] Write a dynamic instantiation loader in the Substrate that parses a Skill and mounts a new agent context.
-- [ ] Distill the legacy Python Sentinel into its own `tachyon_sentinel` Skill Plugin.
+- [ ] Configure `launchd` to periodically trigger agents like Sentinel and Pathogen via the Substrate.
+- [ ] Instantiate the **"Pathogen"** Agent (Red Team) via the new Skills system.
+- [ ] Equip Pathogen to autonomously read the `EXPLOITATION_CATALOG.md` and generate/execute complex adversarial attacks against the Substrate.
 
 ### 🟢 [MEDIUM] Phase 7: Tailscale Fleet Mesh Setup
 - [ ] Enable the `substrate_daemon.py` to bind securely to a `100.x.y.z` Tailscale interface.

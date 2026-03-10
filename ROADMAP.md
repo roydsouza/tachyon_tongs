@@ -99,9 +99,11 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
   - **Sentinel Denylist:** A dynamically updated list of known malicious domains.
   - **Client-Provided Constraints:** Clients send their own `allowed_domains` config when requesting a resource. If open, the Daemon relies entirely on the heavy Semantic Filter + Bouncer Triad.
 
-## Phase 6: The Data-Driven "Skills" Engine (Orthogonal Extensibility)
-- **Why we are doing this:** Hardcoding agent logic in Python is brittle. We want to be able to introspect, clone, and modify agent behaviors purely via text.
-- **How:** Distill the Sentinel (and future agents) into independent "Skills plugins" (e.g., `SKILL.md`). Tachyon Tongs will use these markdown configurations—which codify behaviors, structure, target sites, and actions—to dynamically materialize new agents within the Substrate.
+## Phase 6: The "Skills" Engine & The "Pathogen" Red Team (Orthogonal Extensibility)
+- **Why we are doing this:** Hardcoding agent logic in Python is brittle. Concurrently, we need an active adversary to test our defenses dynamically. 
+- **How:** 
+  1. **Skills Substrate:** Distill agents into independent "Skills plugins" (e.g., `SKILL.md`). Tachyon Tongs reads these markdown configurations to dynamically materialize new agents.
+  2. **The "Pathogen" Agent:** An "evil twin" Red Team agent instantiated entirely via the new Skills Engine. Scheduled via macOS `launchd`, Pathogen periodically wakes up, ingests the `EXPLOITATION_CATALOG.md`, and launches targeted attacks (acting as active regression tests) against the Substrate to ensure defenses hold. It possesses the capability to modify its own Skill to evolve its attack vectors dynamically.
 
 ## Phase 7: The Private Fleet (Tailscale Mesh)
 - **Why we are doing this:** You want your travel laptop to benefit from the heavyweight Sentinel analysis running on the M2 Ultra Desktop without duplicating the entire compute pipeline.
