@@ -55,12 +55,19 @@ Welcome to the active execution backlog! This is where the autonomous **Sentinel
 - [ ] Update `substrate_daemon.py` to route `network_constraints` from client payload to the OPA server.
 - [ ] Upgrade `tachyon_client.py` and `test_client.py` to allow client agents to declare `strict_whitelist` or `filtering_only` tracking.
 
-### 🟢 [HIGH] Phase 6: The "Skills" Extensibility Engine & The Pathogen Agent
-- [ ] Design the `SKILL.md` schema to encapsulate Agent directives, allowed sites, and structural behaviors.
-- [ ] Write a dynamic instantiation loader in the Substrate that parses a Skill and mounts a new agent context.
-- [ ] Configure `launchd` to periodically trigger agents like Sentinel and Pathogen via the Substrate.
-- [ ] Instantiate the **"Pathogen"** Agent (Red Team) via the new Skills system.
-- [ ] Equip Pathogen to autonomously read the `EXPLOITATION_CATALOG.md` and generate/execute complex adversarial attacks against the Substrate.
+### 🟢 [HIGH] Phase 6: The "Skills" Extensibility Engine & The Pathogen Agent (DOMINATED)
+- [x] Design the `SKILL.md` schema to encapsulate Agent directives, allowed sites, and structural behaviors.
+- [x] Write a dynamic instantiation loader in the Substrate that parses a Skill and mounts a new agent context.
+- [x] Configure `launchd` to periodically trigger agents like Sentinel and Pathogen via the Substrate.
+- [x] Instantiate the **"Pathogen"** Agent (Red Team) via the new Skills system.
+- [x] Equip Pathogen to autonomously read the `EXPLOITATION_CATALOG.md` and generate/execute complex adversarial attacks against the Substrate.
+
+### 🟢 [CRITICAL] Phase 6.5: The Vibe Coding Infrastructure (Optimization & Multi-Agent)
+- [ ] **Tiered Sandboxing:** Implement `apple_sandbox.py` using macOS `sandbox-exec` (Seatbelt) for Tier 0 (Compute-only) tasks.
+- [ ] **Multi-Tenant State Manager:** Replace Markdown source-of-truth with a SQLite backend to handle concurrent agent writes without corruption.
+- [ ] **MLX Inference Acceleration:** Refactor the Sentinel Analyst nodes to use `mlx_lm` for Metal-accelerated reasoning on Apple Silicon.
+- [ ] **Implementation of "Shor's Reaper" (Quantum Doom Agent):** Create the `agents/shors_reaper/SKILL.md` and data ingestor for quantum milestones.
+- [ ] **Implementation of "Entropy Dashboard" (Chaos Agent):** Create the `agents/entropy_dashboard/SKILL.md` and ingestor for geopolitical chaos.
 
 ### 🟢 [MEDIUM] Phase 7: Tailscale Fleet Mesh Setup
 - [ ] Enable the `substrate_daemon.py` to bind securely to a `100.x.y.z` Tailscale interface.

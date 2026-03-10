@@ -99,11 +99,16 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
   - **Sentinel Denylist:** A dynamically updated list of known malicious domains.
   - **Client-Provided Constraints:** Clients send their own `allowed_domains` config when requesting a resource. If open, the Daemon relies entirely on the heavy Semantic Filter + Bouncer Triad.
 
-## Phase 6: The "Skills" Engine & The "Pathogen" Red Team (Orthogonal Extensibility)
-- **Why we are doing this:** Hardcoding agent logic in Python is brittle. Concurrently, we need an active adversary to test our defenses dynamically. 
-- **How:** 
-  1. **Skills Substrate:** Distill agents into independent "Skills plugins" (e.g., `SKILL.md`). Tachyon Tongs reads these markdown configurations to dynamically materialize new agents.
-  2. **The "Pathogen" Agent:** An "evil twin" Red Team agent instantiated entirely via the new Skills Engine. Scheduled via macOS `launchd`, Pathogen periodically wakes up, ingests the `EXPLOITATION_CATALOG.md`, and launches targeted attacks (acting as active regression tests) against the Substrate to ensure defenses hold. It possesses the capability to modify its own Skill to evolve its attack vectors dynamically.
+## Phase 6: The "Skills" Engine & The "Pathogen" Red Team (Orthogonal Extensibility) [OPERATIONAL]
+- **Why we did this:** Hardcoding agent logic in Python is brittle. We now have a declarative Skills system.
+
+## Phase 6.5: Vibe Coding & Multitenant Infrastructure [UP NEXT]
+- **Why we are doing this:** Scaling from 1 Sentinel to a "Doom Constellation" of 10+ agents will crush our current Markdown-only state and Lima-only isolation.
+- **How:**
+    - **Tiered Isolation:** Use macOS native sandboxing for low-risk compute (1ms vs 100ms Lima latency).
+    - **Durable Infrastructure:** Move the system-of-record to SQLite with a Markdown human-readable export feed.
+    - **Hardware Maximization:** MLX integration to ensure the M5's Neural Engine is the primary reasoning substrate.
+    - **Agent Discovery:** Establish a shared IPC/Service socket so independent agents in the workspace can find the Substrate instantly.
 
 ## Phase 7: The Private Fleet (Tailscale Mesh)
 - **Why we are doing this:** You want your travel laptop to benefit from the heavyweight Sentinel analysis running on the M2 Ultra Desktop without duplicating the entire compute pipeline.
