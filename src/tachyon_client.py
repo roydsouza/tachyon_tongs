@@ -12,7 +12,7 @@ class TachyonClient:
         self.tenant_id = tenant_id
         self.base_url = base_url
 
-    def safe_fetch(self, url: str) -> Dict[str, Any]:
+    def safe_fetch(self, url: str, allowed_domains: Optional[list] = None) -> Dict[str, Any]:
         """
         Requests the substrate to fetch and sanitize a URL.
         """
@@ -22,6 +22,8 @@ class TachyonClient:
             "action": "safe_fetch",
             "parameters": {"url": url}
         }
+        if allowed_domains is not None:
+            payload["parameters"]["allowed_domains"] = allowed_domains
         try:
             response = requests.post(f"{self.base_url}/action", json=payload)
             response.raise_for_status()
@@ -42,13 +44,13 @@ def get_client(agent_id: str) -> TachyonClient:
     return TachyonClient(agent_id=agent_id)
 
 # Top-level procedural wrappers for easy import
-def safe_fetch(url: str, agent_id: str = "AnonymousAgent", tenant_id: str = "default") -> Dict[str, Any]:
+def safe_fetch(url: str, agent_id: str = "AnonymousAgent", tenant_id: str = "default", allowed_domains: list = None) -> Dict[str, Any]:
     """
     Convenience wrapper that dynamically spins up a TachyonClient to execute a fetch.
     Returns: {"status": "SUCCESS" | "BLOCKED" | "ERROR", ...}
     """
     client = TachyonClient(agent_id=agent_id, tenant_id=tenant_id)
-    return client.safe_fetch(url)
+    return client.safe_fetch(url, allowed_domains=allowed_domains)
 
 def safe_execute(command: str, agent_id: str = "AnonymousAgent", tenant_id: str = "default") -> Dict[str, Any]:
     """

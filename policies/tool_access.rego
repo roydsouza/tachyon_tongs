@@ -2,28 +2,36 @@ package authz.tools
 
 import future.keywords.in
 
-# Default deny
 default allow_fetch = false
 
-# Allowed threat intelligence domains for Sentinel.
-# Phase 4 updates include Tailscale MagicDNS (*.ts.net) for zero-trust routing.
-allowed_domains := [
-    "cisa.gov",
-    "github.com",
-    "nvd.nist.gov",
-    "arxiv.org",
-    "huntr.ml",
-    "lmsys.org",
-    ".ts.net"
+# Phase 5.5: Dynamic Denylist (managed by Sentinel)
+deny_list := [
+    "pastebin.com"
 ]
 
-# Allow if the requested URL domain ends with one of the allowed_domains
 allow_fetch {
-    some domain in allowed_domains
-    endswith(input.domain, domain)
+    not is_denied
+    is_allowed
 }
 
-# Explicit deny for known malicious staging grounds (simulated)
-deny_fetch {
-    endswith(input.url, "pastebin.com")
+is_denied {
+    some d in deny_list
+    endswith(input.domain, d)
+}
+
+# 1. If the client passed allowed_domains, it must match one of them.
+is_allowed {
+    input.allowed_domains
+    count(input.allowed_domains) > 0
+    some d in input.allowed_domains
+    endswith(input.domain, d)
+}
+
+# 2. If the client did NOT pass allowed_domains, allow anything (relying on Triad filtering).
+is_allowed {
+    not has_allowed_domains
+}
+
+has_allowed_domains {
+    input.allowed_domains
 }

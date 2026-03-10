@@ -15,7 +15,8 @@ Autonomous AI agents are incredibly powerful, but they are fundamentally vulnera
 2. **Prompt Injection & Memory Poisoning:** Attackers injecting invisible payloads that lie dormant in your vector database until the agent recalls them, effectively turning your own memories into a trojan horse.
 3. **Zero-Day Threat Velocity:** The speed at which new adversarial ML techniques are published outpaces manual patching. By the time you read about a new prompt injection vector, your agent has already fallen for it.
 
-**Why Tachyon Tongs is Future-Proof:** Static firewalls fail against dynamic AI threats. Tachyon Tongs is an *evolutionary ecosystem*. It assumes your agents *will* be attacked, so it isolates their network access, dynamically scours the web for new zero-day threats, and automatically updates its own policies before an attack even occurs. 
+**Why Tachyon Tongs is Future-Proof (Semantic Gating):** Static firewalls and global whitelists (like Phase 1) fail against dynamic AI workflows. You can't whitelist the whole internet, but you also can't trust it. 
+Instead, Tachyon Tongs uses an *evolutionary ecosystem*. It maintains a **Global Denylist** of known AI-hijacking domains (found by the Sentinel). For everything else, it enforces **Semantic Content Filtering**: It fetches the untrusted site, completely strips `<script>` tags, zero-width steganography, and wrappers, runs the text through an air-gapped LLM Verifier, and *only* returns the clean data. 
 
 ---
 
@@ -25,13 +26,14 @@ As the architecture scales, Tachyon Tongs offers two distinct, orthogonal ways t
 
 ### 1. The Substrate API (Pub/Sub for External Agents)
 You already have agents running on your laptop (or Tailscale fleet). You don't want to rewrite their core logic, but you *do* want them protected.
-- **How it works:** Your external agents use our lightweight Python client to send their tool execution requests (Publish) to the central Tachyon Daemon. The Daemon checks the request against its active Threat Intelligence rules and only subscribes/returns the safe, sanitized output.
+- **How it works:** Your external agents use our lightweight Python client to send their tool execution requests (Publish) to the central Tachyon Daemon. **Crucially, the client passes its own risk profile** (`mode=filtering_only` vs `mode=strict_whitelist`). 
+The Daemon checks the request against its Threat Intelligence rules, applies the Tri-Stage Semantic Filter, and only subscribes/returns the sanitized safe output.
 - **When to use it:** When bringing safety to existing, distributed AI workflows without moving their code.
 - 📚 **Read more:** [Client Integration Guide (Pub/Sub)](docs/CLIENT_INTEGRATION.md)
 
 ### 2. The Skills Engine (Data-Driven Internal Agents)
 Hardcoding AI logic in Python is brittle. We are moving towards a declarative future where an agent's entire personality, capabilities, and intent bounds are defined purely in Markdown metadata.
-- **How it works:** You write a `SKILL.md` file. Tachyon Tongs parses this file, dynamically provisions a brand-new sandboxed AI agent, and injects the strictly allowed tools into its context.
+- **How it works:** You write a `SKILL.md` file (e.g., `capabilities: [web_search, strict_whitelist]`). Tachyon Tongs parses this file, dynamically provisions a brand-new sandboxed AI agent, and injects the strictly allowed tools into its context.
 - **When to use it:** When creating new, deeply-integrated, highly reliable agents that benefit from immediate introspection and version-controllable text definitions.
 - 📚 **Read more:** [Skills Architecture Guide](docs/SKILLS_ARCHITECTURE.md)
 

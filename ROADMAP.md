@@ -89,9 +89,15 @@ This roadmap outlines the progression of the **Tachyon Tongs** architecture—a 
 - **Why we are doing this:** To spot academic exploits (arXiv cs.CR, USENIX) 6-18 months before they become active CVEs in the wild.
 - **How:** An automated parser that distills Daily Preprint Signals into `EXPLOITATION_CATALOG.md` entries (completed Phase 4.2). *Pending:* Synthetic Attack Engine (ZeroDayBench methodology) to auto-test policies against them.
 
-## Phase 5: Event-Horizon Substrate (Workspace-Wide) [UP NEXT]
+## Phase 5: Event-Horizon Substrate (Workspace-Wide) [OPERATIONAL]
 - **Why we are doing this:** Sentinel is lonely. We want other agents in `~/antigravity/` to be able to use the same safety bumpers without having to copy-paste the whole repo like it's 2004.
 - **How:** A local "Tachyon Daemon" (`localhost:60461`) that agents can ping for safe tool execution. One Sentinel Hardening to Rule Them All.
+
+## Phase 5.5: Semantic Intent Gating (Dynamic Networking) [UP NEXT]
+- **Why we are doing this:** The Phase 1 Global Whitelist is too brittle. Some external agents (like a Research Bot) need full web access, while internal agents (like DevOpsBot) need strict bounding. 
+- **How:** Shifting the Substrate from a default-deny whitelist to a Dual-Mode Pipeline:
+  - **Sentinel Denylist:** A dynamically updated list of known malicious domains.
+  - **Client-Provided Constraints:** Clients send their own `allowed_domains` config when requesting a resource. If open, the Daemon relies entirely on the heavy Semantic Filter + Bouncer Triad.
 
 ## Phase 6: The Data-Driven "Skills" Engine (Orthogonal Extensibility)
 - **Why we are doing this:** Hardcoding agent logic in Python is brittle. We want to be able to introspect, clone, and modify agent behaviors purely via text.

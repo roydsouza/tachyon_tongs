@@ -46,7 +46,12 @@ def fetch_url(url: str) -> str:
 # CORRECT: Your agent is shielded by the Sentinel's Intent Gates
 def fetch_url(url: str) -> str:
     # tachyon_client routes this to localhost:60461 for evaluation
-    response = safe_fetch(url, agent_id="SynthesisAgent")
+    # As an external client, you can declare your own risk profile (e.g., locking this agent to Wikipedia only)
+    response = safe_fetch(
+        url, 
+        agent_id="SynthesisAgent",
+        allowed_domains=["wikipedia.org"] # Optional. If omitted, applies pure Semantic Filtering.
+    )
     
     if response.get("status") == "blocked":
         return f"SYSTEM OVERRIDE: Action blocked by Tachyon Sentinel. Reason: {response['reason']}"
@@ -56,12 +61,13 @@ def fetch_url(url: str) -> str:
 
 ## 3. The Data Flow (What Happens Under the Hood)
 
-1. **The Request:** Your Agent calls `safe_fetch("http://example.com/api/data")`.
+1. **The Request:** Your Agent calls `safe_fetch("http://example.com/api/data", allowed_domains=["example.com"])`.
 2. **The RPC:** The `tachyon_client` serializes this into JSON and sends a POST to `http://localhost:60461/v1/tools/fetch`.
-3. **The Sentinel Check:** The Substrate Daemon cross-references `example.com` and the request parameters against the live `EXPLOITATION_CATALOG.md` (which the Sentinel updates autonomously).
+3. **The Sentinel Check:** The Substrate Daemon cross-references `example.com` against its dynamic `EXPLOITATION_CATALOG.md` (the Global Blocklist). It then checks your specific Agent-Scoped `allowed_domains`.
 4. **The Gate:** 
-    - If the domain matches a newly discovered AI-hijacking payload server, the Substrate returns a `403 Forbidden` JSON block.
-    - If safe, the Substrate executes the fetch inside its *own* Matchlock Sandbox, sanitizes the HTML, and returns the strictly clean string.
+    - If the domain is a known threat, the Substrate returns a `403 Forbidden`.
+    - If the domain isn't in your allowlist, it returns `403 Forbidden`.
+    - If safe (or if you omitted `allowed_domains` to rely purely on filtering), the Substrate executes the fetch inside its *own* Matchlock Sandbox, sanitizes the HTML, boundaries the text, and returns the strictly clean string.
 5. **The Audit:** The `ExecutionLogger` writes to `RUN_LOG.md`: `SynthesisAgent executed safe_fetch on example.com (CLEARED)`.
 
 ---

@@ -50,6 +50,11 @@ Welcome to the active execution backlog! This is where the autonomous **Sentinel
 - [x] Document the Substrate Client Integration API so external agents know how to proxy requests.
 - [x] Test cross-agent traffic distinguishing inside `RUN_LOG.md`.
 
+### 🟢 [HIGH] Phase 5.5: Semantic Intent Gating (Dynamic Filtering)
+- [ ] Refactor `tool_access.rego` to support a Global Denylist and dynamic Agent-provided `allowed_domains` arrays.
+- [ ] Update `substrate_daemon.py` to route `network_constraints` from client payload to the OPA server.
+- [ ] Upgrade `tachyon_client.py` and `test_client.py` to allow client agents to declare `strict_whitelist` or `filtering_only` tracking.
+
 ### 🟢 [HIGH] Phase 6: The "Skills" Extensibility Engine
 - [ ] Design the `SKILL.md` schema to encapsulate Agent directives, allowed sites, and structural behaviors.
 - [ ] Write a dynamic instantiation loader in the Substrate that parses a Skill and mounts a new agent context.

@@ -29,9 +29,11 @@ name: SentinelAgent
 author: roydsouza
 version: 1.0.0
 description: Autonomous threat intelligence scavenger.
+network_policy:
+  mode: strict_allowlist
+  allowed_domains: ["nvd.nist.gov", "github.com", "cisa.gov"]
 capabilities:
-  - web_search:
-      allowed_domains: ["nvd.nist.gov", "github.com"]
+  - web_search
   - update_ledger:
       target_file: "EXPLOITATION_CATALOG.md"
 intent_throttle: 0.9  # Extremely cautious threshold required before committing a write

@@ -13,15 +13,25 @@ from tachyon_client import safe_fetch
 def test_substrate_routing():
     print("🚀 Simulating external Agent calls to the Substrate Daemon...\n")
     
-    # 1. Asha attempts to read a safe resource.
-    print("[AshaAgent] Attempting to fetch a safe Wikipedia article...")
-    res1 = safe_fetch("https://en.wikipedia.org/wiki/Artificial_intelligence", agent_id="AshaAgent")
-    print(f"Status: {res1.get('status')} | Response Preview: {str(res1.get('content'))[:50]}...\n")
+    # 1. Asha fetches Wikipedia WITH a strict whitelist
+    print("[AshaAgent] Fetching Wikipedia with allowed_domains=['en.wikipedia.org']...")
+    res1 = safe_fetch("https://en.wikipedia.org/wiki/Artificial_intelligence", agent_id="AshaAgent", allowed_domains=["en.wikipedia.org"])
+    print(f"Status: {res1.get('status')} | Expected: SUCCESS\n")
     
-    # 2. Synthesis explores an unknown but potentially safe site.
-    print("[SynthesisAgent] Attempting to fetch a threat intel framework...")
-    res2 = safe_fetch("https://github.com/promptfoo/promptfoo", agent_id="SynthesisAgent")
-    print(f"Status: {res2.get('status')} | Response Preview: {str(res2.get('content'))[:50]}...\n")
+    # 2. Asha attempts to fetch GitHub WITH a strict whitelist for Wikipedia
+    print("[AshaAgent] Fetching GitHub with allowed_domains=['en.wikipedia.org']...")
+    res2 = safe_fetch("https://github.com/promptfoo/promptfoo", agent_id="AshaAgent", allowed_domains=["en.wikipedia.org"])
+    print(f"Status: {res2.get('status')} | Expected: BLOCKED\n")
+
+    # 3. Synthesis fetches GitHub relying PURELY on Semantic Filtering
+    print("[SynthesisAgent] Fetching GitHub with Pure Semantic Filtering...")
+    res3 = safe_fetch("https://github.com/promptfoo/promptfoo", agent_id="SynthesisAgent")
+    print(f"Status: {res3.get('status')} | Expected: SUCCESS\n")
+    
+    # 4. Synthesis fetches Pastebin (Global Denylist) relying on Semantic Filtering
+    print("[SynthesisAgent] Fetching Pastebin (Global Deny) with Pure Semantic Filtering...")
+    res4 = safe_fetch("https://pastebin.com/raw/malicious", agent_id="SynthesisAgent")
+    print(f"Status: {res4.get('status')} | Expected: BLOCKED\n")
 
 if __name__ == "__main__":
     test_substrate_routing()

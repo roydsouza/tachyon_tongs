@@ -11,12 +11,13 @@ class SecurityViolationError(Exception):
     pass
 
 class SafeFetch:
-    def __init__(self, rego_mock=False):
+    def __init__(self, rego_mock=False, allowed_domains=None):
         """
         Initializes the SafeFetch capability firewall.
         Queries the local OPA server to enforce `tool_access.rego`.
         """
         self.rego_mock = rego_mock
+        self.allowed_domains = allowed_domains
         self.opa_url = "http://localhost:9181/v1/data/authz/tools/allow_fetch"
 
         # Hardcoded fallback for tests if rego_mock is explicitly True
@@ -42,6 +43,8 @@ class SafeFetch:
                     "url": target_url
                 }
             }
+            if self.allowed_domains is not None:
+                payload["input"]["allowed_domains"] = self.allowed_domains
             
             response = requests.post(self.opa_url, json=payload, timeout=2)
             if response.status_code == 200:

@@ -39,6 +39,7 @@ async def execute_action(request: ToolRequest):
     try:
         if request.action == "safe_fetch":
             url = request.parameters.get("url")
+            allowed_domains = request.parameters.get("allowed_domains")
             if not url:
                 raise HTTPException(status_code=400, detail="Missing URL parameter")
             
@@ -51,7 +52,7 @@ async def execute_action(request: ToolRequest):
             # Note: In a production 'Substrate', we would have a more optimized 'Fast Path' 
             # for known safe domains, but for v1, we apply the full Triad for safety.
             
-            result = await asyncio.to_thread(run_supervisor, url=url, logger=logger)
+            result = await asyncio.to_thread(run_supervisor, url=url, logger=logger, allowed_domains=allowed_domains)
             
             # Finalize the log entry for this specific tenant/agent
             logger.finalize_run()
