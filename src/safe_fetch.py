@@ -17,7 +17,7 @@ class SafeFetch:
         Queries the local OPA server to enforce `tool_access.rego`.
         """
         self.rego_mock = rego_mock
-        self.opa_url = "http://localhost:9181/v1/data/authz/tools/allow"
+        self.opa_url = "http://localhost:9181/v1/data/authz/tools/allow_fetch"
 
         # Hardcoded fallback for tests if rego_mock is explicitly True
         self.mock_allowed = ["cisa.gov", "github.com", "nvd.nist.gov", "arxiv.org", "huntr.ml", "lmsys.org"]
@@ -38,7 +38,8 @@ class SafeFetch:
             payload = {
                 "input": {
                     "tool": "safe_fetch",
-                    "domain": domain
+                    "domain": domain,
+                    "url": target_url
                 }
             }
             

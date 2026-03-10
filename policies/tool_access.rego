@@ -20,7 +20,7 @@ allowed_domains := [
 # Allow if the requested URL domain ends with one of the allowed_domains
 allow_fetch {
     some domain in allowed_domains
-    endswith(input.url, domain)
+    endswith(input.domain, domain)
 }
 
 # Explicit deny for known malicious staging grounds (simulated)

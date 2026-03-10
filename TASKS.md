@@ -46,9 +46,9 @@ Welcome to the active execution backlog! This is where the autonomous **Sentinel
 - [ ] **Agent Security Benchmarking:** Run local Sentinel policies against established adversarial benchmarks like WASP, VPI-Bench (Visual Prompt Injection), and BrowseSafe.
 
 ### 🟢 [MEDIUM] Phase 5: Event-Horizon Substrate Integration
-- [ ] Export `tachyon_client.py` as an installable local package for other agents in `~/antigravity/`.
-- [ ] Document the Substrate Client Integration API so external agents know how to proxy requests.
-- [ ] Test cross-agent traffic distinguishing inside `RUN_LOG.md`.
+- [x] Export `tachyon_client.py` as an installable local package for other agents in `~/antigravity/`.
+- [x] Document the Substrate Client Integration API so external agents know how to proxy requests.
+- [x] Test cross-agent traffic distinguishing inside `RUN_LOG.md`.
 
 ### 🟢 [HIGH] Phase 6: The "Skills" Extensibility Engine
 - [ ] Design the `SKILL.md` schema to encapsulate Agent directives, allowed sites, and structural behaviors.

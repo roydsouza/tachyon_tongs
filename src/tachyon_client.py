@@ -40,3 +40,30 @@ class TachyonClient:
 # Convenience singleton instance
 def get_client(agent_id: str) -> TachyonClient:
     return TachyonClient(agent_id=agent_id)
+
+# Top-level procedural wrappers for easy import
+def safe_fetch(url: str, agent_id: str = "AnonymousAgent", tenant_id: str = "default") -> Dict[str, Any]:
+    """
+    Convenience wrapper that dynamically spins up a TachyonClient to execute a fetch.
+    Returns: {"status": "SUCCESS" | "BLOCKED" | "ERROR", ...}
+    """
+    client = TachyonClient(agent_id=agent_id, tenant_id=tenant_id)
+    return client.safe_fetch(url)
+
+def safe_execute(command: str, agent_id: str = "AnonymousAgent", tenant_id: str = "default") -> Dict[str, Any]:
+    """
+    Stub for the safe_execute action boundary (to be implemented in the Substrate).
+    """
+    client = TachyonClient(agent_id=agent_id, tenant_id=tenant_id)
+    payload = {
+        "agent_id": client.agent_id,
+        "tenant_id": client.tenant_id,
+        "action": "safe_execute",
+        "parameters": {"command": command}
+    }
+    try:
+        response = requests.post(f"{client.base_url}/action", json=payload)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        return {"status": "ERROR", "error": str(e)}
