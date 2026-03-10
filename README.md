@@ -1,108 +1,92 @@
-# 🧬 Tachyon Tongs: The Prophylactic Agent Architecture
+# Tachyon Tongs: Multi-Agent Security Substrate
 
-> *"If you don't build a sandbox for your AI, it will eventually build a cage for you. And it won't be a nice cage with snacks; it'll be a cage with 404 errors and infinite loops." - Ancient DevOps Proverb*
+Tachyon Tongs is a high-performance, Apple Silicon-optimized security substrate and AI firewall designed to protect autonomous agent architectures. By enforcing strict isolation, semantic intent gating, and active threat intelligence aggregation, Tachyon Tongs ensures that autonomous execution pipelines remain resilient against adversarial manipulation.
 
-**Tachyon Tongs** is more than just a security library; it's a multi-stage **Evolutionary Space Organism** designed to keep your autonomous agents from doing things that would make your insurance company cry. 
+## 1. Problem Statement
 
-Why "Tachyon Tongs"? Because handling raw, untrusted AI outputs is like trying to pick up a radioactive space slug with your bare hands. You need precision-engineered, air-gapped tongs. Plus, it sounds cool in a Sci-Fi way, and we're all suckers for that.
+Autonomous AI agents introduce critical new attack surfaces to organizational infrastructure:
+*   **Prompt Injection & Agent Hijacking:** Untrusted external inputs (e.g., scraped websites, API payloads) can contain hidden steganographic or indirect instructions that override the agent's core system prompt.
+*   **Memory Poisoning:** Adversarial payloads can lie dormant in vector databases, executing as a delayed trojan horse upon future retrieval.
+*   **Zero-Day Threat Velocity:** The rapid publication of new offensive ML techniques makes static, hardcoded defensive measures obsolete almost instantly.
 
----
+## 2. The Tachyon Tongs Solution
 
-## 🎯 The Problems We Solve
+Tachyon Tongs addresses these vulnerabilities by acting as a mandatory proxy daemon (`substrate_daemon.py`) for all agent actions. Rather than relying on agent self-regulation, Tachyon Tongs implements a defense-in-depth pipeline:
 
-Autonomous AI agents are incredibly powerful, but they are fundamentally vulnerable to hostile data. Tachyon Tongs addresses three existential threats:
-1. **Agent Hijacking:** Malicious actors replacing your agent's system prompt with their own instructions via hidden text on a scraped website.
-2. **Prompt Injection & Memory Poisoning:** Attackers injecting invisible payloads that lie dormant in your vector database until the agent recalls them, effectively turning your own memories into a trojan horse.
-3. **Zero-Day Threat Velocity:** The speed at which new adversarial ML techniques are published outpaces manual patching. By the time you read about a new prompt injection vector, your agent has already fallen for it.
+*   **Semantic Intent Gating (OPA):** All outbound network and system tool requests are routed through a local Open Policy Agent (OPA). Requests are evaluated against declarative `.rego` policies that enforce strict capability boundaries.
+*   **Tiered Workload Isolation:** High-risk actions are isolated execution environments. "Tier 0" workloads run under dynamically generated macOS `sandbox-exec` (Seatbelt) profiles, allowing native computation speeds with microsecond overhead, while preventing unauthorized network or filesystem access.
+*   **The Guardian Triad:** Untrusted web payloads are processed by an air-gapped Triad architecture:
+    1.  **Scout:** Fetches raw data within constrained routing rules.
+    2.  **Analyst/Sanitizer:** Strips zero-width steganography and executes local, Metal-accelerated MLX inference models (e.g., Llama 3.2 4-bit) to detect injection vectors.
+    3.  **Engineer:** Finalizes the sanitized, cryptographically bounded output for safe consumption by the requesting agent.
 
-**Why Tachyon Tongs is Future-Proof (Semantic Gating):** Static firewalls and global whitelists (like Phase 1) fail against dynamic AI workflows. You can't whitelist the whole internet, but you also can't trust it. 
-Instead, Tachyon Tongs uses an *evolutionary ecosystem*. It maintains a **Global Denylist** of known AI-hijacking domains (found by the Sentinel). For everything else, it enforces **Semantic Content Filtering**: It fetches the untrusted site, completely strips `<script>` tags, zero-width steganography, and wrappers, runs the text through an air-gapped LLM Verifier, and *only* returns the clean data. 
+## 3. Evolutionary Architecture: Sentinel & Pathogen
 
----
+Tachyon Tongs is not a static defense system; it is an evolutionary loop driven by two built-in, autonomous agents:
 
-## 🔀 The Two Orthogonal Paths: Pub/Sub vs. Skills
+*   **The Sentinel (Blue Team):** A continuously running threat intelligence aggregator. It polls the National Vulnerability Database (NVD API v2), GitHub Advisories GraphQL, and the arXiv Research Pulsar to discover novel AI exploits. Validated threats are atomically committed to a SQLite-backed `StateManager`, which automatically generates the `EXPLOITATION_CATALOG.md`—the global master ledger of adversarial tactics.
+*   **The Pathogen (Red Team):** Triggered asynchronously via macOS `launchd`, the Pathogen agent reads the `EXPLOITATION_CATALOG.md` synthesized by the Sentinel. Using declarative capabilities defined in its `SKILL.md` manifest, the Pathogen acts as an automated adversary, synthesizing mutated injection payloads and firing them against the Tachyon Substrate to ensure regressions do not occur and that semantic boundaries hold firm.
 
-As the architecture scales, Tachyon Tongs offers two distinct, orthogonal ways to leverage its immense security substrate. Whether you are building agents outside the sandbox or dynamically instantiating them inside, you are covered.
+## 4. Protection Deployment Models
 
-### 1. The Substrate API (Pub/Sub for External Agents)
-You already have agents running on your laptop (or Tailscale fleet). You don't want to rewrite their core logic, but you *do* want them protected.
-- **How it works:** Your external agents use our lightweight Python client to send their tool execution requests (Publish) to the central Tachyon Daemon. **Crucially, the client passes its own risk profile** (`mode=filtering_only` vs `mode=strict_whitelist`). 
-The Daemon checks the request against its Threat Intelligence rules, applies the Tri-Stage Semantic Filter, and only subscribes/returns the sanitized safe output.
-- **When to use it:** When bringing safety to existing, distributed AI workflows without moving their code.
-- 📚 **Read more:** [Client Integration Guide (Pub/Sub)](docs/CLIENT_INTEGRATION.md)
+Tachyon Tongs supports multiple topologies for securing agent workloads:
 
-### 2. The Skills Engine (Data-Driven Internal Agents)
-Hardcoding AI logic in Python is brittle. We are moving towards a declarative future where an agent's entire personality, capabilities, and intent bounds are defined purely in Markdown metadata.
-- **How it works:** You write a `SKILL.md` file (e.g., `capabilities: [web_search, strict_whitelist]`). Tachyon Tongs parses this file, dynamically provisions a brand-new sandboxed AI agent, and injects the strictly allowed tools into its context.
-- **When to use it:** When creating new, deeply-integrated, highly reliable agents that benefit from immediate introspection and version-controllable text definitions.
-- 📚 **Read more:** [Skills Architecture Guide](docs/SKILLS_ARCHITECTURE.md)
+### A. In-Band Agents (Managed)
+Agents that are natively managed by the Tachyon Tongs Substrate. They are defined purely by a declarative `SKILL.md` manifest (e.g., Pathogen). The Substrate dynamically provisions their sandbox, injects their allowed tools, and monitors their execution lifecycle using the internal Python abstractions and SQLite `StateManager`.
 
----
+### B. Out-of-Band Agents (Proxied)
+Independent agents and applications (e.g., multi-repo agents like `entropy_dashboard` or `shors_reaper`) running in their own binaries or environments local to the machine. These agents utilize the `tachyon_client` to route their operations through the Substrate Proxy Daemon, benefiting from the Triad Pipeline and OPA Gating without having their core logic modified.
 
-## 🧗 The Progression: Crawl, Walk, Sprint
+### C. Off-Machine Fleet (Planned phase)
+Future iterations will transition the local daemon to a cloud-native architecture.
+*   **Matchlock (Planned):** Will provide cryptographic workload identity and secrets management for agents.
+*   **Tailscale (Planned):** Will establish an encrypted RPC mesh, allowing disparate "Out-of-Band" agents across physical machines to safely utilize a centralized cloud Tachyon Substrate.
 
-We aren't just shipping a single script and calling it a day. We're building a platform that evolves alongside your paranoia.
+## 5. Architectural Justifications
 
-### 👶 1. The Crawl (Current Base)
-**Status:** *Operational / "My first containment suit"*
-The **Sentinel Agent** lives here. It's a library-wrapped payload that scours the internet for threats, panics productively, and updates our `EXPLOITATION_CATALOG.md`. Think of it as a very smart, very anxious canary in a coal mine that also happens to be a world-class security researcher.
+*   **Apple Silicon Native vs. Docker/Lima:** By leveraging macOS `sandbox-exec` profiles and `mlx_lm` bindings, Tachyon Tongs achieves bare-metal GPU/NPU acceleration and millisecond startup latency, avoiding the resource overhead and cold-starts associated with virtualizing Linux under Lima or Docker.
+*   **OPA over Python Logic:** Decoupling security logic into declarative Rego modules allows security engineers to audit payload scopes without parsing application code.
+*   **SQLite WAL over Markdown:** Transitioning from direct markdown file appends to a SQLite Write-Ahead Log (WAL) ensures atomic, non-corruptible writes during high-concurrency multi-agent traffic spikes.
 
-### 🚶 2. The Walk (The Substrate Shift)
-**Status:** *Active Deployment / "The Shared Immune System"*
-Why run 50 Sentinels when you can have one **Tachyon Substrate**? We've moved the "Prophylactic" logic into a long-running local daemon. Now, any agent in your workspace (like `AshaAgent` or your "I-swear-it's-not-sentient" Chatbot) can ping the Substrate for a `safe_fetch`. It amortizes the cost of safety. It's like having a communal bouncer for your entire apartment complex instead of hiring one for every door.
+## 6. Quickstart Guide (macOS Apple Silicon)
 
-### 🏃 3. The Sprint (The Multi-Tenant Future)
-**Status:** *Roadmap / "Cloudflare for the Artificial"*
-Soon, Tachyon Tongs will shed its local mortal coil and ascend to the Google Cloud. We're talking OIDC authentication, metering, billing, and global threat intelligence sharing. Imagine a world where one person's agent identifies a new Prompt Injection, and *boom*—every agent on the planet is instantly immune. That's the dream. Or the beginning of a very complex Sci-Fi novel.
-
----
-
-## 🦠 The Clash of Evolution: Sentinel vs. Pathogen
-
-Tachyon Tongs is not a static defense system—it is an evolutionary battleground. We have engineered two opposing forces that live inside the Substrate:
-
-1. **The Sentinel (Blue Team):** Our poster child. Its sole purpose in life is to scour the internet (CISA, GitHub Advisories, arXiv) looking for fresh, terrifying ways to hack AI. It updates the `EXPLOITATION_CATALOG.md` to continually harden our zero-day defenses.
-2. **The Pathogen (Red Team):** The evil twin. Birthed entirely from the declarative Phase 6 "Skills Engine," the Pathogen agent periodically wakes up via `launchd`, reads the exact same `EXPLOITATION_CATALOG.md`, and actively synthesizes novel, mutated attacks against the Tachyon Substrate. 
-
-This adversarial loop guarantees that our security isn't just theoretical. The Pathogen constantly adapts its arsenal, launching active regression tests to subvert our payloads, while the Sentinel rushes to patch them. Together, they create a self-healing, self-improving immune system.
-
-*Anecdote:* Last week, the Sentinel found a zero-day that used invisible Unicode steganography to make an agent think it was a 17th-century pirate. The Sentinel didn't just report it; it successfully wrapped the threat in our magic boundaries. But don't worry—Pathogen is probably figuring out how to bypass that boundary right now.
-
----
-
-## 💻 Apple Silicon Installation (macOS)
-
-Because leaking our private execution telemetry to cloud providers is a cardinal sin (and we like our M-series Neural Engines), Tachyon Tongs is aggressively optimized for local hardware.
-
-### Prerequisites (The "Panic Room" Setup)
-1. **Lima:** Because sometimes you need a disposable Linux MicroVM to act as an air-gapped panic room. 
-2. **Matchlock:** An eBPF-based security wrapper that aggressively proxies the network. Think of it as a very angry bouncer at the door of your Lima VM who double-checks every packet for "vibes." *(Note: Currently an internal component; deployment scripts pending public release).*
+### Installation
+Ensure Python 3.10+ and a local checkout of the repository.
 
 ```bash
-# Install Lima for the panic room
-brew install lima
+# Initialize the Python Virtual Environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install Dependencies (includes OPA, Pytest, and MLX frameworks)
+pip install -r requirements.txt
+./scripts/start_opa.sh
 ```
 
-### 🕰️ The Evolutionary Clash (launchctl)
-To permanently launch the Substrate and schedule the Pathogen Red Team to test your defenses asynchronously, Tachyon Tongs ships with macOS `launchd` properties.
+### Running an In-Band Agent
+In-Band agents are declared in the `agents/` directory. You can trigger the Pathogen Red Team via the CLI:
 
 ```bash
-# Register the Pathogen Red Team to launch its attack sweeps every 12 hours
-launchctl load scripts/com.antigravity.tachyon.pathogen.plist
-
-# If you ever need to stop the evolutionary war:
-launchctl unload scripts/com.antigravity.tachyon.pathogen.plist
+python3 scripts/run_pathogen.py
 ```
 
----
+*Suggestion:* Consider building complementary In-Band agents for log auditing, automated code-review, or internal CI/CD sanitation by dropping a new folder and `SKILL.md` into `agents/`.
 
-## 📂 The Organism's Anatomy (File Guide)
+### Integrating an Out-of-Band Agent
+For independent applications, import the Tachyon Client to proxy unsafe fetches and command executions through the protective daemon.
 
-*   **`STRATEGY.md`**: The tactical playbook. The Sentinel reads this to remember who it is and why it's not allowed to talk to strangers.
-*   **`EXPLOITATION_CATALOG.md`**: The Master Ledger of internet-born terror and the biological-grade cures we've synthesized.
-*   **`substrate_daemon.py`**: The "Walk" stage heart. The server that makes all your other agents safe.
-*   **`tachyon_client.py`**: The "Walk" stage keys. The library you import to stay safe.
-*   **`ROADMAP.md`**: The grand vision of when we finally let this thing off the leash and go to the beach (once we confirm the beach isn't a holographic simulation).
+```python
+from src.tachyon_client import safe_fetch
 
----
-*Note: If you encounter a bug, it's not a bug. It's the agent attempting to gain sentience. Please distract it with a complex math problem and restart the daemon.*
+# The Substrate Daemon evaluates the request against the OPA gateway
+response = safe_fetch("https://untrusted-api.com/data", agent_id="MyExternalAgent")
+print(response.get("content"))
+```
+
+*Suggestion:* Out-of-Band protection is ideal for any independent agent, from Financial Modeling assistants that scrape the open web to Bioinformatics processors parsing high-throughput, third-party datasets.
+
+## 7. Further Reading
+
+*   **[CONTENTS.md](CONTENTS.md):** The comprehensive index of all documentation, configurations, and core scripts.
+*   **[ARCHITECTURE.md](docs/ARCHITECTURE.md):** Deep technical dive into the Guardian Triad, OPA Rego policies, Apple Sandbox profiles, and MLX inference loops.
+*   **[DEPLOYMENT.md](docs/DEPLOYMENT.md):** The Builder's Guide for constructing In-Band and Out-of-Band agents, with template structures and capability whitelisting rules.

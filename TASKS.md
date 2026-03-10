@@ -1,30 +1,28 @@
-# 📝 Tachyon Tongs: The Backlog of Doom
+# Tachyon Tongs: Execution Backlog
 
-> *"A roadmap is just a list of promises you make to your future self, right before your future self cries." - Ancient DevOps Proverb*
+This document tracks the active execution backlog for the Tachyon Tongs security substrate. Tasks are prioritized based on immediate threat impact and infrastructural prerequisites.
 
-Welcome to the active execution backlog! This is where the autonomous **Sentinel Agent** translates its paralyzing fear of new zero-day exploits into actionable bullet points for AntiGravity (and the human-in-the-loop) to implement. Let's harden the perimeter, shall we?
+## Security Task Progression
 
-## 🚀 Priority Security Tasks
+### [COMPLETED] Core Infrastructure
+- [x] Initialize repository structure (`src/`, `policies/`, `scripts/`, `docs/`).
+- [x] Establish `matchlock-agent.yaml` Lima configuration for hardware-virtualized sandboxing.
+- [x] Configure `metal_4` acceleration profile for local inference.
 
-### 🟢 [CRITICAL] Core Infrastructure (We Did It!)
-- [x] Initialize repository structure (`src/`, `policies/`, `scripts/`, `docs/`, `.agent/rules/MISSION.md`). *(Because starting without folders is anarchy).*
-- [x] Establish `matchlock-agent.yaml` Lima configuration for hardware-virtualized sandboxing. *(Our disposable panic room).*
-- [x] Configure `metal_4` acceleration profile for local inference. *(Cloud telemetry leaks are so 2024).*
-
-### 🟢 [HIGH] Phase 1: The Core Pipeline
+### [COMPLETED] Phase 1: The Core Pipeline
 - [x] Implement the **Tri-Stage "Safe-Search" Architecture**: Fetcher (Network only), Sanitizer (Regex + deterministic stripping), Analyzer (Air-gapped reasoning).
-- [x] Write Open Policy Agent (Rego) intent policies (`policies/tool_access.rego`). *(Because we don't trust the agent. At all).*
+- [x] Write Open Policy Agent (Rego) intent policies (`policies/tool_access.rego`).
 - [x] Wrap basic tools (e.g., `curl`) in Capability Firewalls (e.g., `safe_fetch`).
 
 ### 🟢 [HIGH] Phase 1.5: Reality Checks (The "Stop Mocking Me" Sprint)
 - [ ] **Real Threat Intel Scraping:** Rip out the mock JSON in `cve_scraper.py` and replace it with actual `requests` calls to the NVD API (Filtered for AI/Agent hijacking). 
 - [ ] **Real OPA Integration:** Stop pretending to use OPA in Python. Make `safe_fetch.py` actually query a local OPA server (`http://localhost:8181/v1/data/authz/tools`) before executing.
 
-### 🟢 [MEDIUM] Phase 2: Advanced Protections
-- [x] Implement **Verifiable Context Boundaries** (non-printable Unicode delimiters) in the Agent's system prompt to prevent IPI. *(Magic invisible text boxes).*
-- [x] Create **Capability Tokens** with action budgets and time-based decay. *(Tokens: The ultimate allowance system).*
+### [COMPLETED] Phase 2: Advanced Protections
+- [x] Implement **Verifiable Context Boundaries** (non-printable Unicode delimiters) in the Agent's system prompt to prevent IPI.
+- [x] Create **Capability Tokens** with action budgets and time-based decay.
 - [x] Establish **Contextual Intent Scoring** logic for the L1 and L2 Intent Gates.
-- [x] Deploy the **Stage 4 Verifier** agent to check outputs before returning to the user. *(The bouncer at the exit).*
+- [x] Deploy the **Stage 4 Verifier** agent to check outputs before returning to the user.
 - [x] **Action Broker/Substrate Migration:** Centralized tool execution through `substrate_daemon.py` using capability-based access.
 
 ### 🟢 [MEDIUM] Phase 2.5: Guardian Triad Splitting
@@ -36,11 +34,11 @@ Welcome to the active execution backlog! This is where the autonomous **Sentinel
 - [x] Orchestrate the Tri-Stage pipeline routing (Fetcher -> Sanitizer -> Analyzer) via ADK state graphs.
 - [ ] **The Guardian Triad Split:** Break the Sentinel's privilege collapse. Split it into three sub-agents: *Scout* (finds threats limitlessly), *Analyst* (classifies them entirely air-gapped), and *Engineer/Broker* (safely proposes the policy updates).
 
-### 🟢 [LOW] Phase 3/4: Future-Proofing & Intelligence
-- [x] Set up the autonomous **Sentinel Agent** to scrape CVE feeds and GitHub advisories, updating this `TASKS.md` file with new threats. *(It's self-aware!)*
+### [COMPLETED] Phase 3/4: Future-Proofing & Intelligence
+- [x] Set up the autonomous **Sentinel Agent** to scrape CVE feeds and GitHub advisories, updating this `TASKS.md` file with new threats.
 - [x] Benchmark WASM tools (Wasmtime) for lightweight, capability-based tool execution inside the sandbox.
-- [x] Investigate hybrid ECC/PQC signatures for hardware authentication. *(Math that makes my head hurt).*
-- [x] Implement behavioral monitoring to detect unexpected reasoning chains. *(Catching the agent lying to itself).*
+- [x] Investigate hybrid ECC/PQC signatures for hardware authentication.
+- [x] Implement behavioral monitoring to detect unexpected reasoning chains.
 - [x] **Implement Research Pulsar:** Added arXiv (cs.CR, cs.AI) integration to the `intel_ingest.py` architecture for early-warning academic exploits.
 - [x] **Granular Agent Transparency & Verbose Logging:** Enforced strict JSON payload introspection into `RUN_LOG.md`.
 - [ ] **Agent Security Benchmarking:** Run local Sentinel policies against established adversarial benchmarks like WASP, VPI-Bench (Visual Prompt Injection), and BrowseSafe.
@@ -69,20 +67,20 @@ Welcome to the active execution backlog! This is where the autonomous **Sentinel
 - [ ] **Implementation of "Shor's Reaper" (Quantum Doom Agent):** Create the `agents/shors_reaper/SKILL.md` and data ingestor for quantum milestones.
 - [ ] **Implementation of "Entropy Dashboard" (Chaos Agent):** Create the `agents/entropy_dashboard/SKILL.md` and ingestor for geopolitical chaos.
 
-### 🟢 [MEDIUM] Phase 7: Tailscale Fleet Mesh Setup
-- [ ] Enable the `substrate_daemon.py` to bind securely to a `100.x.y.z` Tailscale interface.
-- [ ] Establish environment variable routing (`TACHYON_SUBSTRATE_URL`) for remote laptops.
+### [ACTIVE] Phase 7: Documentation Standardization
+- [x] Rewrite `README.md` into a formal whitepaper structure.
+- [x] Create `CONTENTS.md` bird's-eye directory mapping.
+- [x] Author `ARCHITECTURE.md` to detail OPA and Guardian Triad mechanics.
+- [x] Author `DEPLOYMENT.md` to provide Builders Guides for In-Band and Out-of-Band agents.
+- [ ] Scrub all PII and deprecated persona traits from `ROADMAP.md` and `STRATEGY.md`.
 
-### 🟢 [LOW] Phase 8: Hostile Cloud Architecture (Zero Trust R&D)
-- [ ] Prototype mTLS handshakes between clients and the `substrate_daemon`.
-- [ ] Investigate OAuth2/OIDC JWT injection for multi-tenant tracing.
-- [ ] Draft specifications for hardware-backed Request Signing.
-
----
-
-## 🚗 The Parking Lot (Great Ideas, Low Priority)
-- Add a `--dev-mode` flag or a `docker-compose.yml` to run the Sentinel without the Heavy Lima/Matchlock dependencies to speed up onboarding for new contributors.
-- Add Mermaid diagrams to `ARCHITECTURE.md` to visually document the data flow and policy enforcement points.
+### [PLANNED] Phase 8: Off-Machine Cloud Architecture
+- [ ] **Matchlock Cryptographic Identity:** Require Out-of-Band agents to authenticate to the Substrate using cryptographic tokens before accessing `safe_fetch`.
+- [ ] **Tailscale RPC Network:** Bind the `substrate_daemon.py` to a `100.x.y.z` Tailscale interface, allowing remote deployment of Multi-Repo agents across disparate compute nodes.
+- [ ] **Zero-Trust Enhancements:** Prototype mTLS handshakes between distinct external agents and the Substrate proxy. 
 
 ---
-*This file is continuously updated by the Sentinel Agent. If you see it editing itself rapidly, don't panic. Probably.*
+
+## Architectural Backlog
+- Containerize the Substrate Daemon via `docker-compose.yml` to minimize dependency footprints for CI/CD deployments.
+- Append Mermaid orchestration diagrams to `ARCHITECTURE.md` to visualize dynamic sandbox boundaries.

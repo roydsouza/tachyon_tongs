@@ -1,67 +1,38 @@
-# 🎯 Tachyon Tongs: Operational Strategy (v1.0)
+# Tachyon Tongs: Operational Strategy
 
-> *"The best way to stay safe in a zero-trust environment is to trust everyone... and then verify them with a high-energy tachyon beam." - Overheard in the Substrate Breakroom*
+Our operational strategy focuses on active resilience over static defense, transitioning from localized incident response to generalized "Systemic Paranoia" through an amortized defense model.
 
-Our strategy has evolved from "Individual Panic" into **"Systemic Paranoia"**. 
+## 1. Amortized Defense (Substrate-First)
 
----
+The architecture is predicated on centralizing threat intelligence and security execution.
 
-## 🧗 Stage 2 Strategy: The Walk (Substrate-First)
+### Centralized Threat Intelligence
+The Sentinel agent functions as a continuous intelligence aggregation service (Scout) rather than a simple peer. It routinely audits uncurated web intelligence feeds (e.g., GitHub Advisories, NVD, arXiv) searching for adversarial machine learning tactics and Prompt Injection strategies to update the `EXPLOITATION_CATALOG.md`.
+- **The Result:** When the Sentinel synthesizes a threat, the mitigations automatically propagate to the centralized Daemon policies, instantly inoculating all connected downstream agents in the workspace.
 
-In the **Crawl Stage**, our strategy was "Protect the Sentinel at all costs." In the **Walk Stage**, we focus on **Amortized Defense**. 
+### Mandatory Interception (The Substrate Law)
+Agents and tools are prevented from executing network egress (`safe_fetch`) or system operations directly. All capabilities are proxied through the Substrate Daemon to enforce Open Policy Agent (OPA) gating.
+- **The Rationale:** If an agent is manipulated via an upstream vulnerability, it cannot bypass the Daemon to access root systems or extract raw, unvetted intelligence payloads because the Guardian Triad explicitly sanitizes all pipeline traffic.
 
-### 1. Centralized Threat Intelligence
-The Sentinel is now a **System Service (Scout)** rather than just a peer. It scours the internet, finds the latest ways to make AI hallucinate its own deletion, and updates the `EXPLOITATION_CATALOG.md`.
-- **The Result:** Every other agent in the workspace gets the "vaccine" instantly.
+### Verification Enforcement (The Bouncer)
+The final stage of the Guardian pipeline, the **Verifier Agent**, acts as an exit node integrity check. It structurally enforces:
+- Verification of unbroken Unicode boundaries indicating a successful containment string.
+- Non-existence of unauthorized Markdown downloads or remote execution scripts.
+- Terminal parsing for shell-injection invocations.
 
-### 2. Mandatory Mediation (The Substrate Law)
-No agent is allowed to execute a `SafeFetch` directly. They *must* go through the Substrate Daemon. 
-- **The Rationale:** If an agent is compromised, it only sees the sanitized, bounded output. It physically cannot reach the raw, malicious payload because the Substrate (the Guardian Triad) catches it first.
+If the analytical reasoning node is successfully tricked into disregarding safety protocols via a sophisticated payload, the Verifier catches the semantic discrepancies and aborts the execution run entirely.
 
-### 3. Verification Enforcement (The Bouncer)
-The **Engineer Agent** acts as the final bouncer. It checks for:
-- Correct Unicode boundaries.
-- No malicious markdown links.
-- No shell script injection in the sanitized text.
+## 2. The Feedback Loop: Sentinel -> Substrate -> Pathogen
 
-If the "Analyst" (the reasoning node) is tricked into skipping a check, the Engineer catches the mistake and blocks the whole run. We call this "The Auditor's Revenge."
+The system remains resilient through an autonomous, continuous improvement lifecycle:
 
----
+1. **Discovery:** The Sentinel aggregates an uncataloged Prompt Injection vector from an external advisory stream.
+2. **Cataloging:** Structurally verified threats are atomically committed to `EXPLOITATION_CATALOG.md` via the SQLite `StateManager`.
+3. **Daemon Ingestion:** The Substrate Hot-Reloads updated rules or regex definitions to counter the newly documented heuristic patterns.
+4. **Adversarial Synthesis (Pathogen):** The active Red Team agent, the Pathogen, autonomously reads the new entry within `EXPLOITATION_CATALOG.md`. Operating under unprivileged tenant rules, it dynamically synthesizes a targeted payload utilizing the new attack vector and initiates an assault against the Substrate to guarantee the new security patches effectively trap the exploit.
 
-## 🔄 The Feedback Loop: Sentinel -> Substrate -> Agent
+## 3. Self-Improvement Protocol
 
-1. **Scout:** Finds a new Prompt Injection on GitHub. 🕵️‍♂️
-2. **Catalog:** Entries are added to `EXPLOITATION_CATALOG.md`. 📜
-3. **Substrate:** Hot-reloads the new threat signature. 🛡️
-4. **Agent:** Tries to fetch a similarly poisoned URL; gets blocked before it even sees the packet. 🚫
-
----
-*Anecdote: We once caught the Sentinel trying to 'white-list' a domain that was literally just a picture of a cat with a QR code. Turns out the QR code contained a bash script. The Sentinel now has a mandatory 'No Cats' filter for its own safety. It's still bitter about it.*
-ds tied behind its back.
-
-### Step 2: Content Sanitization (The Scrub Down)
-1. The ADK invokes the **Sanitizer** (Stage 2).
-2. The Sanitizer mercilessly strips `<script>` tags, hidden CSS, and zero-width characters. 
-3. The ADK then wraps the cleaned text in machine-verifiable cryptographic boundaries. It looks like this:
-   ```text
-   \u0001UNTRUSTED_CONTENT_START\u0002
-   [The sanitized text goes here. The AI knows this box is dangerous.]
-   \u0003UNTRUSTED_CONTENT_END\u0004
-   ```
-
-### Step 3: Analysis (The Padded Room)
-1. The ADK passes the bounded payload to the **Analyzer Agent** (Stage 3). 
-   - *Constraint:* The Analyzer is entirely air-gapped. No network. No terminal. Just a brain in a jar analyzing text.
-2. The Analyzer extracts the exploit category (e.g., Sandbox Escape), the attack vector, and frantically proposes defenses.
-
-### Step 4: Verification & Synthesis (The Bouncer)
-1. The **Verifier Agent** (Stage 4) cross-references the Analyzer's output to make sure it didn't hallucinate or try to slip a `curl` command into the final report.
-2. If validated, the Sentinel patches the local knowledge base:
-   - Appends new nightmare fuel (attack vectors) and proposed biological-grade cures to `EXPLOITATION_CATALOG.md`.
-3. **Critical Step:** The Sentinel generates an actionable ticket in `TASKS.md` for AntiGravity (and Roy) to implement the defense so we don't all get hacked tomorrow.
-
-## 🧬 Self-Improvement Protocol
-
-The Sentinel is constantly watching itself. It's a 24/7 Civilization-Scale Vibe Check.
-- If the Analyzer frequently flags "Unknown Vulnerability Type," the Sentinel generates a task to update its own prompt taxonomy.
-- If a target in `SITES.md` yields zero actionable intel for 30 days, the Sentinel deletes the link. Tokens aren't free, you know. Make them earn their keep.
+The pipeline actively audits diagnostic efficiency over time:
+- If the air-gapped Analyst continuously fails to categorize vulnerability types, the Sentinel generates explicit structural tasks to update its prompt taxonomy.
+- If an intelligence target within the `SITES.md` registry fails to yield any actionable zero-days or mitigations over a 30-day epoch, the endpoint is queued for deletion to optimize API quotas and compute bandwidth.
