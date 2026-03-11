@@ -134,3 +134,45 @@ def test_state_manager_log_evolution(state_manager):
     
     if os.path.exists(evo_file):
         os.remove(evo_file)
+
+def test_state_manager_integrity_violation(state_manager):
+    """Test that tampering with signed documents raises RuntimeError."""
+    manager, _, _ = state_manager
+    test_file = "/tmp/integrity_test.md"
+    with open(test_file, "w") as f:
+        f.write("# Original Content")
+    
+    # Sign it
+    manager._sign_document(test_file)
+    
+    # Verify (should pass)
+    manager._verify_catalog_integrity(catalog_file=test_file)
+    
+    # Tamper
+    with open(test_file, "a") as f:
+        f.write("\nMalicious injection")
+    
+    # Verify (should fail)
+    with pytest.raises(RuntimeError) as excinfo:
+        manager._verify_catalog_integrity(catalog_file=test_file)
+    assert "INTEGRITY COMPROMISED" in str(excinfo.value)
+    
+    if os.path.exists(test_file):
+        os.remove(test_file)
+    if os.path.exists(f"{test_file}.sig"):
+        os.remove(f"{test_file}.sig")
+
+def test_state_manager_missing_signature(state_manager, capsys):
+    """Test that missing signatures warn but don't halt (default behavior)."""
+    manager, _, _ = state_manager
+    test_file = "/tmp/missing_sig.md"
+    with open(test_file, "w") as f:
+        f.write("No signature here")
+    
+    manager._verify_catalog_integrity(catalog_file=test_file)
+    captured = capsys.readouterr()
+    assert "CRITICAL: No detached signature found" in captured.out
+    
+    if os.path.exists(test_file):
+        os.remove(test_file)
+

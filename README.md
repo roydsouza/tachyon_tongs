@@ -13,7 +13,7 @@ Autonomous AI agents introduce critical new attack surfaces to organizational in
 
 Tachyon Tongs addresses these vulnerabilities by acting as a mandatory proxy daemon (`substrate_daemon.py`) for all agent actions. Rather than relying on agent self-regulation, Tachyon Tongs implements a defense-in-depth pipeline:
 
-*   **Semantic Intent Gating (OPA):** All outbound network and system tool requests are routed through a local Open Policy Agent (OPA). Requests are evaluated against declarative `.rego` policies that enforce strict capability boundaries.
+*   **Semantic Intent Gating (OPA):** All outbound network and system tool requests are routed through a local Open Policy Agent (OPA). Requests are evaluated against declarative `.rego` policies (`policies/tool_access.rego`) that enforce strict capability boundaries.
 *   **Tiered Workload Isolation:** High-risk actions are isolated execution environments. "Tier 0" workloads run under dynamically generated macOS `sandbox-exec` (Seatbelt) profiles, allowing native computation speeds with microsecond overhead, while preventing unauthorized network or filesystem access.
 *   **The Guardian Triad:** Untrusted web payloads are processed by an air-gapped Triad architecture:
     1.  **Scout:** Fetches raw data within constrained routing rules.
@@ -91,3 +91,4 @@ print(response.get("content"))
 *   **[CONTENTS.md](CONTENTS.md):** The comprehensive index of all documentation, configurations, and core scripts.
 *   **[ARCHITECTURE.md](docs/ARCHITECTURE.md):** Deep technical dive into the Guardian Triad, OPA Rego policies, Apple Sandbox profiles, and MLX inference loops.
 *   **[DEPLOYMENT.md](docs/DEPLOYMENT.md):** The Builder's Guide for constructing In-Band and Out-of-Band agents, with template structures and capability whitelisting rules.
+*   **[PHASE_10_STATUS.md](docs/PHASE_10_STATUS.md):** Current progress on Automated Competitive Intelligence.

@@ -83,11 +83,11 @@ This explicitly maps how the Sentinel (Blue Team) aggregates and sanitizes its d
 
 ## 2. Defensive Abstractions
 
-### A. Semantic Intent Gating (Open Policy Agent)
 Every action requested by an agent client (via HTTP POST to the Substrate Daemon) must carry the payload intent and the target domains/parameters. 
-Before execution, the Substrate Daemon transforms this request into a JSON structure and queries a side-car Open Policy Agent (OPA) server running `policies/semantic_access.rego`.
+Before execution, the Substrate Daemon transforms this request into a JSON structure and queries a side-car Open Policy Agent (OPA) server running `policies/tool_access.rego`.
 *   **Tenant Isolation:** OPA enforces that the agent possesses the capability mapping for the requested tool.
 *   **Domain Constraint Gating:** Outbound network requests are structurally validated. Attempting to fetch from untyped IPs or known adversarial sinkholes dynamically fails the OPA evaluation, dropping the request with a hard `BLOCKED` status.
+*   **Infrastructure Note:** The OPA server is typically reachable at `http://localhost:8181/v1/data/authz/tools/allow_fetch`. For localized integration tests, a mock port of `9181` may be utilized as defined in `src/safe_fetch.py`.
 
 ### B. The Guardian Triad (Data Sanitization)
 The ingestion of untrusted external web data is the primary vector for indirect prompt injections. Tachyon Tongs handles `safe_fetch` requests using a strictly isolated three-stage pipeline:

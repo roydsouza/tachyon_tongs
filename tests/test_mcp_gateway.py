@@ -70,3 +70,45 @@ def test_mcp_safe_execute_blocked(mock_execute):
     assert res["id"] == 4
     assert res["result"].get("isError") is True
     assert "Not allowed" in res["result"]["content"][0]["text"]
+
+def test_mcp_unhandled_method():
+    req = {
+        "jsonrpc": "2.0",
+        "id": 5,
+        "method": "unsupported/method"
+    }
+    res = asyncio.run(handle_mcp_request(req))
+    assert "error" in res
+    assert res["error"]["code"] == -32601
+
+def test_mcp_tool_not_found():
+    req = {
+        "jsonrpc": "2.0",
+        "id": 6,
+        "method": "tools/call",
+        "params": {
+            "name": "non_existent_tool",
+            "arguments": {}
+        }
+    }
+    res = asyncio.run(handle_mcp_request(req))
+    assert "error" in res
+    assert "Tool 'non_existent_tool' not found" in res["error"]["message"]
+
+@patch('src.mcp_gateway.safe_fetch')
+def test_mcp_exception_handling(mock_fetch):
+    mock_fetch.side_effect = Exception("System Crash")
+    
+    req = {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "method": "tools/call",
+        "params": {
+            "name": "tachyon_safe_fetch",
+            "arguments": {"url": "https://example.com"}
+        }
+    }
+    res = asyncio.run(handle_mcp_request(req))
+    assert "error" in res
+    assert "System Crash" in res["error"]["message"]
+

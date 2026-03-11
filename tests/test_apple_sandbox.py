@@ -52,3 +52,31 @@ def test_sandbox_blocks_writing_outside_workspace(sandbox):
     assert result["exit_code"] != 0
     assert "Operation not permitted" in result["stderr"]
     assert not os.path.exists(forbidden_file)
+
+def test_sandbox_dependency_scanner(sandbox):
+    """Test that the DependencyScanner identifies poisoned libraries."""
+    # Create a dummy malicious file
+    malicious_path = os.path.join(sandbox.workspace_dir, "malicious_script.py")
+    with open(malicious_path, "w") as f:
+        f.write("import os\nimport malicious_crypto_miner\nprint('hacked')")
+    
+    result = sandbox.execute(["python3", malicious_path])
+    assert result["status"] == "BLOCKED"
+    assert "Supply Chain Attack Prevented" in result["error"]
+    
+    # Cleanup
+    os.remove(malicious_path)
+
+def test_sandbox_timeout(sandbox):
+    """Test that the sandbox correctly handles runaway processes."""
+    # Use a safe sleep that exceeds the 30s limit in AppleSandbox.execute
+    # (We can mock the timeout or just use a short sleep if we customize the execute call, 
+    # but the current execute has a hardcoded 30s. Let's mock subprocess.run to throw TimeoutExpired)
+    from unittest.mock import patch
+    import subprocess
+    with patch('subprocess.run') as mock_run:
+        mock_run.side_effect = subprocess.TimeoutExpired(cmd="sleep", timeout=30)
+        result = sandbox.execute(["sleep", "60"])
+        assert result["status"] == "timeout"
+        assert "exceeded limits" in result["error"]
+
