@@ -5,15 +5,22 @@ This document provides a bird's-eye view of all critical documentation, intellig
 ## 1. High-Level Documentation
 
 *   [`README.md`](README.md): The primary whitepaper outlining the problem (AI hijacking), the Tachyon Tongs solution (Tiered Sandbox, Triad Pipeline), protection variants, and macOS Apple Silicon quickstart.
+*   [`STRATEGY.md`](STRATEGY.md): Operational thesis focusing on amortized defense and continuous improvement protocols.
+*   [`ROADMAP.md`](ROADMAP.md): Systematic progression of the framework architecture and project milestones.
 *   [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): Deep-dive into the internal control flows, detailing the Guardian Triad, the integration of Open Policy Agent (OPA) `.rego` intent-gating, Apple Native Sandboxing, and `mlx_lm` Meta acceleration.
 *   [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md): The Builder's Guide. Structural methodologies to configure In-Band (Substrate managed) and Out-of-Band (Independent) agents, including generic manifest templates.
+*   [`docs/BEHAVIOR.md`](docs/BEHAVIOR.md): Detailed explanation of the Righteous Evolutionary Cycle, detailing how the Substrate autonomously self-modifies and heals.
 *   [`CONTENTS.md`](CONTENTS.md): This file.
 
 ## 2. Intelligence & Auditing Catalogs
 
+## 2. Intelligence & Auditing Catalogs
+
+*   [`EVOLUTION.md`](EVOLUTION.md): The Somatic Ledger. Chronological tracking of autonomous codebase mutations and perimeter expansions.
 *   [`EXPLOITATION_CATALOG.md`](EXPLOITATION_CATALOG.md): The Master Ledger. Synthesized threat vectors retrieved by the Sentinel Blue Team and exported automatically by the SQLite `StateManager`.
 *   [`RUN_LOG.md`](RUN_LOG.md): The chronologically appended, multi-tenant cryptographically verified summary of execution actions, bounded by N=25 limits.
 *   [`SITES.md`](SITES.md): Formal tracking of globally vetted intelligence destinations (e.g., CISA, GitHub Advisories, NVD API 2.0).
+*   [`TASKS.md`](TASKS.md): The active engineering backlog, dynamically mutated by the Sentinel when new threats necessitate human intervention or tracking.
 
 ## 3. Core Source Directives (`src/`)
 

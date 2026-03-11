@@ -22,14 +22,15 @@ The final stage of the Guardian pipeline, the **Verifier Agent**, acts as an exi
 
 If the analytical reasoning node is successfully tricked into disregarding safety protocols via a sophisticated payload, the Verifier catches the semantic discrepancies and aborts the execution run entirely.
 
-## 2. The Feedback Loop: Sentinel -> Substrate -> Pathogen
+## 2. The Feedback Loop: The Righteous Evolutionary Cycle
 
-The system remains resilient through an autonomous, continuous improvement lifecycle:
+The system remains resilient through an autonomous, organismic life-cycle:
 
 1. **Discovery:** The Sentinel aggregates an uncataloged Prompt Injection vector from an external advisory stream.
 2. **Cataloging:** Structurally verified threats are atomically committed to `EXPLOITATION_CATALOG.md` via the SQLite `StateManager`.
-3. **Daemon Ingestion:** The Substrate Hot-Reloads updated rules or regex definitions to counter the newly documented heuristic patterns.
-4. **Adversarial Synthesis (Pathogen):** The active Red Team agent, the Pathogen, autonomously reads the new entry within `EXPLOITATION_CATALOG.md`. Operating under unprivileged tenant rules, it dynamically synthesizes a targeted payload utilizing the new attack vector and initiates an assault against the Substrate to guarantee the new security patches effectively trap the exploit.
+3. **Auto-Patching:** The Engineer synthetically generates a Python or Rego mitigation, writes a localized test suite (`tests/test_auto_mutation_...`), and runs a self-healing regression loop. If successful, the Substrate Daemon is physically patched.
+4. **Adversarial Validation (Pathogen):** The Sentinel dynamically rewrites the Red Team Pathogen's `SKILL.md` file. Pathogen is forced to temporarily abandon all other attack vectors and synthesize metamorphic payloads exclusively targeting the new Engineer patch.
+5. **The Ledger:** Every successful mutation or perimeter expansion is prepended to the `EVOLUTION.md` ledger.
 
 ## 3. Self-Improvement Protocol
 

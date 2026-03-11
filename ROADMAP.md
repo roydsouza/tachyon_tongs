@@ -48,11 +48,15 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 
 ### Phase 6: Skills Engine & Adversarial Simulator (Pathogen) [OPERATIONAL]
 - **Objective:** Eliminate brittle, hardcoded python deployments and establish continuous regression testing.
-- **Implementation:** Declarative `SKILL.md` parsing. Initiation of the autonomous Red Team (Pathogen) to iteratively mutate discovered vulnerabilities into active penetration tests against the local daemon.
+- **Implementation:** Declarative `SKILL.md` parsing. The Pathogen reads the `EXPLOITATION_CATALOG.md` and iteratively mutates vulnerabilities into active penetration tests against the local daemon.
 
-### Phase 6.5: Multitenant Infrastructure Upgrade [OPERATIONAL]
-- **Objective:** Support high-concurrency scaling of the Doom Constellation across disparate threat environments.
-- **Implementation:** Tiered isolation using macOS native iOS seatbelt sandboxes, SQLite Write-Ahead-Log State Management, and `mlx_lm` Meta acceleration integration.
+### Phase 6.5: Multitenant Infrastructure Upgrade & The Live Organism [OPERATIONAL]
+- **Objective:** Support high-concurrency scaling, and transition the static dashboard into a self-healing biological paradigm.
+- **Implementation:** 
+  - Tiered isolation utilizing macOS iOS Seatbelt profiles.
+  - SQLite Write-Ahead-Log `StateManager` for multi-tenant safety.
+  - `AutoPatcher`: Sentinel actively writes mitigation patches into the Substrate, validates them via `pytest`, and updates Pathogen's target identity.
+  - `EVOLUTION.md`: The active somatic ledger recording autonomous discoveries and modifications.
 
 ### Phase 7: The Private Fleet (Tailscale Mesh) [UP NEXT]
 - **Objective:** Expand the Substrate perimeter beyond a single host machine, allowing lightweight edge clients to utilize the centralized MLX security pipeline.
