@@ -8,6 +8,7 @@ This document provides a bird's-eye view of all critical documentation, intellig
 *   [`docs/STRATEGY.md`](docs/STRATEGY.md): Operational thesis focusing on amortized defense and continuous improvement protocols.
 *   [`docs/ROADMAP.md`](docs/ROADMAP.md): Systematic progression of the framework architecture and project milestones.
 *   [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): Deep-dive into the internal control flows, detailing the Guardian Triad, the integration of Open Policy Agent (OPA) `.rego` intent-gating, Apple Native Sandboxing, and `mlx_lm` Meta acceleration.
+*   [`docs/COMPETITIVE_ANALYSIS.md`](docs/COMPETITIVE_ANALYSIS.md): Market positioning and actionable analysis against 2026 enterprise competitors (NeMo, PyRIT, MCP integration).
 *   [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md): The Builder's Guide. Structural methodologies to configure In-Band (Substrate managed) and Out-of-Band (Independent) agents, including generic manifest templates.
 *   [`docs/BEHAVIOR.md`](docs/BEHAVIOR.md): Detailed explanation of the Righteous Evolutionary Cycle, detailing how the Substrate autonomously self-modifies and heals.
 *   [`docs/CLIENT_INTEGRATION.md`](docs/CLIENT_INTEGRATION.md): Overview on integrating external agents using `tachyon_client.py`.

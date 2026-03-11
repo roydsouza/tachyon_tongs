@@ -7,6 +7,7 @@ import time
 from src.adk_sentinel import run_supervisor
 from src.execution_logger import ExecutionLogger
 from src.apple_sandbox import AppleSandbox
+from src.behavior_monitor import syscall_monitor, BehaviorAnomalyError
 import shlex
 
 app = FastAPI(title="Tachyon Tongs Substrate Daemon", version="1.0.0")
@@ -39,6 +40,12 @@ async def execute_action(request: ToolRequest):
     # We treat every external request as "UNTRUSTED_CONTENT" to trigger the full pipeline.
     
     try:
+        # 1a. Identity Hijacking Defense (Statistical Drift)
+        try:
+            syscall_monitor.log_and_evaluate(request.agent_id, request.action)
+        except BehaviorAnomalyError as e:
+            return ToolResponse(request_id=request_id, status="BLOCKED", error=str(e))
+            
         if request.action == "safe_fetch":
             url = request.parameters.get("url")
             allowed_domains = request.parameters.get("allowed_domains")

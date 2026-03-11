@@ -1,7 +1,38 @@
 import subprocess
 import os
 import tempfile
+import ast
 from typing import Dict, Any, List
+
+class DependencyScanner:
+    """
+    Simulates the Protect AI LLM Guard supply chain scanner.
+    Parses the AST of Python scripts to prevent execution of known malware/typosquat packages.
+    """
+    POISONED_LIBRARIES = {
+        "requestz", "urllib5", "colorama-backdoor", 
+        "discord-webhook-stealer", "browser-cookie3", "malicious_crypto_miner"
+    }
+    
+    @classmethod
+    def scan_file(cls, filepath: str) -> bool:
+        """Returns True if safe, False if a poisoned dependency is found."""
+        if not os.path.exists(filepath):
+            return True
+        try:
+            with open(filepath, 'r') as f:
+                tree = ast.parse(f.read(), filename=filepath)
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    for alias in node.names:
+                        if alias.name in cls.POISONED_LIBRARIES:
+                            return False
+                elif isinstance(node, ast.ImportFrom):
+                    if node.module in cls.POISONED_LIBRARIES:
+                        return False
+        except Exception:
+            pass # If it's not valid python, we ignore it for dependency scanning
+        return True
 
 class AppleSandbox:
     """
@@ -31,6 +62,18 @@ class AppleSandbox:
         """
         Executes a command inside the macOS Seatbelt sandbox.
         """
+        # --- Pre-Execution Supply Chain Gating ---
+        for arg in command:
+            if arg.endswith('.py') and os.path.exists(arg):
+                is_safe = DependencyScanner.scan_file(arg)
+                if not is_safe:
+                    return {
+                        "status": "BLOCKED",
+                        "error": f"Supply Chain Attack Prevented: {arg} contains known poisoned dependencies.",
+                        "exit_code": -3
+                    }
+        # ------------------------------------------
+
         profile = profile_template.replace("{workspace_dir}", self.workspace_dir)
         
         # Write the profile to a temporary file
