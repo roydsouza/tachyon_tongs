@@ -65,11 +65,25 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Human-in-the-Loop Gateway:** The `AutoPatcher` generates `PENDING_MERGE.md` manifests instead of executing autonomous Git commits, preserving self-healing while mitigating self-compromise.
   - **Zero-Day Fuzzer:** `zero_day_drill.py` continuously harnesses the Pathogen to stress the Llama 3.2 logic with completely hallucinated, un-cataloged combinations.
 
-### Phase 7: The Private Fleet (Tailscale Mesh) [UP NEXT]
+### Phase 7: The Airlock Interface (TUI & MCP) [UP NEXT]
+- **Objective:** Eliminate "Knowledge Debt" by providing a Human-in-the-Loop staging ground where the Engineer Agent proposes, explains, and negotiates architectural mitigations before committing them.
+- **Implementation:**
+  - **Terminal UI (`textual`):** A high-fidelity split-pane terminal interface for reviewing `.patch` diffs and chatting with the Engineer.
+  - **MCP Gateway:** Exposing un-patched CVEs as resources and the Engineer as a tool via the Model Context Protocol for direct IDE integration.
+
+### Phase 8: Conversational Triage (CLI Skills) [PLANNED]
+- **Objective:** Seamlessly integrate Triad interactions into existing chat interfaces.
+- **Implementation:** Develop an AntiGravity Skill allowing developers to use `/engineer triage` to interactively discuss Substrate vulnerabilities from within their primary command line interface.
+
+### Phase 9: The Dashboard (Rich Web GUI) [PLANNED]
+- **Objective:** Provide a comprehensive, visually rich enterprise dashboard for non-terminal architectural review.
+- **Implementation:** A local FastAPI + Next.js web interface offering side-by-side graphical diffs, threat dependency graphs, and historical mitigation metrics.
+
+### Phase 10: The Private Fleet (Tailscale Mesh) [PLANNED]
 - **Objective:** Expand the Substrate perimeter beyond a single host machine, allowing lightweight edge clients to utilize the centralized MLX security pipeline.
 - **Implementation:** Binding the Substrate Daemon to a `100.x.y.z` Tailscale interface to enable secure Publish/Discover/Subscribe capabilities over a trusted WireGuard backbone.
 
-### Phase 8: Hostile Cloud Organism (Zero-Trust Mesh) [PLANNED]
+### Phase 11: Hostile Cloud Organism (Zero-Trust Mesh) [PLANNED]
 - **Objective:** Secure the mesh against internal Man-in-the-Middle configuration drift via strict identity assertion.
 - **Implementation:** Evolving the intent gateway using:
   - **Matchlock:** Cryptographic workload identities.

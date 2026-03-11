@@ -17,6 +17,17 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-58371 from Unknown.
 - [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-58372 from Unknown.
 
+### 🧹 [HOUSEKEEPING] Sprint Archival
+- [ ] **Write Archival Script/Workflow:** Create a tool or workflow (e.g., `scripts/archive_tasks.py` or an AntiGravity skill) to automatically prune `[COMPLETED]` phases from `TASKS.md` and append them to a new `ACCOMPLISHMENTS.md` file. This prevents `TASKS.md` from becoming a monolithic, unreadable document.
+
+### 🧪 Current Sprint: Phase 7 (The Airlock Interface: TUI & MCP)
+- [ ] **[TUI Scaffolding]** Build `scripts/airlock_tui.py` using the `textual` framework. Design a split-pane layout: Left (Active Threats), Top Right (Code Diff Proposal), Bottom Right (Interactive Chat).
+- [ ] **[Engineer Integration]** Wire the Airlock TUI to trigger the `EngineerAgent`. Instead of AutoPatcher immediately staging `PENDING_MERGE.md`, it should stream the proposed `.patch` to the TUI.
+- [ ] **[Negotiation Chat]** Implement a chat loop in the TUI allowing the human to ask the Engineer questions about the patch and request modifications.
+- [ ] **[Execution Gate]** Add an explicit "AUTHORIZE" command in the TUI that triggers the final application and testing of the patch.
+- [ ] **[MCP Expose]** Update `src/mcp_gateway.py` to expose the pending threats as MCP Resources, and the Engineer's "Propose Patch" and "Discuss Patch" abilities as MCP Tools for IDE users.
+- [ ] **[Knowledge Debt Ledger]** Require the Engineer to automatically synthesize and append an entry to `ARCHITECTURAL_DECISIONS.md` after an authorized patch, detailing the vulnerability, human modifications, and final rationale.
+
 ### [COMPLETED] Core Infrastructure
 - [x] Initialize repository structure (`src/`, `policies/`, `scripts/`, `docs/`).
 - [x] Establish `matchlock-agent.yaml` Lima configuration for hardware-virtualized sandboxing.
