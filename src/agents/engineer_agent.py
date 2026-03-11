@@ -41,24 +41,44 @@ def engineer_action_node(state: dict) -> dict:
                 logger.add_file_updated("EXPLOITATION_CATALOG.md", details=f"Appended {num_threats} validated threats via StateManager.", payload=payload_str)
                 logger.add_file_updated("TASKS.md", details=f"Injected {num_threats} verification tasks to the backlog via StateManager.")
                 
-        # Substrate Evolution: Auto-Patching if explicitly given structural mitigations
-        if state["analysis"].get("proposed_patch_files") and state["analysis"].get("proposed_regression_test"):
+        # Phase 11: Substrate Evolution: Autonomous LLM Remediation
+        if state["analysis"].get("threats_found"):
+            from src.metal_accelerator import MetalAccelerator
             from src.auto_patcher import AutoPatcher
+            import os
+            
             patcher = AutoPatcher()
+            cve_id = "UNKNOWN-THREAT"
             
-            cve_id = state["analysis"].get("threats_found", [{}])[0].get("id", "UNKNOWN-THREAT")
-            
-            patch_result = patcher.apply_and_test(
-                patch_files=state["analysis"]["proposed_patch_files"],
-                test_file_path=state["analysis"]["proposed_regression_test"].get("path", "tests/test_auto_mutation_1.py"),
-                test_content=state["analysis"]["proposed_regression_test"].get("content", ""),
-                cve_id=cve_id
-            )
-            
-            if patch_result and patch_result.get("status") == "success":
-                logger.add_file_updated("EVOLUTION.md", details=f"Organism successfully patched '{cve_id}' without human intervention.")
+            # Extract basic CVE if present
+            threats = state["analysis"]["threats_found"]
+            if isinstance(threats[0], dict):
+                cve_id = threats[0].get("id", "UNKNOWN-THREAT")
+                desc = threats[0].get("description", "Vulnerability detected.")
             else:
-                logger.add_file_updated("ERROR.md", details=f"Organism failed to patch '{cve_id}'. Revert sequence initiated.")
+                cve_id = str(threats[0]).split(" ")[0] if "CVE" in str(threats[0]) else "UNKNOWN-THREAT"
+                desc = str(threats[0])
+            
+            target_file = "src/substrate_daemon.py"
+            if os.path.exists(target_file):
+                with open(target_file, "r") as f:
+                    target_code = f.read()
+
+                # Synthesize Remediation
+                remediation = MetalAccelerator.generate_remediation_patch(cve_id, desc, target_code)
+
+                if "patch_files" in remediation:
+                    patch_result = patcher.apply_and_test(
+                        patch_files=remediation["patch_files"],
+                        test_file_path=remediation.get("test_file_path", "tests/test_auto_mutation_1.py"),
+                        test_content=remediation.get("test_content", ""),
+                        cve_id=cve_id
+                    )
+                    
+                    if patch_result and patch_result.get("status") == "pending_human_approval":
+                        if logger: logger.add_file_updated("EVOLUTION.md", details=f"Organism successfully staged mitigation for '{cve_id}'. Awaiting human review.")
+                    else:
+                        if logger: logger.add_file_updated("ERROR.md", details=f"Organism failed to completely patch '{cve_id}'. Revert sequence initiated.")
                 
     except VerificationFailedError as e:
         # The Engineer caught the Analyst slipping. Refuse to execute write operations.

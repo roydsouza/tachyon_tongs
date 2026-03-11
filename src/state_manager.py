@@ -291,7 +291,10 @@ class StateManager:
                 for threat in threats:
                     cve = threat.get('cve_id') or threat.get('id', 'UNKNOWN')
                     source = threat.get('source', 'Unknown')
-                    new_tasks.append(f"- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against {cve} from {source}.\n")
+                    
+                    # Prevent duplicates: only inject if the cve identifier isn't already active or completed in the backlog
+                    if not any(cve in line for line in lines):
+                        new_tasks.append(f"- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against {cve} from {source}.\n")
 
                 if new_tasks:
                     lines.insert(injection_index, "\n### 🚨 [URGENT] Autonomous Discoveries (Triad Scraped)\n")

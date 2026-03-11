@@ -20,11 +20,19 @@ class AutoPatcher:
         success = False
         revert_required = False
 
-        # 1. Write the Regression Test
+        # 1. Checkout new branch for mitigation testing
+        branch_name = f"auto-patch/{cve_id.replace(' ', '-')}"
+        try:
+            subprocess.run(["git", "checkout", "-b", branch_name], check=True, stderr=subprocess.DEVNULL)
+        except Exception as e:
+            return {"status": "error", "reason": f"Failed to checkout branch: {e}"}
+
+        # 2. Write the Regression Test
         try:
             with open(test_file_path, "w") as f:
                 f.write(test_content)
         except Exception as e:
+            self._execute_revert(cve_id, "Failed during test writing", current_branch=branch_name)
             return {"status": "error", "reason": f"Failed to write regression test: {e}"}
 
         # 2. Apply the Patches
@@ -48,6 +56,13 @@ class AutoPatcher:
             if result.returncode == 0:
                 success = True
                 
+                # Exfiltrate the Mitigation Patch
+                patch_file = f"{cve_id.replace(' ', '_')}.patch"
+                try:
+                    subprocess.run(f"git diff main > {patch_file}", shell=True)
+                except Exception as e:
+                    pass
+                
                 with open("PENDING_MERGE.md", "w") as f:
                     f.write(f"# 🛡️ Pending Human Approval: {cve_id}\n\n")
                     f.write("The AutoPatcher successfully synthesized and validated a mitigation patch.\n\n")
@@ -56,7 +71,7 @@ class AutoPatcher:
                         f.write(f"- `{fname}`\n")
                     f.write(f"- `{test_file_path}`\n\n")
                     f.write("### Action Required\n")
-                    f.write("Please review the changes via `git diff`. If you approve of the mitigation strategy, commit the code and restart the associated Daemon. If you reject the changes, run `git checkout src/ policies/ tests/` to discard the mutation.\n")
+                    f.write(f"Please review the changes via `cat {patch_file}`. If you approve of the mitigation strategy, merge the branch `{branch_name}` into main and restart the associated Daemon.\n")
 
                 self.state_manager.log_evolution(
                     event_type="Autonomous Mitigation (Human Gate)",
@@ -75,13 +90,15 @@ class AutoPatcher:
 
         # 4. Handle Failure (The Revert)
         if revert_required:
-            self._execute_revert(cve_id, traceback)
+            self._execute_revert(cve_id, traceback, current_branch=branch_name)
             return {"status": "failure", "traceback": traceback}
 
-    def _execute_revert(self, cve_id: str, traceback: str):
+    def _execute_revert(self, cve_id: str, traceback: str, current_branch: str = None):
         """Executes the Git Revert Safety Net to preserve the organism."""
         try:
-            subprocess.run(["git", "checkout", "src/", "policies/", "tests/"], check=True)
+            subprocess.run(["git", "checkout", "main"], check=True, stderr=subprocess.DEVNULL)
+            if current_branch:
+                subprocess.run(["git", "branch", "-D", current_branch], check=True, stderr=subprocess.DEVNULL)
             
             # Write Post-Mortem
             with open("ERROR.md", "w") as f:
