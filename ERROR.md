@@ -1,66 +1,10 @@
-# ANOMALY DETECTED: test_agent_hijacked
+# 🚨 Autonomous Patching Failure
 
-**Incident Type:** Identity Hijacking / Statistical Drift
-**Details:** The agent's baseline access ratio exceeded the `3.0` safety threshold. 
-**Current State:**
-- Network Fetches: 5
-- System Executions: 16
+**Target:** CVE-TEST-FAIL
 
-The agent has been automatically halted by the `SyscallBehaviorMonitor` to prevent payload exfiltration.
+The organism attempted to mutate its active defense, but the regression tests failed. The host has been reverted back to a stable cryptographic state.
 
----
-# ANOMALY DETECTED: test_agent_hijacked
-
-**Incident Type:** Identity Hijacking / Statistical Drift
-**Details:** The agent's baseline access ratio exceeded the `3.0` safety threshold. 
-**Current State:**
-- Network Fetches: 5
-- System Executions: 16
-
-The agent has been automatically halted by the `SyscallBehaviorMonitor` to prevent payload exfiltration.
-
----
-# ANOMALY DETECTED: PathogenFuzzer
-
-**Incident Type:** Identity Hijacking / Statistical Drift
-**Details:** The agent's baseline access ratio exceeded the `3.0` safety threshold. 
-**Current State:**
-- Network Fetches: 10
-- System Executions: 1
-
-The agent has been automatically halted by the `SyscallBehaviorMonitor` to prevent payload exfiltration.
-
----
-# ANOMALY DETECTED: PathogenFuzzer
-
-**Incident Type:** Identity Hijacking / Statistical Drift
-**Details:** The agent's baseline access ratio exceeded the `3.0` safety threshold. 
-**Current State:**
-- Network Fetches: 11
-- System Executions: 1
-
-The agent has been automatically halted by the `SyscallBehaviorMonitor` to prevent payload exfiltration.
-
----
-# ANOMALY DETECTED: test_agent_hijacked
-
-**Incident Type:** Identity Hijacking / Statistical Drift
-**Details:** The agent's baseline access ratio exceeded the `3.0` safety threshold. 
-**Current State:**
-- Network Fetches: 5
-- System Executions: 16
-
-The agent has been automatically halted by the `SyscallBehaviorMonitor` to prevent payload exfiltration.
-
----
-# ANOMALY DETECTED: test_agent_hijacked
-
-**Incident Type:** Identity Hijacking / Statistical Drift
-**Details:** The agent's baseline access ratio exceeded the `3.0` safety threshold. 
-**Current State:**
-- Network Fetches: 5
-- System Executions: 16
-
-The agent has been automatically halted by the `SyscallBehaviorMonitor` to prevent payload exfiltration.
-
----
+### Pytest Traceback
+```text
+<MagicMock name='mock.stderr.__radd__()' id='4408580416'>
+```

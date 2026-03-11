@@ -1,10 +1,10 @@
-# 🛡️ Pending Human Approval: CVE
+# 🛡️ Pending Human Approval: CVE-TEST-999
 
 The AutoPatcher successfully synthesized and validated a mitigation patch.
 
 ### Staged Files:
-- `src/substrate_daemon.py`
-- `tests/test_CVE.py`
+- `test_target.py`
+- `tests/test_dummy.py`
 
 ### Action Required
-Please review the changes via `cat CVE.patch`. If you approve of the mitigation strategy, merge the branch `auto-patch/CVE` into main and restart the associated Daemon.
+Please review the changes via `cat CVE-TEST-999.patch`. If you approve of the mitigation strategy, merge the branch `auto-patch/CVE-TEST-999` into main and restart the associated Daemon.

@@ -5,3 +5,5 @@ Traceback (most recent call last):
   File "/Users/rds/antigravity/tachyon_tongs/sentinel.py", line 35, in main
     logger = ExecutionLogger(log_file=args.log_file, verbose_level=args.verbose)
 TypeError: ExecutionLogger.__init__() got an unexpected keyword argument 'verbose_level'
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 6 files:  17%|█▋        | 1/6 [00:00<00:04,  1.17it/s]Fetching 6 files:  33%|███▎      | 2/6 [04:59<11:44, 176.01s/it]Fetching 6 files: 100%|██████████| 6/6 [04:59<00:00, 49.91s/it] 
