@@ -5,8 +5,8 @@ This document provides a bird's-eye view of all critical documentation, intellig
 ## 1. High-Level Documentation
 
 *   [`README.md`](README.md): The primary whitepaper outlining the problem (AI hijacking), the Tachyon Tongs solution (Tiered Sandbox, Triad Pipeline), protection variants, and macOS Apple Silicon quickstart.
-*   [`STRATEGY.md`](STRATEGY.md): Operational thesis focusing on amortized defense and continuous improvement protocols.
-*   [`ROADMAP.md`](ROADMAP.md): Systematic progression of the framework architecture and project milestones.
+*   [`docs/STRATEGY.md`](docs/STRATEGY.md): Operational thesis focusing on amortized defense and continuous improvement protocols.
+*   [`docs/ROADMAP.md`](docs/ROADMAP.md): Systematic progression of the framework architecture and project milestones.
 *   [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): Deep-dive into the internal control flows, detailing the Guardian Triad, the integration of Open Policy Agent (OPA) `.rego` intent-gating, Apple Native Sandboxing, and `mlx_lm` Meta acceleration.
 *   [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md): The Builder's Guide. Structural methodologies to configure In-Band (Substrate managed) and Out-of-Band (Independent) agents, including generic manifest templates.
 *   [`docs/BEHAVIOR.md`](docs/BEHAVIOR.md): Detailed explanation of the Righteous Evolutionary Cycle, detailing how the Substrate autonomously self-modifies and heals.

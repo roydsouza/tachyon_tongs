@@ -38,6 +38,49 @@ Tachyon Tongs operates as a client-server architecture running entirely on `loca
 └─────────────────────────────────────────────┘
 ```
 
+### The Sentinel Payload Topology
+This explicitly maps how the Sentinel (Blue Team) aggregates and sanitizes its data using the Triad before writing to the structural logs.
+
+```text
+[The Internet]
+      │
+      ▼
+┌───────────────────────────────────────────────┐
+│ THE PROPHYLACTIC LAYER (Infrastructure)     │
+│                                             │
+│  ┌───────────▼────────────┐                 │
+│  │ L1: Intent Gate (OPA)  │                 │
+│  └───────────┬────────────┘                 │
+│              │                              │
+│  ┌───────────▼────────────┐                 │
+│  │ L2: Capability Firewall│                 │
+│  └───────────┬────────────┘                 │
+│              │                              │
+└──────────────┼────────────────────────────────┘
+               │ (Strictly Controlled IO)
+┌──────────────▼────────────────────────────────┐
+│ THE PAYLOAD DOMAIN (Sentinel)               │
+│                                             │
+│  ┌──────────────┐     ┌────────────────┐    │
+│  │ Fetcher VM   ├────►│ Sanitizer Node │    │
+│  │ (Network OK) │     │ (Regex/Parse)  │    │
+│  └──────────────┘     └───────┬────────┘    │
+│                               │             │
+│                       ┌───────▼────────┐    │
+│                       │ Analyzer VM    │    │
+│                       │ (Air-Gapped)   │    │
+│                       └───────┬────────┘    │
+│                               │             │
+│                       ┌───────▼────────┐    │
+│                       │ Verifier Node  │    │
+│                       │ (Output Check) │    │
+│                       └───────┬────────┘    │
+│                               │             │
+└───────────────────────────────┼───────────────┘
+                                ▼
+          [Updates to SITES, EXPLOITATION_CATALOG, TASKS]
+```
+
 ## 2. Defensive Abstractions
 
 ### A. Semantic Intent Gating (Open Policy Agent)
