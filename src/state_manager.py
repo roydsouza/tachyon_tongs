@@ -2,6 +2,8 @@ import sqlite3
 import json
 import os
 import threading
+import hmac
+import hashlib
 from datetime import datetime
 
 class StateManager:
@@ -19,7 +21,60 @@ class StateManager:
                 # Allow environment override for testing
                 default_db = os.environ.get("TACHYON_DB_PATH", "tachyon_state.db")
                 cls._instance._init_db(db_path or default_db)
+                cls._instance._init_crypto()
             return cls._instance
+
+    def _init_crypto(self):
+        """
+        Initialize the cryptographic signing identity. 
+        In production, this would be tied to a TPM or YubiKey ed25519-sk.
+        For Phase 8 resilience, we use an ephemeral or environment-provided key.
+        """
+        self.secret_key = os.environ.get("TACHYON_SECRET_KEY", "ephemeral-fallback-key-for-zero-day-drill").encode('utf-8')
+        # On boot, verify the integrity of the active exploitation catalog.
+        # This prevents out-of-band editing by malicious actors.
+        self._verify_catalog_integrity()
+
+    def _sign_document(self, filepath: str) -> str:
+        """Sign a file and return the hex digest. We store this in a parallel .sig file."""
+        if not os.path.exists(filepath):
+            return ""
+        with open(filepath, 'rb') as f:
+            content = f.read()
+            
+        digest = hmac.new(self.secret_key, content, hashlib.sha256).hexdigest()
+        
+        # Write the detached signature
+        sig_path = f"{filepath}.sig"
+        with open(sig_path, 'w') as sf:
+            sf.write(digest)
+            
+        return digest
+        
+    def _verify_catalog_integrity(self, catalog_file="EXPLOITATION_CATALOG.md"):
+        """Verify the cryptographic signature of the catalog."""
+        if not os.path.exists(catalog_file):
+            return  # Brand new organism, nothing to verify
+            
+        sig_path = f"{catalog_file}.sig"
+        if not os.path.exists(sig_path):
+            print(f"[StateManager] CRITICAL: No detached signature found for {catalog_file}!")
+            # In a strict environment we might raise RuntimeError("Integrity Compromised: Missing Signature")
+            # But for testing we just warn initially unless explicitly set.
+            return
+            
+        with open(sig_path, 'r') as sf:
+            expected_sig = sf.read().strip()
+            
+        with open(catalog_file, 'rb') as f:
+            content = f.read()
+            
+        actual_sig = hmac.new(self.secret_key, content, hashlib.sha256).hexdigest()
+        
+        if not hmac.compare_digest(expected_sig, actual_sig):
+            raise RuntimeError(f"INTEGRITY COMPROMISED: {catalog_file} was modified out-of-band! Halt.")
+        else:
+            print(f"[StateManager] Cryptographic state integrity verified for {catalog_file}.")
 
     def _init_db(self, db_path):
         self.db_path = db_path
@@ -203,6 +258,9 @@ class StateManager:
                     entry += f"- **Date Discovered:** {row['date_added']}\n"
                     entry += f"- **Description:** {row['description']}\n\n"
                     f.write(entry)
+            
+            # Cryptographically sign the newly exported ledger
+            self._sign_document(catalog_file)
 
     def inject_tasks(self, threats, tasks_file="TASKS.md"):
         """

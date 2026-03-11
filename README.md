@@ -24,8 +24,9 @@ Tachyon Tongs addresses these vulnerabilities by acting as a mandatory proxy dae
 
 Tachyon Tongs is not a static defense system; it is an evolutionary loop driven by two built-in, autonomous agents:
 
-*   **The Sentinel (Blue Team):** A continuously running threat intelligence aggregator. It polls the National Vulnerability Database (NVD API v2), GitHub Advisories GraphQL, and the arXiv Research Pulsar to discover novel AI exploits. Validated threats are atomically committed to a SQLite-backed `StateManager`, which automatically generates the `EXPLOITATION_CATALOG.md`—the global master ledger of adversarial tactics.
+*   **The Sentinel (Blue Team):** A continuously running threat intelligence aggregator. It polls the National Vulnerability Database (NVD API v2), GitHub Advisories GraphQL, and the arXiv Research Pulsar to discover novel AI exploits. Validated threats are cryptographically signed to prevent offline tampering and atomically committed to a SQLite-backed `StateManager`, which automatically generates the `EXPLOITATION_CATALOG.md`—the global master ledger of adversarial tactics.
 *   **The Pathogen (Red Team):** Triggered asynchronously via macOS `launchd`, the Pathogen agent reads the `EXPLOITATION_CATALOG.md` synthesized by the Sentinel. Using declarative capabilities defined in its `SKILL.md` manifest, the Pathogen acts as an automated adversary, synthesizing mutated injection payloads and firing them against the Tachyon Substrate to ensure regressions do not occur and that semantic boundaries hold firm.
+*   **The Zero-Day Simulator:** Powered by `scripts/zero_day_drill.py`, this continuous fuzzer harnesses the Pathogen agent to generate novel, entirely un-cataloged prompt attacks. It fires them against the local daemon, validating the abstract resilience of the architecture and exporting metrics to `docs/zero_day_drills.md`.
 
 ## 4. Protection Deployment Models
 

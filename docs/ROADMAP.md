@@ -58,6 +58,13 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - `AutoPatcher`: Sentinel actively writes mitigation patches into the Substrate, validates them via `pytest`, and updates Pathogen's target identity.
   - `EVOLUTION.md`: The active somatic ledger recording autonomous discoveries and modifications.
 
+### Phase 8: Zero-Day Resilience (Cryptographic Gating & Fuzzing) [OPERATIONAL]
+- **Objective:** Eliminate recursive supply-chain hijacking vectors and ensure the Substrate Daemon can be provably tested against undocumented threats.
+- **Implementation:**
+  - **Cryptographic State Integrity:** The SQLite backend enforces detached HMAC signatures for critical threat feeds to prevent offline state-tampering bypasses.
+  - **Human-in-the-Loop Gateway:** The `AutoPatcher` generates `PENDING_MERGE.md` manifests instead of executing autonomous Git commits, preserving self-healing while mitigating self-compromise.
+  - **Zero-Day Fuzzer:** `zero_day_drill.py` continuously harnesses the Pathogen to stress the Llama 3.2 logic with completely hallucinated, un-cataloged combinations.
+
 ### Phase 7: The Private Fleet (Tailscale Mesh) [UP NEXT]
 - **Objective:** Expand the Substrate perimeter beyond a single host machine, allowing lightweight edge clients to utilize the centralized MLX security pipeline.
 - **Implementation:** Binding the Substrate Daemon to a `100.x.y.z` Tailscale interface to enable secure Publish/Discover/Subscribe capabilities over a trusted WireGuard backbone.

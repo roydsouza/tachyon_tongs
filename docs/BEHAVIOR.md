@@ -9,7 +9,7 @@ This document details the exact macro-cycle of how the Substrate heals itself.
 The Sentinel Agent acts as the system's external dendritic cells, constantly scouring volatile security environments (NVD APIs, GitHub Advisories, arXiv `cs.CR` pre-prints).
 
 1.  **Discovery:** When the Sentinel identifies a new, credible threat vector (e.g., an emergent LLM memory poisoning technique or a novel prompt extraction string), it sanitizes the payload via the Guardian Triad.
-2.  **Cataloging:** The threat is formally logged into the `SQLite StateManager`, which automatically materializes into the human-readable `EXPLOITATION_CATALOG.md`.
+2.  **Cryptographic Cataloging:** The threat is formally logged into the `SQLite StateManager`. To prevent offline tampering bypasses, the Manager generates a detached HMAC-SHA256 signature for the newly materialized `EXPLOITATION_CATALOG.md`.
 3.  **Backlog Injection:** The Sentinel dynamically injects a mitigation mandate into the top of the engineering backlog (`TASKS.md`).
 4.  **Peripheral Expansion:** If the Sentinel discovers a high-signal security blog linked from an advisory, it autonomously appends the domain to `SITES.md`, expanding its own intelligence perimeter.
 
@@ -19,11 +19,11 @@ Unlike passive systems that wait for human developers to write patches, Tachyon 
 
 1.  **Code Patching:** The Substrate's Engineer node analyzes the active CVE mitigation strategy and writes a physical patch into the repository's source code (e.g., modifying regex filters in `src/substrate_daemon.py` or appending strict constraints to `policies/semantic_access.rego`).
 2.  **Regression Synthesis:** To ensure the organism isn't tearing apart its own vital organs, the Engineer writes a localized test suite (e.g., `tests/test_auto_mitigation_CVE_XYZ.py`) that mocks the exact attack vector described in the new catalog entry.
-3.  **The Auto-Healing Loop:** The Substrate invokes `pytest` over the new addition. 
-    *   If the test passes, the mutation is finalized.
+3.  **The Auto-Healing Loop (Human-Gated):** The Substrate invokes `pytest` over the new addition. 
+    *   If the test passes, the mutation is staged. To prevent recursive hijacking (an attacker poisoning upstream feeds to force a malicious patch), the system does **not** autonomously commit. It generates a `PENDING_MERGE.md` manifest, halting for a human operator to review the `git diff` and authorize the deployment.
     *   If the test fails, the stack trace is fed back into the Engineer for a rewrite (up to 3 recurrences).
     *   If the organism cannot heal itself without breaking core functionality, it executes a `git checkout` to revert the repository to a pristine state, writes an `ERROR.md` post-mortem for human intervention, and halts localized progression.
-4.  **The Somatic Ledger:** Every successful code mutation or new site discovery is proudly date/time-stamped and prepended to `EVOLUTION.md`, providing a permanent, transparent lineage of the organism's adaptations.
+4.  **The Somatic Ledger:** Every successful code staging or new site discovery is proudly date/time-stamped and prepended to `EVOLUTION.md`, providing a permanent, transparent lineage of the organism's adaptations.
 
 ## Phase 3: Adversarial Validation (The Pathogen)
 
@@ -35,4 +35,12 @@ An immune system is useless if the antibodies aren't stressed. Enter the Pathoge
 3.  **Synthesis:** Following its new `SKILL.md` directives, Pathogen reads the description of the new zero-day from `EXPLOITATION_CATALOG.md` and *hallucinates* dynamic, metamorphic permutations of the payload (bypassing static tests).
 4.  **Verification:** Pathogen launches the payloads against the Substrate Daemon in real-time. If the Daemon drops the requests successfully, the mutation is verified as righteous. If Pathogen achieves a bypass, the Sentinel's `TASKS.md` immediately escalates the failure.
 
-This continuous triad—Scout discovering threats, Engineer patching the host, and Pathogen attempting to kill the host—ensures the Tachyon Tongs Substrate hardens at machine speed, requiring zero human intervention until inevitable thermodynamic failure.
+## Phase 4: Continuous Fuzzing (The Zero-Day Drill)
+
+While Pathogen targets known mitigation vectors, the true test of an immune system is its structural resistance to unclassified threats.
+
+1. **The Simulator (`zero_day_drill.py`):** Operates on an asynchronous chronological schedule, invoking Pathogen to synthesize entirely un-cataloged, unpredictable LLM permutations (e.g., base64 wrapped inside multi-lingual homoglyphs).
+2. **The Fitness Function:** These payloads are blasted against the local Guardian Triad to constantly evaluate the NPU inference block-rate.
+3. **The Ledger:** Results are appended to `docs/zero_day_drills.md`, providing the human operator with an ongoing, verifiable metric of the Substrate's zero-day resilience.
+
+This continuous triad—Scout discovering threats, Engineer organizing patches, and Pathogen attempting to kill the host—ensures the Tachyon Tongs Substrate hardens at machine speed, requiring zero human intervention for generation, and only a single cryptographic keystroke for deployment.

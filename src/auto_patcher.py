@@ -47,11 +47,22 @@ class AutoPatcher:
 
             if result.returncode == 0:
                 success = True
+                
+                with open("PENDING_MERGE.md", "w") as f:
+                    f.write(f"# 🛡️ Pending Human Approval: {cve_id}\n\n")
+                    f.write("The AutoPatcher successfully synthesized and validated a mitigation patch.\n\n")
+                    f.write("### Staged Files:\n")
+                    for fname in patch_files.keys():
+                        f.write(f"- `{fname}`\n")
+                    f.write(f"- `{test_file_path}`\n\n")
+                    f.write("### Action Required\n")
+                    f.write("Please review the changes via `git diff`. If you approve of the mitigation strategy, commit the code and restart the associated Daemon. If you reject the changes, run `git checkout src/ policies/ tests/` to discard the mutation.\n")
+
                 self.state_manager.log_evolution(
-                    event_type="Successful Autonomous Mitigation",
-                    details=f"Organism successfully synthesized an infrastructure patch for `{cve_id}`. Regression test `{test_file_path}` passed organically."
+                    event_type="Autonomous Mitigation (Human Gate)",
+                    details=f"Organism successfully synthesized an infrastructure patch for `{cve_id}`. Regression test `{test_file_path}` passed organically. Halting for Human-in-the-Loop review via `PENDING_MERGE.md`."
                 )
-                return {"status": "success", "message": result.stdout}
+                return {"status": "pending_human_approval", "message": result.stdout}
             else:
                 revert_required = True
                 traceback = result.stdout + "\n" + result.stderr

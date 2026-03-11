@@ -22,6 +22,7 @@ This document provides a bird's-eye view of all critical documentation, intellig
 
 *   [`EVOLUTION.md`](EVOLUTION.md): The Somatic Ledger. Chronological tracking of autonomous codebase mutations and perimeter expansions.
 *   [`EXPLOITATION_CATALOG.md`](EXPLOITATION_CATALOG.md): The Master Ledger. Synthesized threat vectors retrieved by the Sentinel Blue Team and exported automatically by the SQLite `StateManager`.
+*   [`docs/zero_day_drills.md`](docs/zero_day_drills.md): The fuzzer metric log. Tracks the continuous resiliency score of the Substrate against novel Pathogen attacks.
 *   [`RUN_LOG.md`](RUN_LOG.md): The chronologically appended, multi-tenant cryptographically verified summary of execution actions, bounded by N=25 limits.
 *   [`SITES.md`](SITES.md): Formal tracking of globally vetted intelligence destinations (e.g., CISA, GitHub Advisories, NVD API 2.0).
 *   [`TASKS.md`](TASKS.md): The active engineering backlog, dynamically mutated by the Sentinel when new threats necessitate human intervention or tracking.
@@ -54,4 +55,5 @@ This document provides a bird's-eye view of all critical documentation, intellig
 *   [`scripts/start_opa.sh`](scripts/start_opa.sh): Local bootstrapper ensuring the Open Policy Agent port is initialized securely bound to localhost.
 *   [`scripts/intel_ingest.py`](scripts/intel_ingest.py): The plugin-driven data ingester routing NVD/GitHub threats into the Triad.
 *   [`scripts/run_pathogen.py`](scripts/run_pathogen.py): The orchestration daemon loading Pathogen's `SKILL.md` to initiate the red-team cycle.
+*   [`scripts/zero_day_drill.py`](scripts/zero_day_drill.py): The continuous adversarial fuzzer generating and measuring zero-day LLM mutations against the Guardian Triad.
 *   [`scripts/tailscale-auth.sh`](scripts/tailscale-auth.sh): Secure node authentication wrapper for generating ephemeral Tailscale keys.
