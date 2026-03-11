@@ -100,3 +100,30 @@ You will abide by the capabilities defined above.
 The Substrate Daemon will parse this file at boot, dynamically instantiate the `google-adk` node, wire up the specifically allowed Python tools, and expose a clean Chat API endpoint for you to interact with. 
 
 To "clone" or "modify" an Agent, you simply edit the Markdown text. The core Python code remains an immutable, audited fortress.
+
+---
+
+## 5. Model Context Protocol (MCP) Integration
+
+If your agent supports the Model Context Protocol (e.g., Claude Desktop), you can integrate Tachyon Tongs as a standard tool provider.
+
+### Step 5.1: Configuration
+Add the following to your MCP client configuration (e.g., `claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "tachyon-tongs": {
+      "command": "python3",
+      "args": ["/Users/rds/antigravity/tachyon_tongs/src/mcp_gateway.py"]
+    }
+  }
+}
+```
+
+### Step 5.2: Tool Usage
+Your agent will now have access to:
+- `tachyon_safe_fetch`: Routes URLs through the Guardian Triad.
+- `tachyon_safe_execute`: Runs commands in the Tier-0 Apple Sandbox.
+
+The Substrate Daemon handles the JSON-RPC routing, OPA gating, and logging automatically.

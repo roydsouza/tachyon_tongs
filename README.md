@@ -38,7 +38,10 @@ Agents that are natively managed by the Tachyon Tongs Substrate. They are define
 ### B. Out-of-Band Agents (Proxied)
 Independent agents and applications (e.g., multi-repo agents like `entropy_dashboard` or `shors_reaper`) running in their own binaries or environments local to the machine. These agents utilize the `tachyon_client` to route their operations through the Substrate Proxy Daemon, benefiting from the Triad Pipeline and OPA Gating without having their core logic modified.
 
-### C. Off-Machine Fleet (Planned phase)
+### C. Standard Protocol Agents (MCP)
+Tachyon Tongs implements the **Model Context Protocol (MCP)**. External agents (e.g., Claude Desktop, IDE extensions) can connect directly to `src/mcp_gateway.py` via `stdio`. This allows standard agents to discover and execute `tachyon_safe_fetch` and `tachyon_safe_execute` as native tools, with all substrate security logic applied transparently.
+
+### D. Off-Machine Fleet (Planned phase)
 Future iterations will transition the local daemon to a cloud-native architecture.
 *   **Matchlock (Planned):** Will provide cryptographic workload identity and secrets management for agents.
 *   **Tailscale (Planned):** Will establish an encrypted RPC mesh, allowing disparate "Out-of-Band" agents across physical machines to safely utilize a centralized cloud Tachyon Substrate.
