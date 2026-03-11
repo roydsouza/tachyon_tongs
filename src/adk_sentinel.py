@@ -29,7 +29,7 @@ def create_supervisor_graph() -> StateGraph:
     
     return graph
 
-def run_supervisor(url: str, logger=None, run_scraper=False, allowed_domains=None) -> dict:
+def run_supervisor(url: str, logger=None, run_scraper=False, allowed_domains=None, denylist=None) -> dict:
     """Executes the Guardian Triad Action Broker."""
     app = create_supervisor_graph().compile()
     
@@ -40,7 +40,8 @@ def run_supervisor(url: str, logger=None, run_scraper=False, allowed_domains=Non
         "target_url": url,
         "run_scraper": run_scraper,
         "logger": logger,
-        "allowed_domains": allowed_domains
+        "allowed_domains": allowed_domains,
+        "denylist": denylist
     }
     
     # Let the Triad negotiate the workflow

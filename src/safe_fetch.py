@@ -11,14 +11,16 @@ class SecurityViolationError(Exception):
     pass
 
 class SafeFetch:
-    def __init__(self, rego_mock=True, allowed_domains=None):
+    def __init__(self, rego_mock=True, allowed_domains=None, denylist=None):
         """
         Initializes the SafeFetch capability firewall.
         Queries the local OPA server to enforce `tool_access.rego`.
         """
         self.rego_mock = rego_mock
         self.allowed_domains = allowed_domains
-        self.opa_url = "http://localhost:9181/v1/data/authz/tools/allow_fetch"
+        self.denylist = denylist
+        # Port 9181 is used for OPA in our tests, but 8181 is standard.
+        self.opa_url = "http://localhost:8181/v1/data/authz/tools/allow_fetch"
 
         # Hardcoded fallback for tests if rego_mock is explicitly True
         self.mock_allowed = ["cisa.gov", "github.com", "nvd.nist.gov", "arxiv.org", "huntr.ml", "lmsys.org", "owasp.org"]
@@ -45,6 +47,11 @@ class SafeFetch:
             }
             if self.allowed_domains is not None:
                 payload["input"]["allowed_domains"] = self.allowed_domains
+            if self.denylist is not None:
+                # OPA expects data.malicious_domains, but we can pass it in input too
+                # or rely on the substrate daemon passing it as DATA.
+                # For this implementation, we pass it in input for the triaged check.
+                payload["input"]["malicious_domains"] = self.denylist
             
             response = requests.post(self.opa_url, json=payload, timeout=2)
             if response.status_code == 200:

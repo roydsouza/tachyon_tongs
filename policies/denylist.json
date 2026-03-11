@@ -1,0 +1,12 @@
+{
+    "malicious_domains": [
+        "pastebin.com",
+        "temp-mail.org",
+        "ngrok.io",
+        "localtunnel.me"
+    ],
+    "trackers": [
+        "doubleclick.net",
+        "google-analytics.com"
+    ]
+}

@@ -4,10 +4,9 @@ import future.keywords.in
 
 default allow_fetch = false
 
-# Phase 5.5: Dynamic Denylist (managed by Sentinel)
-deny_list := [
-    "pastebin.com"
-]
+# Phase 5.5: Dynamic Denylist (loaded via data.json)
+# OPA will see this if we pass it in the data payload or keep it in the same directory.
+import data.malicious_domains
 
 allow_fetch {
     not is_denied
@@ -15,7 +14,7 @@ allow_fetch {
 }
 
 is_denied {
-    some d in deny_list
+    some d in data.malicious_domains
     endswith(input.domain, d)
 }
 

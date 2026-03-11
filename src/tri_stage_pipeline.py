@@ -11,8 +11,8 @@ UNTRUSTED_CONTENT_END = "\u0003UNTRUSTED_CONTENT_END\u0004"
 
 class FetcherNode:
     """Stage 1: The Fetcher. Has network egress, but isolated via Capability Firewalls."""
-    def __init__(self, allowed_domains=None):
-        self.firewall = SafeFetch(allowed_domains=allowed_domains)
+    def __init__(self, allowed_domains=None, denylist=None):
+        self.firewall = SafeFetch(allowed_domains=allowed_domains, denylist=denylist)
 
     def get_raw_data(self, url: str) -> str:
         """Attempts to fetch data using the wrapped tool."""

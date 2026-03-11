@@ -10,7 +10,10 @@ def scout_network_node(state: dict) -> dict:
     The sole node in the Sentinel architecture with network egress.
     Controlled securely by the SafeFetch OPA intent gate.
     """
-    fetcher = FetcherNode(allowed_domains=state.get("allowed_domains"))
+    fetcher = FetcherNode(
+        allowed_domains=state.get("allowed_domains"),
+        denylist=state.get("denylist")
+    )
     scraper = VulnerabilityScraper()
 
     # The Scout can do two things based on state: 
