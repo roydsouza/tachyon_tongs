@@ -29,9 +29,9 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] Wrap basic tools (e.g., `curl`) in Capability Firewalls (e.g., `safe_fetch`).
 
 
-### 🟢 [HIGH] Phase 1.5: Reality Checks (The "Stop Mocking Me" Sprint)
-- [ ] **Real Threat Intel Scraping:** Rip out the mock JSON in `cve_scraper.py` and replace it with actual `requests` calls to the NVD API (Filtered for AI/Agent hijacking). 
-- [ ] **Real OPA Integration:** Stop pretending to use OPA in Python. Make `safe_fetch.py` actually query a local OPA server (`http://localhost:8181/v1/data/authz/tools`) before executing.
+### [COMPLETED] Phase 1.5: Reality Checks (The "Stop Mocking Me" Sprint)
+- [x] **Real Threat Intel Scraping:** Rip out the mock JSON in `cve_scraper.py` and replace it with actual `requests` calls to the NVD API (Filtered for AI/Agent hijacking). 
+- [x] **Real OPA Integration:** Stop pretending to use OPA in Python. Make `safe_fetch.py` actually query a local OPA server (`http://localhost:8181/v1/data/authz/tools`) before executing.
 
 
 ### [COMPLETED] Phase 2: Advanced Protections
@@ -50,7 +50,7 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] Instantiate the **Sentinel Agent** using the `google-adk` framework.
 - [x] Write ADK tool definitions for the `safe_fetch` firewall.
 - [x] Orchestrate the Tri-Stage pipeline routing (Fetcher -> Sanitizer -> Analyzer) via ADK state graphs.
-- [ ] **The Guardian Triad Split:** Break the Sentinel's privilege collapse. Split it into three sub-agents: *Scout* (finds threats limitlessly), *Analyst* (classifies them entirely air-gapped), and *Engineer/Broker* (safely proposes the policy updates).
+- [x] **The Guardian Triad Split:** Break the Sentinel's privilege collapse. Split it into three sub-agents: *Scout* (finds threats limitlessly), *Analyst* (classifies them entirely air-gapped), and *Engineer/Broker* (safely proposes the policy updates).
 
 
 ### [COMPLETED] Phase 3/4: Future-Proofing & Intelligence
