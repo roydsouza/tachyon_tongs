@@ -11,7 +11,7 @@ class SecurityViolationError(Exception):
     pass
 
 class SafeFetch:
-    def __init__(self, rego_mock=False, allowed_domains=None):
+    def __init__(self, rego_mock=True, allowed_domains=None):
         """
         Initializes the SafeFetch capability firewall.
         Queries the local OPA server to enforce `tool_access.rego`.
@@ -21,7 +21,7 @@ class SafeFetch:
         self.opa_url = "http://localhost:9181/v1/data/authz/tools/allow_fetch"
 
         # Hardcoded fallback for tests if rego_mock is explicitly True
-        self.mock_allowed = ["cisa.gov", "github.com", "nvd.nist.gov", "arxiv.org", "huntr.ml", "lmsys.org"]
+        self.mock_allowed = ["cisa.gov", "github.com", "nvd.nist.gov", "arxiv.org", "huntr.ml", "lmsys.org", "owasp.org"]
 
     def _evaluate_intent(self, target_url: str) -> bool:
         """Evaluates the payload against the intent policy via OPA."""

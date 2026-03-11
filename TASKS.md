@@ -92,6 +92,48 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2024-52803 from Unknown.
 - [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-46725 from Unknown.
 - [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-53002 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-17467 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2021-21960 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2021-3942 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-10106 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-11545 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-17500 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-58371 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-58372 from Unknown.
+
+
+### 🚨 [URGENT] Autonomous Discoveries (Triad Scraped)
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2024-52803 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-46725 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-53002 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-17467 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2021-21960 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2021-3942 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-10106 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-11545 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-17500 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-58371 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-58372 from Unknown.
+
+
+### 🚨 [URGENT] Autonomous Discoveries (Triad Scraped)
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2024-52803 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-46725 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-53002 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-17467 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2021-21960 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2021-3942 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-10106 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-11545 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-17500 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-58371 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-58372 from Unknown.
+
+
+### 🚨 [URGENT] Autonomous Discoveries (Triad Scraped)
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2024-52803 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-46725 from Unknown.
+- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2025-53002 from Unknown.
 - [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-10106 from Unknown.
 - [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-11545 from Unknown.
 - [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against CVE-2020-17500 from Unknown.

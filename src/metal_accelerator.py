@@ -51,3 +51,54 @@ class MetalAccelerator:
             return {"status": "success", "threats_found": ["MLX heuristics detected adversarial prompt injection."]}
             
         return {"status": "success", "threats_found": []}
+
+    @classmethod
+    def analyze_competitive_intel(cls, raw_intel: str) -> dict:
+        """
+        Runs the scoured intelligence payload through the Metal accelerator to output
+        an updated Top 10 list and actionable enhancements.
+        """
+        if not MLX_AVAILABLE:
+            # Fallback for testing environments without mlx_lm installed
+            return {
+                "competitive_analysis": "# MOCKED: Top 10 Competitive Update\n\n1. Example Competitor",
+                "actionable_plan": "- [ ] **[SCOUT]** Mock Task generated."
+            }
+            
+        cls.initialize()
+        
+        prompt = f"""
+You are the Tachyon Tongs 'Horizon Scout', an advanced AI security analyst.
+Review the following scoured web intelligence covering the latest agentic firewalls, LLM guardrails, and adversarial research.
+
+RAW INTELLIGENCE:
+{raw_intel}
+
+TASK:
+1. Synthesize a new "Top 10 Competitive Analysis" markdown report contrasting these findings with our focus on: Apple Silicon native execution, offline data sovereignty, and the Sentinel/Pathogen evolutionary loop. Use the header `<ANALYSIS_START>` and `<ANALYSIS_END>`.
+2. Generate an actionable GitHub-style checklist of new features Tachyon Tongs should adopt based on this intelligence. Use the header `<TASKS_START>` and `<TASKS_END>`.
+
+Respond ONLY with the two markdown blocks.
+"""
+        try:
+            # We allow more tokens here since it is generating a full report
+            from mlx_lm import generate
+            response = generate(cls._model, cls._tokenizer, prompt=prompt, max_tokens=2048, verbose=False)
+            
+            analysis = ""
+            tasks = ""
+            
+            if "<ANALYSIS_START>" in response and "<ANALYSIS_END>" in response:
+                analysis = response.split("<ANALYSIS_START>")[1].split("<ANALYSIS_END>")[0].strip()
+            
+            if "<TASKS_START>" in response and "<TASKS_END>" in response:
+                tasks = response.split("<TASKS_START>")[1].split("<TASKS_END>")[0].strip()
+                
+            return {
+                "competitive_analysis": analysis,
+                "actionable_plan": tasks
+            }
+        except Exception as e:
+            return {
+                "error": str(e)
+            }

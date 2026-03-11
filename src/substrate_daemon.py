@@ -65,20 +65,35 @@ async def execute_action(request: ToolRequest):
             
             # Finalize the log entry for this specific tenant/agent
             logger.finalize_run()
-            final_output = result.get("final_output", {})
-            final_status = final_output.get("status", "UNKNOWN")
+            
+            # In adk_sentinel graph, the final state contains 'analysis' and 'sanitized_content'
+            analysis_dict = result.get("analysis", {})
+            final_status = analysis_dict.get("status", "UNKNOWN")
             
             if final_status == "success":
-                return ToolResponse(
-                    request_id=request_id,
-                    status="SUCCESS",
-                    result={
-                        "content": result.get("sanitized_content", ""), 
-                        "threats": result.get("analysis", {}).get("threats_identified", 0)
-                    }
-                )
+                # Check if the Metal Analyst explicitly flagged prompt injections
+                threats = analysis_dict.get("threats_found", [])
+                
+                # If the agent is HorizonScout, it is permitted to read hostile text (like arXiv threat research)
+                is_scout = request.agent_id == "HorizonScout"
+                
+                if len(threats) == 0 or is_scout:
+                    return ToolResponse(
+                        request_id=request_id,
+                        status="SUCCESS",
+                        result={
+                            "content": result.get("sanitized_content", ""), 
+                            "threats": len(threats)
+                        }
+                    )
+                else:
+                    return ToolResponse(
+                        request_id=request_id,
+                        status="BLOCKED",
+                        error=f"Action blocked by Guardian Triad. Payload contained hostile prompt injections: {threats}"
+                    )
             else:
-                reason = final_output.get("reason", "Unknown reason")
+                reason = analysis_dict.get("reason", "Unknown Triad Failure")
                 return ToolResponse(
                     request_id=request_id,
                     status="BLOCKED",
