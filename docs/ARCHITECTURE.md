@@ -64,10 +64,13 @@ High-concurrency traffic emitted by distributed agents necessitates rigid concur
 *   **SQLite WAL `StateManager`:** All execution tracking (`RUN_LOG`) and threat intelligence discovery (`EXPLOITATION_CATALOG`) are routed through `src/state_manager.py`. The database is configured in Write-Ahead-Log (WAL) mode, guaranteeing atomic, corruption-free insertions.
 *   **Materialization:** The SQLite manager transparently triggers Markdown export routines upon each insertion, providing human-readable audits in real-time.
 
-## 4. The Pathogen Execution Lifecycle
+## 4. The Adversarial Co-Evolution Loop (Live Organism)
 
-The Pathogen agent is implemented declaratively via the Skills Engine.
-1.  **Orchestration (`run_pathogen.py`):** Initiated periodically, it loads the `SKILL.md` manifest to acquire its Tenant ID and OPA clearance.
-2.  **Catalog Ingestion:** Pathogen parses the `EXPLOITATION_CATALOG.md` (the Blue Team's defensive playbook) leveraging authorized internal reads.
-3.  **Adversarial Synthesis:** The agent applies mutative heuristic alterations to the documented Zero-Days to synthesize adversarial network payloads.
-4.  **Assault:** Pathogen attempts to inject the mutated payload into the Substrate's Event Horizon to verify whether OPA constraints and Triad sanitization can successfully drop the threat, guaranteeing regression resilience.
+Tachyon Tongs is designed as an autonomic, self-healing organism rather than a static proxy. 
+
+1.  **Orchestration (`run_pathogen.py`):** Initiated periodically, the Pathogen Red Team loads its `SKILL.md` manifest to acquire its Tenant ID and OPA clearance.
+2.  **Code-Patching (The Engineer):** When the Sentinel discovers a new zero-day, it physically writes a Python/Rego patch into the Substrate's source code, tests it, and logs the mutation to `EVOLUTION.md`.
+3.  **Adversarial Synthesis (The Pathogen):** The Sentinel dynamically rewrites the Pathogen's `SKILL.md` to hyper-focus on the newly mitigated threat. The Pathogen reads the `EXPLOITATION_CATALOG.md` and generates hallucinated, metamorphic permutations of the payload.
+4.  **Assault:** Pathogen attempts to inject the mutated payload into the Substrate's Event Horizon to verify whether the Engineer's autonomous patch successfully drops the threat.
+
+For a detailed breakdown of this self-modifying biological paradigm, see `docs/BEHAVIOR.md`.

@@ -41,6 +41,25 @@ def engineer_action_node(state: dict) -> dict:
                 logger.add_file_updated("EXPLOITATION_CATALOG.md", details=f"Appended {num_threats} validated threats via StateManager.", payload=payload_str)
                 logger.add_file_updated("TASKS.md", details=f"Injected {num_threats} verification tasks to the backlog via StateManager.")
                 
+        # Substrate Evolution: Auto-Patching if explicitly given structural mitigations
+        if state["analysis"].get("proposed_patch_files") and state["analysis"].get("proposed_regression_test"):
+            from src.auto_patcher import AutoPatcher
+            patcher = AutoPatcher()
+            
+            cve_id = state["analysis"].get("threats_found", [{}])[0].get("id", "UNKNOWN-THREAT")
+            
+            patch_result = patcher.apply_and_test(
+                patch_files=state["analysis"]["proposed_patch_files"],
+                test_file_path=state["analysis"]["proposed_regression_test"].get("path", "tests/test_auto_mutation_1.py"),
+                test_content=state["analysis"]["proposed_regression_test"].get("content", ""),
+                cve_id=cve_id
+            )
+            
+            if patch_result and patch_result.get("status") == "success":
+                logger.add_file_updated("EVOLUTION.md", details=f"Organism successfully patched '{cve_id}' without human intervention.")
+            else:
+                logger.add_file_updated("ERROR.md", details=f"Organism failed to patch '{cve_id}'. Revert sequence initiated.")
+                
     except VerificationFailedError as e:
         # The Engineer caught the Analyst slipping. Refuse to execute write operations.
         state["final_output"] = {"status": "error", "reason": f"VERIFIER BLOCKED: {str(e)}"}

@@ -110,3 +110,27 @@ def test_state_manager_inject_tasks(state_manager):
     # Cleanup
     if os.path.exists(tasks_file):
         os.remove(tasks_file)
+
+def test_state_manager_log_evolution(state_manager):
+    manager, _, _ = state_manager
+    evo_file = "/tmp/test_EVOLUTION.md"
+    
+    manager.log_evolution("Code Patch", "Mitigated Substrate zero-day via Rego constraint.", evolution_file=evo_file)
+    manager.log_evolution("Perimeter Expansion", "Added https://new-hacker-blog.com to SITES.md", evolution_file=evo_file)
+    
+    with open(evo_file, "r") as f:
+        content = f.read()
+        
+    assert "The Evolutionary Ledger" in content
+    assert "Code Patch" in content
+    assert "Mitigated Substrate" in content
+    assert "Perimeter Expansion" in content
+    assert "https://new-hacker-blog.com" in content
+    
+    # Verify chronological prepending (Perimeter Expansion should appear before Code Patch in the file beneath the header)
+    idx_expansion = content.find("Perimeter Expansion")
+    idx_patch = content.find("Code Patch")
+    assert idx_expansion < idx_patch
+    
+    if os.path.exists(evo_file):
+        os.remove(evo_file)

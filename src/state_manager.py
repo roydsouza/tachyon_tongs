@@ -243,3 +243,34 @@ class StateManager:
                         f.writelines(lines)
             except Exception as e:
                 print(f"[{self.__class__.__name__}] Failed to organically mutate {tasks_file}: {e}")
+
+    def log_evolution(self, event_type, details, evolution_file="EVOLUTION.md"):
+        """
+        The Somatic Ledger. Prepends evolutionary mutations (e.g., Code Patches, SITES.md expansions) 
+        to the top of the EVOLUTION.md log.
+        """
+        header = "# 🌱 Tachyon Tongs: The Evolutionary Ledger\n\nThis file is the living record of the organism's autonomous self-healing, code-patching, and perimeter expansion. Entries are prepended chronologically.\n\n"
+        
+        with self._lock:
+            try:
+                if not os.path.exists(evolution_file):
+                    with open(evolution_file, "w") as f:
+                        f.write(header)
+                
+                with open(evolution_file, "r") as f:
+                    content = f.read()
+                
+                # Strip the header to prepend the new entry right below it
+                if content.startswith(header):
+                    body = content[len(header):]
+                else:
+                    body = content
+                
+                now = datetime.now().isoformat(timespec='seconds')
+                new_entry = f"## 🧬 Mutation: {now} | Type: {event_type}\n"
+                new_entry += f"{details}\n\n---\n\n"
+                
+                with open(evolution_file, "w") as f:
+                    f.write(header + new_entry + body)
+            except Exception as e:
+                print(f"[{self.__class__.__name__}] Failed to write to evolutionary ledger {evolution_file}: {e}")
