@@ -10,6 +10,10 @@ This document provides a bird's-eye view of all critical documentation, intellig
 *   [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): Deep-dive into the internal control flows, detailing the Guardian Triad, the integration of Open Policy Agent (OPA) `.rego` intent-gating, Apple Native Sandboxing, and `mlx_lm` Meta acceleration.
 *   [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md): The Builder's Guide. Structural methodologies to configure In-Band (Substrate managed) and Out-of-Band (Independent) agents, including generic manifest templates.
 *   [`docs/BEHAVIOR.md`](docs/BEHAVIOR.md): Detailed explanation of the Righteous Evolutionary Cycle, detailing how the Substrate autonomously self-modifies and heals.
+*   [`docs/CLIENT_INTEGRATION.md`](docs/CLIENT_INTEGRATION.md): Overview on integrating external agents using `tachyon_client.py`.
+*   [`docs/SKILLS_ARCHITECTURE.md`](docs/SKILLS_ARCHITECTURE.md): The declarative agent framework powering the Pathogen simulator.
+*   [`docs/HYBRID_AUTH.md`](docs/HYBRID_AUTH.md): The Apple Secure Enclave & FIDO2 integration thesis.
+*   [`docs/TAILSCALE.md`](docs/TAILSCALE.md): The roadmap for zero-trust mesh expansion [UPCOMING].
 *   [`CONTENTS.md`](CONTENTS.md): This file.
 
 ## 2. Intelligence & Auditing Catalogs
@@ -46,5 +50,8 @@ This document provides a bird's-eye view of all critical documentation, intellig
 
 ## 5. Administrative Overlays (`scripts/`)
 
-*   [`doom_ticker.py`](scripts/doom_ticker.py): Shared utility outputting terminal-style apocalyptic reporting sourced from the intelligence catalogs.
-*   [`start_opa.sh`](scripts/start_opa.sh): Local bootstrapper ensuring the Open Policy Agent port is initialized securely bound to localhost.
+*   [`scripts/doom_ticker.py`](scripts/doom_ticker.py): Shared utility outputting terminal-style apocalyptic reporting sourced from the intelligence catalogs.
+*   [`scripts/start_opa.sh`](scripts/start_opa.sh): Local bootstrapper ensuring the Open Policy Agent port is initialized securely bound to localhost.
+*   [`scripts/intel_ingest.py`](scripts/intel_ingest.py): The plugin-driven data ingester routing NVD/GitHub threats into the Triad.
+*   [`scripts/run_pathogen.py`](scripts/run_pathogen.py): The orchestration daemon loading Pathogen's `SKILL.md` to initiate the red-team cycle.
+*   [`scripts/tailscale-auth.sh`](scripts/tailscale-auth.sh): Secure node authentication wrapper for generating ephemeral Tailscale keys.
