@@ -1,0 +1,6 @@
+[submodule "airlock_resident"]
+	path = airlock_resident
+	url = https://github.com/roydsouza/airlock_resident.git
+[submodule "deep_sky_observer"]
+	path = deep_sky_observer
+	url = https://github.com/roydsouza/deep_sky_observer.git
