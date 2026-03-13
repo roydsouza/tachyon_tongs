@@ -29,17 +29,19 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[DOCS/ADR]** Initialize Architecture Decision Records in `docs/adr/`. [COMPLETED]
 - [ ] **[DOCS/Scrub]** Scrub all PII and deprecated persona traits from `ROADMAP.md` and `STRATEGY.md`.
 
-### 🟢 [HIGH] Phase 5.5: Semantic Intent Gating (Dynamic Filtering)
-- [ ] Refactor `tool_access.rego` to support a Global Denylist and dynamic Agent-provided `allowed_domains` arrays.
-- [ ] Update `substrate_daemon.py` to route `network_constraints` from client payload to the OPA server.
-- [ ] Upgrade `tachyon_client.py` and `test_client.py` to allow client agents to declare `strict_whitelist` or `filtering_only` tracking.
+### ✅ Phase 5.5: Semantic Intent Gating (Dynamic Filtering) [COMPLETED]
+- [x] Refactor `tool_access.rego` to support a Global Denylist and dynamic Agent-provided `allowed_domains` arrays. [x]
+- [x] Update `substrate_daemon.py` to route `network_constraints` from client payload to the OPA server. [x]
+- [x] Upgrade `tachyon_client.py` and `test_client.py` to allow client agents to declare `strict_whitelist` or `filtering_only` tracking. [x]
 
-### 🟢 [CRITICAL] Phase 6.5: Metal-Accelerated Vibe Infrastructure
-- [ ] **Tiered Sandboxing:** Implement `apple_sandbox.py` using macOS `sandbox-exec` (Seatbelt) for Tier 0 tasks.
-- [x] **State Manager Migration:** Replace Markdown source-of-truth with SQLite backend (`intelligence/tachyon_state.db`). [COMPLETED]
-- [ ] **MLX Inference Acceleration:** Refactor Sentinel Analyst nodes to use `mlx_lm` for Metal-accelerated reasoning.
+### ✅ Phase 6.5: Metal-Accelerated Vibe Infrastructure [COMPLETED]
+- [x] **Tiered Sandboxing**: Implement `apple_sandbox.py` using macOS `sandbox-exec` (Seatbelt) for Tier 0 tasks. [x]
+- [x] **State Manager Migration**: Replace Markdown source-of-truth with SQLite backend (`intelligence/tachyon_state.db`). [x]
+- [x] **MLX Inference Acceleration**: Refactor Sentinel Analyst nodes to use `mlx_lm` for Metal-accelerated reasoning. [x]
 
-### ✅ Phase 11: Supply Chain Security & Integrity Gating [COMPLETED]
+### [PLANNED] Phase 6.6: Specialized Social Agents
+- [ ] **Implementation of "Shor's Reaper" (Quantum Doom Agent)**: Create the `agents/shors_reaper/SKILL.md` and data ingestor.
+- [ ] **Implementation of "Entropy Dashboard" (Chaos Agent)**: Create the `agents/entropy_dashboard/SKILL.md` and ingestor.
 - [x] **[DOCS]** Authored `docs/SUPPLY_CHAIN_SECURITY.md`.
 - [x] **[INTEGRITY]** Implemented `src/agents/integrity_agent.py`.
 - [x] **[DEPS]** Updated `src/state_manager.py` with deterministic capability binding.

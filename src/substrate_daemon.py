@@ -63,7 +63,7 @@ async def execute_action(request: ToolRequest):
                 raise HTTPException(status_code=400, detail="Missing URL parameter")
             
             # Load Dynamic Denylist for OPA
-            denylist_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "policies/denylist.json")
+            denylist_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "policies/shared/denylist.json")
             denylist_data = {}
             if os.path.exists(denylist_path):
                 with open(denylist_path, "r") as f:
