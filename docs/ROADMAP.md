@@ -71,6 +71,13 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Terminal UI (`textual`):** A high-fidelity split-pane terminal interface for reviewing `.patch` diffs and chatting with the Engineer.
   - **MCP Gateway:** Exposing un-patched CVEs as resources and the Engineer as a tool via the Model Context Protocol for direct IDE integration.
 
+### Phase 7.5: Scalable Oversight (The Airlock Debate) [UP NEXT]
+- **Objective:** Eliminate "Knowledge Debt" and bridge the "Verification Bottleneck" by providing a multi-agent adversarial discourse (Analyst vs. Skeptic) with a 12-hour temporal fallback.
+- **Implementation:**
+  - **The Discourse Triad:** Analyst (optimistic impact evaluation) and Skeptic (contrarian critique) debating proposed patches.
+  - **Temporal Fallback:** Automated merge of unreviewed patches after 12 hours of human inactivity to maintain substrate evolution speed.
+  - **Audit Provenance:** Full aggregation of debate transcripts into a permanent architectural ledger.
+
 ### Phase 8: Conversational Triage (CLI Skills) [PLANNED]
 - **Objective:** Seamlessly integrate Triad interactions into existing chat interfaces.
 - **Implementation:** Develop an AntiGravity Skill allowing developers to use `/engineer triage` to interactively discuss Substrate vulnerabilities from within their primary command line interface.

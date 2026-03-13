@@ -42,6 +42,12 @@ Tachyon Tongs operates as a client-server architecture running entirely on `loca
 │ MCP GATEWAY (`src/mcp_gateway.py`)          │
 │ (External Protocol Adapter)                 │
 └─────────────────────────────────────────────┘
+      ▲
+      │ (JSON-RPC)
+┌─────┴───────────────────────────────────────┐
+│ GUARDIAN TRIAD+ (Scalable Oversight)        │
+│ Scout -> Analyst <-> Skeptic -> Engineer    │
+└─────────────────────────────────────────────┘
 ```
 
 ### The Sentinel Payload Topology

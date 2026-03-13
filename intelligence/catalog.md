@@ -2,6 +2,27 @@
 
 This file is the single source of truth for internet-born AI/LLM terror.
 
+### CVE-2026-22708
+- **Source:** Unknown Source
+- **Date Discovered:** 2026-03-12T04:44:34.475338
+- **Description:** Cursor is a code editor built for programming with AI. Prior to 2.3, hen the Cursor Agent is running in Auto-Run Mode with Allowlist mode enabled, certain shell built-ins can still be executed without appearing in the allowlist and without requiring user approval.
+This allows an attacker via indirect or direct prompt injection to poison the shell environment by setting, modifying, or removing environment variables that influence trusted commands. This vulnerability is fixed in 2.3.
+
+### CVE-2025-54135
+- **Source:** Unknown Source
+- **Date Discovered:** 2026-03-12T04:44:34.475315
+- **Description:** Cursor is a code editor built for programming with AI. Cursor allows writing in-workspace files with no user approval in versions below 1.3.9, If the file is a dotfile, editing it requires approval but creating a new one doesn't. Hence, if sensitive MCP files, such as the .cursor/mcp.json file don't already exist in the workspace, an attacker can chain a indirect prompt injection vulnerability to hijack the context to write to the settings file and trigger RCE on the victim without user approval. This is fixed in version 1.3.9.
+
+### CVE-2025-54130
+- **Source:** Unknown Source
+- **Date Discovered:** 2026-03-12T04:44:34.472324
+- **Description:** Cursor is a code editor built for programming with AI. Cursor allows writing in-workspace files with no user approval in versions less than 1.3.9. If the file is a dotfile, editing it requires approval but creating a new one doesn't. Hence, if sensitive editor files, such as the .vscode/settings.json file don't already exist in the workspace, an attacker can chain a indirect prompt injection vulnerability to hijack the context to write to the settings file and trigger RCE on the victim without user approval. This is fixed in version 1.3.9.
+
+### CVE-TEST-001
+- **Source:** Unit Test
+- **Date Discovered:** 2026-03-11T18:40:44.915236
+- **Description:** No description.
+
 ### CVE-2025-58372
 - **Source:** Unknown Source
 - **Date Discovered:** 2026-03-09T20:38:59.202515

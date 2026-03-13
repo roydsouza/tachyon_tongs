@@ -6,6 +6,7 @@ import hmac
 import hashlib
 from datetime import datetime
 
+
 class StateManager:
     """
     Durable Multi-Tenant State Manager for Tachyon Tongs.
@@ -232,9 +233,9 @@ class StateManager:
                         print(f"[StateManager] Failed to insert threat {threat.get('id')}: {e}")
                 conn.commit()
             
-            self._export_catalog_markdown(catalog_file)
+            self.export_catalog(catalog_file)
 
-    def _export_catalog_markdown(self, catalog_file):
+    def _export_catalog_markdown(self, catalog_file="EXPLOITATION_CATALOG.md"):
         """
         Materializes the SQLite catalog index back out to the human-readable Markdown.
         """
@@ -250,17 +251,51 @@ class StateManager:
                 f.write(header)
                 if not rows:
                     f.write("No catalog entries yet.\n")
-                    return
-                    
-                for row in rows:
-                    entry = f"### {row['cve_id']}\n"
-                    entry += f"- **Source:** {row['source']}\n"
-                    entry += f"- **Date Discovered:** {row['date_added']}\n"
-                    entry += f"- **Description:** {row['description']}\n\n"
-                    f.write(entry)
+                else:
+                    for row in rows:
+                        entry = f"### {row['cve_id']}\n"
+                        entry += f"- **Source:** {row['source']}\n"
+                        entry += f"- **Date Discovered:** {row['date_added']}\n"
+                        entry += f"- **Description:** {row['description']}\n\n"
+                        f.write(entry)
             
             # Cryptographically sign the newly exported ledger
             self._sign_document(catalog_file)
+
+    def export_catalog(self, catalog_file="EXPLOITATION_CATALOG.md"):
+        """
+        Materializes the SQLite catalog index back out to the human-readable Markdown.
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.execute('SELECT * FROM exploitation_catalog ORDER BY id DESC')
+            rows = cursor.fetchall()
+            
+            header = "# 📘 EXPLOITATION CATALOG\n\n"
+            header += "This file is the single source of truth for internet-born AI/LLM terror.\n\n"
+            
+            with open(catalog_file, "w") as f:
+                f.write(header)
+                if not rows:
+                    f.write("No catalog entries yet.\n")
+                else:
+                    for row in rows:
+                        entry = f"### {row['cve_id']}\n"
+                        entry += f"- **Source:** {row['source']}\n"
+                        entry += f"- **Date Discovered:** {row['date_added']}\n"
+                        entry += f"- **Description:** {row['description']}\n\n"
+                        f.write(entry)
+            
+            # Cryptographically sign the newly exported ledger
+            self._sign_document(catalog_file)
+
+    def is_package_whitelisted(self, package_spec: str) -> bool:
+        """
+        Checks if a package (and optionally its version) is in the trusted registry.
+        """
+        safe_list = ["requests", "rich", "textual", "mlx_lm", "openai", "anthropic", "pytest"]
+        base_name = package_spec.split('==')[0].split('>=')[0].strip().lower()
+        return base_name in [s.lower() for s in safe_list]
 
     def inject_tasks(self, threats, tasks_file="TASKS.md"):
         """
@@ -297,8 +332,11 @@ class StateManager:
                         new_tasks.append(f"- [ ] **Triad Mitigation Mandate**: Review and patch Substrate Daemon against {cve} from {source}.\n")
 
                 if new_tasks:
+                    staged_at = datetime.datetime.now().isoformat()
                     lines.insert(injection_index, "\n### 🚨 [URGENT] Autonomous Discoveries (Triad Scraped)\n")
-                    lines.insert(injection_index + 1, "".join(new_tasks) + "\n")
+                    # We store the metadata in a hidden or specific format for the fallback to parse
+                    new_tasks_with_meta = [f"{task} <!-- STAGED_AT: {staged_at} -->\n" for task in new_tasks]
+                    lines.insert(injection_index + 1, "".join(new_tasks_with_meta) + "\n")
 
                     with open(tasks_file, 'w') as f:
                         f.writelines(lines)

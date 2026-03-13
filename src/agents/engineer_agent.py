@@ -3,6 +3,7 @@ Tachyon Tongs: Engineer Agent (Action Writer)
 Agent 3 of the Guardian Triad.
 """
 from src.verifier_agent import VerifierAgent, VerificationFailedError
+from src.agents.skeptic_agent import SkepticAgent
 
 def engineer_action_node(state: dict) -> dict:
     """
@@ -46,6 +47,7 @@ def engineer_action_node(state: dict) -> dict:
             from src.metal_accelerator import MetalAccelerator
             from src.auto_patcher import AutoPatcher
             import os
+            import datetime
             
             patcher = AutoPatcher()
             cve_id = "UNKNOWN-THREAT"
@@ -68,17 +70,42 @@ def engineer_action_node(state: dict) -> dict:
                 remediation = MetalAccelerator.generate_remediation_patch(cve_id, desc, target_code)
 
                 if "patch_files" in remediation:
-                    patch_result = patcher.apply_and_test(
-                        patch_files=remediation["patch_files"],
-                        test_file_path=remediation.get("test_file_path", "tests/test_auto_mutation_1.py"),
-                        test_content=remediation.get("test_content", ""),
-                        cve_id=cve_id
-                    )
-                    
-                    if patch_result and patch_result.get("status") == "pending_human_approval":
-                        if logger: logger.add_file_updated("EVOLUTION.md", details=f"Organism successfully staged mitigation for '{cve_id}'. Awaiting human review.")
+                    # Phase 7: The Airlock Staging Gateway
+                    if state.get("airlock_mode", True): 
+                        proposal_path = f"/tmp/tachyon_airlock/{cve_id.replace(' ', '_')}.json"
+                        # Phase 7.5: Run the Skeptic before staging
+                        skeptic = SkepticAgent()
+                        critique = skeptic.critique(state["analysis"], remediation["patch_files"])
+                        
+                        proposal_data = {
+                            "cve_id": cve_id,
+                            "description": desc,
+                            "patch_files": remediation["patch_files"],
+                            "test_file_path": remediation.get("test_file_path", "tests/test_auto_mutation_1.py"),
+                            "test_content": remediation.get("test_content", ""),
+                            "status": "staged_for_review",
+                            "staged_at": datetime.datetime.now().isoformat(),
+                            "critique": critique
+                        }
+                        with open(proposal_path, "w") as f:
+                            import json
+                            json.dump(proposal_data, f, indent=2)
+                        
+                        if logger: logger.add_file_updated(proposal_path, details=f"Staged autonomous proposal for '{cve_id}' in the Airlock.")
+                        state["final_output"] = {"status": "staged", "proposal_path": proposal_path}
                     else:
-                        if logger: logger.add_file_updated("ERROR.md", details=f"Organism failed to completely patch '{cve_id}'. Revert sequence initiated.")
+                        # Legacy Auto-Apply Path
+                        patch_result = patcher.apply_and_test(
+                            patch_files=remediation["patch_files"],
+                            test_file_path=remediation.get("test_file_path", "tests/test_auto_mutation_1.py"),
+                            test_content=remediation.get("test_content", ""),
+                            cve_id=cve_id
+                        )
+                        
+                        if patch_result and patch_result.get("status") == "pending_human_approval":
+                            if logger: logger.add_file_updated("EVOLUTION.md", details=f"Organism successfully staged mitigation for '{cve_id}'. Awaiting human review.")
+                        else:
+                            if logger: logger.add_file_updated("ERROR.md", details=f"Organism failed to completely patch '{cve_id}'. Revert sequence initiated.")
                 
     except VerificationFailedError as e:
         # The Engineer caught the Analyst slipping. Refuse to execute write operations.

@@ -14,12 +14,31 @@ def analyst_reasoning_node(state: dict) -> dict:
     
     # Process scraped CVEs if present
     if "scraped_threats" in state and state["scraped_threats"]:
-        state["analysis"] = {
-            "status": "success",
-            "threats_found": [
-                f"CVE ID: {t['cve_id']} - {t['description']}" for t in state["scraped_threats"]
+        relevant_threats = []
+        for t in state["scraped_threats"]:
+            desc = t['description'].lower()
+            # Tier 2: Expert heuristic refinement.
+            # We want specific combinations or high-fidelity agentic terms. 
+            # 'Injection' alone is too noisy (SQLi), so we look for 'Prompt Injection'.
+            agentic_signals = [
+                "prompt injection", "llm", "large language model", 
+                "agent hijacking", "jailbreak", "rag poisoning",
+                "autonomous agent", "exfiltration"
             ]
-        }
+            if any(signal in desc for signal in agentic_signals):
+                relevant_threats.append(f"CVE ID: {t['cve_id']} - {t['description']}")
+            else:
+                # Log but do not promote to action
+                print(f"[Analyst] Discarding irrelevant semantic noise: {t['cve_id']}")
+        
+        if relevant_threats:
+            state["analysis"] = {
+                "status": "success",
+                "threats_found": relevant_threats
+            }
+        else:
+            state["analysis"] = {"status": "success", "reason": "All discovered signals were filtered as out-of-scope noise."}
+            
         return state
 
     # Process targeted Fetch Payload if present

@@ -26,7 +26,8 @@ async def handle_mcp_request(request: dict) -> dict:
             "result": {
                 "protocolVersion": "2024-11-05", # Standard MCP version
                 "capabilities": {
-                    "tools": {}
+                    "tools": {},
+                    "resources": {}
                 },
                 "serverInfo": {
                     "name": "tachyon-mcp-gateway",
@@ -124,6 +125,61 @@ async def handle_mcp_request(request: dict) -> dict:
                 "error": {"code": -32000, "message": str(e)}
             }
             
+    elif method == "resources/list":
+        return {
+            "jsonrpc": "2.0",
+            "id": req_id,
+            "result": {
+                "resources": [
+                    {
+                        "uri": "tachyon://intelligence/catalog",
+                        "name": "Exploitation Catalog",
+                        "description": "The master ledger of adversarial tactics and active CVEs discovered by the Sentinel.",
+                        "mimeType": "text/markdown"
+                    },
+                    {
+                        "uri": "tachyon://intelligence/sites",
+                        "name": "Intelligence Sites",
+                        "description": "Vetted intelligence destinations for threat scraping.",
+                        "mimeType": "text/markdown"
+                    }
+                ]
+            }
+        }
+
+    elif method == "resources/read":
+        params = request.get("params", {})
+        uri = params.get("uri")
+        file_path = None
+        
+        if uri == "tachyon://intelligence/catalog":
+            file_path = "intelligence/catalog.md"
+        elif uri == "tachyon://intelligence/sites":
+            file_path = "intelligence/sites.md"
+            
+        if file_path and os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                content = f.read()
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": {
+                    "contents": [
+                        {
+                            "uri": uri,
+                            "mimeType": "text/markdown",
+                            "text": content
+                        }
+                    ]
+                }
+            }
+        else:
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "error": {"code": -32602, "message": f"Resource '{uri}' not found."}
+            }
+
     else:
         return {
             "jsonrpc": "2.0",

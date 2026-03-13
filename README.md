@@ -19,6 +19,7 @@ Tachyon Tongs addresses these vulnerabilities by acting as a mandatory proxy dae
     1.  **Scout:** Fetches raw data within constrained routing rules.
     2.  **Analyst/Sanitizer:** Strips zero-width steganography and executes local, Metal-accelerated MLX inference models (e.g., Llama 3.2 4-bit) to detect injection vectors.
     3.  **Engineer:** Finalizes the sanitized, cryptographically bounded output for safe consumption by the requesting agent.
+*   **Supply Chain Integrity Gating:** All third-party library requests and `pip install` intents are audited by the **Integrity Agent** using `pip-audit` to prevent Hallucination Squatting and Dependency Confusion. See [SUPPLY_CHAIN_SECURITY.md](docs/SUPPLY_CHAIN_SECURITY.md) for details.
 
 ## 3. Evolutionary Architecture: Sentinel & Pathogen
 
@@ -39,7 +40,7 @@ Agents that are natively managed by the Tachyon Tongs Substrate. They are define
 Independent agents and applications (e.g., multi-repo agents like `entropy_dashboard` or `shors_reaper`) running in their own binaries or environments local to the machine. These agents utilize the `tachyon_client` to route their operations through the Substrate Proxy Daemon, benefiting from the Triad Pipeline and OPA Gating without having their core logic modified.
 
 ### C. Standard Protocol Agents (MCP)
-Tachyon Tongs implements the **Model Context Protocol (MCP)**. External agents (e.g., Claude Desktop, IDE extensions) can connect directly to `src/mcp_gateway.py` via `stdio`. This allows standard agents to discover and execute `tachyon_safe_fetch` and `tachyon_safe_execute` as native tools, with all substrate security logic applied transparently.
+Tachyon Tongs implements the **Model Context Protocol (MCP)**. External agents (e.g., Claude Desktop, IDE extensions) can connect directly to `src/mcp_gateway.py` via `stdio`. This allows standard agents to discover and execute `tachyon_safe_fetch` and `tachyon_safe_execute` as native tools, with all substrate security logic applied transparently. All proposed modifications are subject to the **Scalable Oversight (Airlock Debate)** protocol.
 
 ### D. Off-Machine Fleet (Planned phase)
 Future iterations will transition the local daemon to a cloud-native architecture.
@@ -95,3 +96,10 @@ print(response.get("content"))
 *   **[ARCHITECTURE.md](docs/ARCHITECTURE.md):** Deep technical dive into the Guardian Triad, OPA Rego policies, Apple Sandbox profiles, and MLX inference loops.
 *   **[DEPLOYMENT.md](docs/DEPLOYMENT.md):** The Builder's Guide for constructing In-Band and Out-of-Band agents, with template structures and capability whitelisting rules.
 *   **[PHASE_10_STATUS.md](docs/PHASE_10_STATUS.md):** Current progress on Automated Competitive Intelligence.
+## ⚡ Slash Commands (The Operator Interface)
+Tachyon Tongs supports explicit control via standardized slash commands, allowing you to bypass manual file lookups:
+- `/help`: View the command manifest.
+- `/catalog`: View the Exploitation Catalog.
+- `/sentinel`: Trigger a threat sweep.
+- `/report`: Generate a substrate health report.
+- `/acdc-loop`: Start a high-assurance development cycle.

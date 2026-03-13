@@ -11,9 +11,22 @@ class VulnerabilityScraper:
         self.mode = mode
         self.api_url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
         
-        # We search specifically for AI related hijackings, injections, etc.
-        # This prevents the Sentinel from panicking over an ancient Windows XP Print Spooler bug.
-        self.search_keywords = ["large language model", "LLM", "prompt injection", "agent hijacking", "autonomous agent"]
+        # Focus exclusively on agentic security, indirect prompt injection, and web-based hijacking.
+        self.search_keywords = [
+            "indirect prompt injection", 
+            "LLM jailbreak", 
+            "agent hijacking", 
+            "autonomous agent takeover", 
+            "RAG poisoning",
+            "prompt injection"
+        ]
+        
+        # Immediate noise reduction: Discard anything related to hardware, industrial, or standard office software.
+        self.noise_denylist = [
+            "printer", "industrial", "firmware", "office suite", "car rental", 
+            "expense tracker", "router", "switch", "iot", "camera", "medical", 
+            "shuttle", "reservation", "aerospace", "automotive"
+        ]
 
     def _fetch_live_data(self, logger=None):
         """Polls the NVD API for recent CVEs matching our keywords."""
@@ -44,7 +57,12 @@ class VulnerabilityScraper:
                         
                         # Extract the english description
                         desc = next((d.get("value") for d in cve_data.get("descriptions", []) if d.get("lang") == "en"), "No description available.")
-                        
+                        desc_lower = desc.lower()
+
+                        # --- NEW: Semantic Noise Filter ---
+                        if any(noise in desc_lower for noise in self.noise_denylist):
+                            continue # Skip non-agentic noise (printers, office apps, etc)
+
                         # Extract CVSS
                         metrics = cve_data.get("metrics", {})
                         cvss_data = metrics.get("cvssMetricV31", [{}])[0].get("cvssData", {})
