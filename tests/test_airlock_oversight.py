@@ -5,7 +5,7 @@ import datetime
 import unittest.mock as mock
 from src.state_manager import StateManager
 from src.agents.engineer_agent import engineer_action_node
-from sentinel import check_temporal_fallback
+from scripts.sentinel import check_temporal_fallback
 
 def test_skeptic_integration():
     """Verify that the Engineer runs the Skeptic and stages the output."""

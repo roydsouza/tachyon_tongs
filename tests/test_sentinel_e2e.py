@@ -35,7 +35,7 @@ class TestSentinelE2E(unittest.TestCase):
         mock_post.return_value.json.return_value = {"result": True}
         # Trigger the sentinel via CLI manually
         result = subprocess.run(
-            ["python3", "sentinel.py", "--manual", "--log-file", self.test_log],
+            ["python3", "scripts/sentinel.py", "--manual", "--log-file", self.test_log],
             capture_output=True,
             text=True,
             env=self.env
@@ -58,10 +58,10 @@ class TestSentinelE2E(unittest.TestCase):
         mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = {"result": True}
         # Run once
-        subprocess.run(["python3", "sentinel.py", "--manual", "--log-file", self.test_log], env=self.env)
+        subprocess.run(["python3", "scripts/sentinel.py", "--manual", "--log-file", self.test_log], env=self.env)
         time.sleep(1.1)
         # Run again with a different source
-        subprocess.run(["python3", "sentinel.py", "--cron", "--log-file", self.test_log], env=self.env)
+        subprocess.run(["python3", "scripts/sentinel.py", "--cron", "--log-file", self.test_log], env=self.env)
         
         with open(self.test_log, "r") as f:
             lines = f.readlines()
