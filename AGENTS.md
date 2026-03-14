@@ -1,5 +1,9 @@
 # 🧠 AGENTS.md: The Tachyon Tongs Map
 
+> [!IMPORTANT]
+> **🔁 ENTRY RITUAL**: Before starting work, you MUST run `git pull` and review [SYNC_LOG.md](file:///Users/rds/antigravity/tachyon_tongs/SYNC_LOG.md) to align with the latest mission state.
+> **🔁 EXIT RITUAL**: Before finishing work, you MUST update [SYNC_LOG.md](file:///Users/rds/antigravity/tachyon_tongs/SYNC_LOG.md) with session highlights and run the `/push` workflow.
+
 This document is the primary entry point for AI agents. It defines the structural boundaries, behavioral principles, and the "Memory as Documentation" hierarchy of the Tachyon Tongs project.
 
 ## 🛡️ Control Plane

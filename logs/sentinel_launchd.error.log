@@ -12,3 +12,4 @@ TypeError: ExecutionLogger.__init__() got an unexpected keyword argument 'verbos
 Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 43842.90it/s]
 /opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python: can't open file '/Users/rds/antigravity/tachyon_tongs/sentinel.py': [Errno 2] No such file or directory
 /opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python: can't open file '/Users/rds/antigravity/tachyon_tongs/sentinel.py': [Errno 2] No such file or directory
+/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python: can't open file '/Users/rds/antigravity/tachyon_tongs/sentinel.py': [Errno 2] No such file or directory
