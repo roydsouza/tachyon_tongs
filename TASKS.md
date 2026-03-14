@@ -20,6 +20,40 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 ### 🚨 [URGENT] Substrate Operator Interface (Slash Commands)
 - [ ] **BUG: Slash Commands Inaccessible**: Commands in `.agents/workflows/` (`/help`, `/catalog`, etc.) are not being recognized by the AntiGravity environment. Investigate system-level registration and caching.
 
+### 🧬 [PLANNED] Phase 13: Sentinel Hybrid Migration
+- [ ] **[MANIFEST]** Create `agents/sentinel/SKILL.md` with identity, capabilities, and network policy.
+- [ ] **[CONFIG]** Externalize hardcoded config (keywords, thresholds) into `SKILL.md` YAML metadata.
+- [ ] **[RUNNER]** Create `tachyon/agents/sentinel/runner.py` to orchestrate deterministic core with declarative config.
+- [ ] **[REGISTRY]** Register Sentinel as a formal substrate agent in `/tmp/tachyon/nodes.json`.
+- [ ] **[REASONING]** (Optional) Implement LLM-assisted CVE summarization as a non-critical capability.
+
+### 🧩 [PLANNED] Phase 14: Radical Modularization & Restructuring
+- [ ] **[FOUNDATION]** Create `pyproject.toml` and `tachyon/__init__.py`; establish proper Python packaging.
+- [ ] **[STRUCTURE]** Move files into new `tachyon/` sub-packages (core, pipeline, agents, etc.) with symlink backwards compat.
+- [ ] **[INIT]** Ensure all new directories have appropriate `__init__.py` file exports.
+- [ ] **[EXTRACTION]** Extract `signing.py` from `state_manager.py` and split `behavior_monitor.py` into focused monitors.
+- [ ] **[ROUTING]** Create unified `ToolRouter` and refactor `substrate_daemon.py` / `mcp_gateway.py`.
+- [ ] **[TESTS]** Mirror structure in `tests/` and update all import paths; verify 100% regression pass.
+- [ ] **[BASE]** Create `tachyon/agents/base.py` abstract class for standardizing future agent implementations.
+
+### 📊 [PLANNED] Phase 15: Sentinel Monitoring & Tuning Framework
+- [ ] **[SCHEMA]** Implement `sentinel_metrics` table in SQLite `StateManager`.
+- [ ] **[CONFIG]** Externalize hardcoded keywords to `config/sentinel_config.json` with dynamic reloading.
+- [ ] **[DASHBOARD]** Build `scripts/sentinel_dashboard.py` for real-time SNR, velocity, and source health tracking.
+- [ ] **[SCORING]** Implement `RelevanceScorer` with agentic-keyword proximity weighted scoring.
+- [ ] **[SOURCES]** Add adapter classes for GitHub Advisory (GraphQL) and arXiv cs.CR (RSS) polling.
+- [ ] **[DEDUP]** Enhance deduplication with "near-duplicate" detection (description similarity thresholds).
+- [ ] **[ALERTS]** Implement automated `[STALE]` alerts in `ERROR.md` for consecutive empty discovery runs.
+
+### 🦠 [PLANNED] Phase 16: Pathogen Adversarial Tuning & Metrics
+- [ ] **[SCHEMA]** Implement `pathogen_metrics` table for tracking attack success, coverage, and mutation lineage.
+- [ ] **[MUTATION]** Implement generational `MutationEngine` with ASCII/Unicode homoglyphs, RLO, and encoding bypasses.
+- [ ] **[LEDGER]** Create `RED_TEAM_LEDGER.md` auto-export for auditing attack history and mutation generations.
+- [ ] **[VECTORS]** Expand Pathogen to test `safe_execute`, MCP protocol, and behavioral drift simulation.
+- [ ] **[DASHBOARD]** Build `scripts/pathogen_dashboard.py` for ASR tracking and defense coverage visualization.
+- [ ] **[REGRESSION]** Implement automated regression detection for previously blocked payloads.
+- [ ] **[DRILL]** Upgrade `zero_day_drill.py` to use `MutationEngine` in high-volume batch mode.
+
 ### 🟢 [ACTIVE] Phase 12: Bi-Directional PEP/PDP Evolution
 - [ ] **[HARVEST]** Add `--harvest` mode to `scripts/sentinel.py` to localize exploit payloads.
 - [ ] **[EXTRACT]** Implement `src/agents/rego_synth_agent.py` and `cedar_synth_agent.py`.
@@ -64,6 +98,25 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 ### ✅ Phase 5: Event-Horizon Substrate Integration [COMPLETED]
 - [x] Export `tachyon_client.py` as an installable local package.
 - [x] Document Substrate Client Integration API.
+
+### 🌌 [PLANNED] Phase 17: Singularity Meta-PDP Implementation
+- [ ] **[BASE]** Implement `PolicyEngine` ABC and `PolicyVerdict` dataclass in `singularity/engines/base.py`.
+- [ ] **[OPA]** Extract OPA/Rego logic from daemon into `singularity/engines/opa.py`.
+- [ ] **[CONSENSUS]** Implement `ConsensusEngine` with Any-Deny, Majority, and Unanimous protocols.
+- [ ] **[SERVER]** Create FastAPI Meta-PDP server in `singularity/server.py` to federate engine queries.
+- [ ] **[CEDAR]** Implement `CedarEngine` for fine-grained AWS Cedar policy evaluation.
+- [ ] **[LEDGER]** Implement `authorization_ledger` in SQLite for 100% auditability of policy decisions.
+- [ ] **[PEP]** Create Event Horizon thin enforcement client to replace embedded daemon policy logic.
+- [ ] **[MIGRATE]** Relocate policies from `tachyon_tongs` to `singularity/policies/`.
+
+### 🔍 [PLANNED] Phase 18: Competitive Gap Implementation
+- [ ] **[PII]** Implement `PIIScanner` in `SanitizerNode` for bidirectional PII redaction (email, keys, SSN).
+- [ ] **[CONFIG]** Externalize hardcoded substrate keywords and thresholds to `config/substrate.json`.
+- [ ] **[REPUTATION]** Implement `domain_reputation.json` and logic for scoring fetch targets in `safe_fetch.py`.
+- [ ] **[SCAN]** Integrate `bandit` / `semgrep` for pre-execution static analysis of `safe_execute` payloads.
+- [ ] **[ALIGNMENT]** Implement `AlignmentChecker` using local embeddings to detect semantic drift in tool use.
+- [ ] **[SEQUENCES]** Implement sequence-based OPA policies to block multi-stage exfiltration chains.
+- [ ] **[SUPPLY]** Implement skill/MCP registration validation (bandit scan + prompt safety check).
 
 ### [PLANNED] Phase 8: Off-Machine Cloud Architecture
 - [ ] **Matchlock Cryptographic Identity**: Use tokens for `safe_fetch` authentication.
