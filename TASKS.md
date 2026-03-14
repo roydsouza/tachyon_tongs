@@ -20,6 +20,13 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 ### 🚨 [URGENT] Substrate Operator Interface (Slash Commands)
 - [ ] **BUG: Slash Commands Inaccessible**: Commands in `.agents/workflows/` (`/help`, `/catalog`, etc.) are not being recognized by the AntiGravity environment. Investigate system-level registration and caching.
 
+### 🟢 [ACTIVE] Phase 12: Bi-Directional PEP/PDP Evolution
+- [ ] **[HARVEST]** Add `--harvest` mode to `scripts/sentinel.py` to localize exploit payloads.
+- [ ] **[EXTRACT]** Implement `src/agents/rego_synth_agent.py` and `cedar_synth_agent.py`.
+- [ ] **[OUTBOUND]** Implement the "Reverse Firewall" (Outbound DLP) in `substrate_daemon.py`.
+- [ ] **[PLUGGABLE]** Implement the multi-engine PDP resolver.
+- [ ] **[MANUAL]** Curate `policies/rego/manual/internal_dlp.rego` for sensitive info.
+
 ### 🧪 Current Sprint: Phase 7 (The Airlock & Documentation)
 - [ ] **[TUI Scaffolding]** Build `scripts/airlock_tui.py` using the `textual` framework. Design a split-pane layout: Left (Active Threats), Top Right (Code Diff Proposal), Bottom Right (Interactive Chat).
 - [ ] **[Engineer Integration]** Wire the Airlock TUI to trigger the `EngineerAgent`.

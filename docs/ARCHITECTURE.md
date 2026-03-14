@@ -7,25 +7,24 @@ This document details the technical architecture of the **Tachyon Tongs** securi
 Tachyon Tongs operates as a client-server architecture running entirely on `localhost`. The core component is the **Substrate Daemon** (`substrate_daemon.py`), which acts as an intercepting proxy and security bouncer for all registered agents.
 
 ```text
-[External Internet / Data Sources]
-      │
-      ▼
-┌───────────────────────────────────────────────┐
-│ TACHYON TONGS SUBSTRATE DAEMON (Port 8443)    │
-│                                             │
-│  ┌────────────────────────┐                 │
-│  │ 1. Client Identity     │◄── (Tenant ID)  │
-│  └───────────┬────────────┘                 │
-│              │                              │
-│  ┌───────────▼────────────┐                 │
-│  │ 2. Semantic Intent Gate│◄── (OPA .rego)  │
-│  └───────────┬────────────┘                 │
-│              │                              │
-│  ┌───────────▼────────────┐                 │
-│  │ 3. Tool Dispatcher     │                 │
-│  └─┬────────────────────┬─┘                 │
-│    │                    │                   │
-└────┼────────────────────┼───────────────────┘
+[External Internet / Data Sources]           [Central LLM / API]
+      │                                             ▲
+      ▼                                             │
+┌───────────────────────────────────────────────────┴───────────┐
+│ TACHYON TONGS PDP (Policy Decision Point)                     │
+│  (Pluggable Engines: OPA/Rego, AWS Cedar, Manual)             │
+└───────────────────────────┬───────────────────────────────────┘
+                            │ (Authorization)
+                            ▼
+┌───────────────────────────────────────────────────────────────┐
+│ TACHYON TONGS PEP (Substrate Daemon)                          │
+│                                                               │
+│  ┌────────────────────────┐       ┌────────────────────────┐  │
+│  │ 1. INBOUND FIREWALL    │       │ 2. OUTBOUND FILTER     │  │
+│  │ (Threat Mitigation)    │       │ (DLP / Sanitization)   │  │
+│  └───────────┬────────────┘       └───────────┬────────────┘  │
+│              │                                │               │
+└──────────────┼────────────────────────────────┼───────────────┘
      │ (Network Fetch)    │ (Code Execution)
 ┌────▼─────────────┐ ┌────▼───────────────────┐
 │  Guardian Triad  │ │  Tier 0 MacOS Sandbox  │
@@ -108,10 +107,13 @@ The ingestion of untrusted external web data is the primary vector for indirect 
     *   **Metal Acceleration (`mlx_lm`):** The Analyst then wraps the sanitized payload into cryptographic boundaries (`\u0001UNTRUSTED_CONTENT_START\u0002`). It utilizes an Apple-Silicon native 4-bit Llama model loaded directly into Unified Memory to evaluate the payload for subtle instruction-override attacks.
 3.  **VerifierNode (Engineer):** Before returning the data to the client, the Engineer verifies the Analyst's output JSON for trailing shell-execution signatures or malicious Markdown downloads, raising Exceptions on contamination.
 
-### C. Tier 0 Workload Isolation (Apple Sandbox)
-When an agent requests code execution (`safe_execute`), it is routed to the `AppleSandbox` wrapper block.
-*   **Seatbelt/sandbox-exec:** Tachyon Tongs dynamically generates a strict Apple Sandbox profile.
-*   **Profile Constraints:** The process is entirely denied `network-outbound` and `network-inbound` sockets. File system access is strictly defaulted to `deny file-write*`, while granting write permissions exclusively to a temporary, randomized workspace directory scoped to the specific execution run.
+### C. Bi-Directional Intent Gating (PEP)
+The Substrate Daemon acts as a **Policy Enforcement Point (PEP)**.
+*   **Inbound PEP**: Protects the agent from the Internet using the Guardian Triad and Rego/Cedar threat policies.
+*   **Outbound PEP (The Reverse Firewall)**: Protects the User/Enterprise from the Agent/LLM. It introspects outgoing calls to sanitize or block sensitive information (API keys, PII) based on internal policies.
+
+### D. Pluggable PDP Engine
+The decision logic is decoupled from the daemon. A pluggable **Policy Decision Point (PDP)** can query multiple engines (Rego, Cedar, local heuristics) and resolve conflicts via a consensus protocol.
 
 ## 3. Durable Transaction Management
 

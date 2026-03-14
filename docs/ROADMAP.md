@@ -96,3 +96,11 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Matchlock:** Cryptographic workload identities.
   - **mTLS:** Cryptographic verification of node identity.
   - **OAuth2/OIDC:** Identifying explicit tenant attribution.
+
+### Phase 12: Bi-Directional Capability Firewall (Scale-Out PDP/PEP) [ACTIVE]
+- **Objective:** Establish a two-way intent-gate for Enterprise-grade DLP and Threat Harvesting.
+- **Implementation:**
+  - **PDP/PEP Separation:** Pluggable policy decision points (Rego/Cedar) and distributed enforcement at the edges.
+  - **Sentinel Harvester:** Amortized exploit localized data lake.
+  - **Reverse Firewall:** Outbound introspection to prevent sensitive data/telemetry leaks.
+  - **A2UI & MCP:** Rich presentation and tool-sharing across the agentic fleet.

@@ -24,3 +24,10 @@ This document is the primary entry point for AI agents. It defines the structura
 ## 📜 Execution Backlog
 - **Backlog**: [TASKS.md](file:///TASKS.md) (Primary engineering tracker)
 - **Roadmap**: [docs/ROADMAP.md](file:///docs/ROADMAP.md) (Strategic milestones)
+
+## 🤖 Automation Mandates
+All agents MUST follow these automation steps before task completion:
+1. **Task Currency**: Update `TASKS.md` to reflect current state.
+2. **Regression Testing**: Add and run regression tests for all new functionality.
+3. **Documentation**: Update all relevant `.md` files to match the implementation.
+4. **Sync**: Push all changes to the `tachyon_tongs` repository.
