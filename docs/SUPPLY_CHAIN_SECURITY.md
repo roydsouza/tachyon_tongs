@@ -39,5 +39,12 @@ The `tests/test_supply_chain_integrity.py` suite simulates:
 - **Typo-squatting detection**: Attempting to install `requessts` instead of `requests`.
 - **Vulnerability interception**: Attempting to load a known-vulnerable package version.
 
-## 4. State of the Art Comparison
+## 4. Human-in-the-Loop: The Airlock Gate
+When an Integrity Violation is detected (e.g., a "Hallucination Squatting" event or a critical CVE):
+1.  **Block**: The Substrate Daemon immediately denies the capability token, preventing the agent from installing or import the library.
+2.  **Alert**: A high-priority entry is injected into the top-level `ALERT.md` ledger.
+3.  **Audit**: The violation is logged in `RUN_LOG.md` with a `REJECTED` status.
+4.  **Airlock Interface**: The user is notified via the **Airlock TUI** (Phase 7), where they can manually override the block if the library is a known-safe internal tool or if a patch is available.
+
+## 5. State of the Art Comparison
 Unlike traditional CI/CD scanners, Tachyon Tongs provides **Runtime Supply Chain Security**. We don't just scan at build time; we intercept the agent's intent *at the moment of execution*, preventing compromised or "hallucinated" code from ever entering the Tier-0 sandbox.

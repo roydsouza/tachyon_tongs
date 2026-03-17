@@ -10,14 +10,14 @@ from pydantic import BaseModel
 # from tachyon.pipeline import SentinelOrchestrator
 from tachyon.enforcement import AppleSandbox, ToolRouter
 from tachyon.monitoring import syscall_monitor
-from tachyon.policy import PolicyEngine
+from tachyon.policy.singularity import SingularityPDP
 
 app = FastAPI(title="Tachyon Tongs Substrate Daemon", version="1.0.0")
 
 # Initialize shared components
 sandbox = AppleSandbox(workspace_dir="/tmp/tachyon_tier0")
 # orchestrator = SentinelOrchestrator()
-policy_engine = PolicyEngine()
+policy_engine = SingularityPDP()
 # router = ToolRouter(orchestrator, sandbox, policy_engine, None, syscall_monitor)
 router = None # Will be initialized on startup
 

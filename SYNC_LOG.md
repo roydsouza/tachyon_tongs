@@ -4,6 +4,18 @@ This log tracks technical decisions, mission-critical state transitions, and syn
 
 ---
 
+## [2026-03-16 21:05] - Documentation & Integrity Showcasing
+- **Session Focus**: Showcasing Security Evolution and Merkle Integrity in public-facing docs.
+- **Key Accomplishments**:
+    - **README Update**: Added "Security Evolution Ledger" as a core pillar of the project.
+    - **Architecture Deep-Dive**: Documented the Merkle Tree implementation and Security Evolution Ledger in `docs/ARCHITECTURE.md`.
+    - **Integrity Gating**: Finalized the plan for immutable auditing in the ACDC loop.
+- **Decisions**:
+    - Use Merkle Trees for document integrity to prevent bypasses via history deletion.
+- **Status**: Documentation updated. Ready for Phase 12 implementation.
+
+---
+
 ## [2026-03-16 20:55] - Threat Modeling & Documentation Core
 - **Session Focus**: Formalizing the security posture and threat landscape.
 - **Key Accomplishments**:

@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from tachyon.substrate_daemon import app
+from tachyon.enforcement.daemon import app
 
 client = TestClient(app)
 
@@ -21,7 +21,7 @@ def test_intent_mapping_research():
     }
     
     # Mock the supervisor so we don't need a real OPA/MLX stack
-    with patch('src.substrate_daemon.run_supervisor') as mock_supervisor:
+    with patch('tachyon.enforcement.daemon.run_supervisor') as mock_supervisor:
         mock_supervisor.return_value = {
             "analysis": {"status": "success", "threats_found": []},
             "sanitized_content": "Mock Content"

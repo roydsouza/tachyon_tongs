@@ -1,10 +1,41 @@
 """
 Tachyon Tongs: High-Assurance AI Agent Substrate
 """
+import sys
+import importlib.util
 
-# Re-exporting core components to maintain backward compatibility with the test suite
-# while preserving the new modular structure.
+# Legacy Shims for Test Compatibility
+SHIMS = {
+    'tachyon.auto_patcher': 'tachyon.agents.engineer',
+    'tachyon.state_manager': 'tachyon.core.state_manager',
+    'tachyon.skill_parser': 'tachyon.core.skill_parser',
+    'tachyon.apple_sandbox': 'tachyon.enforcement.sandbox',
+    'tachyon.enforcement.apple_sandbox': 'tachyon.enforcement.sandbox',
+    'tachyon.adk_sentinel': 'tachyon.pipeline.orchestrator',
+    'tachyon.signing': 'tachyon.core.signing',
+    'tachyon.intel_pipeline': 'tachyon.pipeline.tri_stage_pipeline',
+    'tachyon.horizon_scout': 'tachyon.agents.scout',
+    'tachyon.metal_accelerator': 'tachyon.core.metal_accelerator',
+    'tachyon.intent_scoring': 'tachyon.agents.sentinel.scorer',
+    'tachyon.agents.legacy.intent_scoring': 'tachyon.agents.sentinel.scorer',
+    'tachyon.substrate_daemon': 'tachyon.enforcement.daemon'
+}
 
+def _apply_shims():
+    for legacy, current in SHIMS.items():
+        if legacy not in sys.modules:
+            try:
+                spec = importlib.util.find_spec(current)
+                if spec:
+                    module = importlib.util.module_from_spec(spec)
+                    sys.modules[legacy] = module
+                    spec.loader.exec_module(module)
+            except (ImportError, AttributeError):
+                pass
+
+_apply_shims()
+
+# Core Exports
 from tachyon.core.state_manager import StateManager
 from tachyon.core.signing import IntegrityManager
 from tachyon.core.skill_parser import load_skill, materialize_network_constraints
@@ -12,25 +43,7 @@ from tachyon.agents.engineer import AutoPatcher
 from tachyon.enforcement.sandbox import AppleSandbox
 from tachyon.pipeline.orchestrator import run_supervisor, create_supervisor_graph
 
-# Exposing as modules for legacy tests that do 'from tachyon import auto_patcher'
-# We use 'sys.modules' shimming to handle 'import tachyon.auto_patcher' style calls
-import sys
-import tachyon.agents.engineer as auto_patcher_mod
-import tachyon.core.state_manager as state_manager_mod
-import tachyon.core.skill_parser as skill_parser_mod
-import tachyon.enforcement.sandbox as apple_sandbox_mod
-import tachyon.pipeline.orchestrator as adk_sentinel_mod
-import tachyon.core.signing as signing_mod
-import tachyon.agents.scout as scout_mod
-import tachyon.core.metal_accelerator as metal_mod
-import tachyon.pipeline.tri_stage_pipeline as intel_pipeline_mod
-
-sys.modules['tachyon.auto_patcher'] = auto_patcher_mod
-sys.modules['tachyon.state_manager'] = state_manager_mod
-sys.modules['tachyon.skill_parser'] = skill_parser_mod
-sys.modules['tachyon.apple_sandbox'] = apple_sandbox_mod
-sys.modules['tachyon.adk_sentinel'] = adk_sentinel_mod
-sys.modules['tachyon.signing'] = signing_mod
-sys.modules['tachyon.intel_pipeline'] = intel_pipeline_mod
-sys.modules['tachyon.horizon_scout'] = scout_mod
-sys.modules['tachyon.metal_accelerator'] = metal_mod
+try:
+    from tachyon.enforcement.daemon import app
+except (ImportError, AttributeError):
+    app = None
