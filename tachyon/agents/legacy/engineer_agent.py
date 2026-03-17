@@ -39,6 +39,11 @@ def engineer_action_node(state: dict) -> dict:
                 StateManager().log_exploitation(state["scraped_threats"])
                 StateManager().inject_tasks(state["scraped_threats"])
                 
+                # Phase 12+: Harvest Mode (Localization)
+                if state.get("harvest_mode"):
+                    from tachyon.agents.sentinel.scraper import VulnerabilityScraper
+                    VulnerabilityScraper().harvest_payloads(state["scraped_threats"], logger=logger)
+                
                 logger.add_file_updated("EXPLOITATION_CATALOG.md", details=f"Appended {num_threats} validated threats via StateManager.", payload=payload_str)
                 logger.add_file_updated("TASKS.md", details=f"Injected {num_threats} verification tasks to the backlog via StateManager.")
                 

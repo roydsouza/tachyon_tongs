@@ -23,7 +23,11 @@ Tachyon Tongs addresses these vulnerabilities by acting as a mandatory proxy dae
 *   **Pluggable Governance (PDP/PEP)**: Separation of Policy Decision Points (supporting Rego and Cedar) from Policy Enforcement Points at the edges.
 *   **Security Evolution Ledger**: A cryptographically signed hash-chain (Merkle Tree) that tracks substrate mutations mapped to specific exploits, ensuring immutable audit provenance.
 *   **Apple Silicon Native**: Optimized for Metal-accelerated reasoning and Seatbelt sandboxing.
-*   **Supply Chain Integrity Gating:** All third-party library requests and `pip install` intents are audited by the **Integrity Agent** using `pip-audit` to prevent Hallucination Squatting and Dependency Confusion. See [SUPPLY_CHAIN_SECURITY.md](docs/SUPPLY_CHAIN_SECURITY.md) for details.
+*   **Supply Chain Integrity Gating (Phase 11):** Tachyon Tongs implements a multi-layered defense against library-based attacks:
+    *   **Hallucination Squatting Defense**: Blocks agents from installing/using "imagined" malicious packages via **Deterministic Capability Binding**.
+    *   **Real-Time Auditing**: The **Integrity Agent** performs on-the-fly `pip-audit` scans of all proposed library intents.
+    *   **Cryptographic Provenance**: All trusted libraries are validated against a local state registry.
+    *   Detailed documentation: [SUPPLY_CHAIN_SECURITY.md](docs/SUPPLY_CHAIN_SECURITY.md).
 
 ## 3. Evolutionary Architecture: Sentinel & Pathogen
 

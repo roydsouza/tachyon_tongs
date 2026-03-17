@@ -72,6 +72,25 @@ class AppleSandbox:
                         "error": f"Supply Chain Attack Prevented: {arg} contains known poisoned dependencies.",
                         "exit_code": -3
                     }
+        
+        # Hallucination Squatting / Malicious Package Audit
+        if command and command[0] == "pip" and "install" in command:
+            from tachyon.agents.legacy.integrity_agent import IntegrityAgent
+            agent = IntegrityAgent()
+            # Extract package names (basic heuristic: everything after 'install' that doesn't start with '-')
+            try:
+                install_idx = command.index("install")
+                packages = [pkg for pkg in command[install_idx+1:] if not pkg.startswith("-")]
+                for pkg in packages:
+                    verdict = agent.audit_install_request(pkg)
+                    if verdict["status"] == "REJECTED":
+                        return {
+                            "status": "BLOCKED",
+                            "error": f"Integrity Violation: {verdict['reason']}",
+                            "exit_code": -4
+                        }
+            except ValueError:
+                pass
         # ------------------------------------------
 
         profile = profile_template.replace("{workspace_dir}", self.workspace_dir)

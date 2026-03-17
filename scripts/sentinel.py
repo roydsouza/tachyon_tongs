@@ -119,16 +119,23 @@ def main():
     parser = argparse.ArgumentParser(description="Tachyon Tongs Sentinel Agent CLI")
     parser.add_argument("--manual", action="store_true", help="Trigger a manual execution run.")
     parser.add_argument("--cron", action="store_true", help="Trigger a scheduled (cron) execution run.")
+    parser.add_argument("--harvest", action="store_true", help="Download and localize raw exploit payloads to intelligence/exploits/.")
     parser.add_argument("--log-file", type=str, default="RUN_LOG.md", help="Specify custom log file path.")
     parser.add_argument("--verbose", type=int, choices=[0, 1, 2], default=2, help="Set verbosity level (0=Normal, 1=Details, 2=Full Content).")
     
     args = parser.parse_args()
     
-    if not args.manual and not args.cron:
+    if not args.manual and not args.cron and not args.harvest:
         parser.print_help()
         sys.exit(1)
         
-    trigger_source = "MANUAL_CLI" if args.manual else "CRON_SCHEDULED"
+    # Determine trigger source
+    if args.harvest:
+        trigger_source = "HARVEST_MODE"
+    elif args.manual:
+        trigger_source = "MANUAL_CLI"
+    else:
+        trigger_source = "CRON_SCHEDULED"
     
     print(f"[Sentinel] Initializing run. Trigger source: {trigger_source}")
     
@@ -146,7 +153,13 @@ def main():
         # Phase 1 & 2: The Guardian Triad Split (Autonomous Multi-Agent Workflow)
         print("[Sentinel] Empowering the Guardian Triad Supervisor Graph...")
         # The Scout handles the scraping and the targeted URL fetching!
-        triad_result = run_supervisor("https://github.com/advisories", logger=logger, run_scraper=True)
+        # If harvest is enabled, we pass it down to the supervisor
+        triad_result = run_supervisor(
+            "https://github.com/advisories", 
+            logger=logger, 
+            run_scraper=True,
+            harvest_mode=args.harvest
+        )
         
         # Check Engineer's final verification status
         final_output = triad_result.get("final_output", {})

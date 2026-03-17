@@ -131,7 +131,34 @@ Before execution, the Substrate Daemon transforms this request into a JSON struc
 *   **Tenant Isolation:** OPA enforces that the agent possesses the capability mapping for the requested tool.
 *   **Domain Constraint Gating**: Outbound network requests are structurally validated. Attempting to fetch from untyped IPs or known adversarial sinkholes dynamically fails the OPA evaluation, dropping the request with a hard `BLOCKED` status.
 *   **Infrastructure Note**: The OPA server is typically reachable at `http://localhost:8181/v1/data/authz/tools/allow_fetch`. For localized integration tests, a mock port of `9181` may be utilized as defined in `tachyon/enforcement/safe_fetch.py`.
-## 5. Threat Modeling & Risk Assessment
+### 2.5 Supply Chain Integrity Layer (Phase 11)
+
+Tachyon Tongs provides runtime protection against library-based attacks targeting managed agents.
+
+#### A. Integrity Node Flow
+All library-related intents (e.g., `pip install`, `import`) are routed through the **Integrity Agent** before execution.
+
+```mermaid
+sequenceDiagram
+    participant Agent
+    participant Daemon as Substrate Daemon
+    participant IA as Integrity Agent
+    participant SM as State Manager
+    participant Internet
+
+    Agent->>Daemon: Request: pip install malicious-pkg
+    Daemon->>IA: Audit Intent
+    IA->>SM: is_package_whitelisted(malicious-pkg)?
+    SM-->>IA: False (Hallucination Detected)
+    IA-->>Daemon: REJECTED (Integrity Violation)
+    Daemon-->>Agent: 403 Forbidden
+```
+
+#### B. Deterministic Capability Binding
+Controlled by the `StateManager` (`tachyon/core/state.py`), this mechanism ensures that an agent can only access a strict, cryptographically verified set of libraries. This completely eliminates "Hallucination Squatting" where an agent might imagine and then attempt to fetch a malicious package name.
+
+#### C. Real-time Vulnerability Gating
+The Integrity Agent can dynamically poll `pip-audit` or `safety` APIs. If a dependency contains a known CRITICAL CVE, the Substrate Daemon will halt the sandbox creation and emit a high-priority alert to **ALERT.md**.
 
 For a granular breakdown of specific attack vectors (such as Indirect Prompt Injection, Agent Hijacking, and Outbound Data Exfiltration) and their corresponding substrate mitigations, please refer to the [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md).
 

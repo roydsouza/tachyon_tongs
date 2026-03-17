@@ -26,7 +26,19 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 - **Impact**: The agent remains safe until it retrieves the poisoned memory, at which point it executes the malicious "old" instruction as a "new" command.
 - **Tachyon Mitigation**: All data retrieved from *any* external tool (including database fetches) is treated as untrusted and passed through the **Intent Gate**.
 
-## 3. Outbound Threat Vectors (Agent to External)
+## 3. Supply Chain Threat Vectors (Substrate & Managed Agents)
+
+### A. Hallucination Squatting
+- **Description**: An agent "hallucinates" a non-existent package name. An attacker proactively registers this name on PyPI with a malicious payload.
+- **Impact**: Arbitrary code execution within the agent's environment or host compromise.
+- **Tachyon Mitigation**: **Deterministic Capability Binding** via the `StateManager` whitelist. Only cryptographically verified or manually approved libraries are permitted for installation/import.
+
+### B. Dependency Confusion / Poisoning
+- **Description**: An agent fetches a malicious public package that shadows a private internal one, or a legitimate dependency is compromised upstream.
+- **Impact**: Exfiltration of environment variables, secrets, or data.
+- **Tachyon Mitigation**: The **Integrity Agent** performs real-time `pip-audit` scans before allowing any installation into the Tier 0 sandbox.
+
+## 4. Outbound Threat Vectors (Agent to External)
 
 ### A. Data / Telemetry Exfiltration
 - **Description**: A malicious or compromised agent attempts to send sensitive organizational data (API keys, PII, internal logs) to an attacker-controlled endpoint or a public LLM provider.

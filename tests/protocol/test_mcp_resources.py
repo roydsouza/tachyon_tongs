@@ -2,7 +2,7 @@ import pytest
 import json
 import os
 import sys
-from tachyon.mcp_gateway import handle_mcp_request
+from tachyon.protocol.mcp_gateway import handle_mcp_request
 
 @pytest.mark.asyncio
 async def test_mcp_resources_list():

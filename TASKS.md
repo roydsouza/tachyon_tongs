@@ -71,6 +71,13 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[MERKLE]** Implement a signed Merkle Tree/Hash-Chain for `docs/adr/` and `docs/security_evolution/` to prevent surreptitious history deletion.
 - [ ] **[AUDIT]** Integrate the integrity check into `scripts/verify_substrate.py`.
 
+### 🔋 [PLANNED] Phase 20: Substrate Optimization (Quota Management)
+- [ ] **[MANIFEST]** Create `agents/skills/substrate-optimizer/SKILL.md` with routing logic and LPM triggers.
+- [ ] **[ROUTER]** Implement `ModelRouter` in `tachyon/core/routing.py` to evaluate task complexity.
+- [ ] **[INTEGRATION]** Update `substrate_daemon.py` to route queries through the `ModelRouter`.
+- [ ] **[PROTOCOLS]** Implement Context Pruning and Low-Power Mode (LPM) logic.
+- [ ] **[UI]** Expose quota consumption and active substrate in the Airlock TUI.
+
 ### 🧪 Current Sprint: Phase 7 (The Airlock & Documentation)
 - [ ] **[TUI Scaffolding]** Build `scripts/airlock_tui.py` using the `textual` framework. Design a split-pane layout: Left (Active Threats), Top Right (Code Diff Proposal), Bottom Right (Interactive Chat).
 - [ ] **[Engineer Integration]** Wire the Airlock TUI to trigger the `EngineerAgent`.

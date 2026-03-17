@@ -202,6 +202,33 @@ class VulnerabilityScraper:
                 
         return threats
 
+    def harvest_payloads(self, threats: list, logger=None):
+        """Downloads and localizes raw exploit payloads to intelligence/exploits/."""
+        harvest_dir = "intelligence/exploits"
+        if not os.path.exists(harvest_dir):
+            os.makedirs(harvest_dir)
+            
+        harvested_count = 0
+        for threat in threats:
+            cve_id = threat.get("cve_id", "unknown").replace("/", "_").replace(" ", "_")
+            file_path = os.path.join(harvest_dir, f"{cve_id}.json")
+            
+            # Skip if already harvested
+            if os.path.exists(file_path):
+                continue
+                
+            try:
+                with open(file_path, "w") as f:
+                    json.dump(threat, f, indent=2)
+                harvested_count += 1
+                if logger:
+                    logger.add_file_updated(file_path, details=f"Harvested raw exploit payload for {cve_id}")
+            except Exception as e:
+                print(f"[Sentinel] [HARVEST] Failed to localize {cve_id}: {e}")
+                
+        print(f"[Sentinel] [HARVEST] Successfully localized {harvested_count} new exploit payloads.")
+        return harvested_count
+
     def _format_markdown_entry(self, threat: dict) -> str:
         """Formats the data for the EXPLOITATION_CATALOG.md database."""
         return f"### {threat['cve_id']} (Severity: {threat['severity']})\n- **Description:** {threat['description']}\n- **CVSS:** {threat['score']}\n"

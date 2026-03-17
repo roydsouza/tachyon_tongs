@@ -1,16 +1,3 @@
----
-
-### 🧤 Substrate Optimization Strategy (The Implementation Guide)
-
-To prevent future capacity "burn-outs," we will implement a routing logic within your **A2A Broker**. This document is designed to be copy-pasted into a new skill directory in **AntiGravity**.
-
-#### 📂 Setup Instructions
-1.  **Create Directory:** `mkdir -p ~/antigravity/tachyon_tongs/.agents/skills/substrate-optimizer`
-2.  **Save File:** Save the following markdown as `SKILL.md` inside that directory.
-
----
-
-```markdown
 # 🔋 Substrate Optimization Strategy (Power Management)
 
 ## Intent
@@ -20,9 +7,9 @@ To autonomously manage model routing and token consumption to prevent "Quota Bla
 
 | Task Class | Model Route | Logic |
 | :--- | :--- | :--- |
-| **L1: Reconnaissance** | Gemini 3 Flash (or local LLM using llmcpp or ollama) | Web scrapes, CVE ingestion, and log parsing. |
-| **L2: Verification** | Gemini 3 Flash | Sanitizer audits and "Airlock Debate" logic. |
-| **L3: Mutation/ADR** | Gemini 3.1 Pro (High) | Architectural changes, OPA Rego writing, and ADR generation. |
+| **L1: Reconnaissance** | gemini-3-flash | Web scrapes, CVE ingestion, and log parsing. |
+| **L2: Verification** | gemini-3-flash | Sanitizer audits and "Airlock Debate" logic. |
+| **L3: Mutation/ADR** | gemini-3.1-pro | Architectural changes, OPA Rego writing, and ADR generation. |
 
 ## 🛡️ Operational Protocols
 
@@ -45,13 +32,3 @@ Trigger LPM whenever the **Baseline Quota** indicator drops below 15%:
 ## 📜 Constraints
 - **Least Privilege:** Never use Ultra for documentation or comments.
 - **Deterministic First:** If a task can be solved via a Python script in `scripts/`, execute the script instead of asking the LLM for the answer.
-```
-
----
-
-### 🧪 Verification Step
-Once you have saved this, issue this command to your agent:
-> *"Roy here. Initialize the **Substrate Optimizer** and perform a 'Power Audit' of our current `TASKS.md`. Identify which items can be handled by Flash to save my Pro quota for the upcoming PQC migration."*
-
-**Would you like me to help you modify `substrate_daemon.py` next to programmatically enforce these routing rules at the broker level?**
-

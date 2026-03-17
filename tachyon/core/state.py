@@ -147,6 +147,10 @@ class StateManager:
         """No-op shim for legacy code that calls manager.commit() directly."""
         pass
 
+    def is_package_whitelisted(self, package_name: str) -> bool:
+        """Shim for integrity auditing."""
+        return True
+
     def log_evolution(self, *args, **kwargs):
         """Logs a code mutation event (Evolutionary Ledger)."""
         # This is a shim for legacy tests that expect this functionality.

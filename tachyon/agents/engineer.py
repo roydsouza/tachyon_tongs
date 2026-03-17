@@ -135,4 +135,7 @@ def engineer_action_node(state: dict) -> dict:
     )
     # The legacy test_airlock_oversight expects 'final_output' in the state
     state["final_output"] = result
+    # test_triad_supervisor expects threats_found
+    if "analysis" in state and "threats_found" in state["analysis"]:
+        state["threats_found"] = state["analysis"]["threats_found"]
     return state

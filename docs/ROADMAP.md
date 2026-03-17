@@ -97,10 +97,11 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **mTLS:** Cryptographic verification of node identity.
   - **OAuth2/OIDC:** Identifying explicit tenant attribution.
 
-### Phase 12: Bi-Directional Capability Firewall (Scale-Out PDP/PEP) [ACTIVE]
-- **Objective:** Establish a two-way intent-gate for Enterprise-grade DLP and Threat Harvesting.
+### Phase 13: Substrate-Aware Quota Management [PLANNED]
+- **Objective:** Eliminate "Quota Blackouts" by autonomously routing reasoning tasks between cost-effective (Flash/Local) and high-reasoning (Pro/Ultra) models.
 - **Implementation:**
-  - **PDP/PEP Separation:** Pluggable policy decision points (Rego/Cedar) and distributed enforcement at the edges.
-  - **Sentinel Harvester:** Amortized exploit localized data lake.
-  - **Reverse Firewall:** Outbound introspection to prevent sensitive data/telemetry leaks.
-  - **A2UI & MCP:** Rich presentation and tool-sharing across the agentic fleet.
+  - **Autonomous Model Router:** Evaluates prompt complexity and selects the optimal model substrate.
+  - **Context Pruning:** Minimizes token consumption by surgically loading only required task fragments.
+  - **Low-Power Mode (LPM):** Automatically disables non-critical background processes (e.g., Pathogen drills) based on quota availability.
+
+### Phase 14: Bi-Directional Capability Firewall (Scale-Out PDP/PEP) [ACTIVE]

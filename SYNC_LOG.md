@@ -4,6 +4,19 @@ This log tracks technical decisions, mission-critical state transitions, and syn
 
 ---
 
+## [2026-03-17 16:15] - Phase 12: Sentinel Harvest Mode Implemented
+- **Session Focus**: Implementing the "Intelligence Lake" via raw payload localization.
+- **Key Accomplishments**:
+    - **CLI Upgrade**: Added `--harvest` flag to `scripts/sentinel.py`.
+    - **Harvester Implementation**: Created `VulnerabilityScraper.harvest_payloads()` to localize raw JSON threat data.
+    - **Triad Integration**: Wired the `Engineer` agent to save payloads to `intelligence/exploits/` when in harvest mode.
+    - **Verification**: Successfully harvested 6 new exploit payloads in a live run.
+- **Decisions**:
+    - Localize payloads to a structured `intelligence/exploits/` directory to facilitate downstream Rego/Cedar synthesis.
+- **Status**: Phase 12 (Harvest) Complete. Ready for Policy Synthesizers.
+
+---
+
 ## [2026-03-16 21:05] - Documentation & Integrity Showcasing
 - **Session Focus**: Showcasing Security Evolution and Merkle Integrity in public-facing docs.
 - **Key Accomplishments**:

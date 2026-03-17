@@ -5,8 +5,7 @@ import sys
 import os
 from unittest.mock import patch
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from tachyon.mcp_gateway import handle_mcp_request
+from tachyon.protocol.mcp_gateway import handle_mcp_request
 
 def test_mcp_initialize():
     req = {
@@ -34,7 +33,7 @@ def test_mcp_tools_list():
     assert tools[0]["name"] == "tachyon_safe_fetch"
     assert tools[1]["name"] == "tachyon_safe_execute"
 
-@patch('tachyon.mcp_gateway.safe_fetch')
+@patch('tachyon.protocol.mcp_gateway.safe_fetch')
 def test_mcp_safe_fetch(mock_fetch):
     mock_fetch.return_value = {"status": "SUCCESS", "content": "mocked"}
     
@@ -53,7 +52,7 @@ def test_mcp_safe_fetch(mock_fetch):
     assert not res["result"].get("isError", False)
     assert "mocked" in res["result"]["content"][0]["text"]
 
-@patch('tachyon.mcp_gateway.safe_execute')
+@patch('tachyon.protocol.mcp_gateway.safe_execute')
 def test_mcp_safe_execute_blocked(mock_execute):
     mock_execute.return_value = {"status": "BLOCKED", "error": "Not allowed"}
     
@@ -95,7 +94,7 @@ def test_mcp_tool_not_found():
     assert "error" in res
     assert "Tool 'non_existent_tool' not found" in res["error"]["message"]
 
-@patch('tachyon.mcp_gateway.safe_fetch')
+@patch('tachyon.protocol.mcp_gateway.safe_fetch')
 def test_mcp_exception_handling(mock_fetch):
     mock_fetch.side_effect = Exception("System Crash")
     
