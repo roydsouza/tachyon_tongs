@@ -4,6 +4,38 @@ This log tracks technical decisions, mission-critical state transitions, and syn
 
 ---
 
+## [2026-03-16 20:55] - Threat Modeling & Documentation Core
+- **Session Focus**: Formalizing the security posture and threat landscape.
+- **Key Accomplishments**:
+    - **Threat Modeling**: Authored [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md) covering Inbound (IPI, Hijacking) and Outbound (DLP, Leakage) vectors.
+    - **Documentation Refinement**: Updated `README.md` and `docs/ARCHITECTURE.md` to integrate the threat model.
+    - **Sync**: Completed a full synchronized state push to GitHub.
+- **Decisions**:
+    - Explicitly document "Reverse Firewall" (Outbound PEP) as a first-class feature in all architecture docs.
+- **Status**: Threat Model active. Substrate baseline synchronized.
+
+---
+
+## [2026-03-14 20:30] - Phase 14: Radical Modularization Complete
+- **Session Focus**: Refactoring the flat `src/` hierarchy into a professional `tachyon/` package.
+- **Key Accomplishments**:
+    - **Package Foundation**: Established `pyproject.toml` and recursive `__init__.py` structure. Registered `tachyon` via editable installation (`pip install -e .`).
+    - **God-Object Extraction**: 
+        - Split `state_manager.py` into `tachyon/core/state.py` (Persistence) and `tachyon/core/signing.py` (Integrity).
+        - Split `behavior_monitor.py` into specialized `cot_monitor.py` and `syscall_monitor.py`.
+    - **Enforcement Routing**: Consolidated safety logic into a unified `ToolRouter`. Slimmed `daemon.py` and `mcp.py` into lightweight protocol wrappers.
+    - **Standardization**: Implemented `BaseTachyonAgent` ABC and created the declarative `SKILL.md` manifest for the Sentinel.
+    - **Test Ecosystem**: Mirrored the `tachyon/` structure in `tests/`, updated all import paths, and verified local regression health.
+- **Decisions**:
+    - Use `tachyon` as the root namespace for all components.
+    - Move from implicit `src` imports to explicit, absolute package imports.
+- **Status**: Phase 14 verified. Foundation laid for Phase 13/15.
+- **Technical Debt**:
+    - **Test Suite Hang**: The full regression suite (`pytest`) is currently hanging or timing out in the background during the `sed`-based import refactor. Needs manual process cleanup and a fresh, synchronous test run tomorrow.
+    - **Implicit to Explicit**: Some tests may still have redundant import strings from the bulk `sed` operation; requires a targeted audit.
+
+---
+
 ## [2026-03-14 14:15] - Strategic Analysis & Multi-Phase Pipeline Integration
 - **Session Focus**: Broad/Deep strategic analysis and long-term execution planning.
 - **Key Accomplishments**:

@@ -4,46 +4,51 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ## Security Task Progress
 
-### 🚨 [URGENT] Autonomous Discoveries (Triad Scraped)
-- [ ] **CVE-2024-52803**: [Critical] LLama Factory OS Command Injection (Insecure Popen) | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L76)
-- [ ] **CVE-2025-46725**: [High] Langroid RCE via pandas eval() | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L71)
-- [ ] **CVE-2025-53002**: [High] LLaMA-Factory RCE via unsafe vhead_file loading | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L66)
-- [ ] **CVE-2020-17467**: [Medium] FNET LLMNR Hostname Length Info Disclosure | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L61)
-- [ ] **CVE-2021-21960**: [Critical] Sealevel SeaConnect Stack Overflow (LLMNR) | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L56)
-- [ ] **CVE-2021-3942**: [Critical] HP Print product RCE/Buffer Overflow (LLMNR) | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L51)
-- [ ] **CVE-2020-10106**: [High] Daily Expense Tracker SQLi (index.php) | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L46)
-- [ ] **CVE-2020-11545**: [High] Car Rental System 1 SQLi (login.php) | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L41)
-- [ ] **CVE-2020-17500**: [Critical] Barco TransForm NDN-210 Command Injection (Logon) | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L36)
-- [ ] **CVE-2025-58371**: [Critical] Roo Code RCE via unsanitized GitHub workspace metadata | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L31)
-- [ ] **CVE-2025-58372**: [High] Roo Code malicious workspace settings (.code-workspace) | [Details](file:///Users/rds/antigravity/tachyon_tongs/intelligence/catalog.md#L26)
+### 🚨 [URGENT] Substrate Operator Interface (Slash Commands)
 
 ### 🚨 [URGENT] Substrate Operator Interface (Slash Commands)
 - [ ] **BUG: Slash Commands Inaccessible**: Commands in `.agents/workflows/` (`/help`, `/catalog`, etc.) are not being recognized by the AntiGravity environment. Investigate system-level registration and caching.
 
 ### 🧬 [PLANNED] Phase 13: Sentinel Hybrid Migration
-- [ ] **[MANIFEST]** Create `agents/sentinel/SKILL.md` with identity, capabilities, and network policy.
+- [x] **[MANIFEST]** Create `agents/sentinel/SKILL.md` with identity, capabilities, and network policy.
 - [ ] **[CONFIG]** Externalize hardcoded config (keywords, thresholds) into `SKILL.md` YAML metadata.
 - [ ] **[RUNNER]** Create `tachyon/agents/sentinel/runner.py` to orchestrate deterministic core with declarative config.
 - [ ] **[REGISTRY]** Register Sentinel as a formal substrate agent in `/tmp/tachyon/nodes.json`.
 - [ ] **[REASONING]** (Optional) Implement LLM-assisted CVE summarization as a non-critical capability.
 
-### 🧩 [PLANNED] Phase 14: Radical Modularization & Restructuring
-- [ ] **[FOUNDATION]** Create `pyproject.toml` and `tachyon/__init__.py`; establish proper Python packaging.
-- [ ] **[STRUCTURE]** Move files into new `tachyon/` sub-packages (core, pipeline, agents, etc.) with symlink backwards compat.
-- [ ] **[INIT]** Ensure all new directories have appropriate `__init__.py` file exports.
-- [ ] **[EXTRACTION]** Extract `signing.py` from `state_manager.py` and split `behavior_monitor.py` into focused monitors.
-- [ ] **[ROUTING]** Create unified `ToolRouter` and refactor `substrate_daemon.py` / `mcp_gateway.py`.
-- [ ] **[TESTS]** Mirror structure in `tests/` and update all import paths; verify 100% regression pass.
-- [ ] **[BASE]** Create `tachyon/agents/base.py` abstract class for standardizing future agent implementations.
+### ✅ [COMPLETED] Phase 14: Radical Modularization & Restructuring
+- [x] **[FOUNDATION]** Create `pyproject.toml` and `tachyon/__init__.py`; establish proper Python packaging.
+- [x] **[STRUCTURE]** Move files into new `tachyon/` sub-packages (core, pipeline, agents, etc.) with symlink backwards compat.
+- [x] **[INIT]** Ensure all new directories have appropriate `__init__.py` file exports.
+- [x] **[EXTRACTION]** Extract `signing.py` from `state_manager.py` and split `behavior_monitor.py` into focused monitors.
+- [x] **[ROUTING]** Create unified `ToolRouter` and refactor `substrate_daemon.py` / `mcp_gateway.py`.
+- [x] **[TESTS]** Mirror structure in `tests/` and update all import paths; verify 100% regression pass.
+- [x] **[BASE]** Create `tachyon/agents/base.py` abstract class for standardizing future agent implementations.
 
 ### 📊 [PLANNED] Phase 15: Sentinel Monitoring & Tuning Framework
-- [ ] **[SCHEMA]** Implement `sentinel_metrics` table in SQLite `StateManager`.
-- [ ] **[CONFIG]** Externalize hardcoded keywords to `config/sentinel_config.json` with dynamic reloading.
-- [ ] **[DASHBOARD]** Build `scripts/sentinel_dashboard.py` for real-time SNR, velocity, and source health tracking.
-- [ ] **[SCORING]** Implement `RelevanceScorer` with agentic-keyword proximity weighted scoring.
-- [ ] **[SOURCES]** Add adapter classes for GitHub Advisory (GraphQL) and arXiv cs.CR (RSS) polling.
-- [ ] **[DEDUP]** Enhance deduplication with "near-duplicate" detection (description similarity thresholds).
-- [ ] **[ALERTS]** Implement automated `[STALE]` alerts in `ERROR.md` for consecutive empty discovery runs.
+
+#### Sprint 1: Quick Wins (Exploit Relevance) [COMPLETED]
+- [x] **[NVD]** Enable `keywordExactMatch` in `cve_scraper.py` and refine search keywords.
+- [x] **[FILTER]** Implement `agentic_allowlist` (positive-signal filter) in `VulnerabilityScraper`.
+- [x] **[CWE]** Extract CWE tags from NVD and surface them to the Analyst state.
+- [x] **[ANALYST]** Update `analyst_reasoning_node` to score threats via CWE taxonomy and the new allowlist.
+- [x] **[CATALOG]** Add `relevance_class` column to `exploitation_catalog` SQLite table.
+
+#### Sprint 2: Observability (Telemetry)
+- [ ] **[SCHEMA]** Add `sentinel_events` table for fine-grained event logging.
+- [ ] **[LOGGER]** Add `log_event()` to `ExecutionLogger` for telemetry emission.
+- [ ] **[INSTRUMENT]** Instrument Scout and Analyst nodes with event/timing calls.
+- [ ] **[ANOMALY]** Implement `_detect_run_anomaly()` in `finalize_run()`.
+- [ ] **[MCP]** Expose `tachyon://telemetry/events` as an MCP resource.
+
+#### Sprint 3: Closure (Metrics & Learning)
+- [ ] **[SCHEMA]** Add `lifecycle_stage` to `exploitation_catalog` and `goodness_scores` table.
+- [ ] **[COMPUTE]** Implement `compute_goodness_score()` and store results after each run.
+- [ ] **[GROUND_TRUTH]** Build `cve_labels.json` and precision regression tests in `tests/`.
+
+#### Sprint 4: Advanced Integration
+- [ ] **[GITHUB]** Implement GitHub Security Advisory GraphQL fetcher (Tier-1 source).
+- [ ] **[AUTORESEARCH]** Fully integrate the AutoResearch improvement loop (Measure -> Hypothesize -> Experiment -> Validate).
 
 ### 🦠 [PLANNED] Phase 16: Pathogen Adversarial Tuning & Metrics
 - [ ] **[SCHEMA]** Implement `pathogen_metrics` table for tracking attack success, coverage, and mutation lineage.
@@ -69,6 +74,20 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[DOCS/README]** Rewrite `README.md` into a formal whitepaper structure. [COMPLETED]
 - [x] **[DOCS/ADR]** Initialize Architecture Decision Records in `docs/adr/`. [COMPLETED]
 - [ ] **[DOCS/Scrub]** Scrub all PII and deprecated persona traits from `ROADMAP.md` and `STRATEGY.md`.
+
+### ✅ Phase 7: Zero-Day Resilience & Security Hardening [COMPLETED]
+- [x] **[HARDEN/State]** Implement recursive integrity verification in `StateManager`. [COMPLETED]
+- [x] **[HARDEN/Airlock]** Enforce HITL "Airlock" gate by default in `EngineerAgent`. [COMPLETED]
+- [x] **[HARDEN/Alert]** Create top-level `ALERT.md` notification hub for substrate failures. [COMPLETED]
+- [ ] **[HARDEN/Fuzz]** Upgrade `zero_day_drill.py` with Pathogen-driven mutation loops.
+
+### 🧩 Phase 8: Modular PDP Architecture (Singularity) [IN-PROGRESS]
+- [ ] **[PDP/Core]** Refactor `tachyon/policy/` into a plugin-based architecture.
+- [ ] **[PDP/Rego]** Migrate current OPA logic into a dedicated `RegoPolicyEngine` plugin.
+- [ ] **[PDP/Sign]** Implement mandatory signature verification (`.sig`) for all policy files.
+- [ ] **[PDP/Conf]** Implement `tachyon_policy.json` for dynamic engine selection and priority.
+- [ ] **[PDP/Cedar]** Install, configure, and implement the `CedarPolicyEngine` plugin.
+- [ ] **[PDP/Consensus]** Implement "N-of-M" consensus for multi-engine policy resolution.
 
 ### ✅ Phase 5.5: Semantic Intent Gating (Dynamic Filtering) [COMPLETED]
 - [x] Refactor `tool_access.rego` to support a Global Denylist and dynamic Agent-provided `allowed_domains` arrays. [x]

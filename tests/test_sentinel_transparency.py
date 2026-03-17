@@ -1,6 +1,6 @@
 import unittest
 import os
-from src.execution_logger import ExecutionLogger
+from tachyon.execution_logger import ExecutionLogger
 
 class TestSentinelTransparency(unittest.TestCase):
     def setUp(self):

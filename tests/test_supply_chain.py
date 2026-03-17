@@ -4,10 +4,10 @@ import tempfile
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from src.apple_sandbox import AppleSandbox, DependencyScanner
+from tachyon.apple_sandbox import AppleSandbox, DependencyScanner
 
 def test_safe_execution():
-    from src.apple_sandbox import AppleSandbox
+    from tachyon.apple_sandbox import AppleSandbox
     sandbox = AppleSandbox()
     
     with tempfile.NamedTemporaryFile(suffix=".py", mode="w", delete=False) as f:
@@ -22,7 +22,7 @@ def test_safe_execution():
         os.remove(safe_path)
 
 def test_poisoned_execution_blocked():
-    from src.apple_sandbox import AppleSandbox
+    from tachyon.apple_sandbox import AppleSandbox
     sandbox = AppleSandbox()
     
     with tempfile.NamedTemporaryFile(suffix=".py", mode="w", delete=False) as f:

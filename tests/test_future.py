@@ -1,7 +1,7 @@
 import unittest
-from src.cve_scraper import VulnerabilityScraper
-from src.wasm_benchmark import WasmToolRunner
-from src.behavior_monitor import PromptBehaviorMonitor, BehaviorAnomalyError
+from tachyon.cve_scraper import VulnerabilityScraper
+from tachyon.wasm_benchmark import WasmToolRunner
+from tachyon.behavior_monitor import PromptBehaviorMonitor, BehaviorAnomalyError
 
 class TestPhase3FutureCapabilities(unittest.TestCase):
 

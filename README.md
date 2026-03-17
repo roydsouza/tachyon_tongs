@@ -11,7 +11,7 @@ Autonomous AI agents introduce critical new attack surfaces to organizational in
 
 ## 2. The Tachyon Tongs Solution
 
-Tachyon Tongs addresses these vulnerabilities by acting as a mandatory proxy daemon (`substrate_daemon.py`) for all agent actions. Rather than relying on agent self-regulation, Tachyon Tongs implements a defense-in-depth pipeline:
+Tachyon Tongs addresses these vulnerabilities by acting as a mandatory proxy daemon (`tachyon/enforcement/daemon.py`) for all agent actions. Rather than relying on agent self-regulation, Tachyon Tongs implements a defense-in-depth pipeline:
 
 *   **Semantic Intent Gating (PDP/PEP):** All outbound network and system tool requests are routed through a Policy Enforcement Point ([event_horizon](file:///Users/rds/antigravity/event_horizon)). Requests are evaluated against declarative `.rego` policies by the Policy Decision Point ([singularity](file:///Users/rds/antigravity/singularity)) that enforce strict capability boundaries.
 *   **Tiered Workload Isolation:** High-risk actions are isolated execution environments. "Tier 0" workloads run under dynamically generated macOS `sandbox-exec` (Seatbelt) profiles, allowing native computation speeds with microsecond overhead, while preventing unauthorized network or filesystem access.
@@ -40,7 +40,7 @@ Agents that are natively managed by the Tachyon Tongs Substrate. They are define
 Independent agents and applications (e.g., multi-repo agents like `entropy_dashboard` or `shors_reaper`) running in their own binaries or environments local to the machine. These agents utilize the `tachyon_client` to route their operations through the Substrate Proxy Daemon, benefiting from the Triad Pipeline and OPA Gating without having their core logic modified.
 
 ### C. Standard Protocol Agents (MCP)
-Tachyon Tongs implements the **Model Context Protocol (MCP)**. External agents (e.g., Claude Desktop, IDE extensions) can connect directly to `src/mcp_gateway.py` via `stdio`. This allows standard agents to discover and execute `tachyon_safe_fetch` and `tachyon_safe_execute` as native tools, with all substrate security logic applied transparently. All proposed modifications are subject to the **Scalable Oversight (Airlock Debate)** protocol.
+Tachyon Tongs implements the **Model Context Protocol (MCP)**. External agents (e.g., Claude Desktop, IDE extensions) can connect directly to `tachyon/protocol/mcp.py` via `stdio`. This allows standard agents to discover and execute `tachyon_safe_fetch` and `tachyon_safe_execute` as native tools, with all substrate security logic applied transparently. All proposed modifications are subject to the **Scalable Oversight (Airlock Debate)** protocol.
 
 ### D. Off-Machine Fleet (Planned phase)
 Future iterations will transition the local daemon to a cloud-native architecture.
@@ -65,6 +65,7 @@ source venv/bin/activate
 
 # Install Dependencies (includes OPA, Pytest, and MLX frameworks)
 pip install -r requirements.txt
+pip install -e . --break-system-packages # Register the tachyon package
 ./scripts/start_opa.sh
 ```
 
@@ -81,7 +82,7 @@ python3 scripts/run_pathogen.py
 For independent applications, import the Tachyon Client to proxy unsafe fetches and command executions through the protective daemon.
 
 ```python
-from src.tachyon_client import safe_fetch
+from tachyon.enforcement import safe_fetch
 
 # The Substrate Daemon evaluates the request against the OPA gateway
 response = safe_fetch("https://untrusted-api.com/data", agent_id="MyExternalAgent")
@@ -95,6 +96,7 @@ print(response.get("content"))
 *   **[CONTENTS.md](CONTENTS.md):** The comprehensive index of all documentation, configurations, and core scripts.
 *   **[ARCHITECTURE.md](docs/ARCHITECTURE.md):** Deep technical dive into the Guardian Triad, OPA Rego policies, Apple Sandbox profiles, and MLX inference loops.
 *   **[DEPLOYMENT.md](docs/DEPLOYMENT.md):** The Builder's Guide for constructing In-Band and Out-of-Band agents, with template structures and capability whitelisting rules.
+*   **[THREAT_MODEL.md](THREAT_MODEL.md):** Comprehensive analysis of Inbound (Hijacking/Injection) and Outbound (DLP) threat vectors and mitigations.
 *   **[PHASE_10_STATUS.md](docs/PHASE_10_STATUS.md):** Current progress on Automated Competitive Intelligence.
 ## ⚡ Slash Commands (The Operator Interface)
 Tachyon Tongs supports explicit control via standardized slash commands, allowing you to bypass manual file lookups:

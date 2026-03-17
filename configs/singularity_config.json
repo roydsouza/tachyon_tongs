@@ -1,0 +1,12 @@
+{
+  "consensus": "ANY_DENY",
+  "active_engines": [
+    "REGO"
+  ],
+  "engine_configs": {
+    "REGO": {
+      "policy_dir": "policies/rego",
+      "enforce_signatures": true
+    }
+  }
+}

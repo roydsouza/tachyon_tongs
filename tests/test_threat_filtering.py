@@ -1,6 +1,6 @@
 import pytest
-from src.cve_scraper import VulnerabilityScraper
-from src.agents.analyst_agent import analyst_reasoning_node
+from tachyon.cve_scraper import VulnerabilityScraper
+from tachyon.agents.analyst_agent import analyst_reasoning_node
 
 def test_scraper_noise_denylist():
     """Verify the scraper correctly drops items in the denylist."""

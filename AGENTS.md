@@ -10,6 +10,7 @@ This document is the primary entry point for AI agents. It defines the structura
 - **Identity & Mission**: [.agent/rules/IDENTITY.md](file:///.agent/rules/IDENTITY.md)
 - **Behavioral Principles (Soul)**: [.agent/rules/SOUL.md](file:///.agent/rules/SOUL.md)
 - **Global Constraints**: [.agent/rules/MISSION.md](file:///.agent/rules/MISSION.md)
+- **ADR Governance**: [agents/adr_governance/SKILL.md](file:///Users/rds/antigravity/tachyon_tongs/agents/adr_governance/SKILL.md)
 
 ## 📂 Project Hierarchy
 - **Core Substrate**: `src/` (The secure execution engine)

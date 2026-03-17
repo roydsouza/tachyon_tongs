@@ -6,18 +6,71 @@ Primary executable for manual, scheduled or programmatic invocation of the Senti
 import argparse
 import sys
 import os
+import datetime
+import json
 
 # Add the root directory to PYTHONPATH so it can be invoked easily
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.execution_logger import ExecutionLogger
-from src.cve_scraper import VulnerabilityScraper
-from src.adk_sentinel import run_supervisor
+from tachyon.monitoring.execution_logger import ExecutionLogger
+from tachyon.agents.sentinel.scraper import VulnerabilityScraper
+from tachyon.pipeline.orchestrator import run_supervisor
+from tachyon.agents.engineer import AutoPatcher
 
-import datetime
-import os
-import json
-from src.auto_patcher import AutoPatcher
+def reactive_remediation_sweep(logger=None):
+    """
+    Scans EXPLOITS.md for unresolved threats and triggers the Engineer to work on them.
+    This effectively 'sweeps' the backlog for patchable targets.
+    """
+    exploits_path = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")), "EXPLOITS.md")
+    if not os.path.exists(exploits_path):
+        return
+
+    print("[Sentinel] [REMEDIATION] Initiating backlog sweep...")
+    with open(exploits_path, "r") as f:
+        lines = f.readlines()
+
+    cve_queue = []
+    current_cve = None
+    collecting = False
+    
+    for line in lines:
+        if "### 🔴" in line or "### 🟠" in line:
+            collecting = True
+            continue
+        if collecting and "**CVE-" in line:
+            try:
+                # Expected format: - **CVE-XXXX-XXXX**: [Severity] Description | [Link]
+                parts = line.split("**")
+                if len(parts) < 3:
+                    continue
+                cve_id = parts[1].strip()
+                
+                # The description is after the second '**'
+                desc_part = parts[2].split("|")[0].strip()
+                if desc_part.startswith(":"):
+                    desc_part = desc_part[1:].strip()
+                
+                cve_queue.append({"id": cve_id, "description": desc_part})
+            except Exception as parse_err:
+                print(f"[Sentinel] [REMEDIATION] Skipping malformed line: {line.strip()} ({parse_err})")
+
+    if not cve_queue:
+        print("[Sentinel] [REMEDIATION] No high-priority CVEs in backlog. Sweep complete.")
+        return
+
+    print(f"[Sentinel] [REMEDIATION] Found {len(cve_queue)} threats in backlog. Processing...")
+    
+    # We trigger the supervisor in REMEDIATION mode for each CVE
+    for cve in cve_queue:
+        # Check if already staged in airlock to avoid redundant work
+        airlock_path = f"/tmp/tachyon_airlock/{cve['id'].replace(' ', '_')}.json"
+        if os.path.exists(airlock_path):
+            continue
+            
+        print(f"[Sentinel] [REMEDIATION] Investigating {cve['id']}...")
+        # We pass the CVE as the 'url' to the supervisor to signal a targeted run
+        run_supervisor(f"investigate://{cve['id']}", logger=logger, cve_context=cve)
 
 def check_temporal_fallback():
     """
@@ -87,6 +140,9 @@ def main():
         # Check for aged proposals first
         check_temporal_fallback()
         
+        # Phase 12+: Reactive Remediation Sweep
+        reactive_remediation_sweep(logger=logger)
+        
         # Phase 1 & 2: The Guardian Triad Split (Autonomous Multi-Agent Workflow)
         print("[Sentinel] Empowering the Guardian Triad Supervisor Graph...")
         # The Scout handles the scraping and the targeted URL fetching!
@@ -100,8 +156,10 @@ def main():
              print("[Sentinel] Multi-Agent Threat Analysis completed securely.")
         
     except Exception as e:
+        import traceback
         error_msg = str(e)
         print(f"[Sentinel] [FATAL] Execution failed: {error_msg}")
+        traceback.print_exc()
         logger.log_fatal_error(error_msg)
     finally:
         # Finalize the ledger regardless of crash

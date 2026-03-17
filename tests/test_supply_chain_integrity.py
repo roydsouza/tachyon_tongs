@@ -1,6 +1,6 @@
 import pytest
 import unittest.mock as mock
-from src.agents.integrity_agent import IntegrityAgent
+from tachyon.agents.integrity_agent import IntegrityAgent
 
 # Scaffolding for the Integrity Agent since we haven't implemented the logic yet
 # This test will drive the implementation.

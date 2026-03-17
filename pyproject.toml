@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tachyon-tongs"
+version = "1.0.0"
+description = "Autonomous Agentic Firewall & Security Substrate"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "pydantic",
+    "mlx-lm",
+    "cryptography",
+    "textual",
+]
+
+[project.scripts]
+tachyon-sentinel = "scripts.run_sentinel:main"
+tachyon-pathogen = "scripts.run_pathogen:main"
+tachyon-daemon = "scripts.run_daemon:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tachyon*"]
