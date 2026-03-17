@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from tachyon.verifier_agent import VerifierAgent, VerificationFailedError
-from tachyon.adk_sentinel import run_supervisor
+from tachyon.pipeline.orchestrator import run_supervisor
 
 class TestStage4Verifier(unittest.TestCase):
 

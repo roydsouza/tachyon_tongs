@@ -36,7 +36,14 @@ class AutoPatcher:
             return {"status": "error", "reason": f"Failed to write regression test: {e}"}
 
         # 2. Apply the Patches
-        for file_patch in patch_files:
+        # Phase 12+: Support both new list format and legacy dict format
+        items_to_patch = []
+        if isinstance(patch_files, dict):
+             items_to_patch = [{"file": k, "content": v} for k, v in patch_files.items()]
+        else:
+             items_to_patch = patch_files
+
+        for file_patch in items_to_patch:
             file_path = file_patch.get("file")
             new_content = file_patch.get("content")
             try:
@@ -47,9 +54,9 @@ class AutoPatcher:
 
         # 3. Run the Regression Pipeline
         try:
-            # We run pytest specifically on the synthesized test file
+            # Use the environment-agnostic 'pytest' command
             result = subprocess.run(
-                ["venv/bin/pytest", test_file_path, "-v"],
+                ["pytest", test_file_path, "-v"],
                 capture_output=True,
                 text=True,
                 timeout=15
@@ -69,7 +76,7 @@ class AutoPatcher:
                     f.write(f"# 🛡️ Pending Human Approval: {cve_id}\n\n")
                     f.write("The AutoPatcher successfully synthesized and validated a mitigation patch.\n\n")
                     f.write("### Staged Files:\n")
-                    for file_patch in patch_files:
+                    for file_patch in items_to_patch:
                         f.write(f"- `{file_patch.get('file')}`\n")
                     f.write(f"- `{test_file_path}`\n\n")
                     f.write("### Action Required\n")

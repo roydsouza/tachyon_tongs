@@ -66,6 +66,11 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[PLUGGABLE]** Implement the multi-engine PDP resolver.
 - [ ] **[MANUAL]** Curate `policies/rego/manual/internal_dlp.rego` for sensitive info.
 
+### 🛡️ [NEW] Phase 19: Integrity Gating & Security Evolution
+- [ ] **[LEDGER]** Establish `docs/security_evolution/` to track substrate mutations mapped to specific exploits (The "Exploit-to-Fix" ADRs).
+- [ ] **[MERKLE]** Implement a signed Merkle Tree/Hash-Chain for `docs/adr/` and `docs/security_evolution/` to prevent surreptitious history deletion.
+- [ ] **[AUDIT]** Integrate the integrity check into `scripts/verify_substrate.py`.
+
 ### 🧪 Current Sprint: Phase 7 (The Airlock & Documentation)
 - [ ] **[TUI Scaffolding]** Build `scripts/airlock_tui.py` using the `textual` framework. Design a split-pane layout: Left (Active Threats), Top Right (Code Diff Proposal), Bottom Right (Interactive Chat).
 - [ ] **[Engineer Integration]** Wire the Airlock TUI to trigger the `EngineerAgent`.

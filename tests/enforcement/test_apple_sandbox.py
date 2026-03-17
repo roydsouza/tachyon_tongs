@@ -1,6 +1,6 @@
 import pytest
 import os
-from tachyon.apple_sandbox import AppleSandbox
+from tachyon.enforcement.apple_sandbox import AppleSandbox
 
 @pytest.fixture
 def sandbox():

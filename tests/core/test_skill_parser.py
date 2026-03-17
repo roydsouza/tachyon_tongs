@@ -1,7 +1,7 @@
 import unittest
 import os
 import tempfile
-from tachyon.skill_parser import load_skill, materialize_network_constraints, SkillParserError
+from tachyon.core.skill_parser import load_skill, materialize_network_constraints, SkillParserError
 
 class TestSkillParser(unittest.TestCase):
     def setUp(self):

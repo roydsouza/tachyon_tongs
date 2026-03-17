@@ -1,8 +1,8 @@
 import unittest
 import time
 from tachyon.capability_token import CapabilityToken
-from tachyon.intent_scoring import ContextualIntentGate, IntentContext
-from tachyon.adk_sentinel import run_supervisor
+from tachyon.agents.legacy.intent_scoring import ContextualIntentGate, IntentContext
+from tachyon.pipeline.orchestrator import run_supervisor
 
 class TestAdvancedProtections(unittest.TestCase):
 
@@ -57,7 +57,7 @@ class TestAdvancedProtections(unittest.TestCase):
     # --- ADK Sentinel Integration Tests ---
     def test_adk_sentinel_graph_execution(self):
         # Proves the mocked ADK StateGraph successfully passes state through the 3 nodes
-        from tachyon.adk_sentinel import run_supervisor
+        from tachyon.pipeline.orchestrator import run_supervisor
         final_state = run_supervisor("https://github.com/advisories")
         
         # Ensure all steps populated the state dictionary

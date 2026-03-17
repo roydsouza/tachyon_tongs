@@ -3,7 +3,7 @@ import os
 import json
 import datetime
 import unittest.mock as mock
-from tachyon.state_manager import StateManager
+from tachyon.core.state_manager import StateManager
 from tachyon.agents.engineer_agent import engineer_action_node
 from scripts.sentinel import check_temporal_fallback
 
@@ -21,7 +21,7 @@ def test_skeptic_integration():
     
     # Mocking MetalAccelerator to avoid LLM calls
     import unittest.mock as mock
-    with mock.patch("src.metal_accelerator.MetalAccelerator.generate_remediation_patch") as mock_patch:
+    with mock.patch("tachyon.metal_accelerator.MetalAccelerator.generate_remediation_patch") as mock_patch:
         mock_patch.return_value = {
             "patch_files": {"src/dummy.py": "print('fixed')"},
             "test_file_path": "tests/test_dummy.py",
@@ -62,7 +62,7 @@ def test_temporal_fallback_trigger():
     with open(path, "w") as f:
         json.dump(proposal, f)
         
-    with mock.patch("src.auto_patcher.AutoPatcher.apply_and_test") as mock_apply:
+    with mock.patch("tachyon.auto_patcher.AutoPatcher.apply_and_test") as mock_apply:
         check_temporal_fallback()
         assert mock_apply.called
         assert not os.path.exists(path) # Cleanup check
