@@ -168,3 +168,20 @@ Tachyon Tongs is designed as an autonomic, self-healing organism rather than a s
 5.  **Zero-Day Fuzzing (`zero_day_drill.py`):** A continuous architectural fitness function orchestrates Pathogen asynchronously, generating massive variations of un-cataloged prompt attacks to map the NPU performance and resilience ceiling of the Triad.
 
 For a detailed breakdown of this self-modifying biological paradigm, see `docs/BEHAVIOR.md`.
+
+## 5. Security Evolution & Immutable Auditing
+
+Tachyon Tongs maintains a high-assurance record of its own defensive evolution.
+
+### A. Security Evolution Ledger
+Located in `docs/security_evolution/`, this ledger functions as a specialized set of **Security ADRs**. Each entry maps a specific exploit discovery (from the Sentinel) to the corresponding substrate remediation (synthesized by the Engineer). This provides a clear, educational, and auditable history of how the substrate has hardened over time.
+
+### B. Cryptographic Integrity (Merkle Tree)
+To prevent adversarial "history rewriting"—where a compromised agent might attempt to delete or modify previous security logs—Tachyon Tongs implements a **Signed Merkle Tree** (or Hash-Chain) across the following critical directories:
+- `docs/adr/`
+- `docs/security_evolution/`
+
+Each new entry generates a SHA-256 hash that incorporates the previous entry's hash, forming an immutable chain. The head of this chain is cryptographically signed by the Operator's identity.
+
+### C. Audit Integration
+The integrity of the ledger is verified during every `scripts/verify_substrate.py` run and summarized in the `/report` command. Any deviation in the hash chain or missing files will trigger a substrate-wide **INTEGRITY_FAILURE** alert, halting autonomous evolutions until manual reconciliation.

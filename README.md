@@ -19,6 +19,10 @@ Tachyon Tongs addresses these vulnerabilities by acting as a mandatory proxy dae
     1.  **Scout:** Fetches raw data within constrained routing rules.
     2.  **Analyst/Sanitizer:** Strips zero-width steganography and executes local, Metal-accelerated MLX inference models (e.g., Llama 3.2 4-bit) to detect injection vectors.
     3.  **Engineer:** Finalizes the sanitized, cryptographically bounded output for safe consumption by the requesting agent.
+*   **Outbound Protection (Reverse Firewall)**: Introspective DLP (Data Loss Prevention) that blocks or sanitizes sensitive telemetry leaving the workspace.
+*   **Pluggable Governance (PDP/PEP)**: Separation of Policy Decision Points (supporting Rego and Cedar) from Policy Enforcement Points at the edges.
+*   **Security Evolution Ledger**: A cryptographically signed hash-chain (Merkle Tree) that tracks substrate mutations mapped to specific exploits, ensuring immutable audit provenance.
+*   **Apple Silicon Native**: Optimized for Metal-accelerated reasoning and Seatbelt sandboxing.
 *   **Supply Chain Integrity Gating:** All third-party library requests and `pip install` intents are audited by the **Integrity Agent** using `pip-audit` to prevent Hallucination Squatting and Dependency Confusion. See [SUPPLY_CHAIN_SECURITY.md](docs/SUPPLY_CHAIN_SECURITY.md) for details.
 
 ## 3. Evolutionary Architecture: Sentinel & Pathogen

@@ -23,15 +23,17 @@ SHIMS = {
 
 def _apply_shims():
     for legacy, current in SHIMS.items():
-        if legacy not in sys.modules:
-            try:
-                spec = importlib.util.find_spec(current)
-                if spec:
-                    module = importlib.util.module_from_spec(spec)
-                    sys.modules[legacy] = module
-                    spec.loader.exec_module(module)
-            except (ImportError, AttributeError):
-                pass
+        try:
+            target_module = importlib.import_module(current)
+            if legacy not in sys.modules:
+                sys.modules[legacy] = target_module
+            
+            # If the legacy name starts with 'tachyon.', also set it as an attribute of tachyon
+            if legacy.startswith('tachyon.'):
+                attr_name = legacy.split('.')[-1]
+                setattr(sys.modules['tachyon'], attr_name, target_module)
+        except (ImportError, AttributeError):
+            pass
 
 _apply_shims()
 
