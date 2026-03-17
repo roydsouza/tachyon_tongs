@@ -67,6 +67,24 @@ class SingularityPDP(PolicyEngine):
         # then we are essentially ALLOWed unless an error occurred.
         return PolicyVerdict(Verdict.ALLOW, "Consensus reached", "SINGULARITY_CORE")
 
+    def is_action_allowed(self, agent_id: str, action: str, params: Dict[str, Any]) -> bool:
+        """
+        Wrapper to check if an action is deterministicially allowed.
+        Used by the ToolRouter and legacy enforcement points.
+        """
+        verdict = self.evaluate(agent_id, action, params)
+        return verdict.verdict == Verdict.ALLOW
+
+    def evaluate_intent(self, intent: str, action: str, params: Dict[str, Any]) -> bool:
+        """
+        Shim for legacy intent-based evaluation.
+        Maps to the new evaluate call with 'intent' in params.
+        """
+        params_with_intent = params.copy()
+        params_with_intent["intent"] = intent
+        verdict = self.evaluate("legacy_intent_agent", action, params_with_intent)
+        return verdict.verdict == Verdict.ALLOW
+
     @property
     def engine_id(self) -> str:
         return "SINGULARITY_BROKER"

@@ -122,3 +122,17 @@ class AutoPatcher:
                 event_type="FATAL: Organism Corruption",
                 details=f"Git revert failed during auto-healing loop for `{cve_id}`. Manual intervention required immediately. Error: {e}"
             )
+
+# Alias for legacy pipeline calls
+def engineer_action_node(state: dict) -> dict:
+    patcher = AutoPatcher()
+    # Simplified wrapper for legacy state-passing pipeline
+    result = patcher.apply_and_test(
+        patch_files=state.get("proposed_patches", []),
+        test_file_path=state.get("test_path", "tests/integration/test_patch.py"),
+        test_content=state.get("test_code", ""),
+        cve_id=state.get("cve_id", "manual-patch")
+    )
+    # The legacy test_airlock_oversight expects 'final_output' in the state
+    state["final_output"] = result
+    return state

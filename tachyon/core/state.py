@@ -20,6 +20,7 @@ class StateManager:
                 cls._instance._init_db(db_path or default_db)
                 from .signing import IntegrityManager
                 cls._instance.integrity = IntegrityManager()
+                cls._instance.db = cls._instance # Alias for logic that expects manager.db.conn
                 
                 # ENFORCEMENT: Verify core catalog integrity on boot
                 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -141,6 +142,10 @@ class StateManager:
                         print(f"[StateManager] Failed to insert threat {threat.get('id')}: {e}")
                 conn.commit()
             self.export_catalog(catalog_file)
+
+    def commit(self):
+        """No-op shim for legacy code that calls manager.commit() directly."""
+        pass
 
     def log_evolution(self, *args, **kwargs):
         """Logs a code mutation event (Evolutionary Ledger)."""

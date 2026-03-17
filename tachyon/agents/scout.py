@@ -104,3 +104,10 @@ if __name__ == "__main__":
     intel = scout.scour_web()
     if intel:
         scout.analyze_and_persist(intel)
+
+# Alias for legacy pipeline calls
+def scout_discovery_node(state: dict) -> dict:
+    scout = HorizonScout()
+    intel = scout.scour_web()
+    state["raw_intelligence"] = intel
+    return state

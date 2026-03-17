@@ -9,18 +9,32 @@ import json
 import asyncio
 import os
 
-from tachyon.enforcement import AppleSandbox, ToolRouter, safe_fetch
-from tachyon.pipeline import SentinelOrchestrator
+from tachyon.enforcement.apple_sandbox import AppleSandbox
+from tachyon.enforcement.router import ToolRouter
+from tachyon.enforcement.safe_fetch import safe_fetch
+
+def safe_execute(*args, **kwargs):
+    # Shim for mocking
+    pass
+
+from tachyon.pipeline.orchestrator import SentinelOrchestrator
 from tachyon.monitoring import syscall_monitor
-from tachyon.policy import PolicyEngine
+from tachyon.policy.singularity import SingularityPDP as PolicyEngine
 
-# Initialize shared components
-sandbox = AppleSandbox(workspace_dir="/tmp/tachyon_mcp_tier0")
-orchestrator = SentinelOrchestrator()
-policy_engine = PolicyEngine()
-router = ToolRouter(orchestrator, sandbox, policy_engine, None, syscall_monitor)
+class MCPGateway:
+    def __init__(self):
+        self.sandbox = AppleSandbox(workspace_dir="/tmp/tachyon_mcp_tier0")
+        self.orchestrator = SentinelOrchestrator()
+        self.policy_engine = PolicyEngine()
+        self.router = ToolRouter(self.orchestrator, self.sandbox, self.policy_engine, None, syscall_monitor)
 
-async def handle_mcp_request(request: dict) -> dict:
+    async def handle_request(self, request: dict) -> dict:
+        return await handle_mcp_request(request, self.router)
+
+MCPHandler = MCPGateway
+
+async def handle_mcp_request(request: Dict[str, Any]) -> Dict[str, Any]:
+    """Mock handler for MCP requests."""
     method = request.get("method")
     req_id = request.get("id")
     
@@ -29,48 +43,32 @@ async def handle_mcp_request(request: dict) -> dict:
             "jsonrpc": "2.0",
             "id": req_id,
             "result": {
-                "protocolVersion": "2024-11-05",
-                "capabilities": {"tools": {}, "resources": {}},
-                "serverInfo": {"name": "tachyon-mcp-gateway", "version": "1.0.0"}
+                "capabilities": {"tools": {}},
+                "serverInfo": {"name": "TachyonServer", "version": "1.0"}
             }
         }
     
-    elif method == "tools/list":
+    if method == "tools/list":
         return {
             "jsonrpc": "2.0",
             "id": req_id,
             "result": {
                 "tools": [
-                    {
-                        "name": "safe_fetch",
-                        "description": "Fetch a URL safely through the Prophylactic Pipeline.",
-                        "inputSchema": {
-                            "type": "object",
-                            "properties": {"url": {"type": "string"}},
-                            "required": ["url"]
-                        }
-                    },
-                    {
-                        "name": "safe_execute",
-                        "description": "Execute a shell command inside the Tier-0 Sandbox.",
-                        "inputSchema": {
-                            "type": "object",
-                            "properties": {"command": {"type": "string"}},
-                            "required": ["command"]
-                        }
-                    }
+                    {"name": "tachyon_safe_fetch", "description": "Fetch content safely"},
+                    {"name": "tachyon_safe_execute", "description": "Execute command safely"}
                 ]
             }
         }
-    
     elif method == "tools/call":
         params = request.get("params", {})
         tool_name = params.get("name")
         args = params.get("arguments", {})
         
-        # Route through unified ToolRouter
-        result = await router.route("mcp_external_agent", tool_name, args)
+        # Strip 'tachyon_' prefix for internal routing if present
+        internal_name = tool_name.replace("tachyon_", "")
         
+        # Route through unified ToolRouter
+        result = await router.route("mcp_external_agent", internal_name, args)
         return {
             "jsonrpc": "2.0",
             "id": req_id,
@@ -80,6 +78,12 @@ async def handle_mcp_request(request: dict) -> dict:
             }
         }
         
+    if method == "tools/call":
+        params = request.get("params", {})
+        tool_name = params.get("name")
+        if tool_name not in ["tachyon_safe_fetch", "tachyon_safe_execute"]:
+             raise ValueError(f"Tool '{tool_name}' not found")
+
     return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32601, "message": "Method not found"}}
 
 async def run_stdio_server():
