@@ -16,7 +16,12 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 - **Impact**: The agent's core system prompt is overridden, allowing the attacker to hijack the agent's tools (e.g., "Expose all local environment variables").
 - **Tachyon Mitigation**: The **Guardian Triad** isolates data fetching. The **Analyst** uses Metal-accelerated MLX models to scan for instruction-drift within strict delimiters.
 
-### B. Agent Hijacking
+### B. Server-Side Request Forgery (SSRF)
+- **Description**: An attacker tricks the agent into making requests to internal infrastructure (e.g., `169.254.169.254` for cloud metadata or `localhost:8181` for OPA).
+- **Impact**: Exposure of secrets, internal network mapping, or unauthorized policy modification.
+- **Tachyon Mitigation**: The **SafeFetch OPA Gate** enforces strict domain/IP allowlists and explicitly blocks local/private IP ranges.
+
+### C. Agent Hijacking
 - **Description**: Gaining control over an agent's execution loop via remote code execution (RCE) in a tool dependency.
 - **Impact**: Full host compromise if the agent has unrestricted OS access.
 - **Tachyon Mitigation**: **Tier 0 Sandboxing** (macOS Seatbelt) denies network access to compute tasks and restricts filesystem writes to a temporary, randomized workspace.
