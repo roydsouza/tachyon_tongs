@@ -1,5 +1,5 @@
 import unittest
-from tachyon.agents.legacy.intent_scoring import ContextualIntentGate, IntentContext
+from tachyon.agents.sentinel.scorer import ContextualIntentGate, IntentContext
 
 class TestContextualIntentGate(unittest.TestCase):
     def setUp(self):

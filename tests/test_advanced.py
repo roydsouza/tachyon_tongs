@@ -1,7 +1,7 @@
 import unittest
 import time
 from tachyon.capability_token import CapabilityToken
-from tachyon.agents.legacy.intent_scoring import ContextualIntentGate, IntentContext
+from tachyon.agents.sentinel.scorer import ContextualIntentGate, IntentContext
 from tachyon.pipeline.orchestrator import run_supervisor
 
 class TestAdvancedProtections(unittest.TestCase):

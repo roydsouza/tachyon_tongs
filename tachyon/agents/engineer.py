@@ -1,6 +1,6 @@
 import os
 import subprocess
-from tachyon.core.state import StateManager
+from tachyon.core.state_manager import StateManager
 
 class AutoPatcher:
     """
@@ -35,8 +35,7 @@ class AutoPatcher:
             self._execute_revert(cve_id, "Failed during test writing", current_branch=branch_name)
             return {"status": "error", "reason": f"Failed to write regression test: {e}"}
 
-        # 2. Apply the Patches
-        # Phase 12+: Support both new list format and legacy dict format
+        # 3. Apply the Patches
         items_to_patch = []
         if isinstance(patch_files, dict):
              items_to_patch = [{"file": k, "content": v} for k, v in patch_files.items()]
@@ -52,9 +51,9 @@ class AutoPatcher:
             except Exception as e:
                 return {"status": "error", "reason": f"Failed to apply patch to {file_path}: {e}"}
 
-        # 3. Run the Regression Pipeline
+        # 4. Run the Regression Pipeline
         try:
-            # Use the environment-agnostic 'pytest' command
+            # Use environment-agnostic 'pytest'
             result = subprocess.run(
                 ["pytest", test_file_path, "-v"],
                 capture_output=True,
@@ -97,7 +96,7 @@ class AutoPatcher:
             revert_required = True
             traceback = str(e)
 
-        # 4. Handle Failure (The Revert)
+        # 5. Handle Failure (The Revert)
         if revert_required:
             self._execute_revert(cve_id, traceback, current_branch=branch_name)
             return {"status": "failure", "traceback": traceback}

@@ -47,7 +47,7 @@ def test_intent_mapping_security():
         }
     }
     
-    with patch('src.substrate_daemon.run_supervisor') as mock_supervisor:
+    with patch('tachyon.enforcement.daemon.run_supervisor') as mock_supervisor:
         mock_supervisor.return_value = {
             "analysis": {"status": "success", "threats_found": []},
             "sanitized_content": "Mock Content"
@@ -68,7 +68,7 @@ def test_denylist_propagation():
         }
     }
     
-    with patch('src.substrate_daemon.run_supervisor') as mock_supervisor:
+    with patch('tachyon.enforcement.daemon.run_supervisor') as mock_supervisor:
         mock_supervisor.return_value = {
             "analysis": {"status": "success", "threats_found": []},
             "sanitized_content": "Mock Content"

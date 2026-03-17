@@ -1,41 +1,6 @@
 """
 Tachyon Tongs: High-Assurance AI Agent Substrate
 """
-import sys
-import importlib.util
-
-# Legacy Shims for Test Compatibility
-SHIMS = {
-    'tachyon.auto_patcher': 'tachyon.agents.engineer',
-    'tachyon.state_manager': 'tachyon.core.state_manager',
-    'tachyon.skill_parser': 'tachyon.core.skill_parser',
-    'tachyon.apple_sandbox': 'tachyon.enforcement.sandbox',
-    'tachyon.enforcement.apple_sandbox': 'tachyon.enforcement.sandbox',
-    'tachyon.adk_sentinel': 'tachyon.pipeline.orchestrator',
-    'tachyon.signing': 'tachyon.core.signing',
-    'tachyon.intel_pipeline': 'tachyon.pipeline.tri_stage_pipeline',
-    'tachyon.horizon_scout': 'tachyon.agents.scout',
-    'tachyon.metal_accelerator': 'tachyon.core.metal_accelerator',
-    'tachyon.intent_scoring': 'tachyon.agents.sentinel.scorer',
-    'tachyon.agents.legacy.intent_scoring': 'tachyon.agents.sentinel.scorer',
-    'tachyon.substrate_daemon': 'tachyon.enforcement.daemon'
-}
-
-def _apply_shims():
-    for legacy, current in SHIMS.items():
-        try:
-            target_module = importlib.import_module(current)
-            if legacy not in sys.modules:
-                sys.modules[legacy] = target_module
-            
-            # If the legacy name starts with 'tachyon.', also set it as an attribute of tachyon
-            if legacy.startswith('tachyon.'):
-                attr_name = legacy.split('.')[-1]
-                setattr(sys.modules['tachyon'], attr_name, target_module)
-        except (ImportError, AttributeError):
-            pass
-
-_apply_shims()
 
 # Core Exports
 from tachyon.core.state_manager import StateManager

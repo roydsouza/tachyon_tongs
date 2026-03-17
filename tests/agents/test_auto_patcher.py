@@ -2,7 +2,7 @@ import pytest
 import os
 import subprocess
 from unittest.mock import patch, MagicMock
-from tachyon.auto_patcher import AutoPatcher
+from tachyon.agents.engineer import AutoPatcher
 
 @patch('subprocess.run')
 def test_autopatcher_success_creates_branch_and_patch(mock_run):

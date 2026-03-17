@@ -6,5 +6,5 @@ The organism attempted to mutate its active defense, but the regression tests fa
 
 ### Pytest Traceback
 ```text
-<MagicMock name='mock.stderr.__radd__()' id='4597703280'>
+<MagicMock name='mock.stderr.__radd__()' id='4703621808'>
 ```

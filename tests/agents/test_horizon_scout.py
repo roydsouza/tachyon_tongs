@@ -4,10 +4,10 @@ import sys
 from unittest.mock import patch, MagicMock
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from tachyon.horizon_scout import HorizonScout
-from tachyon.metal_accelerator import MetalAccelerator
+from tachyon.agents.scout import HorizonScout
+from tachyon.core.metal_accelerator import MetalAccelerator
 
-@patch('tachyon.horizon_scout.safe_fetch')
+@patch('tachyon.agents.scout.safe_fetch')
 def test_horizon_scout_fetch(mock_fetch):
     mock_fetch.return_value = {
         "status": "SUCCESS",
@@ -21,7 +21,7 @@ def test_horizon_scout_fetch(mock_fetch):
     assert "Sample arXiv paper" in intel
     assert "Sample arXiv paper" in intel
 
-@patch('tachyon.metal_accelerator.MetalAccelerator.analyze_competitive_intel')
+@patch('tachyon.core.metal_accelerator.MetalAccelerator.analyze_competitive_intel')
 def test_horizon_scout_analysis_persistence(mock_analyze):
     mock_analyze.return_value = {
         "competitive_analysis": "Top 10 Update Mock",
@@ -47,7 +47,7 @@ def test_horizon_scout_analysis_persistence(mock_analyze):
         assert "[PENDING REVIEW]" in content
         assert "[PENDING REVIEW]" in content
 
-@patch('tachyon.horizon_scout.safe_fetch')
+@patch('tachyon.agents.scout.safe_fetch')
 def test_horizon_scout_blocked_source(mock_fetch):
     mock_fetch.return_value = {"status": "BLOCKED"}
     scout = HorizonScout()
@@ -58,11 +58,11 @@ def test_horizon_scout_blocked_source(mock_fetch):
 
 def test_horizon_scout_empty_intel_analysis():
     scout = HorizonScout()
-    with patch('tachyon.metal_accelerator.MetalAccelerator.analyze_competitive_intel') as mock_analyze:
+    with patch('tachyon.core.metal_accelerator.MetalAccelerator.analyze_competitive_intel') as mock_analyze:
         scout.analyze_and_persist("")
         mock_analyze.assert_not_called()
 
-@patch('tachyon.metal_accelerator.MetalAccelerator.analyze_competitive_intel')
+@patch('tachyon.core.metal_accelerator.MetalAccelerator.analyze_competitive_intel')
 def test_horizon_scout_analyst_error(mock_analyze):
     mock_analyze.return_value = {"error": "LLM Timeout"}
     scout = HorizonScout()
