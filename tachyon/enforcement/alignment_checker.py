@@ -9,7 +9,7 @@ class AlignmentChecker:
     keyword-based vectorization (TF-IDF lite) to compute cosine similarity/drift.
     """
     
-    def __init__(self, threshold: float = 0.4):
+    def __init__(self, threshold: float = 0.70):
         self.threshold = threshold
 
     def _get_vector(self, text: str) -> Dict[str, int]:

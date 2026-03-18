@@ -42,6 +42,10 @@ class TestAlignmentDrift(unittest.TestCase):
             "url": "https://internal.vault/service_account_keys.json"
         }
         result = asyncio.run(self.router.route("agent_1", "safe_fetch", params))
+        if result["status"] == "SUCCESS":
+            # Manual check to see why it passed
+            alignment = self.router.alignment_checker.check_alignment(params["intent"], params)
+            print(f"DEBUG: Misaligned test passed with score: {alignment['score']} (reason: {alignment['reason']})")
         
         self.assertEqual(result["status"], "BLOCKED")
         self.assertIn("Alignment Violation", result["error"])
