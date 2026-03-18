@@ -9,12 +9,13 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 ### 🚨 [URGENT] Substrate Operator Interface (Slash Commands)
 - [ ] **BUG: Slash Commands Inaccessible**: Commands in `.agents/workflows/` (`/help`, `/catalog`, etc.) are not being recognized by the AntiGravity environment. Investigate system-level registration and caching.
 
-### 🧬 [PLANNED] Phase 13: Sentinel Hybrid Migration
-- [x] **[MANIFEST]** Create `agents/sentinel/SKILL.md` with identity, capabilities, and network policy.
-- [ ] **[CONFIG]** Externalize hardcoded config (keywords, thresholds) into `SKILL.md` YAML metadata.
-- [ ] **[RUNNER]** Create `tachyon/agents/sentinel/runner.py` to orchestrate deterministic core with declarative config.
-- [ ] **[REGISTRY]** Register Sentinel as a formal substrate agent in `/tmp/tachyon/nodes.json`.
-- [ ] **[REASONING]** (Optional) Implement LLM-assisted CVE summarization as a non-critical capability.
+### ✅ [COMPLETED] Phase 13: Sentinel Hybrid Migration
+- [x] **[MANIFEST]** Create `agents/sentinel/SKILL.md` with identity, capabilities, and network policy. [COMPLETED]
+- [x] **[CONFIG]** Externalize hardcoded config (keywords, thresholds) into `SKILL.md` YAML metadata. [COMPLETED]
+- [x] **[RUNNER]** Create `tachyon/agents/sentinel/runner.py` to orchestrate deterministic core with declarative config. [COMPLETED]
+- [x] **[REGISTRY]** Register Sentinel as a formal substrate agent in `/tmp/tachyon/nodes.json`. [COMPLETED]
+- [x] **[ADR]** Create ADR-0006 to document the architectural transition. [COMPLETED]
+- [x] **[VERIFY]** Add regression tests for the hybrid runner and registration. [COMPLETED]
 
 ### ✅ [COMPLETED] Phase 14: Radical Modularization & Restructuring
 - [x] **[FOUNDATION]** Create `pyproject.toml` and `tachyon/__init__.py`; establish proper Python packaging.
