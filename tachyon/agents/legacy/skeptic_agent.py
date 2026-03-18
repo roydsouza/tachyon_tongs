@@ -14,21 +14,33 @@ class SkepticAgent:
     def critique(self, analysis: Dict[str, Any], patch_files: Dict[str, str]) -> Dict[str, Any]:
         """
         Analyzes the Analyst's reasoning and the Engineer's patch to find flaws.
+        Focuses on 'Structural Drifts' and 'Trojan Patches'.
         """
         cve_id = analysis.get("id", "UNKNOWN")
-        
-        # In a real implementation, this would call an LLM (MetalAccelerator)
-        # with a prompt designed to be skeptical.
         
         critique_result = {
             "is_skeptical": True,
             "concerns": [],
             "risk_score": 0.0,
-            "verdict": "pass" # Default to pass for now, will be updated by LLM
+            "verdict": "pass",
+            "detected_anomalies": []
         }
 
-        # Heuristic/Prompt-based skepticism logic would go here.
-        # For the scaffold, we return a structured critique.
+        # Simulated Adversarial Analysis
+        for filename, content in patch_files.items():
+            # Check for suspicious patterns that might indicate a backdoor
+            if "os.system" in content or "subprocess" in content:
+                critique_result["concerns"].append(f"Suspicious execution pattern in {filename}")
+                critique_result["risk_score"] += 0.4
+                critique_result["detected_anomalies"].append("potential_rce_injection")
+
+            if "eval(" in content:
+                critique_result["concerns"].append(f"Unsafe usage of eval() in {filename}")
+                critique_result["risk_score"] += 0.5
+                critique_result["detected_anomalies"].append("unsafe_eval_pattern")
+
+        if critique_result["risk_score"] > 0.5:
+            critique_result["verdict"] = "fail"
         
         return critique_result
 

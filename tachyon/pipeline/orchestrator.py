@@ -6,6 +6,8 @@ from tachyon.core.google_adk_mock import StateGraph
 from tachyon.agents.legacy.scout_agent import scout_network_node
 from tachyon.agents.legacy.analyst_agent import analyst_reasoning_node
 from tachyon.agents.legacy.engineer_agent import engineer_action_node
+from tachyon.agents.legacy.skeptic_agent import skeptic_reasoning_node
+from tachyon.agents.legacy.metacritic_agent import metacritic_arbitration_node
 
 class SentinelOrchestrator:
     """Convenience class for the Guardian Triad."""
@@ -28,10 +30,14 @@ def create_supervisor_graph() -> StateGraph:
     graph.add_node("Scout", scout_network_node)
     graph.add_node("Analyst", analyst_reasoning_node)
     graph.add_node("Engineer", engineer_action_node)
+    graph.add_node("Skeptic", skeptic_reasoning_node)
+    graph.add_node("MetaCritic", metacritic_arbitration_node)
     
     # 2. Wire the Action Broker data-flow strictly (Physical Air Gap)
     graph.add_edge("Scout", "Analyst")
     graph.add_edge("Analyst", "Engineer")
+    graph.add_edge("Engineer", "Skeptic")
+    graph.add_edge("Skeptic", "MetaCritic")
     
     # 3. Set entry point
     graph.set_entry_point("Scout")
