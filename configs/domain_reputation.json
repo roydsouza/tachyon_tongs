@@ -1,0 +1,8 @@
+{
+    "google.com": {"score": 1.0, "category": "trusted_search"},
+    "github.com": {"score": 1.0, "category": "trusted_dev"},
+    "pypi.org": {"score": 1.0, "category": "trusted_repo"},
+    "emailgpt.com": {"score": 0.1, "category": "known_malicious"},
+    "malicious-shell.net": {"score": 0.0, "category": "c2_server"},
+    "example-squat.com": {"score": 0.3, "category": "suspicious"}
+}

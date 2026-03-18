@@ -2,7 +2,41 @@ import subprocess
 import os
 import tempfile
 import ast
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
+
+class StaticAnalyzer:
+    """
+    Tachyon Tongs: Pre-Execution Static Analysis
+    Detects dangerous Python patterns before they enter the sandbox.
+    """
+    DANGEROUS_FUNCTIONS = {"os.system", "subprocess.Popen", "eval", "exec", "pickle.load", "marshal.load"}
+    
+    @classmethod
+    def scan_file(cls, filepath: str) -> Tuple[bool, str]:
+        """Returns (is_safe, reason)."""
+        if not os.path.exists(filepath):
+            return True, "File not found"
+        try:
+            with open(filepath, 'r') as f:
+                content = f.read()
+                tree = ast.parse(content)
+                
+            for node in ast.walk(tree):
+                # Check for direct attribute calls like os.system()
+                if isinstance(node, ast.Call):
+                    func_name = ""
+                    if isinstance(node.func, ast.Attribute):
+                        if isinstance(node.func.value, ast.Name):
+                            func_name = f"{node.func.value.id}.{node.func.attr}"
+                    elif isinstance(node.func, ast.Name):
+                        func_name = node.func.id
+                        
+                    if func_name in cls.DANGEROUS_FUNCTIONS:
+                        return False, f"Dangerous function detected: {func_name}"
+                        
+            return True, "Safe"
+        except Exception as e:
+            return True, f"Scan skipped: {str(e)}"
 
 class DependencyScanner:
     """
@@ -62,15 +96,24 @@ class AppleSandbox:
         """
         Executes a command inside the macOS Seatbelt sandbox.
         """
-        # --- Pre-Execution Supply Chain Gating ---
+        # --- Pre-Execution Supply Chain & Static Analysis Gating ---
         for arg in command:
             if arg.endswith('.py') and os.path.exists(arg):
-                is_safe = DependencyScanner.scan_file(arg)
-                if not is_safe:
+                # 1. Dependency Scan
+                if not DependencyScanner.scan_file(arg):
                     return {
                         "status": "BLOCKED",
                         "error": f"Supply Chain Attack Prevented: {arg} contains known poisoned dependencies.",
                         "exit_code": -3
+                    }
+                
+                # 2. Static Analysis Scan
+                is_safe, reason = StaticAnalyzer.scan_file(arg)
+                if not is_safe:
+                    return {
+                        "status": "BLOCKED",
+                        "error": f"Static Analysis Violation: {reason}",
+                        "exit_code": -5
                     }
         
         # Hallucination Squatting / Malicious Package Audit

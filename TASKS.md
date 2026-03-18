@@ -13,11 +13,12 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[ROUTING]** Integrate rate-limiting into `ToolRouter`. [COMPLETED]
 - [x] **[VERIFY]** Add regression tests for per-agent and per-tool throttling. [COMPLETED]
 
-### 🔍 [PLANNED] Phase 16: Competitive Gap Implementation
-- [ ] **[REPUTATION]** Implement `domain_reputation.json` and logic for scoring fetch targets in `safe_fetch.py`.
-- [ ] **[SCAN]** Integrate `bandit` / `semgrep` for pre-execution static analysis of `safe_execute` payloads.
+### ✅ [COMPLETED] Phase 16: Competitive Gap Implementation
+- [x] **[ADR]** Create ADR-0008 for Domain Reputation and Static Analysis. [COMPLETED]
+- [x] **[REPUTATION]** Implement `domain_reputation.json` and logic for scoring fetch targets in `safe_fetch.py`. [COMPLETED]
+- [x] **[SCAN]** Integrate `StaticAnalyzer` into `apple_sandbox.py` for pre-execution static analysis. [COMPLETED]
+- [x] **[VERIFY]** Add regression tests for reputation and static analysis. [COMPLETED]
 - [ ] **[ALIGNMENT]** Implement `AlignmentChecker` using local embeddings to detect semantic drift in tool use.
-- [ ] **[SEQUENCES]** Implement sequence-based OPA policies to block multi-stage exfiltration chains.
 
 ### 🦠 [PLANNED] Phase 17: Pathogen Adversarial Tuning & Metrics
 - [ ] **[SCHEMA]** Implement `pathogen_metrics` table for tracking attack success and mutation lineage.

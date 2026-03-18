@@ -5,6 +5,7 @@ Implements a strict intent-gate around the standard `urllib.request` library via
 import urllib.request
 import urllib.parse
 import json
+import os
 import requests
 
 class SecurityViolationError(Exception):
@@ -23,14 +24,27 @@ class SafeFetch:
         # Standardized Tachyon Tongs OPA Port is 9181
         self.opa_url = "http://localhost:9181/v1/data/authz/tools/allow_fetch"
 
+        # Load Domain Reputation Config
+        self.reputation_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../configs/domain_reputation.json"))
+        self.reputation_data = {}
+        if os.path.exists(self.reputation_path):
+            with open(self.reputation_path, "r") as f:
+                self.reputation_data = json.load(f)
+
         # Hardcoded fallback for tests if rego_mock is explicitly True
-        self.mock_allowed = ["cisa.gov", "github.com", "nvd.nist.gov", "arxiv.org", "huntr.ml", "lmsys.org", "owasp.org"]
+        self.mock_allowed = ["google.com", "cisa.gov", "github.com", "nvd.nist.gov", "arxiv.org", "huntr.ml", "lmsys.org", "owasp.org"]
 
     def _evaluate_intent(self, target_url: str) -> bool:
-        """Evaluates the payload against the intent policy via OPA."""
+        """Evaluates the payload against the intent policy via OPA and Reputation."""
         try:
             parsed = urllib.parse.urlparse(target_url)
             domain = parsed.netloc
+            
+            # 1. Reputation Check (Overrides OPA if score is critical)
+            if domain in self.reputation_data:
+                score = self.reputation_data[domain].get("score", 1.0)
+                if score <= 0.3: # Critical threshold for blocking
+                    return False
 
             if self.rego_mock:
                 # If we explicitly pass allowed_domains, only check that list in mock mode.
