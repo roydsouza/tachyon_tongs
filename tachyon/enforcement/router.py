@@ -1,5 +1,7 @@
 import asyncio
 from typing import Dict, Any, Optional
+from tachyon.enforcement.rate_limiter import AdaptiveRateLimiter
+from tachyon.enforcement.alignment_checker import AlignmentChecker
 
 class ToolRouter:
     """
@@ -14,23 +16,30 @@ class ToolRouter:
         self.policy_engine = policy_engine
         self.cot_monitor = cot_monitor
         self.syscall_monitor = syscall_monitor
-        self.rate_limiter = rate_limiter
+        self.rate_limiter = rate_limiter or AdaptiveRateLimiter()
+        self.alignment_checker = AlignmentChecker(threshold=0.2)
     
-    async def route(self, agent_id: str, action: str, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def route(self, agent_id: str, action: str, params: dict) -> dict:
         """
-        Routes a tool call through the safety funnel.
-        0. Rate Limiting (Adaptive throttle)
-        1. Behavioral check (Statistical drift)
-        2. Policy check (Deterministic OPA/Cedar)
-        3. Execution via Sandbox or Prophylactic Pipeline
+        Main entry point for tool execution.
+        Applies: Rate Limiting -> Alignment Check -> Policy Enforcement -> Execution.
         """
-        # 0. Rate Limiting
+        # 0. Rate Limiting Check
         if self.rate_limiter:
             allowed, reason = self.rate_limiter.is_allowed(agent_id, action)
             if not allowed:
                 return {
                     "status": "BLOCKED",
                     "error": f"RATE_LIMIT_EXCEEDED: {reason}"
+                }
+
+        # 0.1 Semantic Alignment Check (Phase 16)
+        if "intent" in params:
+            alignment = self.alignment_checker.check_alignment(params["intent"], params)
+            if not alignment["is_aligned"]:
+                return {
+                    "status": "BLOCKED",
+                    "error": f"Alignment Violation: {alignment['reason']}"
                 }
 
         # 1. Statistical Behavioral Check

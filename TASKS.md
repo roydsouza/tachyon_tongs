@@ -17,8 +17,8 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[ADR]** Create ADR-0008 for Domain Reputation and Static Analysis. [COMPLETED]
 - [x] **[REPUTATION]** Implement `domain_reputation.json` and logic for scoring fetch targets in `safe_fetch.py`. [COMPLETED]
 - [x] **[SCAN]** Integrate `StaticAnalyzer` into `apple_sandbox.py` for pre-execution static analysis. [COMPLETED]
-- [x] **[VERIFY]** Add regression tests for reputation and static analysis. [COMPLETED]
-- [ ] **[ALIGNMENT]** Implement `AlignmentChecker` using local embeddings to detect semantic drift in tool use.
+- [x] **[ALIGNMENT]** Implement `AlignmentChecker` using semantic similarity to detect drift. [COMPLETED]
+- [x] **[VERIFY]** Add exhaustive regression tests for reputation, static analysis, and alignment. [COMPLETED]
 
 ### ✅ [COMPLETED] Phase 17: Pathogen Adversarial Tuning & Metrics
 - [x] **[SKILL]** Implement `high-assurance` skill for mandatory regression/doc automation. [COMPLETED]
