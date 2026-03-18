@@ -58,8 +58,12 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 ## 4. Substrate-Specific Exploits
 
 ### A. OPA/Cedar Policy Bypass
-- **Description**: Crafting a request that satisfies the literal syntax of a policy but violates its semantic intent (e.g., using a URL shortener to bypass a domain denylist).
-- **Tachyon Mitigation**: **Semantic Intent Mapping** translates high-level goals (e.g., "RESEARCH") into strict, non-bypassable domain lists.
+- **Description**: Crafting a request that satisfies the literal syntax of a policy but violates its semantic intent.
+- **Tachyon Mitigation**: **Semantic Intent Mapping**.
+
+### B. Architectural Drift / Forensic Evasion
+- **Description**: Unauthorized structural changes to the substrate to bypass security gates or elude detection.
+- **Tachyon Mitigation**: **ADR-as-IDS**. Cryptographic signing of architecture records ensures any out-of-band mutation is detected as a forensic anomaly.
 
 ### B. MLX Inference Evasion
 - **Description**: Adopting "Jailbreak" techniques (e.g., Base64 encoding, roleplay) to hide malicious instructions from the Analyst's LLM-based scan.
@@ -70,7 +74,24 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 - **Impact**: Unauthorized authorization of a malicious patch or deletion of security logs.
 - **Tachyon Mitigation**: The Airlock resides exclusively on `127.0.0.1`. All WebSocket/API calls require a short-lived **Substrate Session Token** and enforced Content Security Policy (CSP) headers.
 
-## 5. Deployment Security
+## 5. Key-Centric Threat Vectors (The Root of Trust)
 
-- **PDP Integrity**: The Policy Decision Point must be protected from local file tampering.
-- **PEP Availability**: If the Substrate Daemon is killed, agents must default to a "Fail-Closed" state (denying all IO).
+As Tachyon Tongs moves toward a forensic IDS model, the protection of cryptographic keys is paramount.
+
+### A. Accidental Secret Leakage (Credential Exposure)
+- **Description**: The `TACHYON_SECRET_KEY` is accidentally committed to GitHub via a `.env` file or hardcoded in a script.
+- **Impact**: Attacker can forge valid `.sig` files for any ADR or catalog entry, neutralizing the substrate's forensic integrity.
+- **Tachyon Mitigation**: 
+    - **Anti-Entropy Protocol**: Keys are never stored in the repo. 
+    - **Automated Verification**: `IntegrityManager` checks for environment injection only.
+    - **Reference**: See [Generation & Storage](file:///Users/rds/antigravity/tachyon_tongs/docs/KEYS.md#storage--injection-anti-entropy-protocol).
+
+### B. Malicious Key Exfiltration (Local Malware)
+- **Description**: Malware running on the host attempts to read environment variables or memory to steal the `TACHYON_SECRET_KEY`.
+- **Impact**: Attacker gains the ability to forge architectural records or bypass integrity gates until the key is rotated.
+- **Tachyon Mitigation**: 
+    - **Volatile Injection**: The key exists only in the environment/memory of the daemon.
+    - **Hardware Moat (Planned)**: Transition to asymmetric hardware signing (Yubikey/Secure Enclave) ensures that the private key is never exposed to the OS-level memory, even to the substrate itself.
+    - **Reference**: See [Evolutionary Roadmap](file:///Users/rds/antigravity/tachyon_tongs/docs/KEYS.md#phase-3-hardware-root-vision).
+
+## 6. Deployment Security

@@ -2,6 +2,8 @@
 
 This document serves as the authoritative reference for the cryptographic keys protecting the Tachyon Tongs substrate. It outlines the generation, rotation, and protection of these keys to maintain a high-assurance forensic baseline.
 
+For a detailed analysis of attacks targeting these keys (e.g., exfiltration and leakage), see the [Key-Centric Threat Vectors](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md#5-key-centric-threat-vectors-the-root-of-trust) section of the Threat Model.
+
 ## 🛡️ Key Registry
 
 | Key Name | Type | Purpose | Quantization | Status |
