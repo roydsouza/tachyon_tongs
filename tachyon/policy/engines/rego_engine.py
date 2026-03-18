@@ -39,7 +39,8 @@ class RegoPolicyEngine(PolicyEngine):
 
         # Simplified DLP check for the mock engine
         if action == "outbound_dlp":
-            if params.get("has_sensitive_token"):
+            serialized_params = str(params)
+            if params.get("has_sensitive_token") or "sk-" in serialized_params:
                 return PolicyVerdict(Verdict.DENY, "Blocked by Reverse Firewall: Sensitive token detected.", self.engine_id)
 
         return PolicyVerdict(Verdict.ALLOW, "Rego validation passed", self.engine_id)

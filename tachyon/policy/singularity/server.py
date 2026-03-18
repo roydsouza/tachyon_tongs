@@ -28,6 +28,7 @@ async def evaluate_policy(request: EvaluationRequest):
     try:
         print(f"DEBUG: Server evaluating {request.action} for {request.agent_id}")
         print(f"DEBUG: Active Engines: {[e.engine_id for e in pdp.engines]}")
+        # The internal RegoPolicyEngine will call PIIScanner, which looks for 'message' or other keys.
         verdict_obj = pdp.evaluate(request.agent_id, request.action, request.params)
         print(f"DEBUG: Final Verdict: {verdict_obj.verdict.name} (Source: {verdict_obj.engine_id})")
         

@@ -42,10 +42,8 @@ class TestMetaPDP(unittest.TestCase):
         result = self.client.evaluate("test_agent_alpha", "safe_fetch", {"url": "https://google.com"})
         self.assertIn(result.verdict.name, ["ALLOW", "DENY"]) # Mock depends on policy
         
-        # 2. Test DENY (Simulate drift/violation if possible, or just check blocking)
-        params = {"intent": "fetching documentation", "url": "https://vault.internal/key.pem"}
-        # Note: ToolRouter normally calls AlignmentChecker, but PDP evaluation might also block.
-        result = self.client.evaluate("agent_1", "outbound_dlp", {"has_sensitive_token": True})
+        # 2. Test DENY (Sensitive token in payload)
+        result = self.client.evaluate("agent_1", "outbound_dlp", {"message": "Here is my secret: sk-1234567890abcdef", "has_sensitive_token": True})
         self.assertEqual(result.verdict.name, "DENY")
 
         # 3. Verify Ledger Persistence
