@@ -2,14 +2,14 @@
 
 This document details the technical architecture of the **Tachyon Tongs** security substrate. It explains the core routing daemon, the implementation details of the defensive prophylactic layer, and the anatomy of the internal agent abstractions.
 
-## 📜 Governance & Evolution (ADRs)
+## 📜 Threat-Model-Driven Governance (ADR-as-IDS)
 
-To maintain high-assurance security and architectural integrity, all significant mutations to this substrate are governed by **Architecture Decision Records (ADRs)**. 
+The architecture of Tachyon Tongs is a direct physical manifestation of its [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md). To maintain high-assurance security, all significant mutations to this substrate are governed by **Architecture Decision Records (ADRs)**, which must always be justified against a specific threat vector.
 
-- **Location**: [docs/adr/](file:///Users/rds/antigravity/tachyon_tongs/docs/adr/)
-- **Purpose**: These records document the technical context, decisions, and consequences of every major structural change (e.g., modularization, cryptographic state signing, airlock enforcement).
-
-Interested parties should consult the ADRs to understand the historical rationale behind the current system state.
+- **Intrusion Detection (IDS)**: ADRs are **cryptographically signed** assets serving as a forensic baseline. By comparing the signed state of the architecture against the current implementation, operators can detect "Structural Drifts" or unauthorized mutations—even those that follow valid syntax but violate the recorded security intent.
+- **The Threat Model as Source of Truth**: Implementation and administration are never ad-hoc. They are rigorous, peer-reviewed responses to identified vulnerabilities. Any enhancement to the substrate *must* start with a threat analysis, followed by an ADR, and finally the technical implementation.
+- **Tamper Detection**: Every ADR is paired with a `.sig` file. The `IntegrityManager` verifies these signatures during substrate health checks. Any out-of-band modification to the decision records or the threat model triggers a **CRITICAL_SYSTEM_TAMPER** alert.
+- **Forensic Rollback**: ADRs provide the "Ground Truth" for substrate state, allowing for precise forensic recovery based on the last-signed safe threat profile.
 
 ## 1. High-Level Component Topology
 

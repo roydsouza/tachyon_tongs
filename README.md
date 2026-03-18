@@ -9,9 +9,14 @@ Autonomous AI agents introduce critical new attack surfaces to organizational in
 *   **Memory Poisoning:** Adversarial payloads can lie dormant in vector databases, executing as a delayed trojan horse upon future retrieval.
 *   **Zero-Day Threat Velocity:** The rapid publication of new offensive ML techniques makes static, hardcoded defensive measures obsolete almost instantly.
 
-## 2. The Tachyon Tongs Solution
+## 2. Threat-Model-Driven Design
 
-Tachyon Tongs addresses these vulnerabilities by acting as a mandatory proxy daemon (`tachyon/enforcement/daemon.py`) for all agent actions. Rather than relying on agent self-regulation, Tachyon Tongs implements a defense-in-depth pipeline:
+Tachyon Tongs is not merely a collection of security features; it is an implementation of a **Live Threat Model**. 
+
+> [!IMPORTANT]
+> **The Threat Model is Primary**: All architectural decisions, autonomous patches, and operator interventions are driven by the [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md). It serves as the project's single source of security truth, ensuring that the implementation remains in lock-step with the adversarial landscape.
+
+Every mitigation in this substrate—from ADR-signed forensic baselines to the Guardian Triad—mapped directly to a specific vector in the Threat Model. Our governance follows the **ACDC-Loop (Agent-Centric Development Cycle)**, where every code change begins with an update to the threat landscape.
 
 *   **Semantic Intent Gating (PDP/PEP):** All outbound network and system tool requests are routed through a Policy Enforcement Point ([event_horizon](file:///Users/rds/antigravity/event_horizon)). Requests are evaluated against declarative `.rego` policies by the Policy Decision Point ([singularity](file:///Users/rds/antigravity/singularity)) that enforce strict capability boundaries.
 *   **Tiered Workload Isolation:** High-risk actions are isolated execution environments. "Tier 0" workloads run under dynamically generated macOS `sandbox-exec` (Seatbelt) profiles, allowing native computation speeds with microsecond overhead, while preventing unauthorized network or filesystem access.
