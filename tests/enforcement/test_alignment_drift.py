@@ -18,12 +18,17 @@ class MockMonitor:
 
 class TestAlignmentDrift(unittest.TestCase):
     def setUp(self):
+        # Instantiate AlignmentChecker first
+        alignment_checker_instance = AlignmentChecker()
+        alignment_checker_instance.threshold = 0.8 # Set threshold here
+
         self.router = ToolRouter(
             orchestrator=MockOrchestrator(),
             sandbox=None,
             policy_engine=MockPolicyEngine(),
             cot_monitor=None,
-            syscall_monitor=MockMonitor()
+            syscall_monitor=MockMonitor(),
+            alignment_checker=alignment_checker_instance # Pass the configured instance
         )
 
     def test_aligned_intent(self):
