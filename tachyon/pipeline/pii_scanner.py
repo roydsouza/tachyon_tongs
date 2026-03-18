@@ -28,5 +28,12 @@ class PIIScanner:
 
     def scan_dictionary(self, data: dict) -> dict:
         """Recursively scan dictionary values for sensitive data."""
-        text_blob = str(data) # Simple approach for now
-        return self.scan(text_blob)
+        combined_text = ""
+        for value in data.values():
+            if isinstance(value, str):
+                combined_text += value + " "
+            elif isinstance(value, dict):
+                findings = self.scan_dictionary(value)
+                if findings["has_sensitive_token"] or findings["has_pii"]:
+                    return findings # Short circuit if sensitive data found in sub-dict
+        return self.scan(combined_text)
