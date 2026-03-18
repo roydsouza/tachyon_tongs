@@ -28,9 +28,12 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[LEDGER]** Create `PathogenLogger` and verify metrics persistency. [COMPLETED]
 - [x] **[VERIFY]** Add exhaustive regression tests for mutation logging and blocking. [COMPLETED]
 
-### 🌌 [PLANNED] Phase 18: Singularity Meta-PDP Server
-- [ ] **[SERVER]** Create FastAPI Meta-PDP server in `singularity/server.py` to federate engine queries.
-- [ ] **[LEDGER]** Implement `authorization_ledger` in SQLite for 100% auditability of policy decisions.
+### ✅ [COMPLETED] Phase 18: Singularity Meta-PDP Server
+- [x] **[ADR]** Create ADR-0010 for Meta-PDP Server & Ledger. [COMPLETED]
+- [x] **[SERVER]** Create FastAPI Meta-PDP server in `singularity/server.py`. [COMPLETED]
+- [x] **[LEDGER]** Implement `authorization_ledger` in SQLite for 100% auditability. [COMPLETED]
+- [x] **[CLIENT]** Implement `RemoteSingularityPDP` with Fail-Closed logic. [COMPLETED]
+- [x] **[VERIFY]** Add regression tests for remote evaluation and ledger persistence. [COMPLETED]
 
 ---
 
