@@ -4,59 +4,64 @@
 
 ---
 
-## 🏗️ The Architectural Moat
+## 🏗️ The Architectural Moat: Why Tachyon Wins
 
 Tachyon Tongs maintains a five-layer defense-in-depth strategy that provides unique security guarantees compared to SaaS-first or cloud-dependent competitors.
 
-| Layer | Moat Name | Security Guarantee |
-|-------|-----------|--------------------|
-| **1** | **Data Sovereignty** | 100% local execution on Apple Silicon. Zero cloud telemetry. |
-| **2** | **Evolutionary Defense** | Sentinel/Pathogen co-evolution. The system self-heals by red-teaming itself. |
-| **3** | **Hardware Isolation** | Tier-0 sandboxing via macOS Seatbelt and Lima/Matchlock. |
-| **4** | **Air-Gapped Pipeline** | Physical isolation between network egress (Scout) and reasoning (Analyst). |
-| **5** | **Deterministic Policy** | Logic-based enforcement (OPA/Rego + Cedar) instead of fragile LLM prompts. |
+| Layer | Moat Name | Security Guarantee | Competitive Edge |
+|-------|-----------|--------------------|------------------|
+| **1** | **Sovereign Edge** | 100% local execution on Apple Silicon (M5/MLX). | Zero telemetry leak vs. Cloud WAFs (Lakera, Arthur). |
+| **2** | **Evolutionary DNA** | Sentinel/Pathogen co-evolution (Self-Healing). | Dynamic immunity vs. static rulesets (NeMo, LLM Guard). |
+| **3** | **Hardware Isolation** | Tier-0 Seatbelt sandboxing + Lima/Matchlock. | Kernel-level protection vs. API-middleware (Guardrails AI). |
+| **4** | **Air-Gapped Pipeline** | Physical isolation via Guardian Triad. | Content firewalling vs. simple prompt filtering (Rebuff). |
+| **5** | **Deterministic Policy** | Multi-Engine PDP (OPA/Rego + Cedar). | Logic-based enforcement vs. fragile LLM "vibe" checks. |
+
+---
+
+## 🦠 The Evolutionary DNA (Sentinel ↔ Pathogen)
+
+Tachyon Tongs is not a static library; it is a **living defensive organism**. 
+
+- **Sentinel (Blue Team)**: Autonomously harvests zero-days from NVD, GitHub, and arXiv, committing cryptographically signed updates to the `EXPLOITATION_CATALOG.md`.
+- **Pathogen (Red Team)**: A synthetic adversary that evolves its own `SKILL.md` to red-team internal patches via genetic mutation and zero-day drills.
+- **Auto-Patcher**: Synthesizes verified code/policy mitigations, gated by the **Airlock (Airlock Debate Triad)** to ensure human-in-the-loop safety.
 
 ---
 
 ## 🏆 Superiority Matrix
 
-### Strategic Advantages
-
-| Vector | Tachyon Tongs | SaaS Competitors (Lakera, LLM Guard) | Verdict |
-|--------|---------------|-------------------------------------|---------|
-| **Privacy** | Air-gapped local inference | Prompts sent to 3rd party cloud | ✅ **Sovereign** |
-| **Red-Teaming** | Integrated runtime adversary | Static benchmarks / External tools | ✅ **Autonomous** |
-| **Hardening** | Hardware-level Seatbelt sandbox | API-level middleware | ✅ **Hardened** |
-| **Protocol** | Native MCP Gateway | Proprietary REST APIs | ✅ **Open** |
+| Vector | Tachyon Tongs | SaaS Competitors | OSS Competitors (NVIDIA, Meta) |
+|--------|---------------|------------------|-------------------------------|
+| **Privacy** | ✅ Air-gapped / Local | ❌ Cloud-dependent | ⚠️ Hybrid (often CPU-bound) |
+| **Evolution** | ✅ Fully Autonomous | ❌ Vendor-driven | ❌ Static rulesets |
+| **Hardening** | ✅ OS-level Seatbelt | ⚠️ API-level | ⚠️ Docker/Container-level |
+| **Audit** | ✅ SQL Authz Ledger | ⚠️ Black-box SaaS | ⚠️ Log-to-stdout |
 
 ---
 
-## 🔍 Competitor Registry
+## 🔍 Competitor Registry (2026 Edition)
 
-### 🛡️ Active Tracking
-
-| Competitor | Document | Focus Area | Latest Eval |
-|------------|----------|------------|-------------|
-| **Lakera Guard** | [LAKERA_GUARD.md](file:///Users/rds/antigravity/tachyon_tongs/docs/competition/LAKERA_GUARD.md) | Gandalf, PII, SaaS WAF | 2026-03-14 |
-| **LlamaFirewall** | [LLAMA_FIREWALL_META.md](file:///Users/rds/antigravity/tachyon_tongs/docs/competition/LLAMA_FIREWALL_META.md) | CodeShield, PromptGuard-2 | 2026-03-14 |
-| **LLM Guard** | [LLM_GUARD_PALOALTO_NETWORKS.md](file:///Users/rds/antigravity/tachyon_tongs/docs/competition/LLM_GUARD_PALOALTO_NETWORKS.md) | Enterprise DLP, Scanners | 2026-03-14 |
-| **NeMo Guardrails** | [NEMO_GUARDRAILS_NVIDIA.md](file:///Users/rds/antigravity/tachyon_tongs/docs/competition/NEMO_GUARDRAILS_NVIDIA.md) | Colang 2.0, Dialog Rails | 2026-03-14 |
-| **E2B** | [GEMINI_COMPETITIVE.md](file:///Users/rds/antigravity/tachyon_tongs/docs/competition/GEMINI_COMPETITIVE.md) | Code Execution Sandboxing | 2026-03-14 |
-| **Skyfire** | [GEMINI_COMPETITIVE.md](file:///Users/rds/antigravity/tachyon_tongs/docs/competition/GEMINI_COMPETITIVE.md) | Agent Economic Identity | 2026-03-14 |
+| Competitor | Moat Difference | Tachyon Leverage Opportunity |
+|------------|-----------------|------------------------------|
+| **Lakera Guard** | Best-in-class UI/SaaS | Adopt 100ms latency benchmarks for local MLX. |
+| **NeMo Guardrails**| Colang 2.0 Intent Flows | Integrate Colang-style "Task Trajectories" in OPA. |
+| **Purple Llama** | SOTA Security Models | Integrate CodeShield/PromptGuard-2 for Sanitizer scoring. |
+| **Robust Intelligence**| Full-lifecycle Validation | Adopt AISec RMF (NIST) audit templates. |
+| **E2B / Firecracker**| High-speed MicroVMs | Use as Tier-0 alternative for high-concurrency tools. |
 
 ---
 
 ## 📈 Strategic Directions
 
-### ✅ Double Down (Strengths)
-- **Pathogen Intelligence**: Maintain the most aggressive local red-teaming agent.
-- **Apple Silicon Optimization**: Maximize M5 Neural Engine utilization for local sanitization.
-- **Deterministic Logic**: Expand OPA/Cedar coverage to reduce reliance on "vibe-based" filtering.
+### ✅ Double Down (Our Moats)
+- **Neural Engine Supremacy**: Maximize M5 NPU utilization for zero-latency sanitization.
+- **PQC Hybrid Auth**: Move to Dilithium3 signatures for tool-call attestation (Roadmap Ph 19).
+- **Airlock Debate**: Scale "Analyst vs. Skeptic" discourse to prevent Mastery Erosion.
 
 ### ⚠️ Close the Gap (Priorities)
-- **PII Redaction**: Implement local regex-based PII masking (Tier 1).
-- **Static Analysis**: Integrate `bandit`/`semgrep` for code execution scanning (Tier 2).
-- **Sequence Policies**: Implement dialog-flow tracking via OPA sequences (Tier 2).
+- **PII Redaction**: Port `llm-guard` / `PIIScanner` patterns for 100% redaction certainty.
+- **Sequential Policies**: Track dialog-flow state (Colang style) across multi-turn attacks.
+- **Formal Verification**: Generate Rego/Cedar proofs for substrate mutations.
 
 ### ❌ Avoid (Anti-Patterns)
 - **Cloud Dependency**: Do not build SaaS components that require telemetry.

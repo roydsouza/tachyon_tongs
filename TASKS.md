@@ -74,6 +74,9 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 ---
 
 ## 🛠️ Architectural Backlog
+- [ ] **[SECURITY] PQC-Hybrid Attestation**: Implement Dilithium3 signatures for PDP tool-call attestation.
+- [ ] **[SECURITY] Immutable Actions**: Refactor `ToolRouter` to use `frozen` dataclasses to prevent TOCTOU bypasses.
+- [ ] **[OVERSIGHT] Airlock Debate Triad**: Implement the `Skeptic` and `Meta-Critic` agents in `agents/sentinel/`.
 - [ ] **Containerization**: Dockerize the Substrate Daemon for CI/CD.
 - [ ] **Visualization**: Append Mermaid orchestration diagrams to `ARCHITECTURE.md`.
 - [ ] **Archival Script**: Prune historical phases to `ACCOMPLISHMENTS.md`.

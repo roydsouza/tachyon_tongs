@@ -110,4 +110,21 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Context Pruning:** Minimizes token consumption by surgically loading only required task fragments.
   - **Low-Power Mode (LPM):** Automatically disables non-critical background processes (e.g., Pathogen drills) based on quota availability.
 
-### Phase 14: Bi-Directional Capability Firewall (Scale-Out PDP/PEP) [ACTIVE]
+### Phase 14: Bi-Directional Capability Firewall (Scale-Out PDP/PEP) [OPERATIONAL]
+- **Objective:** Establish a centralized Meta-PDP (Singularity) that federates policy across multiple engines (Rego/Cedar).
+- **Implementation:** FastAPI-based server with a Consensus local engine and a SQL Authorization Ledger for 100% auditability.
+
+### Phase 15: PQC-Hybrid Tool Attestation [PLANNED]
+- **Objective:** Preemptively secure the tool-call chain against quantum threats and provide cryptographic "intent-gate" proofs.
+- **Implementation:** Hybrid Ed25519/Dilithium3 signatures for all `RemoteSingularityPDP` requests.
+
+### Phase 16: TOCTOU-Resistant Enforcement (Immutable Actions) [PLANNED]
+- **Objective:** Eliminate race conditions where a tool request is modified between policy check and execution.
+- **Implementation:** Transition `ToolRouter` to use `frozen` dataclasses and hash-verified immutable payloads.
+
+### Phase 17: Scalable Oversight (The Airlock Debate Triad) [IN-PROGRESS]
+- **Objective:** Eliminate "Verification Bottlenecks" by using multi-agent adversarial discourse (Analyst vs. Skeptic) to surface high-value insights to the operator.
+- **Implementation:**
+  - **The Discourse Triad:** Analyst (Optimistic) vs. Skeptic (Pessimistic) debating proposed patches.
+  - **Meta-Critic:** Distills debate into a concise "Verification Summary" for the human operator.
+  - **Mastery Erosion Guard:** Periodic "Deliberate Friction" prompts to keep human calibration sharp.
