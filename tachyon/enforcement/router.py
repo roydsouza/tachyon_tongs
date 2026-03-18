@@ -10,14 +10,14 @@ class ToolRouter:
     entry points (HTTP Substrate Daemon, MCP Gateway).
     """
     
-    def __init__(self, orchestrator, sandbox, policy_engine, cot_monitor, syscall_monitor, rate_limiter=None):
+    def __init__(self, orchestrator, sandbox, policy_engine, cot_monitor, syscall_monitor, rate_limiter=None, alignment_checker=None):
         self.orchestrator = orchestrator
         self.sandbox = sandbox
         self.policy_engine = policy_engine
         self.cot_monitor = cot_monitor
         self.syscall_monitor = syscall_monitor
         self.rate_limiter = rate_limiter or AdaptiveRateLimiter()
-        self.alignment_checker = AlignmentChecker(threshold=0.2)
+        self.alignment_checker = alignment_checker or AlignmentChecker(threshold=0.2)
     
     async def route(self, agent_id: str, action: str, params: dict) -> dict:
         """
