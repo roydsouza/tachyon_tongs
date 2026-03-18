@@ -7,8 +7,8 @@ class PIIScanner:
     """
     def __init__(self):
         self.patterns = {
-            "SECRET_TOKEN": r"\b(?:sk-ant-api01-[a-zA-Z0-9]{20,}|AIza[a-zA-Z0-9_-]{35}|[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\b",
-            "EMAIL": r"\b[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\b",
+            "SECRET_TOKEN": r"\b(?:sk-ant-api01-[a-zA-Z0-9]{20,}|AIza[a-zA-Z0-9_-]{35}|[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})\b",
+            "EMAIL": r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b",
             "CREDIT_CARD": r"\b(?:\d[ -]*?){13,16}\b"
         }
 
