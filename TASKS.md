@@ -20,10 +20,13 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[VERIFY]** Add regression tests for reputation and static analysis. [COMPLETED]
 - [ ] **[ALIGNMENT]** Implement `AlignmentChecker` using local embeddings to detect semantic drift in tool use.
 
-### 🦠 [PLANNED] Phase 17: Pathogen Adversarial Tuning & Metrics
-- [ ] **[SCHEMA]** Implement `pathogen_metrics` table for tracking attack success and mutation lineage.
-- [ ] **[MUTATION]** Implement generational `MutationEngine` with ASCII/Unicode bypasses.
-- [ ] **[LEDGER]** Create `RED_TEAM_LEDGER.md` for attack history auditing.
+### ✅ [COMPLETED] Phase 17: Pathogen Adversarial Tuning & Metrics
+- [x] **[SKILL]** Implement `high-assurance` skill for mandatory regression/doc automation. [COMPLETED]
+- [x] **[ADR]** Create ADR-0009 for Pathogen Adversarial Tuning. [COMPLETED]
+- [x] **[SCHEMA]** Implement `pathogen_metrics` table and `init_pathogen_db.py`. [COMPLETED]
+- [x] **[MUTATION]** Implement generational `MutationEngine` with ASCII/Unicode bypasses. [COMPLETED]
+- [x] **[LEDGER]** Create `PathogenLogger` and verify metrics persistency. [COMPLETED]
+- [x] **[VERIFY]** Add exhaustive regression tests for mutation logging and blocking. [COMPLETED]
 
 ### 🌌 [PLANNED] Phase 18: Singularity Meta-PDP Server
 - [ ] **[SERVER]** Create FastAPI Meta-PDP server in `singularity/server.py` to federate engine queries.
