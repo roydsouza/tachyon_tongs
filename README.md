@@ -21,7 +21,9 @@ Every mitigation in this substrate—from ADR-signed forensic baselines to the G
 *   **Semantic Intent Gating (PDP/PEP):** All outbound network and system tool requests are routed through a Policy Enforcement Point ([event_horizon](file:///Users/rds/antigravity/event_horizon)). Requests are evaluated against declarative `.rego` policies by the Policy Decision Point ([singularity](file:///Users/rds/antigravity/singularity)) that enforce strict capability boundaries.
 *   **Tiered Workload Isolation:** High-risk actions are isolated execution environments. "Tier 0" workloads run under dynamically generated macOS `sandbox-exec` (Seatbelt) profiles, allowing native computation speeds with microsecond overhead, while preventing unauthorized network or filesystem access.
 *   **Inbound Protection (Threat Mitigation)**: A three-stage pipeline (Scout, Analyst, Engineer) that harvests, analyzes, and mitigates agentic exploits.
-*   **Outbound Protection (Reverse Firewall)**: Introspective DLP (Data Loss Prevention) that blocks or sanitizes sensitive telemetry leaving the workspace.
+*   **Bi-Directional Capability Firewall**: Zero-Trust tool access via OPA (Rego) and Cedar policy federation.
+- **Substrate-Aware Model Routing**: Autonomous token management routing between Flash/Local and Pro substrates based on intent complexity.
+- **Pathogen Adversarial Tuning**: Generational mutation engine for continuous defense validation.
 *   **Sentinel Harvest Mode**: Autonomous localization of raw exploit payloads to a local "data lake" for amortized discovery and policy synthesis.
 *   **Pluggable Governance (PDP/PEP)**: Separation of Policy Decision Points (supporting Rego and Cedar) from Policy Enforcement Points at the edges.
 *   **Security Evolution Ledger**: A cryptographically signed hash-chain (Merkle Tree) that tracks substrate mutations mapped to specific exploits, ensuring immutable audit provenance.

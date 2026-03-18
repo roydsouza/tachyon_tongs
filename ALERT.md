@@ -9,3 +9,31 @@ This file serves as the central orchestration point for critical security notifi
 
 > [!NOTE]
 > System initialized securely. No active alerts.
+
+## [STATE_COMPROMISED] 2026-03-18 07:29:38
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> INTEGRITY COMPROMISED: /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md was modified out-of-band! Halt.
+
+---
+
+## [STATE_COMPROMISED] 2026-03-18 07:29:38
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> INTEGRITY COMPROMISED: /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md was modified out-of-band! Halt.
+
+---
+
+## [STATE_COMPROMISED] 2026-03-18 07:29:52
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> INTEGRITY COMPROMISED: /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md was modified out-of-band! Halt.
+
+---
+
+## [STATE_COMPROMISED] 2026-03-18 07:32:48
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> INTEGRITY COMPROMISED: /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md was modified out-of-band! Halt.
+
+---

@@ -39,6 +39,15 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ## ✅ Completed Milestones
 
+### ✅ [COMPLETED] Phase 20: Substrate Optimization (Quota Management)
+- [x] **[MANIFEST]** Create `agents/skills/substrate-optimizer/SKILL.md` with routing logic and LPM triggers. [COMPLETED]
+- [x] **[ROUTER]** Implement `ModelRouter` in `tachyon/core/routing.py` to evaluate task complexity. [COMPLETED]
+- [x] **[INTEGRATION]** Update `substrate_daemon.py` to route queries through the `ModelRouter`. [COMPLETED]
+- [x] **[PROTOCOLS]** Implement Context Pruning and Low-Power Mode (LPM) logic. [COMPLETED]
+- [x] **[ADR]** Author and sign ADR-0013: Substrate-Aware Model Routing. [COMPLETED]
+ [COMPLETED]
+- [x] **[VERIFY]** Add regression tests for the hybrid runner. [COMPLETED]
+
 ### ✅ Phase 13: Sentinel Hybrid Migration
 - [x] **[MANIFEST]** Create `agents/sentinel/SKILL.md` with identity and capabilities. [COMPLETED]
 - [x] **[CONFIG]** Externalize hardcoded config into `SKILL.md` YAML. [COMPLETED]

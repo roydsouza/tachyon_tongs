@@ -44,9 +44,12 @@ def create_supervisor_graph() -> StateGraph:
     
     return graph
 
+from tachyon.utils.debate_logger import DebateLogger
+
 def run_supervisor(url: str, logger=None, run_scraper=False, allowed_domains=None, denylist=None, cve_context=None, harvest_mode=False) -> dict:
     """Executes the Guardian Triad Action Broker."""
     app = create_supervisor_graph().compile()
+    debate_logger = DebateLogger()
     
     if logger and url:
         logger.add_site_polled(url)
@@ -63,4 +66,9 @@ def run_supervisor(url: str, logger=None, run_scraper=False, allowed_domains=Non
     
     # Let the Triad negotiate the workflow
     final_state = app.invoke(initial_state)
+    
+    # Capture the debate for forensic/humorous review
+    if "verdict" in final_state:
+        debate_logger.log_debate(final_state)
+        
     return final_state

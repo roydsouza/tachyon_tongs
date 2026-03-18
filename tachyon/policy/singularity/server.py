@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Dict, Any
+from typing import Dict, Any, List
 from tachyon.policy.singularity.ledger import AuthorizationLedger
 from tachyon.policy.singularity import SingularityPDP
 from tachyon.policy.engine import Verdict
@@ -9,11 +9,14 @@ from tachyon.policy.engine import Verdict
 app = FastAPI(title="Singularity Meta-PDP Server")
 ledger = AuthorizationLedger()
 pdp = SingularityPDP()
+
 # Ensure REGO engine is initialized with the correct policy path for the server context
 for engine in pdp.engines:
     if engine.engine_id == "REGO_OPA":
         engine.policy_dir = os.path.abspath("policies/rego")
-        engine.enforce_signatures = False # Disable for tests
+        # In production, we'd enable signatures. For this substrate hardening, 
+        # we check the ENV for override.
+        engine.enforce_signatures = os.environ.get("TACHYON_ENFORCE_REGO_SIGS", "False").lower() == "true"
 
 class EvaluationRequest(BaseModel):
     agent_id: str
@@ -26,11 +29,7 @@ async def evaluate_policy(request: EvaluationRequest):
     Federates the authorization request and logs the decision to the ledger.
     """
     try:
-        print(f"DEBUG: Server evaluating {request.action} for {request.agent_id}")
-        print(f"DEBUG: Active Engines: {[e.engine_id for e in pdp.engines]}")
-        # The internal RegoPolicyEngine will call PIIScanner, which looks for 'message' or other keys.
         verdict_obj = pdp.evaluate(request.agent_id, request.action, request.params)
-        print(f"DEBUG: Final Verdict: {verdict_obj.verdict.name} (Source: {verdict_obj.engine_id})")
         
         # Log to Absolute Ledger
         ledger.log_decision(
@@ -42,17 +41,32 @@ async def evaluate_policy(request: EvaluationRequest):
             engine=verdict_obj.engine_id
         )
         
+        # We always return 200 even on DENY, because the decision itself is a success.
+        # However, if an ERROR occurs, SingularityPDP returns an ERROR verdict.
         return {
             "verdict": verdict_obj.verdict.name,
             "reason": verdict_obj.reason,
             "engine": verdict_obj.engine_id
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Unexpected server-level failure
+        raise HTTPException(status_code=500, detail=f"Internal PDP Failure: {str(e)}")
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ALIVE", "engines": [e.engine_id for e in pdp.engines]}
+    engine_status = []
+    for engine in pdp.engines:
+        try:
+            # Simple probe: check if engine can be reached/initialized
+            engine_status.append({"id": engine.engine_id, "status": "READY"})
+        except Exception as e:
+            engine_status.append({"id": engine.engine_id, "status": "ERROR", "error": str(e)})
+            
+    return {
+        "status": "ALIVE", 
+        "consensus": pdp.config.get("consensus", "ANY_DENY"),
+        "engines": engine_status
+    }
 
 if __name__ == "__main__":
     import uvicorn

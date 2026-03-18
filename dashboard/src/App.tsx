@@ -17,7 +17,7 @@ interface Threat {
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-space-void select-none">
+    <div className="min-h-screen flex flex-col bg-space-void">
       {/* Header / Substrate Pulse */}
       <header className="h-14 flex items-center justify-between px-6 border-b border-white/10 glass rounded-none">
         <div className="flex items-center gap-3">
@@ -62,14 +62,31 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const App: React.FC = () => {
   const [logs, setLogs] = useState<ActionLog[]>([]);
-  const [threats] = useState<Threat[]>([
-    { id: 'CVE-2024-1337', type: 'IPI', description: 'Indirect Prompt Injection via SVG metadata.', severity: 'CRITICAL' },
-    { id: 'CVE-2024-1338', type: 'RAG', description: 'Knowledge retrieval poisoning in vector DB.', severity: 'HIGH' },
-    { id: 'CVE-2024-1339', type: 'DEP', description: 'Malicious library hallucination detected.', severity: 'CRITICAL' },
-  ]);
+  const [threats, setThreats] = useState<Threat[]>([]);
+  const [isAuthorizing, setIsAuthorizing] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const ws = useRef<WebSocket | null>(null);
 
+  const fetchThreats = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:60462/airlock/threats');
+      const data = await response.json();
+      // Map SQLite columns to component props
+      setThreats(data.map((t: any) => ({
+        id: t.cve_id,
+        type: t.relevance_class || 'CVE',
+        description: t.description,
+        severity: t.relevance_class === 'CRITICAL' ? 'CRITICAL' : 'HIGH'
+      })));
+    } catch (error) {
+      console.error('Failed to fetch threats:', error);
+    }
+  };
+
+  const [currentPatch, setCurrentPatch] = useState<any>(null);
+
   useEffect(() => {
+    fetchThreats();
     // Connect to Airlock API WebSocket
     ws.current = new WebSocket('ws://127.0.0.1:60462/ws/telemetry');
     
@@ -78,17 +95,47 @@ const App: React.FC = () => {
       if (data.type === 'ACTION_LOG') {
         data.timestamp = new Date().toLocaleTimeString();
         setLogs(prev => [data, ...prev].slice(0, 50));
+      } else if (data.type === 'PATCH_PROPOSED') {
+        setCurrentPatch({
+          id: data.patch_id,
+          agent: data.agent_id,
+          status: data.status,
+          timestamp: new Date().toLocaleTimeString(),
+          diff: data.diff || '--- /dev/null\n+++ /tachyon/enforcement/daemon.py\n@@ -0,0 +1,5 @@\n+ # High-Assurance Mitigation\n'
+        });
+        // Also log the proposal
+        setLogs(prev => [{
+          agent_id: data.agent_id,
+          action: `PROPOSED_PATCH_${data.patch_id}`,
+          status: 'PENDING',
+          timestamp: new Date().toLocaleTimeString()
+        }, ...prev]);
       }
     };
 
-    ws.current.onopen = () => {
-      console.log('Airlock Telemetry Stream Connected');
-    };
-
-    return () => {
-      ws.current?.close();
-    };
+    ws.current.onopen = () => console.log('Airlock Telemetry Stream Connected');
+    return () => ws.current?.close();
   }, []);
+
+  const handlePatchAction = async (patchId: string, action: 'AUTHORIZE' | 'REJECT') => {
+    setIsAuthorizing(true);
+    try {
+      const endpoint = action === 'AUTHORIZE' ? 'authorize' : 'reject';
+      const response = await fetch(`http://127.0.0.1:60462/airlock/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ patch_id: patchId, action })
+      });
+      const data = await response.json();
+      setStatusMessage(`${action} SUCCESS: ${data.message}`);
+      if (action === 'AUTHORIZE' || action === 'REJECT') setCurrentPatch(null);
+      setTimeout(() => setStatusMessage(null), 3000);
+    } catch (error) {
+      setStatusMessage(`ERROR: Failed to ${action.toLowerCase()} patch.`);
+    } finally {
+      setIsAuthorizing(false);
+    }
+  };
 
   return (
     <Layout>
@@ -97,9 +144,10 @@ const App: React.FC = () => {
         <div className="h-1/2 glass p-4 flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm">Threat Feed</h3>
-            <span className="text-[10px] text-gray-500">REAL-TIME</span>
+            <span className="text-[10px] text-gray-500" onClick={fetchThreats} style={{cursor: 'pointer'}}>REFRESH</span>
           </div>
           <div className="flex-1 overflow-y-auto space-y-3">
+            {threats.length === 0 && <span className="text-[10px] text-gray-600 italic">SECURE GATEWAY: NO ACTIVE THREATS</span>}
             {threats.map(threat => (
               <div key={threat.id} className="p-3 bg-white/5 border border-white/5 rounded hover:border-space-glow/30 transition-all cursor-pointer group">
                 <div className="flex justify-between items-start mb-1">
@@ -129,40 +177,53 @@ const App: React.FC = () => {
 
       {/* Center Pane: Side-by-Side Patch Diff */}
       <div className="flex-1 glass flex flex-col overflow-hidden relative">
+        {statusMessage && (
+          <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 bg-space-glow text-black px-6 py-2 rounded font-bold text-xs shadow-[0_0_20px_#00f2ff] animate-bounce">
+            {statusMessage}
+          </div>
+        )}
         <div className="h-12 border-b border-white/5 flex items-center justify-between px-6 bg-white/2">
           <div className="flex items-center gap-3">
-            <span className="text-[11px] font-bold text-gray-400">PATCH PROPOSAL:</span>
-            <span className="text-[11px] text-white font-mono">/tachyon/enforcement/daemon.py</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase">{currentPatch ? 'PENDING PATCH:' : 'SYSTEM ARCHITECTURE:'}</span>
+            <span className="text-[11px] text-white font-mono">{currentPatch ? currentPatch.id : 'NO PENDING MITIGATIONS'}</span>
           </div>
-          <div className="flex gap-2">
-            <button className="px-4 py-1 text-[10px] border border-white/20 rounded hover:bg-white/5 transition-all uppercase tracking-widest">Reject</button>
-            <button className="px-4 py-1 text-[10px] bg-space-neon text-black font-bold rounded shadow-[0_0_10px_#39ff14] hover:brightness-110 transition-all uppercase tracking-widest">Authorize Patch</button>
-          </div>
+          {currentPatch && (
+            <div className="flex gap-2">
+              <button 
+                disabled={isAuthorizing}
+                onClick={() => handlePatchAction(currentPatch.id, 'REJECT')}
+                className="px-4 py-1 text-[10px] border border-white/20 rounded hover:bg-white/5 transition-all uppercase tracking-widest disabled:opacity-50"
+              >
+                Reject
+              </button>
+              <button 
+                disabled={isAuthorizing}
+                onClick={() => handlePatchAction(currentPatch.id, 'AUTHORIZE')}
+                className="px-4 py-1 text-[10px] bg-space-neon text-black font-bold rounded shadow-[0_0_10px_#39ff14] hover:brightness-110 transition-all uppercase tracking-widest disabled:opacity-50"
+              >
+                {isAuthorizing ? 'AUTHORIZING...' : 'Authorize Patch'}
+              </button>
+            </div>
+          )}
         </div>
-        <div className="flex-1 flex font-mono text-[11px] leading-relaxed">
-          <div className="w-1/2 p-6 border-r border-white/5 bg-space-black/50 overflow-y-auto">
-            <div className="text-gray-500 mb-2">/* BEFORE */</div>
-            <div className="text-gray-300">
-              <span className="text-gray-600 mr-4">42</span> async def execute_action(request: ToolRequest):<br/>
-              <span className="text-gray-600 mr-4">43</span> &nbsp;&nbsp;&nbsp;&nbsp;request_id = str(uuid.uuid4())<br/>
-              <span className="text-space-crimson bg-space-crimson/10 w-full inline-block">- <span className="text-gray-600 mr-3">44</span>&nbsp;result = await router.route(request.agent_id, request.action, request.parameters)</span><br/>
-              <span className="text-gray-600 mr-4">45</span> <br/>
-              <span className="text-gray-600 mr-4">46</span> &nbsp;&nbsp;&nbsp;&nbsp;return ToolResponse(<br/>
+        <div className="flex-1 overflow-auto bg-black/40 p-6 font-mono text-[11px] text-gray-300 whitespace-pre">
+          {currentPatch ? (
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+              {currentPatch.diff.split('\n').map((line: string, i: number) => (
+                <div key={i} className={`${line.startsWith('+') ? 'text-space-neon bg-space-neon/5' : line.startsWith('-') ? 'text-space-crimson bg-space-crimson/5' : ''} px-2 py-0.5`}>
+                  {line}
+                </div>
+              ))}
             </div>
-          </div>
-          <div className="w-1/2 p-6 bg-space-black/80 overflow-y-auto">
-            <div className="text-gray-500 mb-2">/* AFTER */</div>
-            <div className="text-gray-300">
-              <span className="text-gray-600 mr-4">42</span> async def execute_action(request: ToolRequest):<br/>
-              <span className="text-gray-600 mr-4">43</span> &nbsp;&nbsp;&nbsp;&nbsp;request_id = str(uuid.uuid4())<br/>
-              <span className="text-space-neon bg-space-neon/10 w-full inline-block">+ <span className="text-gray-600 mr-3">44</span>&nbsp;intent = await orchestrator.audit_intent(request)</span><br/>
-              <span className="text-space-neon bg-space-neon/10 w-full inline-block">+ <span className="text-gray-600 mr-3">45</span>&nbsp;if intent.is_malicious:</span><br/>
-              <span className="text-space-neon bg-space-neon/10 w-full inline-block">+ <span className="text-gray-600 mr-3">46</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ToolResponse(status="BLOCKED", error=intent.reason)</span><br/>
-              <span className="text-space-neon bg-space-neon/10 w-full inline-block">+ <span className="text-gray-600 mr-3">47</span>&nbsp;result = await router.route(request.agent_id, request.action, request.parameters)</span><br/>
-              <span className="text-gray-600 mr-4">48</span> <br/>
-              <span className="text-gray-600 mr-4">49</span> &nbsp;&nbsp;&nbsp;&nbsp;return ToolResponse(<br/>
+          ) : (
+            <div className="h-full flex flex-col items-center justify-center text-gray-700 italic opacity-40">
+              <div className="w-24 h-24 mb-4 border-2 border-dashed border-gray-800 rounded-full flex items-center justify-center animate-spin-slow">
+                <span className="not-italic text-2xl">🛡️</span>
+              </div>
+              <span>SUBSTRATE IMMUTABILITY ACTIVE</span>
+              <span className="text-[9px] mt-2 tracking-[0.3em]">WAITING FOR ENGINEER PROPOSAL...</span>
             </div>
-          </div>
+          )}
         </div>
       </div>
 

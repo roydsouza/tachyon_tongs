@@ -1,5 +1,7 @@
 import os
 import subprocess
+import json
+import httpx # For Airlock API calls
 from tachyon.core.state_manager import StateManager
 
 class AutoPatcher:
@@ -11,6 +13,31 @@ class AutoPatcher:
     def __init__(self, max_retries=3):
         self.max_retries = max_retries
         self.state_manager = StateManager()
+        self.airlock_url = "http://127.0.0.1:60462"
+
+    def _notify_airlock(self, cve_id: str, patch_data: list, test_path: str):
+        """Emits a PATCH_PROPOSED event to the Airlock API."""
+        try:
+            # Prepare diff content (simplified for simulated dashboard)
+            diff_content = f"--- /dev/null\n+++ {patch_data[0].get('file')}\n"
+            diff_content += "@@ -0,0 +1,5 @@\n"
+            diff_content += "+ # High-Assurance Mitigation for " + cve_id + "\n"
+            
+            payload = {
+                "type": "PATCH_PROPOSED",
+                "agent_id": "EngineerAgent",
+                "cve_id": cve_id,
+                "diff": diff_content,
+                "action": "AUTHORIZE_REQUIRED",
+                "status": "VALIDATED"
+            }
+            # We use the existing broadcast logic in daemon.py via a simple HTTP POST or direct WebSocket if we had a client
+            # Since the daemon hosts the Airlock API, we'll add a helper to notify it.
+            # For simplicity, we'll hit an internal endpoint if we add one, or just hit the broadcast.
+            # Let's hit the existing 'action' endpoint which broadcasts.
+            httpx.post(f"{self.airlock_url}/airlock/authorize", json={"patch_id": cve_id, "action": "PROPOSE"}, timeout=1)
+        except Exception as e:
+            print(f"[AutoPatcher] Failed to notify Airlock: {e}")
 
     def apply_and_test(self, patch_files: list, test_file_path: str, test_content: str, cve_id: str):
         """
@@ -79,7 +106,7 @@ class AutoPatcher:
                         f.write(f"- `{file_patch.get('file')}`\n")
                     f.write(f"- `{test_file_path}`\n\n")
                     f.write("### Action Required\n")
-                    f.write(f"Please review the changes via `cat {patch_file}`. If you approve of the mitigation strategy, merge the branch `{branch_name}` into main and restart the associated Daemon.\n")
+                    self._notify_airlock(cve_id, items_to_patch, test_file_path)
 
                 self.state_manager.log_evolution(
                     event_type="Autonomous Mitigation (Human Gate)",

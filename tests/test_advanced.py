@@ -62,8 +62,11 @@ class TestAdvancedProtections(unittest.TestCase):
         
         # Ensure all steps populated the state dictionary
         self.assertIn("target_url", final_state)
-        self.assertNotEqual(final_state["raw_html"], "")
-        self.assertIn("status", final_state["analysis"])
+        # Check if raw_html exists and is not empty
+        self.assertTrue(len(final_state.get("raw_html", "")) > 0)
+        # The analyst node sets "analysis" as a dict
+        self.assertIn("analysis", final_state)
+        self.assertEqual(final_state["analysis"].get("status"), "success")
 
 if __name__ == '__main__':
     unittest.main()

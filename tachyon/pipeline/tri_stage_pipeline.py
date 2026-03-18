@@ -27,13 +27,21 @@ class SanitizerNode:
     """Stage 2: The Sanitizer. Deterministic cleaning logic. No LLM reasoning here."""
     
     @staticmethod
-    def clean(raw_html: str) -> str:
+    def clean(raw_input) -> str:
         """Strips dangerous execution tags and zero-width characters."""
-        if raw_html.startswith("FETCH_BLOCKED"):
-            return raw_html
+        content = ""
+        if isinstance(raw_input, dict):
+            if raw_input.get("status") == "FAIL":
+                return f"FETCH_BLOCKED: {raw_input.get('error', 'Unknown Error')}"
+            content = raw_input.get("result", "")
+        else:
+            content = str(raw_input)
+
+        if content.startswith("FETCH_BLOCKED"):
+            return content
 
         # 1. Strip zero-width characters used in steganographic prompt injection
-        cleaned = re.sub(r'[\u200B-\u200D\uFEFF]', '', raw_html)
+        cleaned = re.sub(r'[\u200B-\u200D\uFEFF]', '', content)
         
         # 2. Strip scripts and iframes (rudimentary regex for baseline prototype)
         cleaned = re.sub(r'<script.*?>.*?</script>', '', cleaned, flags=re.IGNORECASE | re.DOTALL)

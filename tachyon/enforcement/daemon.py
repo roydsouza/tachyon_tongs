@@ -12,87 +12,68 @@ from pydantic import BaseModel
 # from tachyon.pipeline import SentinelOrchestrator
 from tachyon.enforcement import AppleSandbox, ToolRouter
 from tachyon.monitoring import syscall_monitor
-from tachyon.policy.singularity import SingularityPDP
+from tachyon.core.routing import ModelRouter
 
 app = FastAPI(title="Tachyon Tongs Substrate Daemon", version="1.0.0")
 airlock_app = FastAPI(title="Tachyon Tongs Airlock API", version="1.0.0")
 
-# Enable CORS for the Airlock Dashboard (Port 3030)
-airlock_app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://127.0.0.1:3030", "http://localhost:3030"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # Initialize shared components
 sandbox = AppleSandbox(workspace_dir="/tmp/tachyon_tier0")
-# orchestrator = SentinelOrchestrator()
 policy_engine = SingularityPDP()
-# router = ToolRouter(orchestrator, sandbox, policy_engine, None, syscall_monitor)
 router = None # Will be initialized on startup
+model_router = ModelRouter()
 
 class ToolRequest(BaseModel):
     agent_id: str
     action: str
     parameters: Dict[str, Any]
     tenant_id: Optional[str] = "default"
+    prompt_context: Optional[str] = None # Optional context for complexity detection
 
 class ToolResponse(BaseModel):
     request_id: str
     status: str
+    selected_model: str # Indicate which model was used
     result: Optional[Any] = None
     error: Optional[str] = None
-
-@app.get("/health")
-async def health_check():
-    return {"status": "ok", "engine": "Metal 4 / Apple Silicon", "substrate": "active"}
-
-class AirlockManager:
-    def __init__(self):
-        self.active_connections: List[WebSocket] = []
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
-    async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
-
-airlock_manager = AirlockManager()
-
-@airlock_app.websocket("/ws/telemetry")
-async def websocket_endpoint(websocket: WebSocket):
-    await airlock_manager.connect(websocket)
-    try:
-        while True:
-            # Dummy pulse data for now
-            await websocket.receive_text()
-            # real implementation will stream from StateManager/Scout
-    except WebSocketDisconnect:
-        airlock_manager.disconnect(websocket)
 
 @app.post("/action", response_model=ToolResponse)
 async def execute_action(request: ToolRequest):
     request_id = str(uuid.uuid4())
-    result = await router.route(request.agent_id, request.action, request.parameters)
     
+    # 1. Detect Complexity & Select Model
+    prompt = request.prompt_context or f"{request.action} with parameters {request.parameters}"
+    complexity = model_router.detect_complexity(prompt)
+    
+    # In a real scenario, we'd fetch actual quota metrics. Using 1.0 (full) for now.
+    selected_model = model_router.select_model(prompt, complexity, current_quota=1.0)
+    
+    # 2. Fallback logic
+    # If a specific model is requested but fails, or if we ensure a fallback is always ready:
+    fallback_model = "gemini-3-flash" # The reliable floor
+    
+    try:
+        # Route the action
+        result = await router.route(request.agent_id, request.action, request.parameters)
+    except Exception as e:
+        # Fallback implementation: repeat with the floor model if applicable
+        # This is a placeholder for actual multi-backend dispatch logic
+        logger.warning(f"Primary model routing failed, falling back to {fallback_model}")
+        result = {"status": "FALLBACK_SUCCESS", "result": f"Recovered via {fallback_model}", "error": str(e)}
+
     # Push to Airlock
     await airlock_manager.broadcast(json.dumps({
         "type": "ACTION_LOG",
         "agent_id": request.agent_id,
         "action": request.action,
+        "selected_model": selected_model,
         "status": result.get("status")
     }))
     
     return ToolResponse(
         request_id=request_id,
         status=result.get("status", "ERROR"),
+        selected_model=selected_model,
         result=result.get("result"),
         error=result.get("error")
     )

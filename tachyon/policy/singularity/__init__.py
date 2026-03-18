@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Type
 from tachyon.policy.engine import PolicyEngine, PolicyVerdict, Verdict
 from tachyon.policy.engines.rego_engine import RegoPolicyEngine
 from tachyon.policy.engines.cedar_engine import CedarPolicyEngine
@@ -9,12 +9,23 @@ class SingularityPDP(PolicyEngine):
     """
     The central broker for multi-engine policy enforcement.
     Federates calls to active plugins based on consensus rules.
+    Now supports pluggable engine registration.
     """
+
+    _registry: Dict[str, Type[PolicyEngine]] = {
+        "REGO": RegoPolicyEngine,
+        "CEDAR": CedarPolicyEngine
+    }
 
     def __init__(self, config_path: str = "configs/singularity_config.json"):
         self.engines: List[PolicyEngine] = []
         self.config = self._load_config(config_path)
         self._initialize_engines()
+
+    @classmethod
+    def register_engine_type(cls, name: str, engine_class: Type[PolicyEngine]):
+        """Registers a new engine type at the class level."""
+        cls._registry[name] = engine_class
 
     def _load_config(self, path: str) -> dict:
         if os.path.exists(path):
@@ -26,19 +37,18 @@ class SingularityPDP(PolicyEngine):
         active = self.config.get("active_engines", [])
         configs = self.config.get("engine_configs", {})
         
-        if "REGO" in active:
-            rego_conf = configs.get("REGO", {})
-            self.engines.append(RegoPolicyEngine(
-                policy_dir=rego_conf.get("policy_dir", "policies/rego"),
-                enforce_signatures=rego_conf.get("enforce_signatures", True)
-            ))
-
-        if "CEDAR" in active:
-            cedar_conf = configs.get("CEDAR", {})
-            self.engines.append(CedarPolicyEngine(
-                policy_dir=cedar_conf.get("policy_dir", "policies/cedar"),
-                enforce_signatures=cedar_conf.get("enforce_signatures", True)
-            ))
+        for engine_name in active:
+            if engine_name in self._registry:
+                engine_class = self._registry[engine_name]
+                conf = configs.get(engine_name, {})
+                # Most engines follow the policy_dir/enforce_signatures pattern
+                try:
+                    self.engines.append(engine_class(
+                        policy_dir=conf.get("policy_dir", f"policies/{engine_name.lower()}"),
+                        enforce_signatures=conf.get("enforce_signatures", True)
+                    ))
+                except Exception as e:
+                    print(f"ERROR: Failed to initialize engine {engine_name}: {e}")
 
     def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
         """
@@ -53,24 +63,22 @@ class SingularityPDP(PolicyEngine):
                 verdict = engine.evaluate(agent_id, action, params)
                 verdicts.append(verdict)
                 
-                # Short-circuit on ANY_DENY (includes DENY and ERROR for maximum security)
+                # ANY_DENY Short-circuit (includes ERROR for maximum security)
                 if self.config.get("consensus") == "ANY_DENY":
                     if verdict.verdict in [Verdict.DENY, Verdict.ERROR]:
                         return verdict
             except Exception as e:
-                error_verdict = PolicyVerdict(Verdict.ERROR, str(e), engine.engine_id)
+                error_verdict = PolicyVerdict(Verdict.ERROR, f"Engine Failure ({engine.engine_id}): {str(e)}", engine.engine_id)
                 if self.config.get("consensus") == "ANY_DENY":
                     return error_verdict
                 verdicts.append(error_verdict)
 
-        # Placeholder: If we reached here without a short-circuited DENY and consensus is ANY_DENY
-        # then we are essentially ALLOWed unless an error occurred.
-        return PolicyVerdict(Verdict.ALLOW, "Consensus reached", "SINGULARITY_CORE")
+        # Final check for ANY_DENY: if we are here, no DENY/ERROR occurred.
+        return PolicyVerdict(Verdict.ALLOW, "Consensus reached (All active engines permitted)", "SINGULARITY_CORE")
 
     def is_action_allowed(self, agent_id: str, action: str, params: Dict[str, Any]) -> bool:
         """
         Wrapper to check if an action is deterministicially allowed.
-        Used by the ToolRouter and legacy enforcement points.
         """
         verdict = self.evaluate(agent_id, action, params)
         return verdict.verdict == Verdict.ALLOW
@@ -78,7 +86,6 @@ class SingularityPDP(PolicyEngine):
     def evaluate_intent(self, intent: str, action: str, params: Dict[str, Any]) -> bool:
         """
         Shim for legacy intent-based evaluation.
-        Maps to the new evaluate call with 'intent' in params.
         """
         params_with_intent = params.copy()
         params_with_intent["intent"] = intent

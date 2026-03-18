@@ -17,6 +17,21 @@ class AuthorizationLedger:
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
+            
+            # Ensure table exists
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS authz_ledger (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    agent_id TEXT,
+                    action TEXT,
+                    params_json TEXT,
+                    verdict TEXT,
+                    reason TEXT,
+                    engine_source TEXT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            
             params_json = json.dumps(params)
             
             cursor.execute('''

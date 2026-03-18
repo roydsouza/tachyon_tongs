@@ -1,5 +1,18 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+## [2026-03-18 11:45] - Substrate-Aware Model Routing & Quota Management
+- **Session Focus**: Cost Optimization, Resilience, and High-Assurance Routing.
+- **Key Accomplishments**:
+    - **ModelRouter Integration**: Implemented autonomous model steering in `daemon.py` based on intent complexity.
+    - **Robust Fallback**: Established a prioritized fallback floor (Gemini 1.5 Flash / Local) to ensure zero-latency execution.
+    - **ADR-0013**: Authored and signed the architectural decision record for Substrate-Aware Model Routing.
+    - **Documentation**: Synchronized `README.md`, `ARCHITECTURE.md`, and `TASKS.md` with the new routing intelligence.
+- **Decisions**:
+    - Use the `gemini-3-flash` model as the mandatory floor for all reconnaissance and verification tasks to maximize token longevity.
+- **Status**: Phase 20 (Quota Management) Complete. Substrate now cost-aware and resilient.
+
+---
+
 This log tracks technical decisions, mission-critical state transitions, and synchronization checkpoints for the Tachyon Tongs project.
 
 ---

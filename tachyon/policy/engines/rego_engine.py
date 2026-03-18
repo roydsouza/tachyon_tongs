@@ -1,4 +1,6 @@
 import os
+import json
+import functools
 from typing import Dict, Any
 from tachyon.policy.engine import PolicyEngine, PolicyVerdict, Verdict
 from tachyon.core.signing import IntegrityManager
@@ -7,17 +9,39 @@ class RegoPolicyEngine(PolicyEngine):
     """
     Enforcement engine for OPA/Rego policies.
     Enforces mandatory cryptographic signature verification for all policy files.
+    Optimized with an LRU cache to reduce evaluation latency for repeat requests.
     """
 
-    def __init__(self, policy_dir: str = "policies/rego", enforce_signatures: bool = True):
+    def __init__(self, policy_dir: str = "policies/rego", enforce_signatures: bool = True, cache_size: int = 1024):
         self.policy_dir = policy_dir
         self.enforce_signatures = enforce_signatures
         self.integrity_manager = IntegrityManager()
+        self.cache_size = cache_size
 
     def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
         """
         Verifies policy integrity and then evaluates the action against the Rego rule set.
+        Uses internal hashing for LRU caching support.
         """
+        # 1. Handle DLP specifically (no cache due to high dynamic content)
+        if action == "outbound_dlp":
+            from tachyon.pipeline.pii_scanner import PIIScanner
+            scanner = PIIScanner()
+            findings = scanner.scan_dictionary(params)
+            params = {**params, **findings}
+            return self._evaluate_uncached(agent_id, action, params)
+
+        # 2. Use cached evaluation for standard tool calls
+        # We JSON-serialize params to make them hashable for lru_cache
+        param_str = json.dumps(params, sort_keys=True)
+        return self._evaluate_cached(agent_id, action, param_str)
+
+    @functools.lru_cache(maxsize=1024)
+    def _evaluate_cached(self, agent_id: str, action: str, param_str: str) -> PolicyVerdict:
+        params = json.loads(param_str)
+        return self._evaluate_uncached(agent_id, action, params)
+
+    def _evaluate_uncached(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
         # 1. Integrity Check
         if self.enforce_signatures:
             try:
@@ -25,19 +49,11 @@ class RegoPolicyEngine(PolicyEngine):
             except RuntimeError as e:
                 return PolicyVerdict(Verdict.DENY, f"INTEGRITY FAILURE: {str(e)}", self.engine_id)
 
-        # 2. OPA Evaluation (Enhanced with PII Scanner for DLP)
-        # If this is a DLP check, we augment the input with scanner findings
-        if action == "outbound_dlp":
-            from tachyon.pipeline.pii_scanner import PIIScanner
-            scanner = PIIScanner()
-            findings = scanner.scan_dictionary(params)
-            params = {**params, **findings}
-
-        # Simulated OPA check for demonstration
+        # 2. Simulated OPA check for demonstration
         if action == "unsafe_execute" and agent_id != "engineer":
              return PolicyVerdict(Verdict.DENY, "Direct execution blocked by Rego (Mock)", self.engine_id)
 
-        # Simplified DLP check for the mock engine
+        # 3. Simplified DLP check for the mock engine
         if action == "outbound_dlp":
             serialized_params = str(params)
             if params.get("has_sensitive_token") or "sk-" in serialized_params:
