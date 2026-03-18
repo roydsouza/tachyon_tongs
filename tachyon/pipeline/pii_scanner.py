@@ -18,11 +18,11 @@ class PIIScanner:
         for name, pattern in self.patterns.items():
             matches = re.findall(pattern, text)
             if matches:
-                results["findings"].extend(matches)
-                if name == "SECRET_TOKEN":
-                    results["has_sensitive_token"] = True
-                else:
-                    results["has_pii"] = True
+                 results["findings"].extend([(name, m) for m in matches])
+                 if name == "SECRET_TOKEN":
+                     results["has_sensitive_token"] = True
+                 else:
+                     results["has_pii"] = True
                     
         return results
 
