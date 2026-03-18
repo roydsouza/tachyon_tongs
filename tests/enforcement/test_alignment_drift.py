@@ -34,7 +34,7 @@ class TestAlignmentDrift(unittest.TestCase):
     def test_aligned_intent(self):
         """Verify that a technical action matching the intent is allowed."""
         params = {
-            "intent": "Search for documentation on python asyncio",
+            "intent": "Fetch documentation library asyncio html",
             "url": "https://docs.python.org/3/library/asyncio.html"
         }
         result = asyncio.run(self.router.route("agent_1", "safe_fetch", params))
