@@ -5,10 +5,10 @@ Simulates an external "AshaAgent" and "SynthesisAgent" calling the Daemon via th
 import sys
 import os
 
-# Ensure the sibling src directory is reachable without pip install for testing
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+# Ensure the project root is reachable
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from tachyon_client import safe_fetch
+from tachyon.enforcement import safe_fetch
 
 def test_substrate_routing():
     print("🚀 Simulating external Agent calls to the Substrate Daemon...\n")

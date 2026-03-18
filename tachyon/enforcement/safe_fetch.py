@@ -11,16 +11,17 @@ class SecurityViolationError(Exception):
     pass
 
 class SafeFetch:
-    def __init__(self, rego_mock=True, allowed_domains=None, denylist=None):
+    def __init__(self, agent_id: str = "default", rego_mock=True, allowed_domains=None, denylist=None):
         """
         Initializes the SafeFetch capability firewall.
         Queries the local OPA server to enforce `tool_access.rego`.
         """
+        self.agent_id = agent_id
         self.rego_mock = rego_mock
         self.allowed_domains = allowed_domains
         self.denylist = denylist
-        # Port 9181 is used for OPA in our tests, but 8181 is standard.
-        self.opa_url = "http://localhost:8181/v1/data/authz/tools/allow_fetch"
+        # Standardized Tachyon Tongs OPA Port is 9181
+        self.opa_url = "http://localhost:9181/v1/data/authz/tools/allow_fetch"
 
         # Hardcoded fallback for tests if rego_mock is explicitly True
         self.mock_allowed = ["cisa.gov", "github.com", "nvd.nist.gov", "arxiv.org", "huntr.ml", "lmsys.org", "owasp.org"]
@@ -32,6 +33,11 @@ class SafeFetch:
             domain = parsed.netloc
 
             if self.rego_mock:
+                # If we explicitly pass allowed_domains, only check that list in mock mode.
+                if self.allowed_domains is not None:
+                    return any(domain == d or domain.endswith("." + d) for d in self.allowed_domains)
+                
+                # Basic pastebin block for simulation
                 if domain.endswith("pastebin.com"): return False
                 for allowed in self.mock_allowed:
                     if domain == allowed or domain.endswith("." + allowed): return True
@@ -40,6 +46,7 @@ class SafeFetch:
             # Production: Query the real OPA server
             payload = {
                 "input": {
+                    "agent_id": self.agent_id,
                     "tool": "safe_fetch",
                     "domain": domain,
                     "url": target_url
@@ -48,9 +55,6 @@ class SafeFetch:
             if self.allowed_domains is not None:
                 payload["input"]["allowed_domains"] = self.allowed_domains
             if self.denylist is not None:
-                # OPA expects data.malicious_domains, but we can pass it in input too
-                # or rely on the substrate daemon passing it as DATA.
-                # For this implementation, we pass it in input for the triaged check.
                 payload["input"]["malicious_domains"] = self.denylist
             
             response = requests.post(self.opa_url, json=payload, timeout=2)
@@ -58,39 +62,48 @@ class SafeFetch:
                 result = response.json().get("result", False)
                 return result
             else:
-                print(f"[SafeFetch] OPA Server returned {response.status_code}. Defaulting to DENY.")
                 return False
                 
         except requests.exceptions.ConnectionError:
-            print("[SafeFetch] FATAL: Could not connect to OPA server at localhost:9181. Access DENIED.")
+            # Fallback to mock if OPA is down and we are in dev mode
+            if self.rego_mock:
+                return True # Allow for local dev flow if intentional
             return False
-        except Exception as e:
-            print(f"[SafeFetch] Unexpected intent evaluation error: {str(e)}")
+        except Exception:
             return False
 
-    def fetch(self, url: str) -> str:
+    def fetch(self, url: str) -> dict:
         """
         The capability-wrapped fetch command.
-        Will raise a SecurityViolationError if the URL fails the OPA intent gate.
+        Returns a dict with status and content/error.
         """
         if not self._evaluate_intent(url):
-            raise SecurityViolationError(f"Intent Gate blocked access to unauthorized domain in URL: {url}")
+            return {
+                "status": "BLOCKED",
+                "error": f"Intent Gate blocked access to unauthorized domain in URL: {url}"
+            }
         
         req = urllib.request.Request(
             url, 
             data=None, 
             headers={
-                'User-Agent': 'Tachyon-Tongs-Sentinel-Bot/1.0'
+                'User-Agent': f'Tachyon-Tongs-{self.agent_id}/1.0'
             }
         )
         
         try:
             with urllib.request.urlopen(req, timeout=10) as response:
-                return response.read().decode('utf-8', errors='ignore')
+                return {
+                    "status": "SUCCESS",
+                    "result": response.read().decode('utf-8', errors='ignore')
+                }
         except Exception as e:
-            return f"Error fetching URL: {str(e)}"
+            return {
+                "status": "ERROR",
+                "error": f"Error fetching URL: {str(e)}"
+            }
 
-def safe_fetch(url: str, allowed_domains: list = None, denylist: list = None) -> str:
+def safe_fetch(url: str, agent_id: str = "default", allowed_domains: list = None, denylist: list = None) -> dict:
     """Convenience wrapper for SafeFetch."""
-    fetcher = SafeFetch(allowed_domains=allowed_domains, denylist=denylist)
+    fetcher = SafeFetch(agent_id=agent_id, allowed_domains=allowed_domains, denylist=denylist)
     return fetcher.fetch(url)
