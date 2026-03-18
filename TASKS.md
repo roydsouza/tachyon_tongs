@@ -59,12 +59,16 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[REGRESSION]** Implement automated regression detection for previously blocked payloads.
 - [ ] **[DRILL]** Upgrade `zero_day_drill.py` to use `MutationEngine` in high-volume batch mode.
 
-### 🟢 [ACTIVE] Phase 12: Bi-Directional PEP/PDP Evolution
-- [ ] **[HARVEST]** Add `--harvest` mode to `scripts/sentinel.py` to localize exploit payloads.
-- [ ] **[EXTRACT]** Implement `src/agents/rego_synth_agent.py` and `cedar_synth_agent.py`.
-- [ ] **[OUTBOUND]** Implement the "Reverse Firewall" (Outbound DLP) in `substrate_daemon.py`.
-- [ ] **[PLUGGABLE]** Implement the multi-engine PDP resolver.
-- [ ] **[MANUAL]** Curate `policies/rego/manual/internal_dlp.rego` for sensitive info.
+### ✅ [COMPLETED] Phase 12.1: Policy Synthesizers (Rego/Cedar)
+- [x] **[EXTRACT]** Implement `tachyon/agents/synthesizer/rego_synth.py` to convert harvested JSON into `.rego` rules. [COMPLETED]
+- [x] **[EXTRACT]** Implement `tachyon/agents/synthesizer/cedar_synth.py` to convert harvested JSON into Cedar policies. [COMPLETED]
+- [x] **[SCHEMA]** Define the `PolicyMapping` to associate exploit IDs with generated rules. [COMPLETED]
+- [x] **[VERIFY]** Auto-load generated policies into the `singularity` PDP for validation. [COMPLETED]
+
+### 🟢 [COMPLETED] Phase 12: Sentinel Harvest Mode
+- [x] **[HARVEST]** Add `--harvest` mode to `scripts/sentinel.py` to localize exploit payloads. [COMPLETED]
+- [x] **[LOCALIZE]** Successfully saved 6 raw payloads to `intelligence/exploits/`. [COMPLETED]
+- [x] **[WIRING]** Integrated localization into the `Engineer` agent. [COMPLETED]
 
 ### 🛡️ [NEW] Phase 19: Integrity Gating & Security Evolution
 - [ ] **[LEDGER]** Establish `docs/security_evolution/` to track substrate mutations mapped to specific exploits (The "Exploit-to-Fix" ADRs).

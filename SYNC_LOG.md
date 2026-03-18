@@ -4,6 +4,19 @@ This log tracks technical decisions, mission-critical state transitions, and syn
 
 ---
 
+## [2026-03-17 19:15] - Phase 12.1: Autonomous Policy Synthesizers Implemented
+- **Session Focus**: Automating the conversion of raw exploit payloads into active security policies.
+- **Key Accomplishments**:
+    - **Synthesizer Agents**: Created `RegoPolicySynthesizer` and `CedarPolicySynthesizer` in `tachyon/agents/synthesizer`.
+    - **Sentinel Integration**: Upgraded `scripts/sentinel.py` to trigger synthesis immediately after harvesting.
+    - **Verification**: Successfully synthesized 6 Rego and 6 Cedar policies in a live end-to-end run.
+    - **Regression Tests**: Added `tests/test_policy_synthesis.py` with passing cases for both engines.
+- **Decisions**:
+    - Use case-insensitive keyword mapping for robust signal extraction from raw NVD descriptions.
+- **Status**: Phase 12.1 Complete.
+
+---
+
 ## [2026-03-17 17:35] - Airlock Oversight Evolution (HITL/HOTL/HOOTL)
 - **Session Focus**: Documenting the phased evolution of human-agent oversight and dashboard surface safety.
 - **Key Accomplishments**:

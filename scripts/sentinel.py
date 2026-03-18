@@ -152,14 +152,33 @@ def main():
         
         # Phase 1 & 2: The Guardian Triad Split (Autonomous Multi-Agent Workflow)
         print("[Sentinel] Empowering the Guardian Triad Supervisor Graph...")
-        # The Scout handles the scraping and the targeted URL fetching!
-        # If harvest is enabled, we pass it down to the supervisor
         triad_result = run_supervisor(
             "https://github.com/advisories", 
             logger=logger, 
             run_scraper=True,
             harvest_mode=args.harvest
         )
+
+        # Phase 12.1: Policy Synthesis
+        if args.harvest:
+            print("[Sentinel] [SYNTHESIS] Initiating autonomous policy generation...")
+            from tachyon.agents.synthesizer.rego_synth import RegoPolicySynthesizer
+            from tachyon.agents.synthesizer.cedar_synth import CedarPolicySynthesizer
+            
+            rego_gen = RegoPolicySynthesizer()
+            cedar_gen = CedarPolicySynthesizer()
+            
+            exploit_dir = "intelligence/exploits"
+            for filename in os.listdir(exploit_dir):
+                if filename.endswith(".json") and filename != ".gitkeep":
+                    path = os.path.join(exploit_dir, filename)
+                    r_path = rego_gen.synthesize(path)
+                    c_path = cedar_gen.synthesize(path)
+                    print(f"[Sentinel] [SYNTHESIS] Generated Rego: {r_path}")
+                    print(f"[Sentinel] [SYNTHESIS] Generated Cedar: {c_path}")
+                    if logger:
+                        logger.add_file_updated(r_path, details=f"Synthesized Rego policy for {filename}")
+                        logger.add_file_updated(c_path, details=f"Synthesized Cedar policy for {filename}")
         
         # Check Engineer's final verification status
         final_output = triad_result.get("final_output", {})
