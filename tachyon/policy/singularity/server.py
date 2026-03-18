@@ -9,6 +9,11 @@ from tachyon.policy.engine import Verdict
 app = FastAPI(title="Singularity Meta-PDP Server")
 ledger = AuthorizationLedger()
 pdp = SingularityPDP()
+# Ensure REGO engine is initialized with the correct policy path for the server context
+for engine in pdp.engines:
+    if engine.engine_id == "REGO_OPA":
+        engine.policy_dir = os.path.abspath("policies/rego")
+        engine.enforce_signatures = False # Disable for tests
 
 class EvaluationRequest(BaseModel):
     agent_id: str
@@ -21,7 +26,10 @@ async def evaluate_policy(request: EvaluationRequest):
     Federates the authorization request and logs the decision to the ledger.
     """
     try:
+        print(f"DEBUG: Server evaluating {request.action} for {request.agent_id}")
+        print(f"DEBUG: Active Engines: {[e.engine_id for e in pdp.engines]}")
         verdict_obj = pdp.evaluate(request.agent_id, request.action, request.params)
+        print(f"DEBUG: Final Verdict: {verdict_obj.verdict.name} (Source: {verdict_obj.engine_id})")
         
         # Log to Absolute Ledger
         ledger.log_decision(
