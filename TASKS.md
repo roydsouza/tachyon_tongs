@@ -7,11 +7,11 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 ### 🚨 [URGENT] Substrate Operator Interface (Slash Commands)
 - [ ] **BUG: Slash Commands Inaccessible**: Commands in `.agents/workflows/` (`/help`, `/catalog`, etc.) are not being recognized by the AntiGravity environment. Investigate system-level registration and caching.
 
-### 📊 [PLANNED] Phase 15: Adaptive Rate-Limiting Implementation
-- [ ] **[ADR]** Create ADR-0007 for the Rate-Limiting strategy.
-- [ ] **[CORE]** Implement `AdaptiveRateLimiter` middleware in `tachyon/enforcement/rate_limiter.py`.
-- [ ] **[ROUTING]** Integrate rate-limiting into `ToolRouter`.
-- [ ] **[VERIFY]** Add regression tests for per-agent and per-tool throttling.
+### ✅ [COMPLETED] Phase 15: Adaptive Rate-Limiting Implementation
+- [x] **[ADR]** Create ADR-0007 for the Rate-Limiting strategy. [COMPLETED]
+- [x] **[CORE]** Implement `AdaptiveRateLimiter` middleware in `tachyon/enforcement/rate_limiter.py`. [COMPLETED]
+- [x] **[ROUTING]** Integrate rate-limiting into `ToolRouter`. [COMPLETED]
+- [x] **[VERIFY]** Add regression tests for per-agent and per-tool throttling. [COMPLETED]
 
 ### 🔍 [PLANNED] Phase 16: Competitive Gap Implementation
 - [ ] **[REPUTATION]** Implement `domain_reputation.json` and logic for scoring fetch targets in `safe_fetch.py`.
