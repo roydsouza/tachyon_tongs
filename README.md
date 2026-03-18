@@ -58,11 +58,15 @@ Future iterations will transition the local daemon to a cloud-native architectur
 *   **Matchlock (Planned):** Will provide cryptographic workload identity and secrets management for agents.
 *   **Tailscale (Planned):** Will establish an encrypted RPC mesh, allowing disparate "Out-of-Band" agents across physical machines to safely utilize a centralized cloud Tachyon Substrate.
 
-## 6. Oversight Dynamics: HITL → HOTL → HOOTL
-Tachyon Tongs follows a phased evolution of human-agent collaboration:
-- **HITL (Human-In-The-Loop)**: *Current Phase*. Every substrate mutation requires explicit human authorization in the Airlock.
-- **HOTL (Human-On-The-Loop)**: *Upcoming*. Autonomous patching with a persistent "Kill Switch" and retrospective audit windows.
 - **HOOTL (Human-Out-Of-The-Loop)**: *Target*. Full autonomous self-healing substrate with high-fidelity immutable logging.
+
+## 7. Forensic Debate Monitoring
+
+Tachyon Tongs provides a unique "Adversarial Audit" capability. Use the `debates/` directory to monitor the real-time discourse between the **Engineer**, **Skeptic**, and **Meta-Critic**. 
+
+- **Visibility**: Every autonomous patch is debated by specialized agents before reaching the Airlock.
+- **Humorous Oversight**: These debates are recorded in witty, high-fidelity markdown, making security audits both informative and engaging. 
+- **The Heartbeat**: Even when idle, the Triad provides "Heartbeat Banter" to confirm oversight availability.
 
 ## 7. Architectural Justifications
 

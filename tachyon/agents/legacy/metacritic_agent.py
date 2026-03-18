@@ -25,6 +25,14 @@ class MetaCriticAgent:
             "risk_mitigation_required": []
         }
 
+        if not proposal:
+            return {
+                "status": "idle",
+                "concurrence": True,
+                "banter": "Nothing to arbitrate. I'll go back to counting the ways the Engineer could fail. Currently at 4,291.",
+                "justification": "Substrate is idle. Heartbeat active."
+            }
+
         # Logic for arbitration:
         # If Skeptic risk score is high and not addressed by Engineer -> Reject.
         # If Skeptic concerns are low or non-critical -> Concur with conditions.
@@ -34,16 +42,19 @@ class MetaCriticAgent:
         
         if risk_score > 0.7:
             verdict["status"] = "rejected"
-            verdict["justification"] = f"Rejected due to high risk score ({risk_score}) and critical concerns: {', '.join(concerns)}"
+            verdict["justification"] = f"Rejected due to high risk score ({risk_score}). Engineer, please consider a career in interpretive dance instead."
+            verdict["banter"] = "ABSOLUTELY NOT. This is a security substrate, not a playground for script kiddies."
         elif risk_score > 0.3:
             verdict["status"] = "conditional_pass"
             verdict["concurrence"] = True
-            verdict["justification"] = "Conditional pass. Skeptic concerns must be addressed in follow-up rotations."
+            verdict["justification"] = "Conditional pass. Skeptic concerns must be addressed. Try harder next time."
             verdict["risk_mitigation_required"] = concerns
+            verdict["banter"] = "Functional, but barely. It's like putting a deadbolt on a cardboard door."
         else:
             verdict["status"] = "approved"
             verdict["concurrence"] = True
             verdict["justification"] = "Full concurrence. The debate surfaced no critical blockers."
+            verdict["banter"] = "Surprisingly adequate. I'll allow it—for now."
 
         return verdict
 

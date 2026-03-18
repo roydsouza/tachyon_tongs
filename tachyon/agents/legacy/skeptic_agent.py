@@ -16,6 +16,14 @@ class SkepticAgent:
         Analyzes the Analyst's reasoning and the Engineer's patch to find flaws.
         Focuses on 'Structural Drifts' and 'Trojan Patches'.
         """
+        if not patch_files:
+            return {
+                "is_skeptical": True,
+                "banter": "Nothing to critique. It's too quiet. I suspect the Engineer is napping—or worse, plotting something 'useful'.",
+                "risk_score": 0.0,
+                "verdict": "pass"
+            }
+
         cve_id = analysis.get("id", "UNKNOWN")
         
         critique_result = {
@@ -23,7 +31,8 @@ class SkepticAgent:
             "concerns": [],
             "risk_score": 0.0,
             "verdict": "pass",
-            "detected_anomalies": []
+            "detected_anomalies": [],
+            "banter": "Oh look, another 'patch'. I've seen more secure code in a 'Hello World' tutorial. Are we trying to secure a substrate or or host a 'Bug Bounty for Dummies'?"
         }
 
         # Simulated Adversarial Analysis

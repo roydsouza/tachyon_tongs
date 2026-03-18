@@ -8,7 +8,8 @@ The architecture of Tachyon Tongs is a direct physical manifestation of its [THR
 
 - **Intrusion Detection (IDS)**: ADRs are **cryptographically signed** assets serving as a forensic baseline. By comparing the signed state of the architecture against the current implementation, operators can detect "Structural Drifts" or unauthorized mutations—even those that follow valid syntax but violate the recorded security intent.
 - **The Threat Model as Source of Truth**: Implementation and administration are never ad-hoc. They are rigorous, peer-reviewed responses to identified vulnerabilities. Any enhancement to the substrate *must* start with a threat analysis, followed by an ADR, and finally the technical implementation.
-- **Tamper Detection**: Every ADR is paired with a `.sig` file. The `IntegrityManager` verifies these signatures during substrate health checks. Any out-of-band modification to the decision records or the threat model triggers a **CRITICAL_SYSTEM_TAMPER** alert.
+- **Forensic Debate Monitoring**: Administrators can monitor the live cognitive reasoning of the Triad via the `debates/` directory. Each record captures the adversarial discourse (Engineer vs. Skeptic vs. Meta-Critic) in a humorous, high-fidelity markdown format, ensuring that security audits are both informative and transparent.
+- **Tamper Detection**: Every ADR is paired with a `.sig` file. The `IntegrityManager` verifies these signatures during substrate health checks.
 - **Forensic Rollback**: ADRs provide the "Ground Truth" for substrate state, allowing for precise forensic recovery based on the last-signed safe threat profile.
 
 ## 1. High-Level Component Topology
