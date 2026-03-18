@@ -4,6 +4,20 @@ This log tracks technical decisions, mission-critical state transitions, and syn
 
 ---
 
+## [2026-03-18 07:30] - Autonomous Substrate Hardening & Test Expansion
+- **Session Focus**: High-Assurance Security, Performance Optimization, and Test Coverage.
+- **Key Accomplishments**:
+    - **TOCTOU Neutralized**: Refactored `ToolRouter` to use `ImmutableToolRequest` (frozen dataclasses) for all tool invocations.
+    - **Policy Engine Caching**: Implemented LRU caching in `RegoPolicyEngine` to decrease evaluation latency.
+    - **SingularityPDP Robustness**: Abstracted engine registration and improved server-side health checks.
+    - **State Integrity**: Enhanced `StateManager` with field-level encryption hooks and strict integrity gating for the exploitation catalog.
+    - **Regression Pass**: Expanded test suite with adversarial cases; all 12 tests passing 100%.
+- **Decisions**:
+    - Enforce parameter immutability at the routing layer to eliminate systemic race conditions between policy check and execution.
+- **Status**: Substrate achieved higher-assurance baseline. Ready for next architectural phase.
+
+---
+
 ## [2026-03-18 04:30] - Strategic Intelligence Consolidation & Knowledge Debt Pruning
 - **Session Focus**: Consolidating legacy intelligence into official project documentation.
 - **Key Accomplishments**:

@@ -73,9 +73,19 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ---
 
+### ✅ [COMPLETED] Phase 19: Immutable Actions & Substrate Hardening
+- [x] **[ADR]** Create ADR-0011: Immutable Actions & TOCTOU-Resistant Routing. [COMPLETED]
+- [x] **[ADR]** Create ADR-0012: State Layer Hardening & Integrity Gating. [COMPLETED]
+- [x] **[CORE]** Refactor `ToolRouter` to use frozen `ImmutableToolRequest` (TOCTOU Defense). [COMPLETED]
+- [x] **[PERFORMANCE]** Implement LRU caching in `RegoPolicyEngine`. [COMPLETED]
+- [x] **[SECURITY]** Implement field-level encryption hooks in `StateManager`. [COMPLETED]
+- [x] **[VERIFY]** Add regression tests for router robustness and state integrity. [COMPLETED]
+
+---
+
 ## 🛠️ Architectural Backlog
 - [ ] **[SECURITY] PQC-Hybrid Attestation**: Implement Dilithium3 signatures for PDP tool-call attestation.
-- [ ] **[SECURITY] Immutable Actions**: Refactor `ToolRouter` to use `frozen` dataclasses to prevent TOCTOU bypasses.
+- [x] **[SECURITY] Immutable Actions**: Refactor `ToolRouter` to use `frozen` dataclasses to prevent TOCTOU bypasses. [COMPLETED]
 - [ ] **[OVERSIGHT] Airlock Debate Triad**: Implement the `Skeptic` and `Meta-Critic` agents in `agents/sentinel/`.
 - [ ] **Containerization**: Dockerize the Substrate Daemon for CI/CD.
 - [ ] **Visualization**: Append Mermaid orchestration diagrams to `ARCHITECTURE.md`.
