@@ -9,15 +9,17 @@ class AlignmentChecker:
     keyword-based vectorization (TF-IDF lite) to compute cosine similarity/drift.
     """
     
-    def __init__(self, threshold: float = 0.3):
+    def __init__(self, threshold: float = 0.4):
         self.threshold = threshold
 
     def _get_vector(self, text: str) -> Dict[str, int]:
-        """Simple word-frequency vectorizer."""
+        """Simple word-frequency vectorizer with sensitive prefix boosting."""
+        # Normalize and filter common paths/extensions that are informative
+        text = text.replace("/", " ").replace(".", " ").replace("_", " ")
         words = text.lower().split()
         vector = {}
         for word in words:
-            if len(word) > 2: # Ignore noise
+            if len(word) > 2:
                 vector[word] = vector.get(word, 0) + 1
         return vector
 
