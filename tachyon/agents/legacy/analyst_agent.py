@@ -57,10 +57,10 @@ def analyst_reasoning_node(state: dict) -> dict:
     # Process targeted CVE investigation if present
     if "cve_context" in state and state["cve_context"]:
         cve = state["cve_context"]
-        print(f"[Analyst] [INVESTIGATION] Focusing on targeted threat: {cve['id']}")
+        print(f"[Analyst] [INVESTIGATION] Focusing on targeted threat: {cve.get('id', 'UNKNOWN')}")
         state["analysis"] = {
             "status": "success",
-            "threats_found": [f"CVE ID: {cve['id']} - {cve['description']}"]
+            "threats_found": [f"CVE ID: {cve.get('id', 'UNKNOWN')} - {cve.get('description', 'No description provided.')}"]
         }
         return state
 
