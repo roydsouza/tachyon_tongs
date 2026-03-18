@@ -65,6 +65,11 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 - **Description**: Adopting "Jailbreak" techniques (e.g., Base64 encoding, roleplay) to hide malicious instructions from the Analyst's LLM-based scan.
 - **Tachyon Mitigation**: **Scalable Oversight (The Airlock Debate)** pits an Analyst against a Skeptic agent to catch subtle evasions through adversarial discourse.
 
+### C. Airlock Dashboard Hijacking
+- **Description**: An attacker with local access or a compromised browser tab attempts to interact with the Airlock GUI via CSRF or XSS.
+- **Impact**: Unauthorized authorization of a malicious patch or deletion of security logs.
+- **Tachyon Mitigation**: The Airlock resides exclusively on `127.0.0.1`. All WebSocket/API calls require a short-lived **Substrate Session Token** and enforced Content Security Policy (CSP) headers.
+
 ## 5. Deployment Security
 
 - **PDP Integrity**: The Policy Decision Point must be protected from local file tampering.

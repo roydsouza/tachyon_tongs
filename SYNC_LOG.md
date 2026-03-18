@@ -4,7 +4,17 @@ This log tracks technical decisions, mission-critical state transitions, and syn
 
 ---
 
-## [2026-03-17 16:15] - Phase 12: Sentinel Harvest Mode Implemented
+## [2026-03-17 17:35] - Airlock Oversight Evolution (HITL/HOTL/HOOTL)
+- **Session Focus**: Documenting the phased evolution of human-agent oversight and dashboard surface safety.
+- **Key Accomplishments**:
+    - **Oversight Modeling**: Detailed the transition from HITL (Active) to HOTL (Planned) and HOOTL (Vision) across `README.md`, `docs/ARCHITECTURE.md`, and `docs/ROADMAP.md`.
+    - **Port Registry**: Allocated global ports `3030` and `60462` in `~/antigravity/PORTS.md`.
+    - **Threat Modeling**: Updated `THREAT_MODEL.md` to mitigate local web-based dashboard hijacking (CSRF/XSS).
+    - **Dashboard Init**: Scaffolded the Vite/React dashboard in `dashboard/` and implemented the WebSocket API in `daemon.py`.
+- **Decisions**:
+    - Use a phased "Oversight Trajectory" to balance early-stage security with long-term autonomous scale.
+    - Reserve global ports early to prevent cross-project collisions in the Antigravity workspace.
+- **Status**: Phase 7 (Airlock Web GUI) Infrastructure & Documentation complete.
 - **Session Focus**: Implementing the "Intelligence Lake" via raw payload localization.
 - **Key Accomplishments**:
     - **CLI Upgrade**: Added `--harvest` flag to `scripts/sentinel.py`.

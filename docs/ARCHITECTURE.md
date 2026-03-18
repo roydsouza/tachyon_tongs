@@ -196,7 +196,32 @@ Tachyon Tongs is designed as an autonomic, self-healing organism rather than a s
 
 For a detailed breakdown of this self-modifying biological paradigm, see `docs/BEHAVIOR.md`.
 
-## 5. Security Evolution & Immutable Auditing
+## 6. Human-Agent Oversight Evolution
+
+Tachyon Tongs is designed to transition through three distinct maturity phases to balance security assurance with operational speed.
+
+### Phase 1: HITL (Human-In-The-Loop)
+**Status**: ACTIVE
+In this early deployment stage, high-assurance is prioritized over speed. 
+- **Mechanism**: The `EngineerAgent` generates a patch, which is then staged in the **Airlock**.
+- **Requirement**: Execution is blocked until a human operator reviews the "Airlock Debate" and clicks **Authorize**.
+- **Goal**: Minimize False Positives and build a "Ground Truth" dataset of safe mutations.
+
+### Phase 2: HOTL (Human-On-The-Loop)
+**Status**: PLANNED
+As the substrate gains experience, we transition to supervisory oversight.
+- **Mechanism**: The substrate autonomously applies patches but maintains a **72-hour reversibility window**.
+- **Requirement**: Humans occupy a "Command Center" role, monitoring real-time telemetry and intervening only for anomalous drift.
+- **Goal**: Scalable defense without the bottleneck of manual intervention.
+
+### Phase 3: HOOTL (Human-Out-Of-The-Loop)
+**Status**: VISION
+The terminal state of a self-healing security substrate.
+- **Mechanism**: Full autonomous detection, synthesis, and remediation.
+- **Requirement**: Provable security through formal verification and immutable Merkle-chain logging. Humans move to a quarterly "Policy Governance" role.
+- **Goal**: Millisecond-latency response to zero-day threats.
+
+## 7. Security Evolution & Immutable Auditing
 
 Tachyon Tongs maintains a high-assurance record of its own defensive evolution.
 

@@ -78,14 +78,15 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[PROTOCOLS]** Implement Context Pruning and Low-Power Mode (LPM) logic.
 - [ ] **[UI]** Expose quota consumption and active substrate in the Airlock TUI.
 
-### 🧪 Current Sprint: Phase 7 (The Airlock & Documentation)
-- [ ] **[TUI Scaffolding]** Build `scripts/airlock_tui.py` using the `textual` framework. Design a split-pane layout: Left (Active Threats), Top Right (Code Diff Proposal), Bottom Right (Interactive Chat).
-- [ ] **[Engineer Integration]** Wire the Airlock TUI to trigger the `EngineerAgent`.
-- [ ] **[Execution Gate]** Add an explicit "AUTHORIZE" command in the TUI that triggers the final application and testing of the patch.
-- [x] **[MCP Expose]** Update `src/mcp_gateway.py` to expose threats as MCP Resources. [COMPLETED]
-- [x] **[DOCS/README]** Rewrite `README.md` into a formal whitepaper structure. [COMPLETED]
-- [x] **[DOCS/ADR]** Initialize Architecture Decision Records in `docs/adr/`. [COMPLETED]
-- [ ] **[DOCS/Scrub]** Scrub all PII and deprecated persona traits from `ROADMAP.md` and `STRATEGY.md`.
+### 🧪 Current Sprint: Phase 7 (The Airlock Web GUI)
+- [ ] **[INFRA]** Initialize `dashboard/` via Vite/React and reserve Port 3030 in `PORTS.md`.
+- [ ] **[BACKEND]** Implement WebSocket Telemetry Stream on Port 60462 in `tachyon/enforcement/daemon.py`.
+- [ ] **[UI]** Build "Deep Space" Dashboard (Threat Graph + Monaco Diff Viewer).
+- [ ] **[Agent]** Wire `EngineerAgent` to stream `.patch` proposals to the Airlock via WebSockets.
+- [ ] **[Oversight]** Implement the "Debate Tree" visualizer in React for Analyst/Skeptic discourse.
+- [x] **[HOUSEKEEPING]** Create `scripts/archive_tasks.py` to prune `[COMPLETED]` phases.
+- [x] **[DOCS]** Update `README.md` to whitepaper style.
+- [x] **[DOCS]** Initialize Architecture Decision Records in `docs/adr/`.
 
 ### ✅ Phase 7: Zero-Day Resilience & Security Hardening [COMPLETED]
 - [x] **[HARDEN/State]** Implement recursive integrity verification in `StateManager`. [COMPLETED]
@@ -111,12 +112,12 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **State Manager Migration**: Replace Markdown source-of-truth with SQLite backend (`intelligence/tachyon_state.db`). [x]
 - [x] **MLX Inference Acceleration**: Refactor Sentinel Analyst nodes to use `mlx_lm` for Metal-accelerated reasoning. [x]
 
-### [PLANNED] Phase 6.6: Specialized Social Agents
-- [ ] **Implementation of "Shor's Reaper" (Quantum Doom Agent)**: Create the `agents/shors_reaper/SKILL.md` and data ingestor.
-- [ ] **Implementation of "Entropy Dashboard" (Chaos Agent)**: Create the `agents/entropy_dashboard/SKILL.md` and ingestor.
+### ✅ Phase 6.6: Supply Chain Security (Phase 11 Legacy) [COMPLETED]
 - [x] **[DOCS]** Authored `docs/SUPPLY_CHAIN_SECURITY.md`.
 - [x] **[INTEGRITY]** Implemented `src/agents/integrity_agent.py`.
 - [x] **[DEPS]** Updated `src/state_manager.py` with deterministic capability binding.
+- [x] **[DAEMON]** Integrated Hallucination Squatting protection into `AppleSandbox` interception loop.
+- [x] **[TEST]** Verified via `tests/test_supply_chain_integrity.py`.
 
 ### ✅ Phase 7.5: Scalable Oversight (The Airlock Debate) [COMPLETED]
 - [x] **[AGENT]** Implement `src/agents/skeptic_agent.py` for contrarian critique.

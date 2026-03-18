@@ -53,13 +53,19 @@ Future iterations will transition the local daemon to a cloud-native architectur
 *   **Matchlock (Planned):** Will provide cryptographic workload identity and secrets management for agents.
 *   **Tailscale (Planned):** Will establish an encrypted RPC mesh, allowing disparate "Out-of-Band" agents across physical machines to safely utilize a centralized cloud Tachyon Substrate.
 
-## 5. Architectural Justifications
+## 6. Oversight Dynamics: HITL → HOTL → HOOTL
+Tachyon Tongs follows a phased evolution of human-agent collaboration:
+- **HITL (Human-In-The-Loop)**: *Current Phase*. Every substrate mutation requires explicit human authorization in the Airlock.
+- **HOTL (Human-On-The-Loop)**: *Upcoming*. Autonomous patching with a persistent "Kill Switch" and retrospective audit windows.
+- **HOOTL (Human-Out-Of-The-Loop)**: *Target*. Full autonomous self-healing substrate with high-fidelity immutable logging.
+
+## 7. Architectural Justifications
 
 *   **Apple Silicon Native vs. Docker/Lima:** By leveraging macOS `sandbox-exec` profiles and `mlx_lm` bindings, Tachyon Tongs achieves bare-metal GPU/NPU acceleration and millisecond startup latency, avoiding the resource overhead and cold-starts associated with virtualizing Linux under Lima or Docker.
 *   **OPA over Python Logic:** Decoupling security logic into declarative Rego modules allows security engineers to audit payload scopes without parsing application code.
 *   **SQLite WAL over Markdown:** Transitioning from direct markdown file appends to a SQLite Write-Ahead Log (WAL) ensures atomic, non-corruptible writes during high-concurrency multi-agent traffic spikes.
 
-## 6. Quickstart Guide (macOS Apple Silicon)
+## 8. Quickstart Guide (macOS Apple Silicon)
 
 ### Installation
 Ensure Python 3.10+ and a local checkout of the repository.

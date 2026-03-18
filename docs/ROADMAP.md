@@ -90,6 +90,12 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 - **Objective:** Expand the Substrate perimeter beyond a single host machine, allowing lightweight edge clients to utilize the centralized MLX security pipeline.
 - **Implementation:** Binding the Substrate Daemon to a `100.x.y.z` Tailscale interface to enable secure Publish/Discover/Subscribe capabilities over a trusted WireGuard backbone.
 
+### 🔳 Stage 4: Autonomous Maturity (HOTL → HOOTL)
+*   [ ] **Hybrid Oversight Platform**: Transition from manual "Airlock" clicks to "Policy-Based Exceptions."
+*   [ ] **Retrospective Audit Engine**: Implement the 72-hour rollback window for autonomous patches.
+*   [ ] **Formal Verification Integration**: Auto-generating formal proofs for substrate mutations.
+*   [ ] **Human-Out-Of-The-Loop (HOOTL)**: Zero-latency autonomous self-healing substrate.
+
 ### Phase 11: Hostile Cloud Organism (Zero-Trust Mesh) [PLANNED]
 - **Objective:** Secure the mesh against internal Man-in-the-Middle configuration drift via strict identity assertion.
 - **Implementation:** Evolving the intent gateway using:

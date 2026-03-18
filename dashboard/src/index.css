@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  /* Deep Space Theme Palette */
+  --color-space-black: #05070a;
+  --color-space-void: #020305;
+  --color-space-glow: #00f2ff;
+  --color-space-neon: #39ff14;
+  --color-space-pulse: #7d2ae8;
+  --color-space-crimson: #ff003c;
+  
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-space-black text-gray-300 font-mono antialiased overflow-hidden;
+  }
+  
+  h1, h2, h3 {
+    @apply text-space-glow tracking-tighter uppercase;
+  }
+}
+
+/* Glassmorphism Utility */
+.glass {
+  @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-xl;
+}
+
+.neon-border {
+  @apply border border-space-glow/30 shadow-[0_0_15px_rgba(0,242,255,0.1)];
+}
