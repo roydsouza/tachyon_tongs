@@ -25,13 +25,22 @@ class RegoPolicyEngine(PolicyEngine):
             except RuntimeError as e:
                 return PolicyVerdict(Verdict.DENY, f"INTEGRITY FAILURE: {str(e)}", self.engine_id)
 
-        # 2. OPA Evaluation (Placeholder for actual OPA-over-HTTP or WASM call)
-        # For now, we simulate the existing logic or use a mock.
-        # In a real implementation, this would query the OPA server.
-        
-        # Simulating a basic check for demonstration
+        # 2. OPA Evaluation (Enhanced with PII Scanner for DLP)
+        # If this is a DLP check, we augment the input with scanner findings
+        if action == "outbound_dlp":
+            from tachyon.pipeline.pii_scanner import PIIScanner
+            scanner = PIIScanner()
+            findings = scanner.scan_dictionary(params)
+            params = {**params, **findings}
+
+        # Simulated OPA check for demonstration
         if action == "unsafe_execute" and agent_id != "engineer":
              return PolicyVerdict(Verdict.DENY, "Direct execution blocked by Rego (Mock)", self.engine_id)
+
+        # Simplified DLP check for the mock engine
+        if action == "outbound_dlp":
+            if params.get("has_sensitive_token") or params.get("has_pii"):
+                return PolicyVerdict(Verdict.DENY, "Blocked by Reverse Firewall: Sensitive data detected.", self.engine_id)
 
         return PolicyVerdict(Verdict.ALLOW, "Rego validation passed", self.engine_id)
 

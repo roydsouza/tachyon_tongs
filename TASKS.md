@@ -65,11 +65,11 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[SCHEMA]** Define the `PolicyMapping` to associate exploit IDs with generated rules. [COMPLETED]
 - [x] **[VERIFY]** Auto-load generated policies into the `singularity` PDP for validation. [COMPLETED]
 
-### 🟢 [ACTIVE] Phase 12.2: Multi-Engine PDP Enforcement & Reverse Firewall
-- [ ] **[OUTBOUND]** Implement the "Reverse Firewall" (Outbound DLP) logic in `tachyon/enforcement/daemon.py`.
-- [ ] **[RESOLVER]** Implement the `MultiEnginePDPResolver` to federate Rego and Cedar verdicts.
-- [ ] **[PII]** Implement sensitive data pattern matching (Regex/LLM) for outbound telemetry.
-- [ ] **[VERIFY]** Add regression tests for bi-directional enforcement (Inbound Threat vs. Outbound Lead).
+### ✅ [COMPLETED] Phase 12.2: Multi-Engine PDP Enforcement & Reverse Firewall
+- [x] **[OUTBOUND]** Implement the "Reverse Firewall" (Outbound DLP) logic in `tachyon/enforcement/daemon.py`. [COMPLETED]
+- [x] **[RESOLVER]** Implement the `MultiEnginePDPResolver` to federate Rego and Cedar verdicts. [COMPLETED]
+- [x] **[PII]** Implement sensitive data pattern matching (Regex/LLM) for outbound telemetry. [COMPLETED]
+- [x] **[VERIFY]** Add regression tests for bi-directional enforcement (Inbound Threat vs. Outbound Lead). [COMPLETED]
 
 ### 🟢 [COMPLETED] Phase 12: Sentinel Harvest Mode
 - [x] **[HARVEST]** Add `--harvest` mode to `scripts/sentinel.py` to localize exploit payloads. [COMPLETED]

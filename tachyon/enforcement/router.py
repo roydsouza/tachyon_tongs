@@ -38,6 +38,16 @@ class ToolRouter:
                 result = await self.sandbox.execute(params.get("command"), params.get("env"))
             elif action == "safe_fetch":
                 result = await self.orchestrator.fetch_and_sanitize(params.get("url"), agent_id)
+            elif action == "send_message":
+                # Outbound DLP (Reverse Firewall)
+                # We reuse the policy engine to check if the message content is allowed
+                if not self.policy_engine.is_action_allowed(agent_id, "outbound_dlp", params):
+                    return {
+                        "status": "BLOCKED",
+                        "error": "Outbound message blocked by Reverse Firewall (DLP violation)."
+                    }
+                # If we had a real messaging client, we'd send it here.
+                result = {"status": "sent", "recipient": params.get("recipient")}
             else:
                 return {"status": "ERROR", "error": f"Unknown action: {action}"}
                 
