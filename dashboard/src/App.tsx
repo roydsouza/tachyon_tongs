@@ -1,4 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+
+interface ActionLog {
+  type: string;
+  agent_id: string;
+  action: string;
+  status: string;
+  timestamp?: string;
+}
+
+interface Threat {
+  id: string;
+  type: string;
+  description: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+}
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -46,6 +61,35 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 }
 
 const App: React.FC = () => {
+  const [logs, setLogs] = useState<ActionLog[]>([]);
+  const [threats] = useState<Threat[]>([
+    { id: 'CVE-2024-1337', type: 'IPI', description: 'Indirect Prompt Injection via SVG metadata.', severity: 'CRITICAL' },
+    { id: 'CVE-2024-1338', type: 'RAG', description: 'Knowledge retrieval poisoning in vector DB.', severity: 'HIGH' },
+    { id: 'CVE-2024-1339', type: 'DEP', description: 'Malicious library hallucination detected.', severity: 'CRITICAL' },
+  ]);
+  const ws = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    // Connect to Airlock API WebSocket
+    ws.current = new WebSocket('ws://127.0.0.1:60462/ws/telemetry');
+    
+    ws.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'ACTION_LOG') {
+        data.timestamp = new Date().toLocaleTimeString();
+        setLogs(prev => [data, ...prev].slice(0, 50));
+      }
+    };
+
+    ws.current.onopen = () => {
+      console.log('Airlock Telemetry Stream Connected');
+    };
+
+    return () => {
+      ws.current?.close();
+    };
+  }, []);
+
   return (
     <Layout>
       {/* Left Pane: Threat Feed */}
@@ -56,38 +100,29 @@ const App: React.FC = () => {
             <span className="text-[10px] text-gray-500">REAL-TIME</span>
           </div>
           <div className="flex-1 overflow-y-auto space-y-3">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="p-3 bg-white/5 border border-white/5 rounded hover:border-space-glow/30 transition-all cursor-pointer group">
+            {threats.map(threat => (
+              <div key={threat.id} className="p-3 bg-white/5 border border-white/5 rounded hover:border-space-glow/30 transition-all cursor-pointer group">
                 <div className="flex justify-between items-start mb-1">
-                  <span className="text-[10px] text-space-glow font-bold">CVE-2024-{1336 + i}</span>
-                  <span className="text-[9px] text-space-crimson">CRITICAL</span>
+                  <span className="text-[10px] text-space-glow font-bold">{threat.id}</span>
+                  <span className={`text-[9px] ${threat.severity === 'CRITICAL' ? 'text-space-crimson' : 'text-orange-500'}`}>{threat.severity}</span>
                 </div>
-                <p className="text-[11px] text-gray-400 leading-tight group-hover:text-white">Indirect Prompt Injection via malicious SVG metadata.</p>
+                <p className="text-[11px] text-gray-400 leading-tight group-hover:text-white font-mono">{threat.description}</p>
               </div>
             ))}
           </div>
         </div>
-        <div className="h-1/2 glass p-4">
-          <h3 className="text-sm mb-4">Integrity Status</h3>
-          <div className="space-y-4">
-            <div className="space-y-1">
-              <div className="flex justify-between text-[10px]">
-                <span>Dependency Health</span>
-                <span className="text-space-neon">SECURE</span>
+        <div className="h-1/2 glass p-4 flex flex-col">
+          <h3 className="text-sm mb-4">Substrate Logs</h3>
+          <div className="flex-1 overflow-y-auto space-y-2 font-mono text-[9px]">
+            {logs.length === 0 && <span className="text-gray-600 italic">WAITING FOR SUBSTRATE PULSE...</span>}
+            {logs.map((log, i) => (
+              <div key={i} className="flex gap-2 border-l border-white/10 pl-2 py-1">
+                <span className="text-gray-600 shrink-0">[{log.timestamp}]</span>
+                <span className="text-space-glow shrink-0">{log.agent_id}</span>
+                <span className="text-white truncate">{log.action}</span>
+                <span className={log.status === 'SUCCESS' ? 'text-space-neon' : 'text-space-crimson'}>{log.status}</span>
               </div>
-              <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full bg-space-neon w-[94%]" />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="flex justify-between text-[10px]">
-                <span>State Provenance</span>
-                <span className="text-space-neon">VERIFIED</span>
-              </div>
-              <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full bg-space-neon w-full shadow-[0_0_5px_#39ff14]" />
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -144,7 +179,7 @@ const App: React.FC = () => {
                 <span className="text-space-glow">Analyst Agent</span>
                 <span className="text-gray-500">12:31:04</span>
               </div>
-              <p className="text-[11px] text-gray-400 leading-normal">The patch implements a prophylactic intent audit at the ingestion layer, preventing TOCTOU vulnerabilities.</p>
+              <p className="text-[11px] text-gray-400 leading-normal font-mono">The patch implements a prophylactic intent audit at the ingestion layer, preventing TOCTOU vulnerabilities.</p>
             </div>
           </div>
           <div className="flex gap-3 pl-6 border-l border-white/10">
@@ -154,14 +189,14 @@ const App: React.FC = () => {
                 <span className="text-space-pulse">Skeptic Agent</span>
                 <span className="text-gray-500">12:31:12</span>
               </div>
-              <p className="text-[11px] text-gray-400 leading-normal">Wait, does the `audit_intent` call have a timeout? If not, we risk a DoS at the enforcement point.</p>
+              <p className="text-[11px] text-gray-400 leading-normal font-mono">Wait, does the `audit_intent` call have a timeout? If not, we risk a DoS at the enforcement point.</p>
             </div>
           </div>
         </div>
         <div className="p-4 bg-white/2 border-t border-white/5">
           <div className="relative">
             <input type="text" placeholder="QUERY SUBSTRATE..." className="w-full bg-space-black border border-white/10 rounded px-3 py-2 text-[10px] focus:outline-none focus:border-space-glow transition-all" />
-            <span className="absolute right-3 top-2.5 text-[10px] text-gray-600 font-bold tracking-tighter cursor-pointer hover:text-white transition-all">SEND</span>
+            <span className="absolute right-3 top-2.5 text-[10px] text-gray-600 font-bold tracking-tighter cursor-pointer hover:text-white transition-all uppercase">Send</span>
           </div>
         </div>
       </div>
