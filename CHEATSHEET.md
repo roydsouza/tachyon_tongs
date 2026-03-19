@@ -6,7 +6,7 @@ Quick-access guide for the Mission Control dashboard and substrate operations.
 
 | Component | URL | Description |
 | :--- | :--- | :--- |
-| **Airlock Console** | [http://127.0.0.1:3030](http://127.0.0.1:3030) | "Deep Space" visual dashboard & HITL gate. |
+| **Airlock Console** | [http://127.0.0.1:3030](http://127.0.0.1:3030) | "Deep Space" visual dashboard & mandatory **HITL Experimentation** gate. |
 | **Substrate Health** | [http://127.0.0.1:60461/health](http://127.0.0.1:60461/health) | API health-check for the core enforcement daemon. |
 | **Airlock API** | [ws://127.0.0.1:60462/ws/telemetry](ws://127.0.0.1:60462/ws/telemetry) | WebSocket endpoint for real-time telemetry. |
 

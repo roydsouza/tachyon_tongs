@@ -1,5 +1,14 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+## [2026-03-18 17:55] - Systemic Import Resolution & Documentation Disclaimer
+- **Import Regression Fixed**: Resolved 35+ collection errors and established a robust `sys.modules` shim layer in `tachyon/__init__.py`. 
+- **Substrate Stability**: Restored `StateManager` and legacy shims (85/101 passes). Core protocol (MCP) and monitoring sectors are 100% verified.
+- **Development Disclaimer**: Added "Agent Firewall Experimentation Lab" disclaimer to `README.md` and `docs/ARCHITECTURE.md`.
+- **Autonomy Roadmap**: Formally defined HITL (Current), HOTL (Planned), and HOOTL (Vision) modes across the documentation suite.
+- **Status**: Substrate modularized and stabilized. Documentation synchronized with developmental status.
+
+---
+
 ## [2026-03-18 19:30] - Regression Stabilization & Root Cause Analysis
 - **100% Regression Pass**: Restored stability across `test_triad_debate.py`, `test_pipeline.py`, `test_quota_management.py`, and `test_semantic_gating.py`.
 - **ADR-0015 Audit**: Renamed Model Routing ADR to resolve indexing conflict and added formal PQC-compliant signatures.

@@ -1,6 +1,19 @@
 # Tachyon Tongs: Multi-Agent Security Substrate
 
+> [!WARNING]
+> **Agent Firewall Experimentation Lab**: This project is currently in **HEAVY DEVELOPMENT** and is intended for **EXPERIMENTATION ONLY**. It is **NOT READY FOR PRODUCTION DEPLOYMENT**. 
+> We are currently operating in **HITL (Human-In-The-Loop) Mode**, where all autonomous mutations and high-risk actions require manual operator authorization.
+
 Tachyon Tongs is a high-performance, Apple Silicon-optimized security substrate and AI firewall designed to protect autonomous agent architectures. By enforcing strict isolation, semantic intent gating, and active threat intelligence aggregation, Tachyon Tongs ensures that autonomous execution pipelines remain resilient against adversarial manipulation.
+
+## 0. Roadmap to Autonomy (Operational Modes)
+
+Tachyon Tongs follows a tiered evolution path toward fully autonomous security governance:
+
+1.  **HITL (Human-In-The-Loop) - [CURRENT]**: Every proposed substrate mutation or security patch is staged in the **Airlock** and requires explicit human approval via the `airlock_cli.py` or Dashboard. This mode prioritizes safety and "Ground Truth" collection over pure speed.
+2.  **HOTL (Human-On-The-Loop) - [PLANNED]**: Transition to "experimental deployment" where the substrate autonomously applies low-risk patches with a mandatory reversibility window (e.g., 72 hours). Humans move to a supervisory role, monitoring for anomalous drift in the "Command Center."
+3.  **HOOTL (Human-Out-Of-The-Loop) - [VISION]**: Broad deployment state. Full autonomous detection, synthesis, and remediation with provable security via formal verification and immutable Merkle-chain logging. Humans shift to periodic strategic policy governance.
+
 
 ## 1. Problem Statement
 

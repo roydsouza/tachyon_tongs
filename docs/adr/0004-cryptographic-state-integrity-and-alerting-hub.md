@@ -10,7 +10,7 @@ Tachyon Tongs operates under a high-assurance model where the autonomous Sentine
 We have implemented a two-fold security hardening layer:
 1. **Cryptographic State Integrity**: All critical state changes (specifically the Exploitation Catalog) are now signed with HMAC-SHA256. The `StateManager` enforces mandatory signature verification during initialization, halting the substrate immediately if a mismatch is detected.
 2. **High-Visibility Alerting (ALERT.md)**: A top-level high-visibility hub was created to capture critical substrate failures. This file uses reverse-chronological (LIFO) ordering to ensure the most recent security events are immediately visible to the operator.
-3. **Airlock Enforcement**: Autonomous code mutations are now gated behind a mandatory "Airlock" (/tmp/tachyon_airlock/), requiring human-in-the-loop (HITL) review via the `airlock_cli.py` tool.
+3. **Airlock Enforcement**: Autonomous code mutations are now gated behind a mandatory "Airlock" (/tmp/tachyon_airlock/), requiring human-in-the-loop (HITL) review via the `airlock_cli.py` tool. This is a core component of the project's current **HITL Experimentation Phase**.
 
 ## Consequences
 - **Positive**: Prevents state poisoning and unauthorized autonomous code mutations. Provides a centralized, robust notification system for security compromises.

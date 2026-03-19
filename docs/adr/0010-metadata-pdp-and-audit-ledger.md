@@ -4,7 +4,7 @@
 Proposed (Phase 18)
 
 ## Context
-As the Tachyon Tongs substrate scales, local policy evaluation becomes fragmented. We need a unified "Source of Truth" for authorization that is decoupled from the execution nodes. Furthermore, we need an "Absolute Audit" capability to prove *why* a decision was made, especially for regulatory compliance (HITL/HOTL/HOOTL).
+As the Tachyon Tongs substrate scales, local policy evaluation becomes fragmented. We need a unified "Source of Truth" for authorization that is decoupled from the execution nodes. Furthermore, we need an "Absolute Audit" capability to prove *why* a decision was made, especially for the project's evolution from **HITL** (Current Experimentation) to **HOTL** (Experimental Deployment) and **HOOTL** (Broad Deployment).
 
 ## Decision
 We are transitioning the policy layer to a **Centralized Meta-PDP Server**:
