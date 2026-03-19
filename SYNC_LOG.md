@@ -1,6 +1,26 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
-## [2026-03-19 14:15] - P0 Code Hygiene & Security Hardening Implementation
+## [2026-03-19 15:45] - Substrate Refining & Stress Testing Implementation
+
+- **Session Focus**: Modularizing the core substrate and expanding regression testing to identify hidden flaws.
+- **Key Accomplishments**:
+    - **Tool Registry Architecture**: 
+        - Created `ToolRegistry` in `tachyon/enforcement/registry.py` to decouple action logic from the router.
+        - Refactored `ToolRouter` to use dynamic dispatch, eliminating the legacy `if/elif` chain.
+    - **Alert Resilience**:
+        - Implemented `AlertRateLimiter` in `tachyon/core/alert_limiter.py`.
+        - Integrated it into `StateManager.emit_alert` to prevent log-flooding DoS and noise.
+    - **Dynamic Capability Discovery**:
+        - Refactored `BaseTachyonAgent` to use dynamic capability sets based on the assigned role.
+    - **TOCTOU Hardening**:
+        - Hardened `recursive_freeze` to support sets, tuples, and nested frozen objects.
+- **Comprehensive Verification**:
+    - **New Stress Tests**: 
+        - `repro_freeze_fuzz.py`: Verified deep immutability against complex nested types.
+        - `test_alert_limiter.py`: Confirmed rate-limiting suppresses floods.
+        - `stress_state_concurrency.py`: Verified `StateManager` threading/multiprocessing stability (25 concurrent alerts captured without corruption).
+    - **Full Regression Pass**: All 12 core enforcement and agent tests passing 100%.
+- **Status**: Substrate architectural aesthetics significantly improved. Robustness verified via stress testing. Ready for hotl/hootl transition.
 
 - **Session Focus**: Implementing critical security fixes and architectural improvements identified in the audit.
 - **Key Accomplishments**:

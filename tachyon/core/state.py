@@ -22,7 +22,9 @@ class StateManager:
                 default_db = os.environ.get("TACHYON_DB_PATH", "tachyon_state.db")
                 cls._instance._init_db(db_path or default_db)
                 from .signing import IntegrityManager
+                from .alert_limiter import AlertRateLimiter
                 cls._instance.integrity = IntegrityManager()
+                cls._instance.alert_limiter = AlertRateLimiter()
                 cls._instance.db = cls._instance # Alias for logic that expects manager.db.conn
                 
                 # ENFORCEMENT: Verify core catalog integrity on boot
@@ -192,7 +194,10 @@ class StateManager:
                     fcntl.flock(lock_f, fcntl.LOCK_UN)
 
     def emit_alert(self, alert_type: str, message: str):
-        """Emits a high-priority alert to the top-level ALERT.md ledger."""
+        """Emits a high-priority alert to the top-level ALERT.md ledger. Rate-bounded."""
+        if hasattr(self, "alert_limiter") and not self.alert_limiter.should_allow(alert_type):
+            return # Suppress loud alerts
+            
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         alert_path = os.path.join(root_dir, "ALERT.md")
         if not os.path.exists(alert_path): alert_path = "ALERT.md"

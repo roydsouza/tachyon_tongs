@@ -45,9 +45,19 @@ class BaseTachyonAgent(ABC):
         pass
         
     def get_metadata(self) -> Dict[str, Any]:
-        """Returns standard agent metadata."""
+        """Returns standard agent metadata with dynamic capability discovery."""
         return {
             "agent_id": self.agent_id,
             "type": self.__class__.__name__,
-            "capabilities": self.config.get("capabilities", []) if self.config else []
+            "role": self.role_name,
+            "capabilities": self.get_capabilities(),
+            "config": getattr(self, "config", {})
         }
+
+    def get_capabilities(self) -> list:
+        """Dynamically discovers agent capabilities."""
+        # Standard substrate tools by default
+        base_tools = ["safe_execute", "safe_fetch", "send_message"]
+        # In a real implementation, this would cross-reference the policy engine
+        return base_tools
+

@@ -29,7 +29,18 @@ class RegoPolicyEngine(PolicyEngine):
             scanner = PIIScanner()
             findings = scanner.scan_dictionary(params)
             params = {**params, **findings}
-            return self._evaluate_uncached(agent_id, action, params)
+            # Skip whitelist for internal DLP checks
+            return self._evaluate_uncached(agent_id, action, params, skip_whitelist=True)
+
+        # 2. For send_message, we MUST also check outbound_dlp internally
+        if action == "send_message":
+            # Pass 1: Primary action (send_message) check
+            verdict = self._evaluate_uncached(agent_id, action, params)
+            if verdict.verdict == Verdict.DENY:
+                return verdict
+            
+            # Pass 2: Secondary content (outbound_dlp) check
+            return self.evaluate(agent_id, "outbound_dlp", params)
 
         # 2. Use cached evaluation for standard tool calls
         # We JSON-serialize params to make them hashable for lru_cache
@@ -41,7 +52,7 @@ class RegoPolicyEngine(PolicyEngine):
         params = json.loads(param_str)
         return self._evaluate_uncached(agent_id, action, params)
 
-    def _evaluate_uncached(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
+    def _evaluate_uncached(self, agent_id: str, action: str, params: Dict[str, Any], skip_whitelist: bool = False) -> PolicyVerdict:
         # 1. Integrity Check
         if self.enforce_signatures:
             try:
@@ -50,24 +61,23 @@ class RegoPolicyEngine(PolicyEngine):
                 return PolicyVerdict(Verdict.DENY, f"INTEGRITY FAILURE: {str(e)}", self.engine_id)
 
         # 2. Whitelist Check (Phase 22 Hardening)
-        # Any action involving a domain or recipient must be whitelisted
-        # We skip this for explicit 'outbound_dlp' calls as they are secondary checks
-        if action != "outbound_dlp":
+        if not skip_whitelist:
             from tachyon.core.state import StateManager
             state = StateManager()
-            # Support both lowercase and TitleCase keys for legacy compatibility
             target = (params.get("domain") or params.get("Domain") or 
                       params.get("recipient") or params.get("Recipient") or 
                       params.get("url") or params.get("URL"))
+
             
             if target:
+                target_str = str(target)
                 # Extract domain if it's a URL
-                if "://" in str(target):
+                if "://" in target_str:
                     from urllib.parse import urlparse
-                    target = urlparse(str(target)).netloc
+                    target_str = urlparse(target_str).netloc
                 
-                if not state.is_package_whitelisted(str(target)):
-                    return PolicyVerdict(Verdict.DENY, f"Action blocked: '{target}' is not in the trusted registry.", self.engine_id)
+                if not state.is_package_whitelisted(target_str):
+                    return PolicyVerdict(Verdict.DENY, f"Action blocked: '{target_str}' is not in the trusted registry.", self.engine_id)
 
         # 3. Simulated OPA check for demonstration
         if action == "unsafe_execute" and agent_id != "engineer":

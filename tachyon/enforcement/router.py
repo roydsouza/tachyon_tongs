@@ -7,10 +7,14 @@ from tachyon.enforcement.alignment_checker import AlignmentChecker
 from types import MappingProxyType
 
 def recursive_freeze(d: Any) -> Any:
-    """Recursively convert dictionaries to MappingProxyType."""
-    if isinstance(d, dict):
+    """Recursively convert dictionaries to MappingProxyType and lists to tuple."""
+    if isinstance(d, MappingProxyType):
+        return d
+    elif isinstance(d, dict):
         return MappingProxyType({k: recursive_freeze(v) for k, v in d.items()})
-    elif isinstance(d, list):
+    elif isinstance(d, list) or isinstance(d, set):
+        return tuple(recursive_freeze(i) for i in d)
+    elif isinstance(d, tuple):
         return tuple(recursive_freeze(i) for i in d)
     return d
 
@@ -53,16 +57,37 @@ class ToolRouter:
         self.syscall_monitor = syscall_monitor
         self.rate_limiter = rate_limiter or AdaptiveRateLimiter()
         self.alignment_checker = alignment_checker or AlignmentChecker(threshold=0.2)
+        
+        # Initialize Tool Registry with standard handlers
+        from .registry import registry as tool_registry
+        self.registry = tool_registry
+        self._register_default_handlers()
+
+    def _register_default_handlers(self):
+        """Registers the core substrate tool handlers."""
+        self.registry.register("safe_execute", self._handle_safe_execute)
+        self.registry.register("safe_fetch", self._handle_safe_fetch)
+        self.registry.register("send_message", self._handle_send_message)
+
+    async def _handle_safe_execute(self, agent_id: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        return await self.sandbox.execute(params.get("command"), params.get("env"))
+
+    async def _handle_safe_fetch(self, agent_id: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        return await self.orchestrator.fetch_and_sanitize(params.get("url"), agent_id)
+
+    async def _handle_send_message(self, agent_id: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Core handler for sending messages. Security checks are handled in the route() pass."""
+        return {"status": "sent", "recipient": params.get("recipient")}
     
     async def route(self, agent_id: str, action: str, params: dict) -> dict:
         """
         Main entry point for tool execution.
-        Applies: Rate Limiting -> Alignment Check -> Policy Enforcement -> Execution.
+        Applies: Rate Limiting -> Alignment Check -> Policy Enforcement -> Execution via Registry.
         """
         # 0. Freeze the request immediately to prevent TOCTOU
         request = ImmutableToolRequest(agent_id=agent_id, action=action, params=params)
 
-        # 0. Rate Limiting Check
+        # 1. Rate Limiting Check
         if self.rate_limiter:
             allowed, reason = self.rate_limiter.is_allowed(request.agent_id, request.action)
             if not allowed:
@@ -71,7 +96,7 @@ class ToolRouter:
                     "error": f"RATE_LIMIT_EXCEEDED: {reason}"
                 }
 
-        # 0.1 Semantic Alignment Check (Phase 16)
+        # 2. Semantic Alignment Check (Phase 16)
         if "intent" in request.params:
             alignment = self.alignment_checker.check_alignment(request.params["intent"], request.params)
             if not alignment["is_aligned"]:
@@ -80,34 +105,24 @@ class ToolRouter:
                     "error": f"Alignment Violation: {alignment['reason']}"
                 }
 
-        # 1. Statistical Behavioral Check
+        # 3. Statistical Behavioral Check
         self.syscall_monitor.log_and_evaluate(request.agent_id, request.action)
         
-        # 2. Policy Enforcement Check (Pass the immutable request)
-        # Note: We pass request.params to maintain compatibility with current engine signatures
+        # 4. Policy Enforcement Check (Pass the immutable request)
         if not self.policy_engine.is_action_allowed(request.agent_id, request.action, request.params):
             return {
                 "status": "BLOCKED",
                 "error": f"Policy violation: Action '{request.action}' denied for agent '{request.agent_id}'."
             }
             
-        # 3. Final Execution using the FROZEN parameters
+        # 5. Final Execution using the Registry and FROZEN parameters
         try:
-            if request.action == "safe_execute":
-                result = await self.sandbox.execute(request.params.get("command"), request.params.get("env"))
-            elif request.action == "safe_fetch":
-                result = await self.orchestrator.fetch_and_sanitize(request.params.get("url"), request.agent_id)
-            elif request.action == "send_message":
-                # Check BOTH general policy and specific outbound_dlp
-                if not self.policy_engine.is_action_allowed(request.agent_id, "outbound_dlp", request.params):
-                    return {
-                        "status": "BLOCKED",
-                        "error": "Outbound message blocked by Reverse Firewall (DLP violation)."
-                    }
-                result = {"status": "sent", "recipient": request.params.get("recipient")}
-            else:
-                return {"status": "ERROR", "error": f"Unknown action: {request.action}"}
-                
+            result = await self.registry.execute(request.action, request.agent_id, request.params)
+            if isinstance(result, dict) and result.get("status") == "BLOCKED":
+                 return result
+            if isinstance(result, dict) and result.get("status") == "ERROR":
+                 return result
+                 
             return {"status": "SUCCESS", "result": result}
         except Exception as e:
             return {"status": "ERROR", "error": str(e)}
