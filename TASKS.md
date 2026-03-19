@@ -2,13 +2,98 @@
 
 This document tracks the active execution backlog for the Tachyon Tongs security substrate. Tasks are prioritized based on immediate threat impact and infrastructural prerequisites.
 
-## Security Task Progress
+---
+
+## 🔳 Active & In-Progress
+
+### 🔳 [IN-PROGRESS] Phase 22: Self-Evolving Policies & Immune Response
+- [x] **[CORE]** Implement `ImmuneManager` for autonomic feedback loops. [DONE]
+- [ ] **[ADR]** Author and sign ADR-0020: Autonomous Immune Response Protocol.
+- [ ] **[VERIFY]** Comprehensive regression tests for Canary-triggered patching.
+- [ ] **[DOCS]** Update README (Teaser), ARCHITECTURE (Deep Dive), and ADMIN/CHEATSHEET.
+
+### 🔳 [IN-PROGRESS] Phase 21.7: The Canary Honeypot (Active Probe)
+- [x] **[ADR]** Sign and anchor ADR-0019: Canary Honeypot Protocol. [DONE]
+- [x] **[ROLE]** Implement `CanaryRole` (Scout & Harvest logic). [DONE]
+- [x] **[LEDGER]** Create forensic `CANARY_LOG.md`. [DONE]
+- [x] **[ARCH]** Root symlink for `CANARY_LOG.md`. [DONE]
+- [x] **[AUTO]** Automate Canary scout via macOS `launchd` (4hr interval). [DONE]
+- [ ] **[VERIFY]** Validate "Honeypot-to-Immune-System" feedback loop.
+
+### 🔳 [PLANNED] Phase 21.9: Local Reasoning Substrate (llama.cpp)
+- [ ] **[ENGINE]** Integrate `llama-cpp-python` as a local reasoning provider.
+- [ ] **[ROUTING]** Extend `ModelRouter` to support `LOCAL_LLM`.
+
+### 🔳 [PLANNED] Phase 23: Hardware-Level Isolation
+- [ ] **[SANDBOX]** Prototype WASM-based tool isolation.
+- [ ] **[ISOLATION]** Explore MicroVM (Firecracker/Lima) for Tier-0 agents.
+
+---
+
+## 🛠️ Architectural Backlog
+
+### Code Hygiene (P0–P1)
+- [ ] **[SECURITY] Fix `ImmutableToolRequest.params`**: Uses mutable `Dict` — defeats the frozen-dataclass TOCTOU defense. Should use `MappingProxyType` or frozen dict.
+- [ ] **[SECURITY] Fix `is_package_whitelisted()`**: `StateManager` method always returns `True` — Supply Chain defense is effectively a no-op.
+- [ ] **[BUG] Fix `BaseTachyonAgent.get_metadata()`**: References non-existent `self.config` — will crash if called.
+- [ ] **[REFACTOR] Extract `DummySanitizer`**: Hardcoded inside `CanaryRole._scout()`. Should be a proper module in `tachyon/core/`.
+
+### Infrastructure (P2–P3)
+- [/] **[CHORE] Agent Consolidation**: Cleaned redundant dirs; modularization pending Phase 22.
+- [ ] **[CHORE] Prune `__init__.py` Shim Layer**: 30+ `sys.modules` shims for legacy `src.*` imports. Audit whether any legacy code still uses them.
+- [ ] **[CHORE] Archival Script**: Prune `RUN_LOG.md` (93KB and growing) and implement log rotation.
+- [ ] **[OVERSIGHT] Tiered Debates**: Implement risk-based debate tiers (None/Self/Dyad/Triad).
+- [ ] **[SECURITY] PQC-Hybrid Attestation**: Implement Dilithium3 signatures for PDP tool-call attestation.
+- [ ] **Containerization**: Dockerize the Substrate Daemon for CI/CD.
+
+### 🔭 New Opportunities (Identified 2026-03-19)
+- [ ] **[REFACTOR] Registry Pattern for `main.py`**: Replace if/elif role chain with a registry dict or decorator pattern.
+- [ ] **[SECURITY] Rate-Bounded Logging**: Extend `AdaptiveRateLimiter` to log-write actions to prevent Log Flooding DoS.
+- [ ] **[SECURITY] Singleton Immutability Guard**: Freeze `StateManager` fields after initialization to prevent cross-agent state poisoning.
+- [ ] **[SECURITY] Tool Schema Allowlist**: Add strict schema validation in `ToolRouter` to prevent LLM Tool-Use Confusion attacks.
+- [ ] **[CHORE] Delete orphan `src/dummy.py`** and junk file `SELECT * FROM authz_ledger` at project root.
+
+---
+
+## ✅ Completed Milestones
 
 ### ✅ [COMPLETED] P0: Substrate Integrity & Security Hardening
 - [x] **Fix Integrity Loop**: Add `fsync`/`flush` to `state.py` to stop false-positive `STATE_COMPROMISED` alerts. [DONE]
 - [x] **Atomic State Access**: Implement file locking for `EXPLOITATION_CATALOG.md`. [DONE]
 - [x] **Input Sanitization**: Scaffolding `InputSanitizer` to scrub prompts before policy evaluation. [DONE]
-- [x] **BUG: Slash Commands Inaccessible**: Commands in `.agent/workflows/` (`/help`, `/catalog`, etc.) were being masked by redundant `.agents/` directory. Consolidated all workflows to `.agent/workflows/`. [DONE]
+- [x] **BUG: Slash Commands Inaccessible**: Consolidated all workflows to `.agent/workflows/`. [DONE]
+
+### ✅ [COMPLETED] Phase 10: Integrity Gating & Cryptographic State
+- [x] **[STATE]** Migrate to SQLite `StateManager` with WAL mode. [COMPLETED]
+- [x] **[SIGN]** Implement detached signatures for the Exploit Catalog. [COMPLETED]
+- [x] **[ADR]** Create ADR-0004 for State Integrity. [COMPLETED]
+
+### ✅ [COMPLETED] Phase 11: Supply Chain Security
+- [x] **[INTEGRITY]** Implement Hallucination Squatting defense and `IntegrityAgent`. [COMPLETED]
+- [x] **[AUDIT]** Integrate `pip-audit` for proposed dependency intents. [COMPLETED]
+
+### ✅ [COMPLETED] Phase 12: Sentinel Harvest Mode
+- [x] **[HARVEST]** Add `--harvest` mode for payload localization. [COMPLETED]
+- [x] **[LOCALIZE]** Save 6 raw payloads to `intelligence/exploits/`. [COMPLETED]
+
+### ✅ [COMPLETED] Phase 12.1: Policy Synthesizers (Rego/Cedar)
+- [x] **[EXTRACT]** Implement autonomous policy synthesizers in `tachyon/agents/synthesizer/`. [COMPLETED]
+- [x] **[VERIFY]** Auto-load synthesized policies into OPA/Cedar. [COMPLETED]
+
+### ✅ [COMPLETED] Phase 12.2: Multi-Engine PDP & Reverse Firewall
+- [x] **[OUTBOUND]** Implement the "Reverse Firewall" (Outbound DLP) logic in `ToolRouter`. [COMPLETED]
+- [x] **[RESOLVER]** Implement `SingularityPDP` to federate Rego and Cedar. [COMPLETED]
+- [x] **[PII]** Implement `PIIScanner` for outbound telemetry. [COMPLETED]
+- [x] **[VERIFY]** Add bi-directional regression tests. [COMPLETED]
+- [x] **[ADR]** Create ADR-0005 for PDP/DLP architecture. [COMPLETED]
+
+### ✅ [COMPLETED] Phase 13: Sentinel Hybrid Migration
+- [x] **[MANIFEST]** Create `agents/sentinel/SKILL.md` with identity and capabilities. [COMPLETED]
+- [x] **[CONFIG]** Externalize hardcoded config into `SKILL.md` YAML. [COMPLETED]
+- [x] **[RUNNER]** Create `tachyon/agents/sentinel/runner.py` for hybrid execution. [COMPLETED]
+- [x] **[REGISTRY]** Register Sentinel in `/tmp/tachyon/nodes.json`. [COMPLETED]
+- [x] **[ADR]** Create ADR-0006 for the architectural transition. [COMPLETED]
+- [x] **[VERIFY]** Add regression tests for the hybrid runner. [COMPLETED]
 
 ### ✅ [COMPLETED] Phase 15: Adaptive Rate-Limiting Implementation
 - [x] **[ADR]** Create ADR-0007 for the Rate-Limiting strategy. [COMPLETED]
@@ -38,53 +123,6 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[CLIENT]** Implement `RemoteSingularityPDP` with Fail-Closed logic. [COMPLETED]
 - [x] **[VERIFY]** Add regression tests for remote evaluation and ledger persistence. [COMPLETED]
 
----
-
-## ✅ Completed Milestones
-
-### ✅ [COMPLETED] Phase 20: Substrate Optimization (Quota Management)
-- [x] **[MANIFEST]** Create `agents/skills/substrate-optimizer/SKILL.md` with routing logic and LPM triggers. [COMPLETED]
-- [x] **[ROUTER]** Implement `ModelRouter` in `tachyon/core/routing.py` to evaluate task complexity. [COMPLETED]
-- [x] **[INTEGRATION]** Update `substrate_daemon.py` to route queries through the `ModelRouter`. [COMPLETED]
-- [x] **[PROTOCOLS]** Implement Context Pruning and Low-Power Mode (LPM) logic. [COMPLETED]
-- [x] **[ADR]** Author and sign ADR-0013: Substrate-Aware Model Routing. [COMPLETED]
- [COMPLETED]
-- [x] **[VERIFY]** Add regression tests for the hybrid runner. [COMPLETED]
-
-### ✅ Phase 13: Sentinel Hybrid Migration
-- [x] **[MANIFEST]** Create `agents/sentinel/SKILL.md` with identity and capabilities. [COMPLETED]
-- [x] **[CONFIG]** Externalize hardcoded config into `SKILL.md` YAML. [COMPLETED]
-- [x] **[RUNNER]** Create `tachyon/agents/sentinel/runner.py` for hybrid execution. [COMPLETED]
-- [x] **[REGISTRY]** Register Sentinel in `/tmp/tachyon/nodes.json`. [COMPLETED]
-- [x] **[ADR]** Create ADR-0006 for the architectural transition. [COMPLETED]
-- [x] **[VERIFY]** Add regression tests for the hybrid runner. [COMPLETED]
-
-### ✅ Phase 12.2: Multi-Engine PDP & Reverse Firewall
-- [x] **[OUTBOUND]** Implement the "Reverse Firewall" (Outbound DLP) logic in `ToolRouter`. [COMPLETED]
-- [x] **[RESOLVER]** Implement `SingularityPDP` to federate Rego and Cedar. [COMPLETED]
-- [x] **[PII]** Implement `PIIScanner` for outbound telemetry. [COMPLETED]
-- [x] **[VERIFY]** Add bi-directional regression tests. [COMPLETED]
-- [x] **[ADR]** Create ADR-0005 for PDP/DLP architecture. [COMPLETED]
-
-### ✅ Phase 12.1: Policy Synthesizers (Rego/Cedar)
-- [x] **[EXTRACT]** Implement autonomous policy synthesizers in `tachyon/agents/synthesizer/`. [COMPLETED]
-- [x] **[VERIFY]** Auto-load synthesized policies into OPA/Cedar. [COMPLETED]
-
-### ✅ Phase 12: Sentinel Harvest Mode
-- [x] **[HARVEST]** Add `--harvest` mode for payload localization. [COMPLETED]
-- [x] **[LOCALIZE]** Save 6 raw payloads to `intelligence/exploits/`. [COMPLETED]
-
-### ✅ Phase 11: Supply Chain Security
-- [x] **[INTEGRITY]** Implement Hallucination Squatting defense and `IntegrityAgent`. [COMPLETED]
-- [x] **[AUDIT]** Integrate `pip-audit` for proposed dependency intents. [COMPLETED]
-
-### ✅ Phase 10: Integrity Gating & Cryptographic State
-- [x] **[STATE]** Migrate to SQLite `StateManager` with WAL mode. [COMPLETED]
-- [x] **[SIGN]** Implement detached signatures for the Exploit Catalog. [COMPLETED]
-- [x] **[ADR]** Create ADR-0004 for State Integrity. [COMPLETED]
-
----
-
 ### ✅ [COMPLETED] Phase 19: Immutable Actions & Substrate Hardening
 - [x] **[ADR]** Create ADR-0011: Immutable Actions & TOCTOU-Resistant Routing. [COMPLETED]
 - [x] **[ADR]** Create ADR-0012: State Layer Hardening & Integrity Gating. [COMPLETED]
@@ -93,7 +131,13 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[SECURITY]** Implement field-level encryption hooks in `StateManager`. [COMPLETED]
 - [x] **[VERIFY]** Add regression tests for router robustness and state integrity. [COMPLETED]
 
----
+### ✅ [COMPLETED] Phase 20: Substrate Optimization (Quota Management)
+- [x] **[MANIFEST]** Create `agents/skills/substrate-optimizer/SKILL.md` with routing logic and LPM triggers. [COMPLETED]
+- [x] **[ROUTER]** Implement `ModelRouter` in `tachyon/core/routing.py` to evaluate task complexity. [COMPLETED]
+- [x] **[INTEGRATION]** Update `substrate_daemon.py` to route queries through the `ModelRouter`. [COMPLETED]
+- [x] **[PROTOCOLS]** Implement Context Pruning and Low-Power Mode (LPM) logic. [COMPLETED]
+- [x] **[ADR]** Author and sign ADR-0013: Substrate-Aware Model Routing. [COMPLETED]
+- [x] **[VERIFY]** Add regression tests for the hybrid runner. [COMPLETED]
 
 ### ✅ [COMPLETED] Phase 21: Forensic Hardening & Agent Consolidation
 - [x] **[SECURITY]** HMAC Signature sidecars for all ADRs.
@@ -103,37 +147,8 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[GOVERNANCE]** Initialize `CHANGE_CONTROL.md` and `PATHS_NOT_TAKEN.md`.
 - [x] **[CHORE]** Substrate Re-Sign and Documentation Reorg.
 
-### 🔳 [PLANNED] Phase 21.7: The Canary Honeypot (Active Probe)
-- [x] **[ADR]** Sign and anchor ADR-0019: Canary Honeypot Protocol. [DONE]
-- [x] **[ROLE]** Implement `CanaryRole` (Scout & Harvest logic). [DONE]
-- [x] **[LEDGER]** Create forensic `CANARY_LOG.md`. [DONE]
-- [x] **[ARCH]** Root symlink for `CANARY_LOG.md`. [DONE]
-- [x] **[AUTO]** Automate Canary scout via macOS `launchd` (4hr interval). [DONE]
-- [ ] **[VERIFY]** Validate "Honeypot-to-Immune-System" feedback loop.
-
-### 🔳 [PLANNED] Phase 21.9: Local Reasoning Substrate (llama.cpp)
-- [ ] **[ENGINE]** Integrate `llama-cpp-python` as a local reasoning provider.
-- [ ] **[ROUTING]** Extend `ModelRouter` to support `LOCAL_LLM`.
-
-### 🔳 [/] Phase 22: Self-Evolving Policies & Immune Response
-- [ ] **[ADR]** Author and sign ADR-0020: Autonomous Immune Response Protocol.
-- [ ] **[CORE]** Implement `ImmuneManager` for autonomic feedback loops.
-- [ ] **[VERIFY]** Comprehensive regression tests for Canary-triggered patching.
-- [ ] **[DOCS]** Update README (Teaser), ARCHITECTURE (Deep Dive), and ADMIN/CHEATSHEET.
-
-### 🔳 [PLANNED] Phase 23: Hardware-Level Isolation
-- [ ] **[SANDBOX]** Prototype WASM-based tool isolation.
-- [ ] **[ISOLATION]** Explore MicroVM (Firecracker/Lima) for Tier-0 agents.
-
----
-
-## 🛠️ Architectural Backlog
+### ✅ [COMPLETED] Architectural Backlog (Done)
 - [x] **[CHORE] Documentation Reorg**: Create `docs/INDEX.md` and collapse `.agents/`. [DONE]
-- [/] **[CHORE] Agent Consolidation**: Cleaned redundant dirs; modularization pending Phase 22.
-- [ ] **[OVERSIGHT] Tiered Debates**: Implement risk-based debate tiers (None/Self/Dyad/Triad).
-- [ ] **[SECURITY] PQC-Hybrid Attestation**: Implement Dilithium3 signatures for PDP tool-call attestation.
 - [x] **[SECURITY] Immutable Actions**: Refactor `ToolRouter` to use `frozen` dataclasses to prevent TOCTOU bypasses. [COMPLETED]
 - [x] **[OVERSIGHT] Airlock Debate Triad**: Implement the `Skeptic` and `Meta-Critic` agents in `agents/sentinel/`. [COMPLETED]
-- [ ] **Containerization**: Dockerize the Substrate Daemon for CI/CD.
 - [x] **Visualization**: Append Mermaid orchestration diagrams to `ARCHITECTURE.md`. [COMPLETED]
-- [ ] **Archival Script**: Prune historical phases to `ACCOMPLISHMENTS.md`.

@@ -39,11 +39,16 @@ async def test_router_toctou_resistance():
     # Let's ensure the router uses the values from the request.
     
     request = ImmutableToolRequest(agent_id="test", action="safe_execute", params=params)
-    params["command"] = "rm -rf /" # Attempted mutation
     
-    assert request.params["command"] == "rm -rf /" # Standard dict behavior
-    # Note: To fully solve TOCTOU for DICTS, we'd need deepcopy.
-    # But the intent of ImmutableToolRequest is to establish the logic for freezing.
+    # Attempt mutation of the original dictionary
+    params["command"] = "rm -rf /"
+    
+    # Verify the request remains original because it was frozen on initialization
+    assert request.params["command"] == "ls"
+    
+    # Verify direct mutation raises TypeError (MappingProxyType)
+    with pytest.raises(TypeError):
+        request.params["command"] = "rm -rf /"
     
 @pytest.mark.asyncio
 async def test_router_parameter_validation():

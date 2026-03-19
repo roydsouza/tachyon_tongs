@@ -271,8 +271,20 @@ class StateManager:
         """Stub for legacy transactional calls."""
         pass
 
-    def is_package_whitelisted(self, package_name: str) -> bool: 
-        return True
+    def is_package_whitelisted(self, package_name: str) -> bool:
+        """
+        Checks if a package is whitelisted for installation/import.
+        Demonstrates supply chain defense by checking against the exploitation catalog.
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            # Check if package exists in catalog and is NOT marked as malicious, 
+            # or exists in a specific 'approved_packages' metadata (simulated here)
+            cursor = conn.execute(
+                "SELECT 1 FROM exploitation_catalog WHERE cve_id = ? AND relevance_class = 'APPROVED'", 
+                (package_name,)
+            )
+            return cursor.fetchone() is not None
 
     def log_evolution(self, event_type, details, evolution_file="EVOLUTION.md"):
         """Logs architectural or structural evolution of the substrate."""

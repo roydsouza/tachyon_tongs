@@ -16,14 +16,22 @@ class AutoPatcher:
         self.role = EngineerRole("legacy-engineer")
 
     def apply_and_test(self, patch_files: list, test_file_path: str, test_content: str, cve_id: str):
-        """Delegates to the modular EngineerRole."""
-        result = self.role.handle_action("apply_and_test", {
+        """Delegates to the modular EngineerRole and adds legacy audit markers."""
+        res = self.role.handle_action("apply_and_test", {
             "patch_files": patch_files,
             "test_path": test_file_path,
             "test_code": test_content,
             "cve_id": cve_id
         })
-        return result.get("result", result)
+        result = res.get("result", res)
+        
+        if result.get("status") == "staged":
+            # Legacy audit file for human oversight
+            with open("PENDING_MERGE.md", "a") as f:
+                f.write(f"## {cve_id} | Staged for review\n- Branch: auto-patch/{cve_id.replace(' ', '-')}\n\n")
+            result["status"] = "pending_human_approval"
+            
+        return result
 
 def engineer_action_node(state: dict) -> dict:
     """Legacy pipeline node for the triad supervisor."""

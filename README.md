@@ -1,5 +1,8 @@
 # Tachyon Tongs: Multi-Agent Security Substrate
 
+> [!IMPORTANT]
+> **Development Status**: Tachyon Tongs is under heavy active development and operates as an **Agent Firewall Experimentation Lab** in **HITL (Human-In-The-Loop)** mode. It is **not yet production-ready**. All autonomous mutations require explicit human approval via the Airlock.
+
 Tachyon Tongs is a high-performance, Apple Silicon-native security substrate and AI firewall. It is designed to protect autonomous agent architectures by enforcing strict isolation, semantic intent gating, and active threat intelligence aggregation.
 
 ## 1. Problem Statement
@@ -59,15 +62,15 @@ Tachyon Tongs follows a tiered evolution path toward fully autonomous security g
 # Initialize and Install
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-pip install -e . --break-system-packages # Register substrate
+pip install -e .  # Register substrate
 ./scripts/start_opa.sh
 
 # Run the Substrate Controller
 python3 -m tachyon.main --role guardian --action verify_substrate
 ```
 
-## 🚀 Coming Soon: Phase 22 (Autonomous Immune Response)
-We are preparing to ignite the **Evolutionary Substrate**. In Phase 22, the substrate will gain an **Autonomic Immune System** that detects defensive gaps via the **Canary** and self-synthesizes high-assurance policy updates. Stay tuned as we transition from manual oversight to proactive, self-evolving defense.
+## 🧬 Phase 22: Autonomic Immune Response [ACTIVE]
+The **Evolutionary Substrate** is live. Phase 22 introduces the **ImmuneManager**, an autonomic immune system that detects defensive gaps via the **Canary** and self-synthesizes high-assurance policy updates. The substrate is now self-healing — proposed patches are staged in the **Airlock** for HITL oversight before deployment.
 
 ## ⚡ Slash Commands
 - `/help`: View the command manifest.

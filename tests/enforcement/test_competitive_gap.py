@@ -1,7 +1,7 @@
 import unittest
 import os
 import json
-from tachyon.enforcement.safe_fetch import SafeFetch
+from tachyon.enforcement.safe_fetch import SafeFetch, SecurityViolationError
 from tachyon.enforcement.apple_sandbox import AppleSandbox
 
 class TestCompetitiveGap(unittest.TestCase):
@@ -12,13 +12,21 @@ class TestCompetitiveGap(unittest.TestCase):
 
     def test_domain_reputation_blocking(self):
         """Verify that high-risk domains are blocked by the reputation engine."""
+        # Seed the whitelist for Google but NOT for emailgpt
+        import sqlite3
+        from tachyon.core.state import StateManager
+        db_path = StateManager().db_path
+        with sqlite3.connect(db_path) as conn:
+             conn.execute("INSERT OR IGNORE INTO exploitation_catalog (cve_id, relevance_class) VALUES (?, ?)", ("google.com", "APPROVED"))
+             conn.commit()
+             
         # 1. Test Malicious Domain (Score 0.1)
-        result = self.fetcher.fetch("https://emailgpt.com/payload")
-        self.assertEqual(result["status"], "BLOCKED")
-        self.assertIn("authorized domain", result["error"])
+        with self.assertRaises(SecurityViolationError):
+             self.fetcher.fetch("https://emailgpt.com/payload")
 
         # 2. Test Trusted Domain (Score 1.0)
         # Note: In mock mode, this might fail if networking is off, but status should not be BLOCKED by intent gate
+        # google.com is seeded in the whitelist above
         result = self.fetcher.fetch("https://google.com")
         self.assertNotEqual(result["status"], "BLOCKED")
 

@@ -1,5 +1,58 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+## [2026-03-19 14:15] - P0 Code Hygiene & Security Hardening Implementation
+
+- **Session Focus**: Implementing critical security fixes and architectural improvements identified in the audit.
+- **Key Accomplishments**:
+    - **Immutable Actions (TOCTOU Defense)**: 
+        - Hardened `ImmutableToolRequest` in `tachyon/enforcement/router.py`.
+        - Implemented `recursive_freeze` using `MappingProxyType` and `tuple` to ensure parameters are deeply immutable after policy evaluation begins.
+        - Authored and signed **ADR-0021**.
+    - **Whitelisted Supply Chain Defense**:
+        - Activated `is_package_whitelisted` in `tachyon/core/state_manager.py` to check the `exploitation_catalog` for `APPROVED` entries.
+        - Integrated whitelist checks into `SafeFetch` and `RegoPolicyEngine` to enforce default-deny on all domain/recipient/URL targets.
+        - Authored and signed **ADR-0022**.
+    - **Architectural Modularity**:
+        - Extracted `CanarySanitizer` to `tachyon/core/canary_sanitizer.py`.
+        - Fixed `AutoPatcher` in `engineer.py` to use `EngineerRole` while maintaining legacy audit logs and status contracts.
+    - **Substrate Stability**:
+        - Fixed `AttributeError` in `BaseTachyonAgent.get_metadata()`.
+        - Resolved path-handling bugs in `EngineerRole._apply_and_test`.
+- **Verification Result**:
+    - **100% Pass Rate** on core security regression suite:
+        - `repro_toctou.py`: Verified deep immutability.
+        - `repro_whitelist.py`: Verified default-deny/approve logic.
+        - `test_router_robustness.py`, `test_bidirectional_pep.py`, `test_competitive_gap.py`, `test_auto_patcher.py`: All aligned and passing.
+- **Status**: P0 Implementation Complete. Substrate is hardened and stabilized. Documentation is synchronized. Ready for Phase 23.
+
+- **Session Focus**: Deep review of all documentation, source code, and threat model for structural integrity, consistency, and strategic gaps.
+- **Key Accomplishments**:
+    - **THREAT_MODEL.md**: Fixed all duplicate section/sub-section numbering (two §4, two §6, duplicate §B/§C labels). Renumbered sequentially §1–§9. Added 3 new threat vectors:
+        1. **LLM Tool-Use Confusion / Schema Injection** (§6C): Attacker crafts ambiguous tool inputs to chain tools maliciously.
+        2. **Append-Only Log Flooding** (§9A): DoS on HITL via massive `EVOLUTION.md`/`RUN_LOG.md` noise.
+        3. **Singleton State Poisoning** (§9B): Exploiting shared `StateManager` singleton to corrupt state across agents.
+    - **ROADMAP.md**: De-duplicated Phase 8. Reordered all phases into logical Stage groups (1–7). Updated 6+ stale status labels (`[PLANNED]` → `[COMPLETED]`/`[OPERATIONAL]`). Consolidated duplicate PQC references.
+    - **TASKS.md**: Reorganized from mixed-order into Active/In-Progress → Architectural Backlog → Completed sections. Fixed orphan line 51. Added P0 Code Hygiene items (mutable `ImmutableToolRequest.params`, no-op `is_package_whitelisted`, broken `get_metadata`). Added "New Opportunities" section.
+    - **ARCHITECTURE.md**: Fixed section §4 (renumbered to §2.6), resolved §8 collision (→ §8.4), updated 2 stale `[PLANNED]` labels to `[OPERATIONAL]` for Reverse Firewall and Singularity PDP.
+    - **README.md**: Added development stage disclaimer. Removed `--break-system-packages` from quickstart. Updated Phase 22 from "Coming Soon" to "[ACTIVE]".
+    - **SYNC_LOG.md**: Reordered all entries to strict reverse-chronological order. Split dual-block entry.
+    - **Cleanup**: Deleted junk file `SELECT * FROM authz_ledger` (SQL query accidentally saved as filename) and orphan `src/dummy.py`.
+- **P0 Issues Identified for Flash Implementation**:
+    - `ImmutableToolRequest.params` uses mutable `Dict` — defeats the frozen-dataclass TOCTOU defense. **Fix**: Use `types.MappingProxyType` or convert to `frozenset` of tuples in `__post_init__`.
+    - `StateManager.is_package_whitelisted()` always returns `True` — Supply Chain defense is a no-op. **Fix**: Implement actual whitelist lookup against the `exploitation_catalog` or a dedicated `approved_packages` table.
+    - `BaseTachyonAgent.get_metadata()` references `self.config` which is never set. **Fix**: Either add `self.config = {}` to `__init__` or derive capabilities from the Role class.
+    - `DummySanitizer` hardcoded inside `CanaryRole._scout()`. **Fix**: Extract to `tachyon/core/canary_sanitizer.py` or use the existing `InputSanitizer` from `BaseTachyonAgent`.
+    - `__init__.py` has 30+ `sys.modules` shims. **Fix**: Audit which legacy scripts still use `src.*` imports and prune dead shims.
+    - `RUN_LOG.md` at 93KB and growing unbounded. **Fix**: Implement the archival script from the backlog with configurable size threshold.
+- **New Strategic Opportunities for Flash**:
+    - Registry pattern for `main.py` role factory (replace if/elif chain).
+    - Rate-bounded logging to prevent Log Flooding DoS (extend `AdaptiveRateLimiter`).
+    - Singleton immutability guard on `StateManager` fields post-init.
+    - Tool schema allowlist in `ToolRouter` for LLM Tool-Use Confusion defense.
+- **Status**: Audit complete. All documentation synchronized and internally consistent. P0 code items logged in `TASKS.md` for next implementation session.
+
+---
+
 ## [2026-03-18 20:25] - Phase 22: Autonomic Immune Response Deployment
 - **Immune System Ignite**: Implemented `ImmuneManager` to close the loop between **Canary** (Detection) and **Engineer** (Remediation).
 - **Self-Evolving Policies**: Added support for automated OPA-Rego policy synthesis staged via the **Airlock** for HITL oversight.
@@ -7,13 +60,6 @@
 - **Documentation Deep-Dive**: Enriched `docs/ARCHITECTURE.md` with feedback loop mechanics and launched `ADMIN.md` / `CHEATSHEET.md` for operator governance.
 - **Verified Resilience**: 100% pass rate in the new `tests/test_immune_evolution.py` regression suite.
 - **Status**: Phase 22 Active. Substrate is now self-healing.
-
-## [2026-03-18 17:55] - Systemic Import Resolution & Documentation Disclaimer
-- **Import Regression Fixed**: Resolved 35+ collection errors and established a robust `sys.modules` shim layer in `tachyon/__init__.py`. 
-- **Substrate Stability**: Restored `StateManager` and legacy shims (85/101 passes). Core protocol (MCP) and monitoring sectors are 100% verified.
-- **Development Disclaimer**: Added "Agent Firewall Experimentation Lab" disclaimer to `README.md` and `docs/ARCHITECTURE.md`.
-- **Autonomy Roadmap**: Formally defined HITL (Current), HOTL (Planned), and HOOTL (Vision) modes across the documentation suite.
-- **Status**: Substrate modularized and stabilized. Documentation synchronized with developmental status.
 
 ---
 
@@ -24,6 +70,15 @@
 - **Substrate Hardening**: Implemented deterministic test guards in `MetalAccelerator` and restored security integrity in `SafeFetch`.
 - **Roadmap**: Added Phase 21 for Local LLM (llama.cpp) integration to `ROADMAP.md` and `TASKS.md`.
 - **Status**: Substrate 100% stable. Ready for production deployment.
+
+---
+
+## [2026-03-18 17:55] - Systemic Import Resolution & Documentation Disclaimer
+- **Import Regression Fixed**: Resolved 35+ collection errors and established a robust `sys.modules` shim layer in `tachyon/__init__.py`. 
+- **Substrate Stability**: Restored `StateManager` and legacy shims (85/101 passes). Core protocol (MCP) and monitoring sectors are 100% verified.
+- **Development Disclaimer**: Added "Agent Firewall Experimentation Lab" disclaimer to `README.md` and `docs/ARCHITECTURE.md`.
+- **Autonomy Roadmap**: Formally defined HITL (Current), HOTL (Planned), and HOOTL (Vision) modes across the documentation suite.
+- **Status**: Substrate modularized and stabilized. Documentation synchronized with developmental status.
 
 ---
 
@@ -95,6 +150,10 @@ This log tracks technical decisions, mission-critical state transitions, and syn
     - Use a phased "Oversight Trajectory" to balance early-stage security with long-term autonomous scale.
     - Reserve global ports early to prevent cross-project collisions in the Antigravity workspace.
 - **Status**: Phase 7 (Airlock Web GUI) Infrastructure & Documentation complete.
+
+---
+
+## [2026-03-17 17:35] - Phase 12: Sentinel Harvest Mode
 - **Session Focus**: Implementing the "Intelligence Lake" via raw payload localization.
 - **Key Accomplishments**:
     - **CLI Upgrade**: Added `--harvest` flag to `scripts/sentinel.py`.
@@ -159,13 +218,7 @@ This log tracks technical decisions, mission-critical state transitions, and syn
 - **Session Focus**: Broad/Deep strategic analysis and long-term execution planning.
 - **Key Accomplishments**:
     - Produced 7 strategic analysis documents in `docs/strategic_analyses/` (Sentinel/Pathogen tuning, Hybrid Architecture, Modularization, Singularity Meta-PDP, and Competitive Gaps/Strengths).
-    - Integrated all recommendations into `TASKS.md` with 6 new execution phases:
-        - **Phase 13**: Sentinel Hybrid Migration (Declarative SKILL.md + Deterministic Core).
-        - **Phase 14**: Radical Modularization (Splitting src/ into 6 sub-packages).
-        - **Phase 15**: Sentinel Monitoring (SNR tracking, Relevance scoring, Source diversification).
-        - **Phase 16**: Pathogen Adversarial Tuning (Generational Mutation Engine, Red Team Ledger).
-        - **Phase 17**: Singularity Meta-PDP (Engine Abstraction, Consensus protocols, Audit Ledger).
-        - **Phase 18**: Competitive Gap Closure (PII Redaction, Bandit Scanning, CoT Alignment).
+    - Integrated all recommendations into `TASKS.md` with 6 new execution phases.
     - Established `docs/COMPETITIVE_ANALYSIS.md` as a structured **Living Registry** for competitive moats and advantages.
     - Updated `src/horizon_scout.py` to preserve the registry structure and use append-only logic for autonomous discoveries.
 - **Decisions**:

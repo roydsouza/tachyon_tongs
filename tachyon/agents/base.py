@@ -15,6 +15,7 @@ class BaseTachyonAgent(ABC):
         self.state = StateManager()
         self.integrity = IntegrityManager()
         self.sanitizer = InputSanitizer()
+        self.config = {} # Fix: Initialize config to prevent AttributeErrors
 
     def handle_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
         """Unified entry point for all agent actions."""
@@ -48,5 +49,5 @@ class BaseTachyonAgent(ABC):
         return {
             "agent_id": self.agent_id,
             "type": self.__class__.__name__,
-            "capabilities": self.config.get("capabilities", [])
+            "capabilities": self.config.get("capabilities", []) if self.config else []
         }

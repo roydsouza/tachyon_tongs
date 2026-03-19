@@ -49,11 +49,31 @@ class RegoPolicyEngine(PolicyEngine):
             except RuntimeError as e:
                 return PolicyVerdict(Verdict.DENY, f"INTEGRITY FAILURE: {str(e)}", self.engine_id)
 
-        # 2. Simulated OPA check for demonstration
+        # 2. Whitelist Check (Phase 22 Hardening)
+        # Any action involving a domain or recipient must be whitelisted
+        # We skip this for explicit 'outbound_dlp' calls as they are secondary checks
+        if action != "outbound_dlp":
+            from tachyon.core.state import StateManager
+            state = StateManager()
+            # Support both lowercase and TitleCase keys for legacy compatibility
+            target = (params.get("domain") or params.get("Domain") or 
+                      params.get("recipient") or params.get("Recipient") or 
+                      params.get("url") or params.get("URL"))
+            
+            if target:
+                # Extract domain if it's a URL
+                if "://" in str(target):
+                    from urllib.parse import urlparse
+                    target = urlparse(str(target)).netloc
+                
+                if not state.is_package_whitelisted(str(target)):
+                    return PolicyVerdict(Verdict.DENY, f"Action blocked: '{target}' is not in the trusted registry.", self.engine_id)
+
+        # 3. Simulated OPA check for demonstration
         if action == "unsafe_execute" and agent_id != "engineer":
              return PolicyVerdict(Verdict.DENY, "Direct execution blocked by Rego (Mock)", self.engine_id)
 
-        # 3. Simplified DLP check for the mock engine
+        # 4. Simplified DLP check for the mock engine
         if action == "outbound_dlp":
             serialized_params = str(params)
             if params.get("has_sensitive_token") or "sk-" in serialized_params:

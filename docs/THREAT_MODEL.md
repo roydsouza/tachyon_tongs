@@ -26,7 +26,7 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 - **Impact**: Full host compromise if the agent has unrestricted OS access.
 - **Tachyon Mitigation**: **Tier 0 Sandboxing** (macOS Seatbelt) denies network access to compute tasks and restricts filesystem writes to a temporary, randomized workspace.
 
-### C. Memory / Vector Poisoning
+### D. Memory / Vector Poisoning
 - **Description**: Inserting "sleeper" instructions into a long-term memory store (Vector DB).
 - **Impact**: The agent remains safe until it retrieves the poisoned memory, at which point it executes the malicious "old" instruction as a "new" command.
 - **Tachyon Mitigation**: All data retrieved from *any* external tool (including database fetches) is treated as untrusted and passed through the **Intent Gate**.
@@ -60,7 +60,7 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 - **Impact**: Exposure of intellectual property and defensive strategies.
 - **Tachyon Mitigation**: **Output Sanitization** at the Verifier Node scans outgoing text for signatures of system instructions.
 
-## 4. Substrate-Specific Exploits
+## 5. Substrate-Specific Exploits
 
 ### A. OPA/Cedar Policy Bypass
 - **Description**: Crafting a request that satisfies the literal syntax of a policy but violates its semantic intent.
@@ -70,16 +70,16 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 - **Description**: Unauthorized structural changes to the substrate to bypass security gates or elude detection.
 - **Tachyon Mitigation**: **ADR-as-IDS**. Cryptographic signing of architecture records ensures any out-of-band mutation is detected as a forensic anomaly.
 
-### B. MLX Inference Evasion
+### C. MLX Inference Evasion
 - **Description**: Adopting "Jailbreak" techniques (e.g., Base64 encoding, roleplay) to hide malicious instructions from the Analyst's LLM-based scan.
 - **Tachyon Mitigation**: **Scalable Oversight (The Airlock Debate)** pits an Analyst against a Skeptic agent to catch subtle evasions through adversarial discourse.
 
-### C. Airlock Dashboard Hijacking
+### D. Airlock Dashboard Hijacking
 - **Description**: An attacker with local access or a compromised browser tab attempts to interact with the Airlock GUI via CSRF or XSS.
 - **Impact**: Unauthorized authorization of a malicious patch or deletion of security logs.
 - **Tachyon Mitigation**: The Airlock resides exclusively on `127.0.0.1`. All WebSocket/API calls require a short-lived **Substrate Session Token** and enforced Content Security Policy (CSP) headers.
 
-## 5. Model-Level & Cognitive Attacks
+## 6. Model-Level & Cognitive Attacks
 
 ### A. Latent Instruction Activation
 - **Description**: Exploiting "jailbroken" states or hidden triggers in the base LLM weights that bypass system-prompt constraints.
@@ -89,7 +89,12 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 - **Description**: Injecting "subtle failures" into the Pathogen's red-teaming logic to cause the Sentinel to generate weak or permissive policies.
 - **Tachyon Mitigation**: **Signed Mutation Intents** ensure all evolutionary changes are attributed to a verified execution run, with automated "Fitness Audits" by an independent Meta-Critic.
 
-## 6. Key-Centric Threat Vectors (The Root of Trust)
+### C. LLM Tool-Use Confusion / Schema Injection
+- **Description**: An attacker crafts inputs that exploit ambiguity in tool schemas, causing the LLM to invoke the wrong tool, pass malicious parameters, or chain tools in an unintended sequence (e.g., routing a `safe_fetch` result directly into `safe_execute`).
+- **Impact**: Policy bypass via legitimate-looking tool calls that compose into an attack chain.
+- **Tachyon Mitigation**: **ImmutableToolRequest** freezes all parameters at the routing boundary. The `ToolRouter` validates action+parameter combinations against a strict schema allowlist. The Airlock Debate Triad provides a secondary cognitive check on proposed tool sequences.
+
+## 7. Key-Centric Threat Vectors (The Root of Trust)
 
 As Tachyon Tongs moves toward a forensic IDS model, the protection of cryptographic keys is paramount.
 
@@ -109,7 +114,7 @@ As Tachyon Tongs moves toward a forensic IDS model, the protection of cryptograp
     - **Hardware Moat (Planned)**: Transition to asymmetric hardware signing (Yubikey/Secure Enclave) ensures that the private key is never exposed to the OS-level memory, even to the substrate itself.
     - **Reference**: See [Evolutionary Roadmap](file:///Users/rds/antigravity/tachyon_tongs/docs/KEYS.md#phase-3-hardware-root-vision).
 
-## 6. Supply Chain & Repository Integrity (GitHub)
+## 8. Supply Chain & Repository Integrity (GitHub)
 
 The GitHub repository is the "Source of Truth" for the substrate's architecture. Compromise of the repo affects all managed agents.
 
@@ -123,4 +128,20 @@ The GitHub repository is the "Source of Truth" for the substrate's architecture.
 - **Description**: Attackers modify the GitHub Actions workflow to bypass regression tests or inject malicious binaries during deployment.
 - **Tachyon Mitigation**: **Agentic Verification**. The substrate performs its own `Guardian IDS` audit during startup, independent of the external CI/CD state.
 
-## 7. Deployment Security
+## 9. Operational & Infrastructure Threats
+
+### A. Append-Only Log Flooding (DoS on HITL)
+- **Description**: An adversary (or a misconfigured agent) triggers massive volumes of `EVOLUTION.md`, `CANARY_LOG.md`, or `RUN_LOG.md` entries. This overwhelms the Human-In-The-Loop operator with noise, creating a "fog of war" that masks genuine security events.
+- **Impact**: Degraded forensic review capacity. Alert fatigue leading to missed critical events. Potential filesystem exhaustion (e.g., `RUN_LOG.md` already at 93KB after limited operation).
+- **Tachyon Mitigation**:
+    - **Rate-Bounded Logging**: The `AdaptiveRateLimiter` should be extended to cover log-write actions, not just tool calls.
+    - **Log Rotation**: Implement the planned archival script to prune historical phases to `ACCOMPLISHMENTS.md` and rotate `RUN_LOG.md` at a configurable size threshold.
+    - **Anomaly Detection**: The Guardian audit should flag unusual log-write velocity as a potential DoS indicator.
+
+### B. Singleton State Poisoning
+- **Description**: The `StateManager` uses a thread-locked Singleton pattern (`_instance`). If any agent (or test) corrupts the singleton's internal state (e.g., by modifying `db_path` or `integrity`), the corruption propagates to all subsequent agents in the same process.
+- **Impact**: Silent integrity bypass across the entire substrate. A compromised Canary could poison the state that the Guardian later trusts.
+- **Tachyon Mitigation**:
+    - **Immutable Singleton Fields**: After initialization, `db_path` and `integrity` references should be frozen (e.g., via `__setattr__` guard or dataclass wrapping).
+    - **Per-Agent State Isolation (Planned)**: In HOTL/HOOTL modes, each agent role should operate with a scoped `StateManager` view rather than a shared global singleton.
+    - **Integrity Re-verification**: The Guardian should re-verify catalog integrity *after* each agent action, not just at boot.

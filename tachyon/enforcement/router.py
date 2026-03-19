@@ -4,6 +4,16 @@ from dataclasses import dataclass, field
 from tachyon.enforcement.rate_limiter import AdaptiveRateLimiter
 from tachyon.enforcement.alignment_checker import AlignmentChecker
 
+from types import MappingProxyType
+
+def recursive_freeze(d: Any) -> Any:
+    """Recursively convert dictionaries to MappingProxyType."""
+    if isinstance(d, dict):
+        return MappingProxyType({k: recursive_freeze(v) for k, v in d.items()})
+    elif isinstance(d, list):
+        return tuple(recursive_freeze(i) for i in d)
+    return d
+
 @dataclass(frozen=True)
 class ImmutableToolRequest:
     """
@@ -13,14 +23,16 @@ class ImmutableToolRequest:
     """
     agent_id: str
     action: str
-    params: Dict[str, Any] = field(default_factory=dict)
+    params: Any = field(default_factory=dict)
     timestamp: float = field(default=None)
 
     def __post_init__(self):
+        # Freeze params recursively
+        object.__setattr__(self, "params", recursive_freeze(self.params))
+        
         if self.timestamp is None:
             try:
                 loop = asyncio.get_event_loop()
-                # Use object.__setattr__ because the dataclass is frozen
                 object.__setattr__(self, "timestamp", loop.time())
             except RuntimeError:
                 import time
@@ -86,7 +98,7 @@ class ToolRouter:
             elif request.action == "safe_fetch":
                 result = await self.orchestrator.fetch_and_sanitize(request.params.get("url"), request.agent_id)
             elif request.action == "send_message":
-                # Outbound DLP (Reverse Firewall)
+                # Check BOTH general policy and specific outbound_dlp
                 if not self.policy_engine.is_action_allowed(request.agent_id, "outbound_dlp", request.params):
                     return {
                         "status": "BLOCKED",

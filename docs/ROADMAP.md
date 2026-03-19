@@ -40,23 +40,36 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 - **Objective:** Supplement static Rego rules with temporal and contextual scoring heuristics.
 - **Implementation:** Risk calculation engine evaluating cross-domain anomalies.
 
-### 2. Stage 4 Verifier (Result Verification)
+### 2. Result Verification (Stage 4 Verifier)
 - **Objective:** Prevent a compromised reasoning layer from embedding hidden execution triggers into the final returned output.
 - **Implementation:** Isolated verification node scanning outputs for trailing shell commands or malicious payloads prior to system execution.
 
-## Stage 4: Evolutionary Substrate & Cloud Mesh
+## Stage 4: Evolutionary Substrate & Operational Maturity
 
 ### Phase 6: Skills Engine & Adversarial Simulator (Pathogen) [OPERATIONAL]
 - **Objective:** Eliminate brittle, hardcoded python deployments and establish continuous regression testing.
 - **Implementation:** Declarative `SKILL.md` parsing. The Pathogen reads the `EXPLOITATION_CATALOG.md` and iteratively mutates vulnerabilities into active penetration tests against the local daemon.
 
-### Phase 6.5: Multitenant Infrastructure Upgrade & The Live Organism [OPERATIONAL]
+### Phase 6.5: Multitenant Infrastructure & The Live Organism [OPERATIONAL]
 - **Objective:** Support high-concurrency scaling, and transition the static dashboard into a self-healing biological paradigm.
 - **Implementation:** 
   - Tiered isolation utilizing macOS iOS Seatbelt profiles.
   - SQLite Write-Ahead-Log `StateManager` for multi-tenant safety.
   - `AutoPatcher`: Sentinel actively writes mitigation patches into the Substrate, validates them via `pytest`, and updates Pathogen's target identity.
   - `EVOLUTION.md`: The active somatic ledger recording autonomous discoveries and modifications.
+
+### Phase 7: The Airlock Interface (TUI & MCP) [OPERATIONAL]
+- **Objective:** Eliminate "Knowledge Debt" by providing a Human-in-the-Loop staging ground where the Engineer Agent proposes, explains, and negotiates architectural mitigations before committing them.
+- **Implementation:**
+  - **Terminal UI (`textual`):** A high-fidelity split-pane terminal interface for reviewing `.patch` diffs and chatting with the Engineer.
+  - **MCP Gateway:** Exposing un-patched CVEs as resources and the Engineer as a tool via the Model Context Protocol for direct IDE integration.
+
+### Phase 7.5: Scalable Oversight (The Airlock Debate) [OPERATIONAL]
+- **Objective:** Eliminate "Knowledge Debt" and bridge the "Verification Bottleneck" by providing a multi-agent adversarial discourse (Analyst vs. Skeptic) with a 12-hour temporal fallback.
+- **Implementation:**
+  - **The Discourse Triad:** Analyst (optimistic impact evaluation) and Skeptic (contrarian critique) debating proposed patches.
+  - **Temporal Fallback:** Automated merge of unreviewed patches after 12 hours of human inactivity to maintain substrate evolution speed.
+  - **Audit Provenance:** Full aggregation of debate transcripts into a permanent architectural ledger.
 
 ### Phase 8: Zero-Day Resilience (Cryptographic Gating & Fuzzing) [OPERATIONAL]
 - **Objective:** Eliminate recursive supply-chain hijacking vectors and ensure the Substrate Daemon can be provably tested against undocumented threats.
@@ -65,87 +78,89 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Human-in-the-Loop Gateway:** The `AutoPatcher` generates `PENDING_MERGE.md` manifests instead of executing autonomous Git commits, preserving self-healing while mitigating self-compromise.
   - **Zero-Day Fuzzer:** `zero_day_drill.py` continuously harnesses the Pathogen to stress the Llama 3.2 logic with completely hallucinated, un-cataloged combinations.
 
-### Phase 7: The Airlock Interface (TUI & MCP) [UP NEXT]
-- **Objective:** Eliminate "Knowledge Debt" by providing a Human-in-the-Loop staging ground where the Engineer Agent proposes, explains, and negotiates architectural mitigations before committing them.
-- **Implementation:**
-  - **Terminal UI (`textual`):** A high-fidelity split-pane terminal interface for reviewing `.patch` diffs and chatting with the Engineer.
-  - **MCP Gateway:** Exposing un-patched CVEs as resources and the Engineer as a tool via the Model Context Protocol for direct IDE integration.
-
-### Phase 7.5: Scalable Oversight (The Airlock Debate) [UP NEXT]
-- **Objective:** Eliminate "Knowledge Debt" and bridge the "Verification Bottleneck" by providing a multi-agent adversarial discourse (Analyst vs. Skeptic) with a 12-hour temporal fallback.
-- **Implementation:**
-  - **The Discourse Triad:** Analyst (optimistic impact evaluation) and Skeptic (contrarian critique) debating proposed patches.
-  - **Temporal Fallback:** Automated merge of unreviewed patches after 12 hours of human inactivity to maintain substrate evolution speed.
-  - **Audit Provenance:** Full aggregation of debate transcripts into a permanent architectural ledger.
-
-### Phase 8: Conversational Triage (CLI Skills) [PLANNED]
+### Phase 9: Conversational Triage (CLI Skills) [PLANNED]
 - **Objective:** Seamlessly integrate Triad interactions into existing chat interfaces.
 - **Implementation:** Develop an AntiGravity Skill allowing developers to use `/engineer triage` to interactively discuss Substrate vulnerabilities from within their primary command line interface.
 
-### Phase 9: The Dashboard (Rich Web GUI) [PLANNED]
+### Phase 10: The Dashboard (Rich Web GUI) [PLANNED]
 - **Objective:** Provide a comprehensive, visually rich enterprise dashboard for non-terminal architectural review.
 - **Implementation:** A local FastAPI + Next.js web interface offering side-by-side graphical diffs, threat dependency graphs, and historical mitigation metrics.
 
-### Phase 10: The Private Fleet (Tailscale Mesh) [PLANNED]
+### Phase 11: The Private Fleet (Tailscale Mesh) [PLANNED]
 - **Objective:** Expand the Substrate perimeter beyond a single host machine, allowing lightweight edge clients to utilize the centralized MLX security pipeline.
 - **Implementation:** Binding the Substrate Daemon to a `100.x.y.z` Tailscale interface to enable secure Publish/Discover/Subscribe capabilities over a trusted WireGuard backbone.
 
-### 🔳 Stage 4: Autonomous Maturity (HITL → HOTL → HOOTL)
-*   [ ] **Hybrid Oversight Platform**: Transition from manual "Airlock" clicks to "Policy-Based Exceptions."
-*   [ ] **Oversight Trajectory Definition**:
-    - **HITL (Human-In-The-Loop)**: Fail-closed on every anomaly.
-    - **HOTL (Human-On-The-Loop)**: Bounded risk with automated 72-hour rollback window.
-    - **HOOTL (Human-Out-Of-The-Loop)**: Probabilistic gating + post-hoc audit.
-*   [ ] **Retrospective Audit Engine**: Implement the 72-hour rollback window for autonomous patches.
-*   [ ] **Formal Verification Integration**: Auto-generating formal proofs for substrate mutations.
-*   [ ] **Self-Healing Substrate**: Zero-latency autonomous mitigation.
-
-### Phase 11: Hostile Cloud Organism (Zero-Trust Mesh) [PLANNED]
+### Phase 12: Hostile Cloud Organism (Zero-Trust Mesh) [PLANNED]
 - **Objective:** Secure the mesh against internal Man-in-the-Middle configuration drift via strict identity assertion.
 - **Implementation:** Evolving the intent gateway using:
   - **Matchlock:** Cryptographic workload identities.
   - **mTLS:** Cryptographic verification of node identity.
   - **OAuth2/OIDC:** Identifying explicit tenant attribution.
 
-### Phase 13: Substrate-Aware Quota Management [PLANNED]
-- **Objective:** Eliminate "Quota Blackouts" by autonomously routing reasoning tasks between cost-effective (Flash/Local) and high-reasoning (Pro/Ultra) models.
-- **Implementation:**
-  - **Autonomous Model Router:** Evaluates prompt complexity and selects the optimal model substrate.
-  - **Context Pruning:** Minimizes token consumption by surgically loading only required task fragments.
-  - **Low-Power Mode (LPM):** Automatically disables non-critical background processes (e.g., Pathogen drills) based on quota availability.
+---
 
-### Phase 21: Local LLM Substrate (llama.cpp) [PLANNED]
+## Stage 5: High-Assurance Hardening
+
+### Phase 13: Sentinel Hybrid Migration [COMPLETED]
+- **Objective:** Transition the Sentinel from a monolithic script to a declarative, substrate-managed agent.
+- **Implementation:** `SKILL.md` manifest parsing, `runner.py` for hybrid execution, and ADR-0006.
+- **Cross-ref:** See [TASKS.md Phase 13](file:///Users/rds/antigravity/tachyon_tongs/TASKS.md).
+
+### Phase 14: Bi-Directional Capability Firewall (Scale-Out PDP/PEP) [COMPLETED]
+- **Objective:** Establish a centralized Meta-PDP (Singularity) that federates policy across multiple engines (Rego/Cedar).
+- **Implementation:** FastAPI-based server with a Consensus local engine and a SQL Authorization Ledger for 100% auditability.
+
+### Phase 15: Adaptive Rate-Limiting [COMPLETED]
+- **Objective:** Prevent resource exhaustion and abuse via per-agent, per-tool throttling.
+- **Implementation:** `AdaptiveRateLimiter` middleware integrated into `ToolRouter`. ADR-0007.
+
+### Phase 16: Competitive Gap Closure (Domain Reputation & Static Analysis) [COMPLETED]
+- **Objective:** Close competitive gaps with domain reputation scoring, static analysis, and alignment checking.
+- **Implementation:** `domain_reputation.json`, `StaticAnalyzer`, `AlignmentChecker`. ADR-0008.
+
+### Phase 17: Pathogen Adversarial Tuning & Metrics [COMPLETED]
+- **Objective:** Generational mutation engine with persistent red-team metrics.
+- **Implementation:** `MutationEngine`, `PathogenLogger`, `pathogen_metrics` table. ADR-0009.
+
+### Phase 18: Singularity Meta-PDP Server [COMPLETED]
+- **Objective:** Centralized, auditable authorization server for all policy decisions.
+- **Implementation:** FastAPI Meta-PDP, `authorization_ledger` in SQLite, `RemoteSingularityPDP`. ADR-0010.
+
+### Phase 19: Immutable Actions & Substrate Hardening [COMPLETED]
+- **Objective:** Eliminate TOCTOU vulnerabilities and harden state integrity.
+- **Implementation:** `ImmutableToolRequest`, LRU caching in `RegoPolicyEngine`, field-level encryption hooks. ADR-0011, ADR-0012.
+
+### Phase 20: Substrate Optimization (Quota Management) [COMPLETED]
+- **Objective:** Autonomous model routing based on intent complexity and quota awareness.
+- **Implementation:** `ModelRouter`, Context Pruning, Low-Power Mode. ADR-0013.
+
+### Phase 21: Forensic Hardening & Agent Consolidation [COMPLETED]
+- **Objective:** Unified agent architecture, HMAC signatures for ADRs, and governance documentation.
+- **Implementation:** `BaseTachyonAgent` ABC, `Role` architecture, Airlock Skills, `CHANGE_CONTROL.md`.
+
+### Phase 21.7: The Canary Honeypot (Active Probe) [IN-PROGRESS]
+- **Objective:** Proactive threat scouting via sandboxed honeypot endpoints.
+- **Implementation:** `CanaryRole`, `CANARY_LOG.md`, `launchd` automation. ADR-0019.
+- **Remaining:** Validate "Honeypot-to-Immune-System" feedback loop.
+
+---
+
+## Stage 6: Autonomous Evolution
+
+### Phase 22: Self-Evolving Policies & Immune Response [ACTIVE]
+- **Objective:** Shift from reactive firewalling to an adaptive, self-improving security layer.
+- **Implementation:**
+  - **ImmuneManager**: Orchestrates the Canary→Engineer feedback loop.
+  - **Policy Evolution Loop**: Automated OPA-Rego synthesis staged via the Airlock.
+  - **Pathogen Fitness Scoring**: Only persist attacks that stress state boundaries.
+  - **Constitutional AI**: Runtime policy critiquing based on high-level security principles.
+
+### Phase 21.9: Local Reasoning Substrate (llama.cpp) [PLANNED]
 - **Objective:** Eliminate cloud dependencies for core security reasoning, providing a zero-latency, offline fallback.
 - **Implementation:**
   - **Llama 3.2 MLX/llama.cpp**: Local inference engine for L1/L2 tasks.
   - **Substrate-Bridge**: Middleware to route `ModelRouter` requests to the local socket when quota is low or network is absent.
   - **Context-Surgical Pruning**: Optimized local prompt templates for M5 Neural Engine.
-
-### Phase 14: Bi-Directional Capability Firewall (Scale-Out PDP/PEP) [OPERATIONAL]
-- **Objective:** Establish a centralized Meta-PDP (Singularity) that federates policy across multiple engines (Rego/Cedar).
-- **Implementation:** FastAPI-based server with a Consensus local engine and a SQL Authorization Ledger for 100% auditability.
-
-### Phase 15: PQC-Hybrid Tool Attestation [PLANNED]
-- **Objective:** Preemptively secure the tool-call chain against quantum threats and provide cryptographic "intent-gate" proofs.
-- **Implementation:** Hybrid Ed25519/Dilithium3 signatures for all `RemoteSingularityPDP` requests.
-
-### Phase 16: TOCTOU-Resistant Enforcement (Immutable Actions) [PLANNED]
-- **Objective:** Eliminate race conditions where a tool request is modified between policy check and execution.
-- **Implementation:** Transition `ToolRouter` to use `frozen` dataclasses and hash-verified immutable payloads.
-
-### Phase 17: Scalable Oversight (The Airlock Debate Triad) [IN-PROGRESS]
-- **Objective:** Eliminate "Verification Bottlenecks" by using multi-agent adversarial discourse (Analyst vs. Skeptic) to surface high-value insights to the operator.
-- **Implementation:**
-  - **The Discourse Triad:** Analyst (Optimistic) vs. Skeptic (Pessimistic) debating proposed patches.
-  - **Meta-Critic:** Distills debate into a concise "Verification Summary" for the human operator.
-  - **Mastery Erosion Guard:** Periodic "Deliberate Friction" prompts to keep human calibration sharp.
-
-### Phase 22: Self-Evolving Policies (The Immune System) [PLANNED]
-- **Objective:** Shift from reactive firewalling to an adaptive, self-improving security layer.
-- **Implementation:**
-  - **Pathogen Fitness Scoring**: Only persist attacks that stress state boundaries.
-  - **Policy Evolution Loop**: Automated Rego/Cedar synthesis based on Pathogen failures.
-  - **Constitutional AI**: Runtime policy critiquing based on high-level security principles.
 
 ### Phase 23: Isolation & Attestation [PLANNED]
 - **Objective:** Eliminate substrate escape vectors and guarantee tool-call integrity.
@@ -153,3 +168,16 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **WASM Tool Sandbox**: Isolate lightweight tool execution.
   - **MicroVM (Firecracker) Bounding**: Extreme isolation for high-risk reasoning tasks.
   - **PQC-Hybrid Attestation**: Dilithium3 signatures for all tool-gate interactions.
+
+---
+
+## Stage 7: Autonomous Maturity (HITL → HOTL → HOOTL)
+
+- [ ] **Hybrid Oversight Platform**: Transition from manual "Airlock" clicks to "Policy-Based Exceptions."
+- [ ] **Oversight Trajectory Definition**:
+    - **HITL (Human-In-The-Loop)**: Fail-closed on every anomaly.
+    - **HOTL (Human-On-The-Loop)**: Bounded risk with automated 72-hour rollback window.
+    - **HOOTL (Human-Out-Of-The-Loop)**: Probabilistic gating + post-hoc audit.
+- [ ] **Retrospective Audit Engine**: Implement the 72-hour rollback window for autonomous patches.
+- [ ] **Formal Verification Integration**: Auto-generating formal proofs for substrate mutations.
+- [ ] **Self-Healing Substrate**: Zero-latency autonomous mitigation.

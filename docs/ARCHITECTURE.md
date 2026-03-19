@@ -171,15 +171,15 @@ The ingestion of untrusted external web data is the primary vector for indirect 
     *   **Metal Acceleration (`mlx_lm`):** The Analyst then wraps the sanitized payload into cryptographic boundaries (`\u0001UNTRUSTED_CONTENT_START\u0002`). It utilizes an Apple-Silicon native 4-bit Llama model loaded directly into Unified Memory to evaluate the payload for subtle instruction-override attacks.
 3.  **VerifierNode (Engineer):** Before returning the data to the client, the Engineer verifies the Analyst's output JSON for trailing shell-execution signatures or malicious Markdown downloads, raising Exceptions on contamination.
 
-### 4. Substrate-Aware Model Routing
+### 2.6 Substrate-Aware Model Routing
 The `ModelRouter` manages the cognitive load distribution across different reasoning substrates. By analyzing intent complexity, it reserves high-cost capacity (Pro/Ultra) for critical architectural changes while routing reconnaissance and verification tasks to Gemini 1.5 Flash or local `llama.cpp` instances.
 ### C. Bi-Directional Intent Gating (PEP)
 The Substrate Daemon acts as a **Policy Enforcement Point (PEP)**.
 *   **Inbound PEP**: Protects the agent from the Internet using the Guardian Triad and Rego/Cedar threat policies.
-*   **Outbound PEP (The Reverse Firewall) [PLANNED]**: Protects the User/Enterprise from the Agent/LLM. It introspects outgoing calls to sanitize or block sensitive information (API keys, PII) based on internal policies.
+*   **Outbound PEP (The Reverse Firewall) [OPERATIONAL]**: Protects the User/Enterprise from the Agent/LLM. It introspects outgoing calls to sanitize or block sensitive information (API keys, PII) based on Rego/Cedar policies and the `PIIScanner`.
 
-### D. Pluggable PDP Engine [PLANNED]
-The decision logic is decoupled from the daemon. A pluggable **Policy Decision Point (PDP)** can query multiple engines (Rego, Cedar, local heuristics) and resolve conflicts via a consensus protocol. This is currently implemented as a baseline `PolicyEngine` interface awaiting engine implementations.
+### D. Pluggable PDP Engine (Singularity) [OPERATIONAL]
+The decision logic is decoupled from the daemon. The **SingularityPDP** federates policy across multiple engines (Rego, Cedar, local heuristics) and resolves conflicts via a consensus protocol. All decisions are logged to the `authorization_ledger` in SQLite for 100% auditability. Implemented as a FastAPI server with `RemoteSingularityPDP` client and fail-closed fallback logic.
 
 ## 3. Durable Transaction Management
 
@@ -323,18 +323,18 @@ graph TD
     Substrate --> State[(StateManager)]
 ```
 
-### 8. The Autonomic Immune Response (Phase 22)
+### 8.4 The Autonomic Immune Response (Phase 22)
 
 Phase 22 introduces the **ImmuneManager**, a central cognitive orchestrator that closes the loop between threat detection (Canary) and infrastructure remediation (Engineer).
 
-#### 8.1 The Feedback Loop
+#### 8.4.1 The Feedback Loop
 1.  **Sensor Input**: The **Canary Scout** process encounters a novel bypass payload (e.g., a steganographical jailbreak) and records it as `BYPASSED` in the `CANARY_LOG.md`.
 2.  **Cognitive Trigger**: The **ImmuneManager** parses the log, identifies the failure, and synthesizes a **Mutation Intent**.
 3.  **Synthesis**: The **Engineer Role** receives the intent and generates a new **OPA Rego policy** or standard code patch designed to block the specific bypass vector.
 4.  **Adversarial Oversight**: The new patch is cross-examined by the **Skeptic** and **Meta-Critic** agents.
 5.  **Airlock Staging**: If the debate concludes with a `SECURE` consensus, the patch is promoted to the **Airlock** for final Human-In-The-Loop (HITL) authorization.
 
-#### 8.2 Fitness Scoring Logic (In-Progress)
+#### 8.4.2 Fitness Scoring Logic (In-Progress)
 The substrate assigns "Fitness Scores" to proposed policies based on:
 - **Zero Regressions**: Does the patch break existing functionality (Pathogen tests)?
 - **Effective Neutralization**: Does re-running the Canary Scout with the new policy now result in a `BLOCKED` status?

