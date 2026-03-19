@@ -92,10 +92,18 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ---
 
+### 🔳 [PLANNED] Phase 21: Local LLM Substrate (llama.cpp)
+- [ ] **[ENGINE]** Integrate `llama-cpp-python` or `mlx-lm` as a local reasoning provider.
+- [ ] **[ROUTING]** Extend `ModelRouter` to support `LOCAL_LLM` as a first-class target.
+- [ ] **[PROMPTS]** Optimize system prompts for local 4-bit/8-bit quantized models.
+- [ ] **[VERIFY]** Add regression tests for "Full Offline" tool-use scenarios.
+
+---
+
 ## 🛠️ Architectural Backlog
 - [ ] **[SECURITY] PQC-Hybrid Attestation**: Implement Dilithium3 signatures for PDP tool-call attestation.
 - [x] **[SECURITY] Immutable Actions**: Refactor `ToolRouter` to use `frozen` dataclasses to prevent TOCTOU bypasses. [COMPLETED]
-- [ ] **[OVERSIGHT] Airlock Debate Triad**: Implement the `Skeptic` and `Meta-Critic` agents in `agents/sentinel/`.
+- [x] **[OVERSIGHT] Airlock Debate Triad**: Implement the `Skeptic` and `Meta-Critic` agents in `agents/sentinel/`. [COMPLETED]
 - [ ] **Containerization**: Dockerize the Substrate Daemon for CI/CD.
-- [ ] **Visualization**: Append Mermaid orchestration diagrams to `ARCHITECTURE.md`.
+- [x] **Visualization**: Append Mermaid orchestration diagrams to `ARCHITECTURE.md`. [COMPLETED]
 - [ ] **Archival Script**: Prune historical phases to `ACCOMPLISHMENTS.md`.

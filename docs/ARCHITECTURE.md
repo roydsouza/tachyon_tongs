@@ -9,8 +9,9 @@ The architecture of Tachyon Tongs is a direct physical manifestation of its [THR
 - **Intrusion Detection (IDS)**: ADRs are **cryptographically signed** assets serving as a forensic baseline. By comparing the signed state of the architecture against the current implementation, operators can detect "Structural Drifts" or unauthorized mutations—even those that follow valid syntax but violate the recorded security intent.
 - **The Threat Model as Source of Truth**: Implementation and administration are never ad-hoc. They are rigorous, peer-reviewed responses to identified vulnerabilities. Any enhancement to the substrate *must* start with a threat analysis, followed by an ADR, and finally the technical implementation.
 - **Forensic Debate Monitoring**: Administrators can monitor the live cognitive reasoning of the Triad via the `debates/` directory. Each record captures the adversarial discourse (Engineer vs. Skeptic vs. Meta-Critic) in a humorous, high-fidelity markdown format, ensuring that security audits are both informative and transparent.
-- **Tamper Detection**: Every ADR is paired with a `.sig` file. The `IntegrityManager` verifies these signatures during substrate health checks.
-- **Forensic Rollback**: ADRs provide the "Ground Truth" for substrate state, allowing for precise forensic recovery based on the last-signed safe threat profile.
+- **Tamper Detection (Guardian IDS)**: Every ADR is a hybrid signed asset (Embedded JSON + External `.sig`). The `GuardianIDS` agent verifies these signatures against a cumulative **Merkle Root** stored in `docs/adr/MANIFEST.json`.
+- **Forensic Integrity**: Any structural drift or unauthorized mutation in the ADR history is detected as a Merkle violation.
+- **Out-of-Band Resilience**: Planned integration with a remote attestation service for the Merkle Root ensures detection even if the local repository is compromised.
 
 ## 1. High-Level Component Topology
 
@@ -240,3 +241,94 @@ Each new entry generates a SHA-256 hash that incorporates the previous entry's h
 
 ### C. Audit Integration
 The integrity of the ledger is verified during every `scripts/verify_substrate.py` run and summarized in the `/report` command. Any deviation in the hash chain or missing files will trigger a substrate-wide **INTEGRITY_FAILURE** alert, halting autonomous evolutions until manual reconciliation.
+
+## 8. Visual Orchestration
+
+### 8.1 Substrate Enforcement Flow (Tool Request Handling)
+Visualizes the interception, freezing, and multi-engine authorization of an agent's tool call.
+
+```mermaid
+sequenceDiagram
+    participant Agent
+    participant Daemon as Substrate Daemon (PEP)
+    participant PDP as Policy Decision Point (Singularity)
+    participant Sandbox as Tier 0 MacOS Sandbox
+    participant Network as Internet / Target API
+
+    Agent->>Daemon: Request: tool_call(safe_fetch, "evil-api.com")
+    Daemon->>Daemon: Freeze Request (ImmutableToolRequest)
+    Daemon->>PDP: is_action_allowed(request)
+    
+    rect rgb(240, 240, 240)
+        Note over PDP: Logic: OPA (Rego) + AWS Cedar + Reputation
+        PDP-->>Daemon: Verdict: BLOCKED (Malicious Reputation)
+    end
+
+    alt is_blocked
+        Daemon-->>Agent: 403 Forbidden (Integrity Violation)
+    else is_allowed
+        Daemon->>Sandbox: Execute Request
+        Sandbox->>Network: Physical Fetch
+        Network-->>Sandbox: Raw Data
+        Sandbox-->>Daemon: Sanitized Output
+        Daemon-->>Agent: 200 OK (Sanitized Content)
+    end
+```
+
+### 8.2 Scalable Oversight (The Airlock Debate Triad)
+Visualizes the adversarial cognitive reasoning chain and the human-in-the-loop authorization gate.
+
+```mermaid
+sequenceDiagram
+    participant Scout as Scout Agent (Harvest)
+    participant Analyst as Analyst Agent (Reasoning)
+    participant Engineer as Engineer Agent (Proposal)
+    participant Skeptic as Skeptic Agent (Contrarian)
+    participant MetaCritic as Meta-Critic (Arbiter)
+    participant Airlock as Airlock Console (HITL)
+
+    Scout->>Analyst: New Exploit Payload Found
+    Analyst->>Analyst: Metal-Accelerated MLX Analysis
+    Analyst->>Engineer: Validated Threat Context
+    Engineer->>Engineer: Propose Security Patch (Code/Rego)
+    Engineer->>Skeptic: Proposed Patch for Review
+    
+    rect rgb(255, 240, 240)
+        Note over Skeptic: Search for logic bombs or Trojan side-effects
+        Skeptic-->>MetaCritic: Adversarial Critique (Risk Score)
+    end
+    
+    Engineer-->>MetaCritic: Patch Rationale
+    MetaCritic->>MetaCritic: Resolution & Verdict
+    
+    alt is_authorized
+        MetaCritic->>Airlock: Stage for Human Authorization
+        Airlock-->>Engineer: Human Authorized! -> Deploy to Substrate
+    else is_rejected
+        MetaCritic-->>Engineer: Reject Proposal (Revision Needed)
+    end
+```
+
+### 8.3 State Integrity & Merkle Anchoring (Guardian IDS)
+Visualizes the multi-layered integrity verification of the architectural substrate.
+
+```mermaid
+graph TD
+    subgraph Layers ["🛡️ Integrity Layers"]
+        A[ADR Content] --> B{Embedded JSON}
+        A --> C{Sidecar .sig}
+        B --> D[Guardian IDS Agent]
+        C --> D
+        D --> E[MERKLE MANIFEST.json]
+        E --> F[Cumulative Merkle Root]
+    end
+
+    subgraph Verification ["🔍 Audit Flow"]
+        G[Operator / Cron] --> H[python3 guardian_ids.py]
+        H --> I{Verify Layers}
+        I -- SECURE --> J[Operation Continues]
+        I -- Mismatch --> K[ALERT.md + Forensic Halt]
+    end
+
+    F -. Forensic Anchor .-> I
+```

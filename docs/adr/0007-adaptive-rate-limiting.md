@@ -17,3 +17,14 @@ We are implementing an **Adaptive Rate-Limiting** middleware within the `ToolRou
 ## Consequences
 - **Positive**: Prevents cascading failures from looping agents; protects external API quotas; improves substrate stability.
 - **Negative**: Adds a small lookup overhead to every tool call; may require fine-tuning to avoid blocking legitimate high-burst workloads (e.g., parallel data processing).
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0007",
+  "hash": "sha256:8f0ae177f7b4e61e1f5b4e8978457aa75a3a31d0d20caeadfd81bf87380eb95d",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

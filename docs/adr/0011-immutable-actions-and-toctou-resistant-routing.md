@@ -20,3 +20,14 @@ We will refactor the enforcement pipeline to use `ImmutableToolRequest` (a froze
 - **Performance**: Negligible overhead for dataclass instantiation.
 - **Developer UX**: Developers must now interact with the `ImmutableToolRequest` object rather than raw dicts at the execution layer.
 - **Modularity**: Clearly separates the "Intent" from the "Execution" state.
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0011",
+  "hash": "sha256:63cd32b062af7bfefbf90a0d1fdc371cdfb4e1d535e200e08f83ace67e2773f6",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

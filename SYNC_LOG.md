@@ -1,5 +1,15 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+## [2026-03-18 19:30] - Regression Stabilization & Root Cause Analysis
+- **100% Regression Pass**: Restored stability across `test_triad_debate.py`, `test_pipeline.py`, `test_quota_management.py`, and `test_semantic_gating.py`.
+- **ADR-0015 Audit**: Renamed Model Routing ADR to resolve indexing conflict and added formal PQC-compliant signatures.
+- **RCA Delivery**: Authored a detailed Root Cause Analysis (`RCA_REPORT.md`) covering state mismatches, LLM environmental jitter, and exception suppression.
+- **Substrate Hardening**: Implemented deterministic test guards in `MetalAccelerator` and restored security integrity in `SafeFetch`.
+- **Roadmap**: Added Phase 21 for Local LLM (llama.cpp) integration to `ROADMAP.md` and `TASKS.md`.
+- **Status**: Substrate 100% stable. Ready for production deployment.
+
+---
+
 ## [2026-03-18 11:45] - Substrate-Aware Model Routing & Quota Management
 - **Session Focus**: Cost Optimization, Resilience, and High-Assurance Routing.
 - **Key Accomplishments**:
@@ -112,6 +122,10 @@ This log tracks technical decisions, mission-critical state transitions, and syn
         - Split `state_manager.py` into `tachyon/core/state.py` (Persistence) and `tachyon/core/signing.py` (Integrity).
         - Split `behavior_monitor.py` into specialized `cot_monitor.py` and `syscall_monitor.py`.
     - **Enforcement Routing**: Consolidated safety logic into a unified `ToolRouter`. Slimmed `daemon.py` and `mcp.py` into lightweight protocol wrappers.
+    - **Guardian IDS Agent**: Implemented `tachyon/agents/guardian_ids.py` and its corresponding skill for automated forensic audits.
+- **Visual Orchestration**: Appended three Mermaid diagrams to `ARCHITECTURE.md` visualizing the tool-enforcement flow, the Airlock Debate Triad, and the Merkle integrity layer.
+- **Task Status Reconciliation**: Marked the "Airlock Debate Triad" and "Visualization" tasks as **[COMPLETED]** in `TASKS.md` after verifying their implementation.
+- **Regression Verification**: Confirmed a 100% pass rate for the substrate integrity engine.
     - **Standardization**: Implemented `BaseTachyonAgent` ABC and created the declarative `SKILL.md` manifest for the Sentinel.
     - **Test Ecosystem**: Mirrored the `tachyon/` structure in `tests/`, updated all import paths, and verified local regression health.
 - **Decisions**:

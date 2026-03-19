@@ -15,3 +15,14 @@ We have implemented a two-fold security hardening layer:
 ## Consequences
 - **Positive**: Prevents state poisoning and unauthorized autonomous code mutations. Provides a centralized, robust notification system for security compromises.
 - **Negative**: Increases operational friction by requiring manual approval of security patches and re-signing of state for recovery. Requires management of the `TACHYON_SECRET_KEY` environment variable for production environments.
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0004",
+  "hash": "sha256:ba36316597144847b30a19db5121f8b93f16654c9d45b6040b8b6c7654657f78",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

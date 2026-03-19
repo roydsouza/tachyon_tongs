@@ -14,3 +14,14 @@ The Airlock Debate Triad (ADR-0013) generates critical forensic data. However, t
 ## Consequences
 - **Positive**: High engagement for human reviewers; simplified forensic audits; visible "Agent Reasoning" chains.
 - **Negative**: Increased filesystem clutter (requires periodic archival); slightly higher token count for persona-building.
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0014",
+  "hash": "sha256:7463eddf19b8828cb05d24202dbfcf9b30412f24a999a96ffe1fa8d06b25850f",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

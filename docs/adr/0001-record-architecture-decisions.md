@@ -13,3 +13,14 @@ We will use Architecture Decision Records (ADRs) to document all significant tec
 - **Positive**: Clear audit trail of "why" decisions were made.
 - **Positive**: Prevents AI agents from accidentally undoing security constraints during optimization.
 - **Negative**: Adds slight overhead to the planning phase.
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0001",
+  "hash": "sha256:7571164c85dc409028706fc7d21a32b6f2548418e125d2ec4a7fbeecc1419da9",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

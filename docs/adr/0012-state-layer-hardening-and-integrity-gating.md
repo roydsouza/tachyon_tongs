@@ -17,3 +17,14 @@ Harden the state management layer with strict runtime integrity gating and field
 - **Resilience**: Prevents the substrate from operating on a compromised knowledge base in strict environments.
 - **Privacy**: Protects harvested threat intelligence from unauthorized local access.
 - **Extensibility**: Simplifies the addition of new policy engines (e.g., Cedar, OPA variants).
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0012",
+  "hash": "sha256:cfb96aaaaf9b30830da146d8d541a73219dd8b05e8acc79157d31d5fc31d71f5",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

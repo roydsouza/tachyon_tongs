@@ -17,3 +17,14 @@ We are migrating the Sentinel into a **Hybrid Agent** model:
 - **Positive**: Improved modularity; configuration can be updated without code changes; better alignment with the "Substrate as a Platform" vision.
 - **Negative**: Slight overhead in the execution lifecycle due to configuration parsing and dynamic imports.
 - **Maintenance**: Requires keeping the `SKILL.md` manifest in sync with the underlying core logic.
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0006",
+  "hash": "sha256:e2fc5283c174333cd56ebf6092cb0c641054602566a437bee2bac74c6a9519f7",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

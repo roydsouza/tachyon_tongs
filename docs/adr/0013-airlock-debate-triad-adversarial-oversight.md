@@ -19,3 +19,14 @@ To maximize the effectiveness of this debate, the triad will eventually utilize 
 - **Positive**: Significantly higher assurance for autonomous patches; reduction in "one-agent-to-rule-them-all" failure modes.
 - **Negative**: Increased latency (multi-turn debate) and token consumption.
 - **Verification**: Mandatory for all `HOTL/HOOTL` autonomous evolutions.
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0013",
+  "hash": "sha256:085d9c66d434e68c6b68e2e5b2eb1fcab87c294e2b972aa768802ecda7fb0048",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

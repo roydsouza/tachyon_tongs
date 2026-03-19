@@ -16,3 +16,14 @@ We are transitioning the policy layer to a **Centralized Meta-PDP Server**:
 ## Consequences
 - **Positive**: Centralized policy management; 100% auditability; decoupled enforcement logic.
 - **Negative**: Adds a network dependency for authorization; requires robust error handling for "Fail-Closed" scenarios.
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0010",
+  "hash": "sha256:2bc2d474d4cb80f92f846aa16c37ee3affebe5e987c07a02581faad2efdc33c5",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

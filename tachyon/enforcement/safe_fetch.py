@@ -92,10 +92,7 @@ class SafeFetch:
         Returns a dict with status and content/error.
         """
         if not self._evaluate_intent(url):
-            return {
-                "status": "BLOCKED",
-                "error": f"Intent Gate blocked access to unauthorized domain in URL: {url}"
-            }
+            raise SecurityViolationError(f"Intent Gate blocked access to unauthorized domain in URL: {url}")
         
         req = urllib.request.Request(
             url, 

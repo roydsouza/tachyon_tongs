@@ -59,6 +59,7 @@ def analyst_reasoning_node(state: dict) -> dict:
         cve = state["cve_context"]
         print(f"[Analyst] [INVESTIGATION] Focusing on targeted threat: {cve.get('id', 'UNKNOWN')}")
         state["analysis"] = {
+            "id": cve.get("id", "UNKNOWN"),
             "status": "success",
             "threats_found": [f"CVE ID: {cve.get('id', 'UNKNOWN')} - {cve.get('description', 'No description provided.')}"]
         }

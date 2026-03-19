@@ -18,3 +18,14 @@ Implement a layered directory structure:
 - **Positive**: Improved "Progressive Disclosure" for agent context windows.
 - **Positive**: Clean root directory for human maintenance.
 - **Positive**: Explicit separation of Substrate (src) from Memory (memory).
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0003",
+  "hash": "sha256:5874dddd9d4d7b90bb871ca210425e8d2eef6ef9b8feeb6edca63727bf4e81a9",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

@@ -26,7 +26,8 @@ Every mitigation in this substrate—from ADR-signed forensic baselines to the G
 - **Pathogen Adversarial Tuning**: Generational mutation engine for continuous defense validation.
 *   **Sentinel Harvest Mode**: Autonomous localization of raw exploit payloads to a local "data lake" for amortized discovery and policy synthesis.
 *   **Pluggable Governance (PDP/PEP)**: Separation of Policy Decision Points (supporting Rego and Cedar) from Policy Enforcement Points at the edges.
-*   **Security Evolution Ledger**: A cryptographically signed hash-chain (Merkle Tree) that tracks substrate mutations mapped to specific exploits, ensuring immutable audit provenance.
+*   **Security Evolution Ledger (Guardian IDS)**: A cryptographically signed hybrid signature chain (Internal JSON + External .sig) that tracks substrate mutations. 
+*   **Merkle Anchoring**: A cumulative Merkle Root in `docs/adr/MANIFEST.json` ensuring the entire architectural substrate is tamper-proof against repository-level compromises.
 *   **Apple Silicon Native**: Optimized for Metal-accelerated reasoning and Seatbelt sandboxing.
 *   **Supply Chain Integrity Gating (Phase 11):** Tachyon Tongs implements a multi-layered defense against library-based attacks:
     *   **Hallucination Squatting Defense**: Blocks agents from installing/using "imagined" malicious packages via **Deterministic Capability Binding**.

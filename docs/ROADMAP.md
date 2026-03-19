@@ -110,6 +110,13 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Context Pruning:** Minimizes token consumption by surgically loading only required task fragments.
   - **Low-Power Mode (LPM):** Automatically disables non-critical background processes (e.g., Pathogen drills) based on quota availability.
 
+### Phase 21: Local LLM Substrate (llama.cpp) [PLANNED]
+- **Objective:** Eliminate cloud dependencies for core security reasoning, providing a zero-latency, offline fallback.
+- **Implementation:**
+  - **Llama 3.2 MLX/llama.cpp**: Local inference engine for L1/L2 tasks.
+  - **Substrate-Bridge**: Middleware to route `ModelRouter` requests to the local socket when quota is low or network is absent.
+  - **Context-Surgical Pruning**: Optimized local prompt templates for M5 Neural Engine.
+
 ### Phase 14: Bi-Directional Capability Firewall (Scale-Out PDP/PEP) [OPERATIONAL]
 - **Objective:** Establish a centralized Meta-PDP (Singularity) that federates policy across multiple engines (Rego/Cedar).
 - **Implementation:** FastAPI-based server with a Consensus local engine and a SQL Authorization Ledger for 100% auditability.

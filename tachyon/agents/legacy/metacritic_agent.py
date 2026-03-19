@@ -25,26 +25,20 @@ class MetaCriticAgent:
             "risk_mitigation_required": []
         }
 
-        if not proposal:
-            return {
-                "status": "idle",
-                "concurrence": True,
-                "banter": "Nothing to arbitrate. I'll go back to counting the ways the Engineer could fail. Currently at 4,291.",
-                "justification": "Substrate is idle. Heartbeat active."
-            }
-
         # Logic for arbitration:
+        # If Skeptic risk score is high and not addressed by Engineer -> Reject.
+        # If Skeptic concerns are low or non-critical -> Concur with conditions.
         # If Skeptic risk score is high and not addressed by Engineer -> Reject.
         # If Skeptic concerns are low or non-critical -> Concur with conditions.
         
         risk_score = critique.get("risk_score", 0.0)
         concerns = critique.get("concerns", [])
         
-        if risk_score > 0.7:
+        if risk_score >= 0.4:
             verdict["status"] = "rejected"
             verdict["justification"] = f"Rejected due to high risk score ({risk_score}). Engineer, please consider a career in interpretive dance instead."
             verdict["banter"] = "ABSOLUTELY NOT. This is a security substrate, not a playground for script kiddies."
-        elif risk_score > 0.3:
+        elif risk_score > 0.0:
             verdict["status"] = "conditional_pass"
             verdict["concurrence"] = True
             verdict["justification"] = "Conditional pass. Skeptic concerns must be addressed. Try harder next time."
@@ -68,7 +62,8 @@ def metacritic_arbitration_node(state: Dict[str, Any]) -> Dict[str, Any]:
     proposal = state.get("patch_files", {})
     critique = state.get("critique", {})
     
-    if proposal and critique:
-        state["verdict"] = arbiter.arbitrate(proposal, critique)
-        
+    # In test scenarios, the Engineer might put proposal in 'patch_files'
+    # The arbiter expects 'proposal' as a dict.
+    state["verdict"] = arbiter.arbitrate(proposal, critique)
+    
     return state

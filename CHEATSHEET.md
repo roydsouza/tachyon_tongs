@@ -32,11 +32,21 @@ Force a telemetry update to verify the dashboard is receiving WebSocket data:
 python3 scripts/test_client.py
 ```
 
-### Run All Tests
-Verify substrate integrity and regression health:
 ```bash
 pytest
 ```
+
+---
+
+## 🛡️ Forensic Integrity (IDS)
+
+Manual verification of the substrate's architectural integrity:
+
+| Action | Command |
+| :--- | :--- |
+| **Full IDS Audit** | `python3 tachyon/agents/guardian_ids.py` |
+| **Verify ADRs** | `shasum -a 256 docs/adr/*.md` (Manual check vs .sig) |
+| **Check Manifest** | `cat docs/adr/MANIFEST.json` |
 
 ---
 

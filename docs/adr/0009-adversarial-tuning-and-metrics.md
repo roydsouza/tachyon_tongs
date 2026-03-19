@@ -16,3 +16,14 @@ We are implementing the **Pathogen System**:
 ## Consequences
 - **Positive**: Proactive identification of weak points in our firewalls; quantitative metrics for substrate "hardness."
 - **Negative**: Increased complexity of the test suite; requires maintaining a library of mutation techniques.
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0009",
+  "hash": "sha256:50146ba28beec1b22d6d2f4256692205f37634d7d7658ee8b2625faeb6b2cba6",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

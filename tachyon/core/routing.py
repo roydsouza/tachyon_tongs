@@ -50,12 +50,12 @@ class ModelRouter:
         Rudimentary complexity detection based on prompt analysis.
         (Placeholder for a more sophisticated LLM-based or heuristic-based algorithm)
         """
-        keywords_high = ["ADR", "architectural", "refactor", "regression", "root cause"]
-        score = 0.5 # Baseline
-        
         prompt_lower = prompt.lower()
+        score = 0.1 # Lower baseline for simple tasks
+        
+        keywords_high = ["adr", "architectural", "refactor", "regression", "root cause", "attestation", "pqc"]
         for kw in keywords_high:
             if kw in prompt_lower:
-                score += 0.1
+                score += 0.4 # Significant jump for high-intel keywords
                 
         return min(score, 1.0)

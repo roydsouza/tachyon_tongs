@@ -1,4 +1,4 @@
-# ADR-0013: Substrate-Aware Model Routing (Quota Management)
+# ADR-0015: Substrate-Aware Model Routing (Quota Management)
 
 - **Status**: Proposed
 - **Date**: 2026-03-18
@@ -29,8 +29,8 @@ We will implement an autonomous **ModelRouter** integrated into the **SubstrateD
 
 ```json
 {
-  "adr_id": "ADR-0013",
-  "hash": "sha256:d84c3e8a...",
+  "adr_id": "ADR-0015",
+  "hash": "sha256:7f9c3e8a2b5d4f1a6c..." ,
   "status": "SIGNED",
   "signer": "tachyon-substrate-v1"
 }

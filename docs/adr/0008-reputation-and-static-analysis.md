@@ -23,3 +23,14 @@ We are introducing a "Competitive Gap" security layer:
 - **Positive**: Proactive defense against zero-day URLs and common coding vulnerabilities; reduced reliance on manual blocklists.
 - **Negative**: Increased latency for initial tool calls due to scanning/lookup; potential for false positives in legitimate administrative scripts.
 - **Maintenance**: Requires a curated and updated `domain_reputation.json`.
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0008",
+  "hash": "sha256:fd5bbb24a427e1a8ba160dd26a18952638177109f68496100068ff567ef30008",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

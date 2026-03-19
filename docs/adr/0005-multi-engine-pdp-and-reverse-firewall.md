@@ -27,3 +27,14 @@ We are implementing a **Multi-Engine Policy Decision Point (PDP)** architecture 
 - **Positive**: Higher assurance through multi-engine consensus; reduced risk of secret exfiltration.
 - **Negative**: Increased latency per tool call due to multi-engine evaluation (mitigated by asynchronous execution).
 - **Maintenance**: Requires maintaining multiple policy sets (Rego and Cedar) for the same threat vectors.
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0005",
+  "hash": "sha256:6e4c69d2711f5c0ed52577d42aee669970a7941b5a0fe69915fcc403cec79ed9",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

@@ -94,4 +94,18 @@ As Tachyon Tongs moves toward a forensic IDS model, the protection of cryptograp
     - **Hardware Moat (Planned)**: Transition to asymmetric hardware signing (Yubikey/Secure Enclave) ensures that the private key is never exposed to the OS-level memory, even to the substrate itself.
     - **Reference**: See [Evolutionary Roadmap](file:///Users/rds/antigravity/tachyon_tongs/docs/KEYS.md#phase-3-hardware-root-vision).
 
-## 6. Deployment Security
+## 6. Supply Chain & Repository Integrity (GitHub)
+
+The GitHub repository is the "Source of Truth" for the substrate's architecture. Compromise of the repo affects all managed agents.
+
+### A. Malicious Commit Injection
+- **Description**: An attacker gains write access to the repository and modifies an ADR to loosen security constraints or injects a "Trojan" tool.
+- **Tachyon Mitigation**: 
+    - **Merkle Anchoring**: The `docs/adr/MANIFEST.json` cumulative root detects any structural or content drift in the ADR history.
+    - **OOB Attestation (Gated)**: Planned remote storage of the Merkle Root ensures detection even if the local manifest is also tampered with.
+
+### B. CI/CD Pipeline Hijacking
+- **Description**: Attackers modify the GitHub Actions workflow to bypass regression tests or inject malicious binaries during deployment.
+- **Tachyon Mitigation**: **Agentic Verification**. The substrate performs its own `Guardian IDS` audit during startup, independent of the external CI/CD state.
+
+## 7. Deployment Security
