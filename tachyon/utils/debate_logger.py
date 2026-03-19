@@ -23,9 +23,21 @@ class DebateLogger:
     def log_debate(self, state: Dict[str, Any]):
         """
         Extracts proposal, critique, and verdict from state and writes the log.
+        Implements a 5-minute deduplication window for the same CVE.
         """
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        now_dt = datetime.now()
+        timestamp = now_dt.strftime("%Y%m%d_%H%M%S")
         cve_id = state.get("cve_context", {}).get("id", "UNKNOWN_THREAT")
+        
+        # 🛡️ Deduplication Gating
+        for existing_file in os.listdir(self.base_dir):
+            if cve_id in existing_file and existing_file.endswith(".md"):
+                # Check file mtime
+                f_path = os.path.join(self.base_dir, existing_file)
+                if (now_dt - datetime.fromtimestamp(os.path.getmtime(f_path))).total_seconds() < 300:
+                    print(f"[DebateLogger] [INFO] Redundant debate for {cve_id} suppressed.")
+                    return f_path
+
         filename = f"DEBATE_{timestamp}_{cve_id}.md"
         filepath = os.path.join(self.base_dir, filename)
 
@@ -34,7 +46,7 @@ class DebateLogger:
         verdict = state.get("verdict", {})
 
         with open(filepath, "w") as f:
-            f.write(f"# ⚔️ Airlock Debate: {cve_id}\n\n")
+            f.write(f"# ⚔️ Airlock Debate: [{cve_id}](../EXPLOITATION_CATALOG.md#{cve_id.lower().replace('-', '')})\n\n")
             f.write(f"**Timestamp**: {datetime.now().isoformat()}\n")
             f.write(f"**Status**: {verdict.get('status', 'PENDING').upper()}\n\n")
 
