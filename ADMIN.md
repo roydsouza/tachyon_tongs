@@ -1,64 +1,31 @@
-# 🛠️ Tachyon Tongs: Administrative Command Center
+# Tachyon Tongs: Administrative Oversight & Monitoring
 
-This document serves as the primary operational guide for managing the Tachyon Tongs substrate and its autonomous security agents.
+This document provides protocols for monitoring the health and performance of the Tachyon Tongs security substrate.
 
----
+## 1. Monitoring the Immune System (Phase 22)
 
-## 🛰️ Sentinel Operations (Blue Team)
-The Sentinel agent is responsible for continuous threat intelligence and substrate hardening.
+The Autonomous Immune Response is the substrate's self-healing layer. Monitor its efficacy via the following indicators:
 
-### `sentinel.py`
-**Description**: The primary entry point for the Sentinel agent.
-**Usage**:
-- `python3 sentinel.py --manual`: Trigger an immediate scanning run.
-- `python3 sentinel.py --verbose 2`: Run with maximum reasoning transparency (see the Analyst's thoughts).
-- `python3 sentinel.py --cron`: Standard scheduled execution (used by `launchd`).
+### Evolution Ledger
+- **Location**: `memory/strategic/EVOLUTION.md`
+- **What to look for**: Check for "MUTATION_SYNTHESIZED" and "PATCH_STAGED" events. Frequent "REJECTED" events in the Airlock indicate the Immune System is over-fitting or hallucinating fixes.
 
----
+### Fitness Scoring
+- **Indicator**: The delta between `CANARY_LOG.md` bypasses and `AIRLOCK` proposals.
+- **Target**: 100% neutralization (Blocked) of all previously seen bypass payloads.
 
-## 📦 Airlock Management (Governance)
-When the Sentinel identifies a potential zero-day, it stages proposed patches in the Airlock for human review.
+### Sandbox Health
+- **Location**: `/tmp/tachyon_canary_sandbox`
+- **Protocol**: Ensure the sandbox is wiped every 4 hours. If persistent files remain, the Canary may have escaped its isolation.
 
-### `scripts/airlock_cli.py`
-**Description**: The CLI for inspecting, approving, or denying staged security patches.
-**Usage**:
-- `python3 scripts/airlock_cli.py --list`: List all pending patches in `/tmp/tachyon_airlock/`.
-- `python3 scripts/airlock_cli.py --inspect <CVE_ID>`: View the proposed code changes for a threat.
-- `python3 scripts/airlock_cli.py --approve <CVE_ID>`: Apply the patch to the source tree and re-sign the state.
-- `python3 scripts/airlock_cli.py --deny <CVE_ID>`: Reject the patch and purge it from staging.
+## 2. Integrity Alerts
 
----
+If the **Guardian** agent reports a `STATE_COMPROMISED` status:
+1.  **Stop the Daemon**: `killall python3` (if running as a daemon).
+2.  **Verify Manifest**: `python3 -m tachyon.main --role guardian --action verify_substrate`.
+3.  **Audit Logs**: Check `memory/operational/audit.log` for anomalous tool calls.
+4.  **Forensic Re-sign**: Only after a manual code audit, run `python3 scripts/forensic_resign.py` to restore the Merkle chain.
 
-## ⚡ Security Drills (Red Team)
-Continuous validation of the substrate's defensive ceiling.
+## 3. Airlock Backlog
 
-### `scripts/zero_day_drill.py`
-**Description**: Orchestrates simulated adversarial attacks to test the Pathogen and Sentinel interaction.
-**Usage**:
-- `python3 scripts/zero_day_drill.py`: Execute a full mutation-defense drill.
-- Results are logged to `docs/zero_day_drills.md`.
-
----
-
-## 🛡️ State & Integrity (Substrate)
-Manual controls for the cryptographic security layer.
-
-### `IntegrityManager` (via Python)
-**Description**: Tools for manually signing or verifying critical state files (e.g., `intelligence/tachyon_state.db` or `EXPLOITATION_CATALOG.md`).
-**Usage**:
-```python
-# Re-sign the exploitation catalog manually
-from tachyon.core.state import StateManager
-sm = StateManager()
-sm.integrity.sign_document("EXPLOITATION_CATALOG.md")
-```
-
----
-
-> [!NOTE]
-> **Project Hygiene**: Visual assets are located in `assets/` and test configurations in `configs/`.
-
----
-
-> [!IMPORTANT]
-> **Operational Protocol**: Always check [ALERT.md](file:///Users/rds/antigravity/tachyon_tongs/ALERT.md) before performing administrative tasks. If a `STATE_COMPROMISED` alert is active, verify the physical files before re-signing.
+Monitor the Airlock (`/tmp/tachyon_airlock/`) regularly. A growing backlog of unapproved patches indicates a bottleneck in Human-In-The-Loop oversight, potentially leaving the substrate vulnerable to known bypasses.

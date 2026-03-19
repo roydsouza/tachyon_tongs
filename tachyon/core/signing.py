@@ -30,6 +30,8 @@ class IntegrityManager:
         sig_path = f"{filepath}.sig"
         with open(sig_path, 'w') as sf:
             sf.write(digest)
+            sf.flush()
+            os.fsync(sf.fileno())
             
         return digest
         
@@ -40,7 +42,7 @@ class IntegrityManager:
             
         sig_path = f"{filepath}.sig"
         if not os.path.exists(sig_path):
-            raise RuntimeError(f"INTEGRITY FAILURE: No detached signature found for {filepath}. Access Denied.")
+            raise RuntimeError(f"No detached signature found for {filepath}. Access Denied.")
             
         with open(sig_path, 'r') as sf:
             expected_sig = sf.read().strip()

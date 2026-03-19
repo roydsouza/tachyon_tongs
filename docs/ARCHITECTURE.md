@@ -308,7 +308,37 @@ sequenceDiagram
         MetaCritic-->>Engineer: Reject Proposal (Revision Needed)
     end
 ```
+```mermaid
+graph TD
+    User((Human Operator)) -->|Authorize| Airlock[Airlock HITL]
+    Airlock -->|Signed Patch| Substrate[Unified Substrate]
+    Substrate -->|Execute| Sentinel[Sentinel Role]
+    Substrate -->|Mutate| Engineer[Engineer Role]
+    Substrate -->|Audit| Guardian[Guardian Role]
+    Substrate -->|Scout| Canary[Canary Role]
+    
+    Canary -->|Intelligence| CANARY_LOG[CANARY_LOG.md]
+    CANARY_LOG -->|Fitness Data| Sentinel
+    
+    Substrate --> State[(StateManager)]
+```
 
+### 8. The Autonomic Immune Response (Phase 22)
+
+Phase 22 introduces the **ImmuneManager**, a central cognitive orchestrator that closes the loop between threat detection (Canary) and infrastructure remediation (Engineer).
+
+#### 8.1 The Feedback Loop
+1.  **Sensor Input**: The **Canary Scout** process encounters a novel bypass payload (e.g., a steganographical jailbreak) and records it as `BYPASSED` in the `CANARY_LOG.md`.
+2.  **Cognitive Trigger**: The **ImmuneManager** parses the log, identifies the failure, and synthesizes a **Mutation Intent**.
+3.  **Synthesis**: The **Engineer Role** receives the intent and generates a new **OPA Rego policy** or standard code patch designed to block the specific bypass vector.
+4.  **Adversarial Oversight**: The new patch is cross-examined by the **Skeptic** and **Meta-Critic** agents.
+5.  **Airlock Staging**: If the debate concludes with a `SECURE` consensus, the patch is promoted to the **Airlock** for final Human-In-The-Loop (HITL) authorization.
+
+#### 8.2 Fitness Scoring Logic (In-Progress)
+The substrate assigns "Fitness Scores" to proposed policies based on:
+- **Zero Regressions**: Does the patch break existing functionality (Pathogen tests)?
+- **Effective Neutralization**: Does re-running the Canary Scout with the new policy now result in a `BLOCKED` status?
+- **Policy Simplicity**: OPA policies with lower complexity scores are prioritized to minimize latency.
 ### 8.3 State Integrity & Merkle Anchoring (Guardian IDS)
 Visualizes the multi-layered integrity verification of the architectural substrate.
 

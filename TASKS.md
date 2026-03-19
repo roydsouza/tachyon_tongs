@@ -4,8 +4,11 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ## Security Task Progress
 
-### 🚨 [URGENT] Substrate Operator Interface (Slash Commands)
-- [ ] **BUG: Slash Commands Inaccessible**: Commands in `.agents/workflows/` (`/help`, `/catalog`, etc.) are not being recognized by the AntiGravity environment. Investigate system-level registration and caching.
+### ✅ [COMPLETED] P0: Substrate Integrity & Security Hardening
+- [x] **Fix Integrity Loop**: Add `fsync`/`flush` to `state.py` to stop false-positive `STATE_COMPROMISED` alerts. [DONE]
+- [x] **Atomic State Access**: Implement file locking for `EXPLOITATION_CATALOG.md`. [DONE]
+- [x] **Input Sanitization**: Scaffolding `InputSanitizer` to scrub prompts before policy evaluation. [DONE]
+- [x] **BUG: Slash Commands Inaccessible**: Commands in `.agent/workflows/` (`/help`, `/catalog`, etc.) were being masked by redundant `.agents/` directory. Consolidated all workflows to `.agent/workflows/`. [DONE]
 
 ### ✅ [COMPLETED] Phase 15: Adaptive Rate-Limiting Implementation
 - [x] **[ADR]** Create ADR-0007 for the Rate-Limiting strategy. [COMPLETED]
@@ -92,15 +95,42 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ---
 
-### 🔳 [PLANNED] Phase 21: Local LLM Substrate (llama.cpp)
-- [ ] **[ENGINE]** Integrate `llama-cpp-python` or `mlx-lm` as a local reasoning provider.
-- [ ] **[ROUTING]** Extend `ModelRouter` to support `LOCAL_LLM` as a first-class target.
-- [ ] **[PROMPTS]** Optimize system prompts for local 4-bit/8-bit quantized models.
-- [ ] **[VERIFY]** Add regression tests for "Full Offline" tool-use scenarios.
+### ✅ [COMPLETED] Phase 21: Forensic Hardening & Agent Consolidation
+- [x] **[SECURITY]** HMAC Signature sidecars for all ADRs.
+- [x] **[SECURITY]** High-Assurance Input Sanitization (ADR-0017).
+- [x] **[SKILLS]** Airlock Management Skills (List/Inspect/Approve/Deny).
+- [x] **[ARCH] Phase 21.5: Agent Consolidation**: Unified `BaseTachyonAgent` and `Role` architecture. 100% logic migration. [DONE]
+- [x] **[GOVERNANCE]** Initialize `CHANGE_CONTROL.md` and `PATHS_NOT_TAKEN.md`.
+- [x] **[CHORE]** Substrate Re-Sign and Documentation Reorg.
+
+### 🔳 [PLANNED] Phase 21.7: The Canary Honeypot (Active Probe)
+- [x] **[ADR]** Sign and anchor ADR-0019: Canary Honeypot Protocol. [DONE]
+- [x] **[ROLE]** Implement `CanaryRole` (Scout & Harvest logic). [DONE]
+- [x] **[LEDGER]** Create forensic `CANARY_LOG.md`. [DONE]
+- [x] **[ARCH]** Root symlink for `CANARY_LOG.md`. [DONE]
+- [x] **[AUTO]** Automate Canary scout via macOS `launchd` (4hr interval). [DONE]
+- [ ] **[VERIFY]** Validate "Honeypot-to-Immune-System" feedback loop.
+
+### 🔳 [PLANNED] Phase 21.9: Local Reasoning Substrate (llama.cpp)
+- [ ] **[ENGINE]** Integrate `llama-cpp-python` as a local reasoning provider.
+- [ ] **[ROUTING]** Extend `ModelRouter` to support `LOCAL_LLM`.
+
+### 🔳 [/] Phase 22: Self-Evolving Policies & Immune Response
+- [ ] **[ADR]** Author and sign ADR-0020: Autonomous Immune Response Protocol.
+- [ ] **[CORE]** Implement `ImmuneManager` for autonomic feedback loops.
+- [ ] **[VERIFY]** Comprehensive regression tests for Canary-triggered patching.
+- [ ] **[DOCS]** Update README (Teaser), ARCHITECTURE (Deep Dive), and ADMIN/CHEATSHEET.
+
+### 🔳 [PLANNED] Phase 23: Hardware-Level Isolation
+- [ ] **[SANDBOX]** Prototype WASM-based tool isolation.
+- [ ] **[ISOLATION]** Explore MicroVM (Firecracker/Lima) for Tier-0 agents.
 
 ---
 
 ## 🛠️ Architectural Backlog
+- [x] **[CHORE] Documentation Reorg**: Create `docs/INDEX.md` and collapse `.agents/`. [DONE]
+- [/] **[CHORE] Agent Consolidation**: Cleaned redundant dirs; modularization pending Phase 22.
+- [ ] **[OVERSIGHT] Tiered Debates**: Implement risk-based debate tiers (None/Self/Dyad/Triad).
 - [ ] **[SECURITY] PQC-Hybrid Attestation**: Implement Dilithium3 signatures for PDP tool-call attestation.
 - [x] **[SECURITY] Immutable Actions**: Refactor `ToolRouter` to use `frozen` dataclasses to prevent TOCTOU bypasses. [COMPLETED]
 - [x] **[OVERSIGHT] Airlock Debate Triad**: Implement the `Skeptic` and `Meta-Critic` agents in `agents/sentinel/`. [COMPLETED]

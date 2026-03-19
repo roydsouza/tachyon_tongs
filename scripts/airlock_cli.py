@@ -42,8 +42,13 @@ def inspect_patch(patch_id):
     print(f"\n--- 🔍 Inspecting: {patch_id} ---")
     print(f"CVE ID: {data.get('cve_id', 'N/A')}")
     print(f"Description: {data.get('description', 'N/A')}")
-    print("\nProposed Changes:")
-    for file_patch in data.get("patch_files", []):
+    # Proposed Changes
+    patch_files = data.get("patch_files", [])
+    if isinstance(patch_files, dict):
+        # Convert dict to list of dicts for processing
+        patch_files = [{"file": k, "content": v} for k, v in patch_files.items()]
+
+    for file_patch in patch_files:
         print(f"\nTarget File: {file_patch.get('file')}")
         print("Proposed Content:")
         print("-" * 20)
@@ -61,7 +66,11 @@ def approve_patch(patch_id):
     
     print(f"[Airlock] Approving and applying {patch_id}...")
     
-    for file_patch in data.get("patch_files", []):
+    patch_files = data.get("patch_files", [])
+    if isinstance(patch_files, dict):
+        patch_files = [{"file": k, "content": v} for k, v in patch_files.items()]
+
+    for file_patch in patch_files:
         target_path = os.path.join(ROOT_DIR, file_patch.get("file"))
         
         # Backup existing

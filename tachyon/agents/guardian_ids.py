@@ -2,6 +2,7 @@ import os
 import json
 import hashlib
 from typing import Dict, List, Optional
+from tachyon.core.signing import IntegrityManager
 
 class GuardianIDS:
     """
@@ -13,6 +14,7 @@ class GuardianIDS:
     def __init__(self, adr_dir: str = "docs/adr", manifest_path: str = "docs/adr/MANIFEST.json"):
         self.adr_dir = adr_dir
         self.manifest_path = manifest_path
+        self.integrity = IntegrityManager()
 
     def calculate_file_hash(self, path: str) -> str:
         """Calculates SHA-256 hash of a file."""
@@ -73,16 +75,16 @@ class GuardianIDS:
             actual_hash = self.calculate_file_hash(filepath)
             calculated_hashes[filename] = actual_hash
 
-            # B. Sidecar Verification
-            if not os.path.exists(sig_path):
-                report["status"] = "WARNING"
-                report["findings"].append(f"MISSING_SIDECAR: {filename}.sig is missing.")
-            else:
-                with open(sig_path, "r") as f:
-                    sig_hash = f.read().strip()
-                if sig_hash != actual_hash:
+            # B. Sidecar Verification (High-Assurance HMAC)
+            try:
+                self.integrity.verify_integrity(filepath)
+            except RuntimeError as e:
+                if "No detached signature found" in str(e):
+                    report["status"] = "WARNING"
+                    report["findings"].append(f"MISSING_SIDECAR: {filename}.sig is missing.")
+                else:
                     report["status"] = "CRITICAL"
-                    report["findings"].append(f"INTEGRITY_VIOLATION: Sidecar mismatch for {filename}")
+                    report["findings"].append(f"INTEGRITY_VIOLATION: HMAC Sidecar mismatch for {filename} ({str(e)})")
 
             # C. Embedded Verification
             embedded_hash = self.extract_embedded_hash(filepath)

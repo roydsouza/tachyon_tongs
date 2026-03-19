@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.tachyon.canary</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/python3</string>
+        <string>-m</string>
+        <string>tachyon.main</string>
+        <string>--role</string>
+        <string>canary</string>
+        <string>--action</string>
+        <string>scout</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/rds/antigravity/tachyon_tongs</string>
+    <key>StartInterval</key>
+    <integer>14400</integer> <!-- 4 hours -->
+    <key>StandardOutPath</key>
+    <string>/Users/rds/antigravity/tachyon_tongs/memory/operational/canary_stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/rds/antigravity/tachyon_tongs/memory/operational/canary_stderr.log</string>
+</dict>
+</plist>

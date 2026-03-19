@@ -90,11 +90,15 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 - **Objective:** Expand the Substrate perimeter beyond a single host machine, allowing lightweight edge clients to utilize the centralized MLX security pipeline.
 - **Implementation:** Binding the Substrate Daemon to a `100.x.y.z` Tailscale interface to enable secure Publish/Discover/Subscribe capabilities over a trusted WireGuard backbone.
 
-### 🔳 Stage 4: Autonomous Maturity (HOTL → HOOTL)
+### 🔳 Stage 4: Autonomous Maturity (HITL → HOTL → HOOTL)
 *   [ ] **Hybrid Oversight Platform**: Transition from manual "Airlock" clicks to "Policy-Based Exceptions."
+*   [ ] **Oversight Trajectory Definition**:
+    - **HITL (Human-In-The-Loop)**: Fail-closed on every anomaly.
+    - **HOTL (Human-On-The-Loop)**: Bounded risk with automated 72-hour rollback window.
+    - **HOOTL (Human-Out-Of-The-Loop)**: Probabilistic gating + post-hoc audit.
 *   [ ] **Retrospective Audit Engine**: Implement the 72-hour rollback window for autonomous patches.
 *   [ ] **Formal Verification Integration**: Auto-generating formal proofs for substrate mutations.
-*   [ ] **Human-Out-Of-The-Loop (HOOTL)**: Zero-latency autonomous self-healing substrate.
+*   [ ] **Self-Healing Substrate**: Zero-latency autonomous mitigation.
 
 ### Phase 11: Hostile Cloud Organism (Zero-Trust Mesh) [PLANNED]
 - **Objective:** Secure the mesh against internal Man-in-the-Middle configuration drift via strict identity assertion.
@@ -135,3 +139,17 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **The Discourse Triad:** Analyst (Optimistic) vs. Skeptic (Pessimistic) debating proposed patches.
   - **Meta-Critic:** Distills debate into a concise "Verification Summary" for the human operator.
   - **Mastery Erosion Guard:** Periodic "Deliberate Friction" prompts to keep human calibration sharp.
+
+### Phase 22: Self-Evolving Policies (The Immune System) [PLANNED]
+- **Objective:** Shift from reactive firewalling to an adaptive, self-improving security layer.
+- **Implementation:**
+  - **Pathogen Fitness Scoring**: Only persist attacks that stress state boundaries.
+  - **Policy Evolution Loop**: Automated Rego/Cedar synthesis based on Pathogen failures.
+  - **Constitutional AI**: Runtime policy critiquing based on high-level security principles.
+
+### Phase 23: Isolation & Attestation [PLANNED]
+- **Objective:** Eliminate substrate escape vectors and guarantee tool-call integrity.
+- **Implementation:**
+  - **WASM Tool Sandbox**: Isolate lightweight tool execution.
+  - **MicroVM (Firecracker) Bounding**: Extreme isolation for high-risk reasoning tasks.
+  - **PQC-Hybrid Attestation**: Dilithium3 signatures for all tool-gate interactions.

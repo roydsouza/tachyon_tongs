@@ -1,54 +1,37 @@
-# 📋 Tachyon Tongs: Substrate Cheatsheet
+# Tachyon Tongs Operator Cheatsheet
 
-Quick-access guide for the Mission Control dashboard and substrate operations.
+Quick-reference CLI commands for managing the Tachyon Substrate.
 
-## 🔗 Operational URLs
+## 🛡️ Core Controller (main.py)
 
-| Component | URL | Description |
+| Role | Action | Command |
 | :--- | :--- | :--- |
-| **Airlock Console** | [http://127.0.0.1:3030](http://127.0.0.1:3030) | "Deep Space" visual dashboard & mandatory **HITL Experimentation** gate. |
-| **Substrate Health** | [http://127.0.0.1:60461/health](http://127.0.0.1:60461/health) | API health-check for the core enforcement daemon. |
-| **Airlock API** | [ws://127.0.0.1:60462/ws/telemetry](ws://127.0.0.1:60462/ws/telemetry) | WebSocket endpoint for real-time telemetry. |
+| **Guardian** | Verify Substrate | `python3 -m tachyon.main --role guardian --action verify_substrate` |
+| **Canary** | Threat Scout | `python3 -m tachyon.main --role canary --action scout` |
+| **Sentinel** | NVD Sweep | `python3 -m tachyon.main --role sentinel --action run_sweep` |
+| **Engineer** | Apply Patch | `python3 -m tachyon.main --role engineer --action apply_and_test --params '{"cve_id": "CVE-X", "patch_files": []}'` |
 
----
+## 🧬 Immune System & Evolution
 
-## 🛠️ Common Commands
+| Tool | Action | Command |
+| :--- | :--- | :--- |
+| **ImmuneManager** | Trigger Evolution | `python3 -m tachyon.core.immune_manager` |
+| **Airlock** | List Proposals | `python3 scripts/airlock_cli.py list` |
+| **Airlock** | Approve Patch | `python3 scripts/airlock_cli.py approve <PROPOSAL_ID>` |
+| **Airlock** | Deny Patch | `python3 scripts/airlock_cli.py deny <PROPOSAL_ID>` |
 
-### Start Services (Manual)
-If the background processes halt, use these commands to restore the substrate:
+## 🧪 Testing & Verification
 
-```bash
-# Start Substrate Daemon & Airlock API
-python3 -m uvicorn tachyon.enforcement.daemon:app --host 127.0.0.1 --port 60461 &
-python3 -m uvicorn tachyon.enforcement.daemon:airlock_app --host 127.0.0.1 --port 60462 &
+| Target | Command |
+| :--- | :--- |
+| **Full Suite** | `pytest` |
+| **Airlock Suite** | `pytest tests/test_airlock_oversight.py` |
+| **Immune Suite** | `python3 tests/test_immune_evolution.py` |
 
-# Start Web Dashboard
-cd dashboard && npm run dev
-```
-
-### Trigger a Pulse
-Force a telemetry update to verify the dashboard is receiving WebSocket data:
-```bash
-python3 scripts/test_client.py
-```
-
-```bash
-pytest
-```
-
----
-
-## 🛡️ Forensic Integrity (IDS)
-
-Manual verification of the substrate's architectural integrity:
+## 🧹 Maintenance
 
 | Action | Command |
 | :--- | :--- |
-| **Full IDS Audit** | `python3 tachyon/agents/guardian_ids.py` |
-| **Verify ADRs** | `shasum -a 256 docs/adr/*.md` (Manual check vs .sig) |
-| **Check Manifest** | `cat docs/adr/MANIFEST.json` |
-
----
-
-## 🛡️ Port Registry
-For the full station-wide allocation, see **[~/antigravity/PORTS.md](file:///Users/rds/antigravity/PORTS.md)**.
+| **Forensic Re-sign** | `python3 scripts/forensic_resign.py` |
+| **Clear Sandbox** | `rm -rf /tmp/tachyon_canary_sandbox` |
+| **Restart Daemon** | `launchctl unload ~/Library/LaunchAgents/com.tachyon.canary.plist && launchctl load ~/Library/LaunchAgents/com.tachyon.canary.plist` |

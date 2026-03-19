@@ -17,11 +17,14 @@ from tachyon.agents.sentinel.scraper import VulnerabilityScraper
 from tachyon.pipeline.orchestrator import run_supervisor
 from tachyon.agents.engineer import AutoPatcher
 
+from tachyon.core.sanitizer import InputSanitizer
+
 def reactive_remediation_sweep(logger=None):
     """
     Scans EXPLOITS.md for unresolved threats and triggers the Engineer to work on them.
     This effectively 'sweeps' the backlog for patchable targets.
     """
+    sanitizer = InputSanitizer()
     exploits_path = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")), "EXPLOITS.md")
     if not os.path.exists(exploits_path):
         return
@@ -50,6 +53,9 @@ def reactive_remediation_sweep(logger=None):
                 desc_part = parts[2].split("|")[0].strip()
                 if desc_part.startswith(":"):
                     desc_part = desc_part[1:].strip()
+                
+                # SANITIZATION: Neutralize potential prompt injection in description
+                desc_part = sanitizer.sanitize(desc_part)
                 
                 cve_queue.append({"id": cve_id, "description": desc_part})
             except Exception as parse_err:

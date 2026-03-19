@@ -4,165 +4,41 @@ import json
 import httpx # For Airlock API calls
 from tachyon.core.state_manager import StateManager
 
+from tachyon.agents.roles import EngineerRole
+
 class AutoPatcher:
     """
     The surgical limb of the Tachyon Tongs organism.
-    Executes autonomous code mutation, triggers test regimens, and reverts upon failure (The 3-Attempt Loop).
+    Refactored to delegate to the Unified Substrate (EngineerRole).
     """
 
     def __init__(self, max_retries=3):
-        self.max_retries = max_retries
-        self.state_manager = StateManager()
-        self.airlock_url = "http://127.0.0.1:60462"
-
-    def _notify_airlock(self, cve_id: str, patch_data: list, test_path: str):
-        """Emits a PATCH_PROPOSED event to the Airlock API."""
-        try:
-            # Prepare diff content (simplified for simulated dashboard)
-            diff_content = f"--- /dev/null\n+++ {patch_data[0].get('file')}\n"
-            diff_content += "@@ -0,0 +1,5 @@\n"
-            diff_content += "+ # High-Assurance Mitigation for " + cve_id + "\n"
-            
-            payload = {
-                "type": "PATCH_PROPOSED",
-                "agent_id": "EngineerAgent",
-                "cve_id": cve_id,
-                "diff": diff_content,
-                "action": "AUTHORIZE_REQUIRED",
-                "status": "VALIDATED"
-            }
-            # We use the existing broadcast logic in daemon.py via a simple HTTP POST or direct WebSocket if we had a client
-            # Since the daemon hosts the Airlock API, we'll add a helper to notify it.
-            # For simplicity, we'll hit an internal endpoint if we add one, or just hit the broadcast.
-            # Let's hit the existing 'action' endpoint which broadcasts.
-            httpx.post(f"{self.airlock_url}/airlock/authorize", json={"patch_id": cve_id, "action": "PROPOSE"}, timeout=1)
-        except Exception as e:
-            print(f"[AutoPatcher] Failed to notify Airlock: {e}")
+        self.role = EngineerRole("legacy-engineer")
 
     def apply_and_test(self, patch_files: list, test_file_path: str, test_content: str, cve_id: str):
-        """
-        Attempts to write new code, run a synthesized test, and handle the outcome.
-        patch_files: List of dicts { "file": "path/to/file.py", "content": "new_code_string" }
-        """
-        success = False
-        revert_required = False
+        """Delegates to the modular EngineerRole."""
+        result = self.role.handle_action("apply_and_test", {
+            "patch_files": patch_files,
+            "test_path": test_file_path,
+            "test_code": test_content,
+            "cve_id": cve_id
+        })
+        return result.get("result", result)
 
-        # 1. Checkout new branch for mitigation testing
-        branch_name = f"auto-patch/{cve_id.replace(' ', '-')}"
-        try:
-            subprocess.run(["git", "checkout", "-b", branch_name], check=True, stderr=subprocess.DEVNULL)
-        except Exception as e:
-            return {"status": "error", "reason": f"Failed to checkout branch: {e}"}
-
-        # 2. Write the Regression Test
-        try:
-            with open(test_file_path, "w") as f:
-                f.write(test_content)
-        except Exception as e:
-            self._execute_revert(cve_id, "Failed during test writing", current_branch=branch_name)
-            return {"status": "error", "reason": f"Failed to write regression test: {e}"}
-
-        # 3. Apply the Patches
-        items_to_patch = []
-        if isinstance(patch_files, dict):
-             items_to_patch = [{"file": k, "content": v} for k, v in patch_files.items()]
-        else:
-             items_to_patch = patch_files
-
-        for file_patch in items_to_patch:
-            file_path = file_patch.get("file")
-            new_content = file_patch.get("content")
-            try:
-                with open(file_path, "w") as f:
-                    f.write(new_content)
-            except Exception as e:
-                return {"status": "error", "reason": f"Failed to apply patch to {file_path}: {e}"}
-
-        # 4. Run the Regression Pipeline
-        try:
-            # Use environment-agnostic 'pytest'
-            result = subprocess.run(
-                ["pytest", test_file_path, "-v"],
-                capture_output=True,
-                text=True,
-                timeout=15
-            )
-
-            if result.returncode == 0:
-                success = True
-                
-                # Exfiltrate the Mitigation Patch
-                patch_file = f"{cve_id.replace(' ', '_')}.patch"
-                try:
-                    subprocess.run(f"git diff main > {patch_file}", shell=True)
-                except Exception as e:
-                    pass
-                
-                with open("PENDING_MERGE.md", "w") as f:
-                    f.write(f"# 🛡️ Pending Human Approval: {cve_id}\n\n")
-                    f.write("The AutoPatcher successfully synthesized and validated a mitigation patch.\n\n")
-                    f.write("### Staged Files:\n")
-                    for file_patch in items_to_patch:
-                        f.write(f"- `{file_patch.get('file')}`\n")
-                    f.write(f"- `{test_file_path}`\n\n")
-                    f.write("### Action Required\n")
-                    self._notify_airlock(cve_id, items_to_patch, test_file_path)
-
-                self.state_manager.log_evolution(
-                    event_type="Autonomous Mitigation (Human Gate)",
-                    details=f"Organism successfully synthesized an infrastructure patch for `{cve_id}`. Regression test `{test_file_path}` passed organically. Halting for Human-in-the-Loop review via `PENDING_MERGE.md`."
-                )
-                return {"status": "pending_human_approval", "message": result.stdout}
-            else:
-                revert_required = True
-                traceback = result.stdout + "\n" + result.stderr
-        except subprocess.TimeoutExpired:
-            revert_required = True
-            traceback = "Pytest execution timed out (possible infinite loop in synthesized patch)."
-        except Exception as e:
-            revert_required = True
-            traceback = str(e)
-
-        # 5. Handle Failure (The Revert)
-        if revert_required:
-            self._execute_revert(cve_id, traceback, current_branch=branch_name)
-            return {"status": "failure", "traceback": traceback}
-
-    def _execute_revert(self, cve_id: str, traceback: str, current_branch: str = None):
-        """Executes the Git Revert Safety Net to preserve the organism."""
-        try:
-            subprocess.run(["git", "checkout", "main"], check=True, stderr=subprocess.DEVNULL)
-            if current_branch:
-                subprocess.run(["git", "branch", "-D", current_branch], check=True, stderr=subprocess.DEVNULL)
-            
-            # Write Post-Mortem
-            with open("ERROR.md", "w") as f:
-                f.write(f"# 🚨 Autonomous Patching Failure\n\n**Target:** {cve_id}\n\nThe organism attempted to mutate its active defense, but the regression tests failed. The host has been reverted back to a stable cryptographic state.\n\n### Pytest Traceback\n```text\n{traceback}\n```\n")
-            
-            self.state_manager.log_evolution(
-                event_type="Failed Autonomous Mitigation (Reverted)",
-                details=f"Organism attempted infrastructure patch for `{cve_id}`. Regression tests failed. Codebase reverted. View `ERROR.md` for telemetry."
-            )
-        except Exception as e:
-            # If git checkout fails, we are in deep trouble.
-            self.state_manager.log_evolution(
-                event_type="FATAL: Organism Corruption",
-                details=f"Git revert failed during auto-healing loop for `{cve_id}`. Manual intervention required immediately. Error: {e}"
-            )
-
-# Alias for legacy pipeline calls
 def engineer_action_node(state: dict) -> dict:
+    """Legacy pipeline node for the triad supervisor."""
     patcher = AutoPatcher()
-    # Simplified wrapper for legacy state-passing pipeline
+    
+    # Map CVE ID from analysis if not top-level
+    cve_id = state.get("cve_id") or state.get("analysis", {}).get("id", "manual-patch")
+    
     result = patcher.apply_and_test(
         patch_files=state.get("proposed_patches", []),
         test_file_path=state.get("test_path", "tests/integration/test_patch.py"),
         test_content=state.get("test_code", ""),
-        cve_id=state.get("cve_id", "manual-patch")
+        cve_id=cve_id
     )
-    # The legacy test_airlock_oversight expects 'final_output' in the state
     state["final_output"] = result
-    # test_triad_supervisor expects threats_found
     if "analysis" in state and "threats_found" in state["analysis"]:
         state["threats_found"] = state["analysis"]["threats_found"]
     return state
