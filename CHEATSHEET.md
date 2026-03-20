@@ -2,7 +2,17 @@
 
 Quick-reference CLI commands for managing the Tachyon Substrate.
 
-## 🛡️ Core Controller (main.py)
+## 🛰️ Event-Horizon Command Bridge (`tt`)
+
+| Action | Command |
+| :--- | :--- |
+| **Boot Ritual** | `tt ritual` |
+| **Status Dashboard** | `tt dash` |
+| **Integrity Check** | `tt status` |
+| **Airlock Queue** | `tt airlock` |
+| **Agent Management** | `tt agent list\|run\|stop` |
+
+## 🧬 Legacy Controllers (Substrate v0.9)
 
 | Role | Action | Command |
 | :--- | :--- | :--- |
@@ -10,15 +20,7 @@ Quick-reference CLI commands for managing the Tachyon Substrate.
 | **Canary** | Threat Scout | `python3 -m tachyon.main --role canary --action scout` |
 | **Sentinel** | NVD Sweep | `python3 -m tachyon.main --role sentinel --action run_sweep` |
 | **Engineer** | Apply Patch | `python3 -m tachyon.main --role engineer --action apply_and_test --params '{"cve_id": "CVE-X", "patch_files": []}'` |
-
-## 🧬 Immune System & Evolution
-
-| Tool | Action | Command |
-| :--- | :--- | :--- |
-| **ImmuneManager** | Trigger Evolution | `python3 -m tachyon.core.immune_manager` |
 | **Airlock** | List Proposals | `python3 scripts/airlock_cli.py list` |
-| **Airlock** | Approve Patch | `python3 scripts/airlock_cli.py approve <PROPOSAL_ID>` |
-| **Airlock** | Deny Patch | `python3 scripts/airlock_cli.py deny <PROPOSAL_ID>` |
 
 ## 🧪 Testing & Verification
 
