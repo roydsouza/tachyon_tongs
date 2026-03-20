@@ -1,8 +1,14 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
-## [2026-03-19 21:23] - Event-Horizon Command Bridge Design (Phase 24)
-
-- **Session Focus**: Designing the NeoVIM-first CLI/TUI command-and-control architecture for the substrate.
+### 2026-03-19: Event-Horizon Command Bridge Phase 24.1 & 24.2
+- **Objective:** Consolidate Substrate API and implement the 3-tier Command Bridge (CLI/TUI/NeoVIM).
+- **Status:** [OPERATIONAL]
+- **Key Decisions:**
+  - Unified PEP and Airlock onto port `60461` (ADR-0025).
+  - Implementation of `tt` Typer CLI and Textual TUI with live telemetry.
+  - Development of `tachyon.nvim` (Pure Lua) with floating dashboard and Telescope integration.
+  - Standardized ADR manifest and roadmap synchronization.
+- **Verification:** `tt status` verified; NeoVim commands registered.
 - **Key Accomplishments**:
     - **Feedback Synthesis**: Reviewed 5 LLM feedback files (Claude, OpenAI, Grok, Gemini, Cumulative) and synthesized the best ideas into a unified design.
     - **ADMIN_CLI_NEOVIM.md**: Created a comprehensive 300-line operator reference covering CLI commands (`tt`), TUI keybindings, NeoVIM plugin (`tachyon.nvim`), Ghostty configuration, workflow recipes, and TOML config reference.

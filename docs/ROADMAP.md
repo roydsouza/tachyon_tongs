@@ -162,13 +162,13 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Substrate-Bridge**: Middleware to route `ModelRouter` requests to the local socket when quota is low or network is absent.
   - **Context-Surgical Pruning**: Optimized local prompt templates for M5 Neural Engine.
 
-### Phase 24: Event-Horizon Command Bridge (CLI/TUI/NeoVIM) [PLANNED]
+### Phase 24: Event-Horizon Command Bridge (CLI/TUI/NeoVIM) [OPERATIONAL]
 - **Objective:** Provide a unified, NeoVIM-first command-and-control interface for the substrate — replacing ad-hoc scripts with a single, composable `tt` entrypoint.
 - **Implementation:**
-  - **Tier 1 — CLI (`tt`):** Typer-based UNIX-composable commands with JSON output mode. Covers agent lifecycle, Airlock review, log tailing, catalog search, and substrate verification.
-  - **Tier 2 — TUI (`tt dash`):** Textual-framework dashboard with 5 Active Manifolds (Health, Agents, Activity, Airlock Queue, Logs). Vi-style keybindings, GPU-accelerated via Ghostty.
-  - **Tier 3 — NeoVIM Plugin (`tachyon.nvim`):** Pure Lua plugin with floating dashboard, Telescope integration for fuzzy-finding agents/debates/catalog, Rego LSP configuration, and custom syntax highlighting for debate transcripts.
-  - **Ghostty Optimization:** Custom color palette, OSC 9 push notifications, Nerd Font icons, and dedicated keybindings for rapid substrate access.
+  - **Tier 1 — CLI (`tt`):** Typer-based UNIX-composable commands with JSON output mode. [DONE]
+  - **Tier 2 — TUI (`tt dash`):** Textual-framework dashboard with live manifolds and unified API telemetry. [DONE]
+  - **Tier 3 — NeoVIM Plugin (`tachyon.nvim`):** Pure Lua plugin with floating dashboard, Telescope integration, and syntax highlighting. [DONE]
+  - **Unified Daemon:** Consolidates PEP and Airlock layers on port 60461. [DONE]
 - **Reference:** See [ADMIN_CLI_NEOVIM.md](file:///Users/rds/antigravity/tachyon_tongs/ADMIN_CLI_NEOVIM.md) for the full operator reference.
 
 ### Phase 23: Isolation & Attestation [PLANNED]

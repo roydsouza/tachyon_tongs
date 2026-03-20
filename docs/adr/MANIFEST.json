@@ -20,6 +20,11 @@
     "0018-unified-agent-substrate.md": "sha256:283099048b65d0fe1aa9f2bdc0defd580f0e83e949c9fd670c4dc819a571d050",
     "0019-canary-honeypot-protocol.md": "sha256:69b23b4c5fc446f2b542d8f3bf6fd974170dd66f8e22d90301762e017dbd5a06",
     "0020-autonomous-immune-response.md": "sha256:017a9ae18ed99fb2da64356b9fed42e201304671892afaf7fab592eabb265bd3",
+    "0021-immutable-actions-and-toctou-hardening.md": "sha256:6ce9eef08f0956d86a9be5dde08c52597f433527ade943ca0def20480c44696b",
+    "0022-whitelisted-supply-chain-defense.md": "sha256:6e8cbff5f8cb90fecf33265b66919dc1ddbdb26d51b137434e9b350cfcbe9665",
+    "0023-canary-agent-formalization.md": "sha256:43716209243e7c3147f1e9d94da29323155ce4a93b52f9acb717320a39ea6ae6",
+    "0024-agent-consolidation.md": "sha256:aa0f40cd0f9a9a268d89c45c11ade95da96fec8c7aa84d65e3e84fa62e8beb70",
+    "0025-unified-substrate-bridge.md": "sha256:eb2293540013f1560f428ae691b4a8301572bc326e4bcd0c97dc191f8eafccd4",
     "PATHS_NOT_TAKEN.md": "sha256:2d9bcd718a42ff9fcaedfc49afcc28f17bbd03b472a6dc794d3cd6120d659160"
   },
   "merkle_root": "02368823186c729b60d820259c0052b987f3485e15b906ca35754385067e2c69"
