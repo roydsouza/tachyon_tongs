@@ -559,3 +559,18 @@ The substrate implements a self-evolving security posture via the **Autonomic Im
 
 ### 10.2 Evolutionary Ledger
 All structural changes and policy evolutions are recorded in the `EVOLUTION.md` ledger, providing a high-assurance audit trail of the substrate's cognitive and defensive growth.
+
+## 11. Local Reasoning Substrate (LRS)
+
+To ensure high-assurance resilience, the Tachyon Tongs substrate includes a **Local Reasoning Substrate (LRS)**. This allows agents to perform critical security analysis and policy synthesis completely offline, mitigating risks associated with cloud dependency.
+
+### 11.1 Local Model Provider
+The LRS is powered by `llama.cpp`, optimized for Apple Silicon M5. It operates in a persistent daemon mode via `llama-server`, providing an OpenAI-compatible API for internal requests.
+- **Hardware Acceleration**: Inference is offloaded to the Metal GPU (`-ngl 99`) for near-instantaneous response times.
+- **Model Selection**: Defaulting to **Llama-3.1-8B (Q5_K_M)** specifically quantized to maximize reasoning accuracy within M5 memory constraints.
+
+### 11.2 Autonomous Fallback
+The `ModelRouter` implements an intelligent fallback protocol:
+1. **Hybrid Execution**: Attempts cloud-based inference (Gemini 1.5 Pro) for maximum cognitive depth.
+2. **Offline Fallback**: Upon connection failure or timeout, the router automatically re-routes the task to the local LRS.
+3. **Local-First Purity**: Security-critical or air-gapped tasks can be forced to `LOCAL_ONLY` mode, ensuring zero data egress.

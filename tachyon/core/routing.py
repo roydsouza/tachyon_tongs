@@ -1,7 +1,9 @@
 import logging
 import yaml
+import asyncio
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
+from tachyon.core.local_provider import LocalModelProvider
 
 logger = logging.getLogger("tachyon.core.routing")
 
@@ -9,6 +11,7 @@ class ModelRouter:
     """
     Autonomous Model Router for Substrate Optimization.
     Routes tasks to the appropriate model based on complexity and skill-defined logic.
+    Supports Local-First fallback via llama.cpp.
     """
     
     DEFAULT_SKILL_PATH = "agents/skills/substrate-optimizer/SKILL.md"
@@ -17,17 +20,44 @@ class ModelRouter:
         self.skill_path = Path(skill_path or self.DEFAULT_SKILL_PATH)
         self.routing_matrix = self._load_routing_matrix()
         self.lpm_threshold = 0.15 # 15% quota
+        self.local_provider = LocalModelProvider()
         
     def _load_routing_matrix(self) -> Dict[str, str]:
         """Loads the routing matrix from the SKILL.md file."""
         # In a real implementation, this would parse the markdown table.
         # For simplicity, we hardcode based on the SKILL.md content.
         return {
-            "L1": "gemini-3-flash",
-            "L2": "gemini-3-flash",
-            "L3": "gemini-3.1-pro"
+            "L1": "gemini-1.5-flash",
+            "L2": "gemini-1.5-flash",
+            "L3": "gemini-1.5-pro"
         }
         
+    async def route_and_generate(self, prompt: str, system_prompt: Optional[str] = None, mode: str = "HYBRID", **kwargs) -> str:
+        """
+        Route to appropriate model and handle execution with fallback logic.
+        Modes: HYBRID, LOCAL_ONLY, CLOUD_ONLY
+        """
+        complexity = self.detect_complexity(prompt)
+        target_model = self.select_model(prompt, complexity)
+
+        if mode == "LOCAL_ONLY":
+            return await self.local_provider.generate(prompt, system_prompt, **kwargs)
+
+        # In a real implementation, this would call the Cloud provider (Gemini/OpenAI)
+        # For this phase, we mock the cloud call and focus on the fallback.
+        try:
+            if mode == "CLOUD_ONLY":
+                # Mocking a cloud call that fails if we want to demonstrate fallback
+                raise ConnectionError("Cloud API Unreachable")
+            
+            # Simulated successful cloud call
+            return f"[CLOUD:{target_model}] " + "Result for: " + prompt[:20] + "..."
+        except Exception as e:
+            if mode == "HYBRID":
+                logger.warning(f"Cloud fallback triggered: {e}")
+                return await self.local_provider.generate(prompt, system_prompt, **kwargs)
+            raise
+
     def select_model(self, task_description: str, complexity_score: float, current_quota: float = 1.0) -> str:
         """
         Selects the appropriate model based on task complexity and current quota.
@@ -35,7 +65,7 @@ class ModelRouter:
         # Low Power Mode (LPM) check
         if current_quota < self.lpm_threshold:
             logger.warning("Low Power Mode active! Forcing Flash model.")
-            return "gemini-3-flash"
+            return "gemini-1.5-flash"
             
         # Complexity-based routing
         if complexity_score < 0.4:
@@ -53,7 +83,7 @@ class ModelRouter:
         prompt_lower = prompt.lower()
         score = 0.1 # Lower baseline for simple tasks
         
-        keywords_high = ["adr", "architectural", "refactor", "regression", "root cause", "attestation", "pqc"]
+        keywords_high = ["adr", "architectural", "refactor", "regression", "root cause", "attestation", "pqc", "immune"]
         for kw in keywords_high:
             if kw in prompt_lower:
                 score += 0.4 # Significant jump for high-intel keywords

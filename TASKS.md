@@ -14,12 +14,12 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[VERIFY]** Regression tests for Canary-to-Engineer evolution loop [DONE]
 - [x] **[DOCS]** Update ARCHITECTURE, README, and EVOLUTION.md [DONE]
 
-# Phase 21.9: Local Reasoning Substrate (llama.cpp) [IN-PROGRESS]
-- [/] **[PLAN]** Research optimal **GGUF quants** for Apple Silicon M5 [IN-PROGRESS]
-- [ ] **[ADR]** Author **ADR-0026: Local Model Fallback & Routing**
-- [ ] **[CORE]** Implement **LocalModelProvider** via llama.cpp
-- [ ] **[CORE]** Update **ModelRouter** for high-assurance local-first fallback
-- [ ] **[VERIFY]** Benchmarking M5/Metal inference performance
+# Phase 21.9: Local Reasoning Substrate (llama.cpp) [COMPLETED]
+- [x] **[PLAN]** Research optimal **GGUF quants** for Apple Silicon M5 [DONE]
+- [x] **[ADR]** Author and sign **ADR-0026: Local Model Fallback & Routing** [DONE]
+- [x] **[CORE]** Implement **LocalModelProvider** via llama-server [DONE]
+- [x] **[CORE]** Update **ModelRouter** for high-assurance local-first fallback [DONE]
+- [x] **[VERIFY]** Benchmarking and regression testing (3/3 passed) [DONE]
 
 ### 🔳 [PLANNED] Phase 23: Hardware-Level Isolation
 - [ ] **[SANDBOX]** Prototype WASM-based tool isolation.

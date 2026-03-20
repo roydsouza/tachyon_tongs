@@ -25,6 +25,7 @@
     "0023-canary-agent-formalization.md": "sha256:43716209243e7c3147f1e9d94da29323155ce4a93b52f9acb717320a39ea6ae6",
     "0024-agent-consolidation.md": "sha256:aa0f40cd0f9a9a268d89c45c11ade95da96fec8c7aa84d65e3e84fa62e8beb70",
     "0025-unified-substrate-bridge.md": "sha256:eb2293540013f1560f428ae691b4a8301572bc326e4bcd0c97dc191f8eafccd4",
+    "0026-local-model-fallback.md": "sha256:c900ec7ed62f118044afe8294b6386da3fcc757affbd69bd3d242ccf29ff58c3",
     "PATHS_NOT_TAKEN.md": "sha256:2d9bcd718a42ff9fcaedfc49afcc28f17bbd03b472a6dc794d3cd6120d659160"
   },
   "merkle_root": "8a9a1f6a96919bc48e01c3cc9382c1383f9fa0ff74d47997c3a60614ae3a8375"
