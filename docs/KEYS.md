@@ -4,6 +4,7 @@
 **Date:** 2026-03-20
 **Security Classification:** INTERNAL
 **ADR Reference:** ADR-0028
+**Operator Guide:** [docs/GENESIS_RECOVERY_CEREMONY.md](GENESIS_RECOVERY_CEREMONY.md)
 
 ---
 
@@ -28,11 +29,15 @@ Tachyon Tongs employs a **tiered, hardware-bound cryptographic architecture** to
 ## 3. Detailed Key Lifecycle Procedures
 
 ### 3.1 ROOT KEY (The Sovereign)
-*   **Generation**: On-device via Apple's `SecureEnclave` API. The private key is generated *inside* the dedicated security chip and is physically non-extractable.
-*   **Protection**: Hardware-isolated from the main Apple M5 CPU. Operations (signing) require **biometric presence** (Touch ID).
-*   **Usage**: Only used for high-privilege "Ceremonies": signing delegation certificates for Development keys and ultimate release approval.
-*   **Rotation**: None (bound to the project/hardware lifetime).
-*   **Recovery**: A one-time backup is performed during derivation, split into **Shamir 3-of-5 shares**. Shares are stored in physically separate, air-gapped locations (e.g., safe deposit box, 1Password vault, YubiKey).
+*   **Generation (The Genesis Ceremony)**: Triggered once via `tt keys genesis`. The substrate generates a 256-bit high-entropy **Seed** in volatile memory. This seed is used to derive the Ed25519 key *inside* the Apple Secure Enclave.
+*   **Backup (One-Time Execution)**: Immediately after generation, the **Seed** is split into 5 Shamir shares. These shares are displayed **once** in the terminal (hidden by default, revealed via Touch ID). 
+    *   **Receiving Shares**: You must manually copy each share to its designated cold-storage location. The substrate **never** writes these shares to disk.
+*   **Protection**: Hardware-isolated. Operations (signing) happen inside the Enclave and are Touch ID-gated.
+*   **Recovery (The Resurrection Ceremony)**: Triggered via `tt keys recovery`. You are prompted to input any 3 of the 5 shares.
+    *   **Mechanism**: The substrate reconstructs the 256-bit Seed in memory, then re-derives and re-imports the key into the (new) hardware's Secure Enclave.
+    *   **Conflict Resolution**: On an existing laptop, the OS will prompt before overwriting an existing key of the same name.
+*   **Verification (The Proof of Recovery)**: After recovery, the substrate performs a **Signing Check**. It generates a dummy challenge, signs it with the recovered key, and verifies the signature against the **Public Key** stored in the repository. If `SIGN_OK`, the recovery is proven successful.
+*   **Security Breach Protection**: The shares are generated **once only**. If an attacker obtains <3 shares, they have zero information. If you suspect compromise, you must perform a **Root Rotation** (Phase 25.1.5).
 
 ### 3.2 DEVELOPMENT KEY (The Operator)
 *   **Generation**: Created in the macOS **System Keychain**.
