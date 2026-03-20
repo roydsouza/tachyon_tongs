@@ -6,15 +6,20 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ## 🔳 Active & In-Progress
 
-### 🔳 [IN-PROGRESS] Phase 22: Self-Evolving Policies & Immune Response
-- [x] **[CORE]** Implement `ImmuneManager` for autonomic feedback loops. [DONE]
-- [ ] **[ADR]** Author and sign ADR-0020: Autonomous Immune Response Protocol.
-- [ ] **[VERIFY]** Comprehensive regression tests for Canary-triggered patching.
-- [ ] **[DOCS]** Update README (Teaser), ARCHITECTURE (Deep Dive), and ADMIN/CHEATSHEET.
+### 🔳 [IN-PROGRESS]# Phase 22: Self-Evolving Policies & Immune Response [DONE]
+- [x] **[ADR]** Author and sign **ADR-0020: Autonomous Immune Response Protocol** [DONE]
+- [x] **[CORE]** Implement **ImmuneManager** for autonomic feedback loops [DONE]
+- [x] **[STATE]** Add **processed_events** and **patches** tables to StateManager [DONE]
+- [x] **[CLI]** Implement **`tt immune`** command [DONE]
+- [x] **[VERIFY]** Regression tests for Canary-to-Engineer evolution loop [DONE]
+- [x] **[DOCS]** Update ARCHITECTURE, README, and EVOLUTION.md [DONE]
 
-### 🔳 [PLANNED] Phase 21.9: Local Reasoning Substrate (llama.cpp)
-- [ ] **[ENGINE]** Integrate `llama-cpp-python` as a local reasoning provider.
-- [ ] **[ROUTING]** Extend `ModelRouter` to support `LOCAL_LLM`.
+# Phase 21.9: Local Reasoning Substrate (llama.cpp) [IN-PROGRESS]
+- [/] **[PLAN]** Research optimal **GGUF quants** for Apple Silicon M5 [IN-PROGRESS]
+- [ ] **[ADR]** Author **ADR-0026: Local Model Fallback & Routing**
+- [ ] **[CORE]** Implement **LocalModelProvider** via llama.cpp
+- [ ] **[CORE]** Update **ModelRouter** for high-assurance local-first fallback
+- [ ] **[VERIFY]** Benchmarking M5/Metal inference performance
 
 ### 🔳 [PLANNED] Phase 23: Hardware-Level Isolation
 - [ ] **[SANDBOX]** Prototype WASM-based tool isolation.
