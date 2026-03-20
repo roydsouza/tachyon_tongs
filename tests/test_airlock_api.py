@@ -2,7 +2,7 @@ import pytest
 import httpx
 import json
 import asyncio
-from tachyon.enforcement.daemon import airlock_app
+from tachyon.api.server import app as airlock_app
 from fastapi.testclient import TestClient
 
 client = TestClient(airlock_app)

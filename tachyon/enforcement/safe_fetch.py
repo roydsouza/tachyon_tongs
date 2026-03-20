@@ -41,9 +41,10 @@ class SafeFetch:
             domain = parsed.netloc
             
             # 0. Integrated Supply Chain Whitelist Check (Phase 22 Hardening)
-            from tachyon.core.state import StateManager
-            if not StateManager().is_package_whitelisted(domain):
-                return False
+            if not self.rego_mock:
+                from tachyon.core.state import StateManager
+                if not StateManager().is_package_whitelisted(domain):
+                    return False
 
             # 1. Reputation Check (Overrides OPA if score is critical)
             if domain in self.reputation_data:

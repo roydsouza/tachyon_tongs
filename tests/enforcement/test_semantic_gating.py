@@ -5,7 +5,8 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from tachyon.enforcement.daemon import app
+from tachyon.api.server import app
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
 
@@ -21,13 +22,13 @@ def test_intent_mapping_research():
     }
     
     # Mock the supervisor so we don't need a real OPA/MLX stack
-    with patch('tachyon.enforcement.daemon.run_supervisor') as mock_supervisor:
+    with patch('tachyon.api.pep.run_supervisor') as mock_supervisor:
         mock_supervisor.return_value = {
             "analysis": {"status": "success", "threats_found": []},
             "sanitized_content": "Mock Content"
         }
         
-        response = client.post("/action", json=payload)
+        response = client.post("/api/v1/action", json=payload)
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "SUCCESS", f"Expected SUCCESS, got {data.get('status')}: {data.get('error')}"
@@ -47,13 +48,13 @@ def test_intent_mapping_security():
         }
     }
     
-    with patch('tachyon.enforcement.daemon.run_supervisor') as mock_supervisor:
+    with patch('tachyon.api.pep.run_supervisor') as mock_supervisor:
         mock_supervisor.return_value = {
             "analysis": {"status": "success", "threats_found": []},
             "sanitized_content": "Mock Content"
         }
         
-        response = client.post("/action", json=payload)
+        response = client.post("/api/v1/action", json=payload)
         assert response.status_code == 200
         _, kwargs = mock_supervisor.call_args
         assert "cisa.gov" in kwargs["allowed_domains"]
@@ -68,13 +69,13 @@ def test_denylist_propagation():
         }
     }
     
-    with patch('tachyon.enforcement.daemon.run_supervisor') as mock_supervisor:
+    with patch('tachyon.api.pep.run_supervisor') as mock_supervisor:
         mock_supervisor.return_value = {
             "analysis": {"status": "success", "threats_found": []},
             "sanitized_content": "Mock Content"
         }
         
-        response = client.post("/action", json=payload)
+        response = client.post("/api/v1/action", json=payload)
         assert response.status_code == 200
         _, kwargs = mock_supervisor.call_args
         assert "pastebin.com" in kwargs["denylist"]

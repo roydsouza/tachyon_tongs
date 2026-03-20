@@ -32,8 +32,8 @@ def test_horizon_scout_analysis_persistence(mock_analyze):
     scout.analyze_and_persist("Some raw data from the web")
     
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    docs_path = os.path.join(base_dir, '..', 'docs', 'COMPETITIVE_ANALYSIS.md')
-    strategy_path = os.path.join(base_dir, '..', 'PENDING_STRATEGY_MERGE.md')
+    docs_path = os.path.join(base_dir, '..', '..', 'docs', 'COMPETITIVE_ANALYSIS.md')
+    strategy_path = os.path.join(base_dir, '..', '..', 'PENDING_STRATEGY_MERGE.md')
     
     assert os.path.exists(docs_path)
     assert os.path.exists(strategy_path)

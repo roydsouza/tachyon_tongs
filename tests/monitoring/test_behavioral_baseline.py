@@ -35,7 +35,7 @@ def test_anomalous_drift_halting():
     assert "Statistical syscall drift" in str(exc_info.value)
     
     # Ensure ERROR.md was touched
-    error_file = os.path.join(os.path.dirname(__file__), '..', 'ERROR.md')
+    error_file = os.path.join(os.path.dirname(__file__), '..', '..', 'ERROR.md')
     assert os.path.exists(error_file)
     with open(error_file, 'r') as f:
         content = f.read()

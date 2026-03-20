@@ -33,9 +33,9 @@ def test_mcp_tools_list():
     assert tools[0]["name"] == "tachyon_safe_fetch"
     assert tools[1]["name"] == "tachyon_safe_execute"
 
-@patch('tachyon.protocol.mcp_gateway.safe_fetch')
-def test_mcp_safe_fetch(mock_fetch):
-    mock_fetch.return_value = {"status": "SUCCESS", "content": "mocked"}
+@patch('tachyon.enforcement.router.ToolRouter.route')
+def test_mcp_safe_fetch(mock_route):
+    mock_route.return_value = {"status": "SUCCESS", "result": "mocked"}
     
     req = {
         "jsonrpc": "2.0",
@@ -94,9 +94,9 @@ def test_mcp_tool_not_found():
     assert "error" in res
     assert "Tool 'non_existent_tool' not found" in res["error"]["message"]
 
-@patch('tachyon.protocol.mcp_gateway.safe_fetch')
-def test_mcp_exception_handling(mock_fetch):
-    mock_fetch.side_effect = Exception("System Crash")
+@patch('tachyon.enforcement.router.ToolRouter.route')
+def test_mcp_exception_handling(mock_route):
+    mock_route.side_effect = Exception("System Crash")
     
     req = {
         "jsonrpc": "2.0",

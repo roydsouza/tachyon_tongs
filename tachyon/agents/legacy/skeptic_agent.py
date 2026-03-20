@@ -64,7 +64,7 @@ def skeptic_reasoning_node(state: Dict[str, Any]) -> Dict[str, Any]:
     patch_files = state.get("patch_files")
     
     # Fallback to cve_context if patch_files is missing in state
-    if not patch_files and "cve_context" in state:
+    if not patch_files and state.get("cve_context") is not None:
         patch_files = state["cve_context"].get("patch_files", {})
     
     if analysis:

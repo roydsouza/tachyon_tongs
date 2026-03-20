@@ -66,7 +66,7 @@ class HorizonScout:
         base_dir = os.path.dirname(__file__)
         
         if analysis:
-            docs_path = os.path.join(base_dir, '..', 'docs', 'COMPETITIVE_ANALYSIS.md')
+            docs_path = os.path.join(base_dir, '..', '..', 'docs', 'COMPETITIVE_ANALYSIS.md')
             
             # Read existing content to preserve structure
             existing_content = ""
@@ -92,7 +92,7 @@ class HorizonScout:
             print(f"  -> Successfully updated docs/COMPETITIVE_ANALYSIS.md")
             
         if tasks:
-            strategy_path = os.path.join(base_dir, '..', 'PENDING_STRATEGY_MERGE.md')
+            strategy_path = os.path.join(base_dir, '..', '..', 'PENDING_STRATEGY_MERGE.md')
             with open(strategy_path, 'w') as f:
                 f.write("# [PENDING REVIEW] Horizon Scout Strategic Roadmap\n\n" 
                         "The following actionable metrics were reverse-engineered from competitor intel.\n"

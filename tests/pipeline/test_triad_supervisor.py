@@ -20,7 +20,7 @@ class TestTriadSupervisor(unittest.TestCase):
         # And the topology must strictly air-gap the Scout from the Engineer
         # (Using the graph's internal representation if possible, or just checking nodes)
         
-    @patch('tachyon.agents.scout_agent.VulnerabilityScraper.scrape_new_threats')
+    @patch('tachyon.agents.sentinel.scraper.VulnerabilityScraper.scrape_new_threats')
     def test_supervisor_routes_scraped_threats(self, mock_scrape):
         mock_scrape.return_value = [{"cve_id": "TEST-1", "description": "foo"}]
         

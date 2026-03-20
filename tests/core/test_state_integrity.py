@@ -45,7 +45,7 @@ def test_state_manager_integrity_signing(clean_state):
     with open(catalog_path, "rb") as f:
         content = f.read()
         
-    expected_sig = hmac.new(sm.secret_key, content, hashlib.sha256).hexdigest()
+    expected_sig = hmac.new(sm.integrity.secret_key, content, hashlib.sha256).hexdigest()
     assert sig == expected_sig
 
 def test_state_manager_tampering_detection(clean_state):
