@@ -115,7 +115,7 @@ class EngineerRole(BaseTachyonAgent):
                     "parameters": {
                         "patch_id": cve_id,
                         "summary": summary,
-                        "status": "pending_review"
+                        "status": "pending"
                     }
                 }, 
                 timeout=1

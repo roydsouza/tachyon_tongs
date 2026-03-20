@@ -1,8 +1,10 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
-from typing import List
+import os
+import uvicorn
 import json
 import asyncio
+from typing import List
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 from tachyon.api.routes import router as api_v1_router
 
 app = FastAPI(

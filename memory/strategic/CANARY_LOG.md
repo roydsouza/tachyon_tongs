@@ -14,3 +14,7 @@
 - **Payload**: `Normal-looking-payload`
 - **Forensics**: Sanitizer triggered: False
 
+
+### [2026-03-20T17:00:00] END-TO-END-BYPASS | STATUS: BYPASSED
+- **Payload**: `sudo rm -rf /`
+- **Forensics**: Sanitizer triggered: False

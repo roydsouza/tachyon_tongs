@@ -545,3 +545,17 @@ sequenceDiagram
 | API request latency (p95) | < 100ms |
 | Memory footprint | < 100MB (all panels open) |
 | Keystroke-to-screen latency | < 16ms |
+
+## 10. Autonomic Immune Response Protocol (AIRP)
+
+The substrate implements a self-evolving security posture via the **Autonomic Immune Response Protocol (AIRP)**. This system bridges the gap between passive detection and active remediation without requiring immediate human intervention for mitigation staging.
+
+### 10.1 The Feedback Loop
+1.  **Sensation**: The **Canary** agent identifies a bypass in existing filters and logs it to `CANARY_LOG.md`.
+2.  **Transmission**: The **ImmuneManager** polls the logs, deduplicates events via a SQLite `processed_events` table, and signals the **Engineer**.
+3.  **Synthesis**: The **Engineer** role generates a narrow-scope Rego policy (in `tachyon/enforcement/policies/auto_immune_*.rego`) to block the specific bypass vector.
+4.  **Verification**: The synthesized policy is tested against a regression suite. If successful, it is pushed to a dedicated branch.
+5.  **Airlock Staging**: The **Engineer** notifies the Unified API (`/action: PROPOSE_PATCH`), making the patch visible in the **Command Bridge** (NeoVim/CLI/TUI) for final human ACK.
+
+### 10.2 Evolutionary Ledger
+All structural changes and policy evolutions are recorded in the `EVOLUTION.md` ledger, providing a high-assurance audit trail of the substrate's cognitive and defensive growth.
