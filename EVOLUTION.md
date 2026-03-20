@@ -2,6 +2,14 @@
 
 This file tracks the structural and cognitive growth of the Tachyon Tongs substrate.
 
+## [Autonomic Evolution] 2026-03-19 21:49:45
+Mitigated bypass BYPASS-001-2026-03-20T10:00:00 via synthesized Rego policy. Proposal staged in Airlock.
+
+---
+## [Autonomic Evolution] 2026-03-19 21:49:36
+Mitigated bypass BYPASS-001-2026-03-20T10:00:00 via synthesized Rego policy. Proposal staged in Airlock.
+
+---
 ## [Agent Action] 2026-03-19 21:03:59
 Agent tachyon-master (Canary) initiating scout
 

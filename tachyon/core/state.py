@@ -68,6 +68,19 @@ class StateManager:
                 )
             ''')
             conn.execute('''
+                CREATE TABLE IF NOT EXISTS patches (
+                    id TEXT PRIMARY KEY,
+                    cve_id TEXT,
+                    summary TEXT,
+                    status TEXT,
+                    timestamp TEXT,
+                    additions INTEGER,
+                    deletions INTEGER,
+                    debate_status TEXT
+                )
+            ''')
+            conn.commit()
+            conn.execute('''
                 CREATE TABLE IF NOT EXISTS processed_events (
                     event_id TEXT PRIMARY KEY,
                     processed_at TEXT,

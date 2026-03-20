@@ -53,22 +53,37 @@ class StateBridge:
         return agents
 
     def get_patches(self) -> List[PatchProposal]:
-        """Retrieves pending patches from the exploitation catalog/Airlock."""
+        """Retrieves pending patches from the Airlock."""
         patches = []
         with sqlite3.connect(self.state.db_path) as conn:
             conn.row_factory = sqlite3.Row
-            # This logic will evolve as we add a 'patches' table, 
-            # for now we scan the catalog for recent entries.
-            cursor = conn.execute("SELECT * FROM exploitation_catalog ORDER BY id DESC LIMIT 10")
+            cursor = conn.execute("SELECT * FROM patches ORDER BY timestamp DESC LIMIT 50")
             for row in cursor:
                 patches.append(PatchProposal(
-                    id=f"patch-{row['id']}",
+                    id=row['id'],
                     cve=row['cve_id'],
-                    timestamp=datetime.fromisoformat(row['date_added']) if row['date_added'] else datetime.now(),
-                    status=PatchStatus.PENDING,
-                    additions=0,
-                    deletions=0,
-                    debate_status="complete",
-                    summary=row['description'][:100]
+                    timestamp=datetime.fromisoformat(row['timestamp']) if row['timestamp'] else datetime.now(),
+                    status=row['status'],
+                    additions=row['additions'] or 0,
+                    deletions=row['deletions'] or 0,
+                    debate_status=row['debate_status'] or "pending",
+                    summary=row['summary'] or "No summary provided."
                 ))
         return patches
+
+    def register_patch(self, patch_id: str, summary: str, status: str = "pending_review"):
+        """Registers a new patch proposal in the state layer."""
+        with self.state._lock:
+            with sqlite3.connect(self.state.db_path) as conn:
+                conn.execute('''
+                    INSERT OR REPLACE INTO patches (id, cve_id, summary, status, timestamp, additions, deletions, debate_status)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    f"patch-{patch_id}", 
+                    patch_id, 
+                    summary, 
+                    status, 
+                    datetime.now().isoformat(), 
+                    0, 0, "active"
+                ))
+                conn.commit()

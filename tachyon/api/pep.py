@@ -56,6 +56,15 @@ class PEPLayer:
                 denylist = ["pastebin.com"] if intent == "DEFAULT" else []
                 result_data = run_supervisor(url, allowed_domains=allowed_domains, denylist=denylist)
                 result = {"status": "SUCCESS", "result": {"summary": result_data, "intent_gated": intent}}
+            elif request.action == "PROPOSE_PATCH":
+                from tachyon.core.state_bridge import StateBridge
+                patch_id = request.parameters.get("patch_id")
+                summary = request.parameters.get("summary")
+                status = request.parameters.get("status", "pending_review")
+                
+                bridge = StateBridge()
+                bridge.register_patch(patch_id, summary, status)
+                result = {"status": "SUCCESS", "result": f"Patch {patch_id} staged in Airlock."}
             else:
                 # Generic action routing (to be extended)
                 result = {"status": "SUCCESS", "result": f"Action {request.action} verified by Singularity."}

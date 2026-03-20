@@ -22,11 +22,21 @@ class ImmuneManager:
         Scans the Canary Log for bypasses and triggers the Engineer to evolve a fix.
         """
         if not os.path.exists(self.canary_log):
-            return {"status": "IDLE", "reason": "No canary log found"}
+            return {
+                "status": "IDLE", 
+                "reason": "No canary log found",
+                "evolutions_triggered": 0,
+                "details": []
+            }
 
         bypasses = self._get_latest_bypasses()
         if not bypasses:
-            return {"status": "IDLE", "reason": "No unprocessed bypasses detected"}
+            return {
+                "status": "IDLE", 
+                "reason": "No unprocessed bypasses detected",
+                "evolutions_triggered": 0,
+                "details": []
+            }
 
         results = []
         for bypass in bypasses:

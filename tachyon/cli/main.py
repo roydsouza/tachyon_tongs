@@ -113,6 +113,33 @@ def airlock():
     console.print(table)
 
 @app.command()
+def immune():
+    """Trigger the autonomic immune system scan."""
+    from tachyon.core.immune_manager import ImmuneManager
+    console.rule("[bold magenta]Autonomic Immune Scan[/bold magenta]")
+    
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        console=console
+    ) as progress:
+        task = progress.add_task("[magenta]Scanning Canary Log for bypasses...", total=None)
+        manager = ImmuneManager()
+        results = manager.scan_and_evolve()
+        progress.update(task, completed=100)
+    
+    if results["status"] == "SUCCESS":
+        count = results["evolutions_triggered"]
+        if count > 0:
+            console.print(f"[bold green]✓ Autonomic Evolution Complete: {count} patch(es) staged in Airlock.[/bold green]")
+            for detail in results["details"]:
+                console.print(f"  - [cyan]{detail['threat_id']}[/cyan]: {detail['engineer_status'].upper()}")
+        else:
+            console.print("[dim]No new bypasses detected. Substrate is stable.[/dim]")
+    else:
+        console.print(f"[bold red]Scan Failed:[/bold red] {results.get('reason')}")
+
+@app.command()
 def agent(
     action: str = typer.Argument(..., help="list|run|stop|restart"),
     name: Optional[str] = typer.Argument(None, help="Agent name")
