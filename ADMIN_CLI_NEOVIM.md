@@ -123,6 +123,9 @@ tt catalog export                # Export as JSON/markdown
 tt verify                        # Run Guardian substrate audit
 tt report                        # Generate health report
 tt ritual verify-substrate       # High-assurance pre-flight check
+tt keys genesis                  # Start Root Key Genesis Ceremony
+tt keys recovery                 # Start Resurrection Ceremony (3-of-5)
+tt keys status                   # Check hardware key fingerprints
 ```
 
 ---
