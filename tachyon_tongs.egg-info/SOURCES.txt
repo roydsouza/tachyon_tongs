@@ -35,7 +35,10 @@ tachyon/agents/sentinel/sentinel_role.py
 tachyon/agents/synthesizer/__init__.py
 tachyon/agents/synthesizer/cedar_synth.py
 tachyon/agents/synthesizer/rego_synth.py
+tachyon/api/pep.py
+tachyon/api/routes.py
 tachyon/api/schema.py
+tachyon/api/server.py
 tachyon/cli/__init__.py
 tachyon/cli/main.py
 tachyon/cli/tui/__init__.py
@@ -52,6 +55,7 @@ tachyon/core/sanitizer.py
 tachyon/core/signing.py
 tachyon/core/skill_parser.py
 tachyon/core/state.py
+tachyon/core/state_bridge.py
 tachyon/core/state_manager.py
 tachyon/core/wasm_benchmark.py
 tachyon/enforcement/__init__.py

@@ -1,4 +1,5 @@
 [console_scripts]
+tachyon-api = tachyon.api.server:main
 tachyon-daemon = scripts.run_daemon:main
 tachyon-pathogen = scripts.run_pathogen:main
 tachyon-sentinel = scripts.run_sentinel:main

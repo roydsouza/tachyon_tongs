@@ -23,6 +23,7 @@ dependencies = [
 
 [project.scripts]
 tt = "tachyon.cli.main:app"
+tachyon-api = "tachyon.api.server:main"
 tachyon-sentinel = "scripts.run_sentinel:main"
 tachyon-pathogen = "scripts.run_pathogen:main"
 tachyon-daemon = "scripts.run_daemon:main"
