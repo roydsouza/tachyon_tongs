@@ -1,6 +1,21 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
-## [2026-03-19 19:30] - Agent Documentation Expansion & Registry Unification
+## [2026-03-19 21:23] - Event-Horizon Command Bridge Design (Phase 24)
+
+- **Session Focus**: Designing the NeoVIM-first CLI/TUI command-and-control architecture for the substrate.
+- **Key Accomplishments**:
+    - **Feedback Synthesis**: Reviewed 5 LLM feedback files (Claude, OpenAI, Grok, Gemini, Cumulative) and synthesized the best ideas into a unified design.
+    - **ADMIN_CLI_NEOVIM.md**: Created a comprehensive 300-line operator reference covering CLI commands (`tt`), TUI keybindings, NeoVIM plugin (`tachyon.nvim`), Ghostty configuration, workflow recipes, and TOML config reference.
+    - **ROADMAP.md**: Added Phase 24 (Event-Horizon Command Bridge) to Stage 6.
+    - **TASKS.md**: Added 40+ granular sub-tasks across 5 sub-phases (CLI Skeleton, TUI Dashboard, NeoVIM Plugin, Ghostty Integration, Polish/Testing). Fixed duplicate Phase 21.9 entry.
+    - **README.md**: Added "Command & Control: Event-Horizon Bridge" section with link to ADMIN_CLI_NEOVIM.md.
+    - **ARCHITECTURE.md**: Added comprehensive §9 covering 3-tier topology, tech stack table, TUI manifold layout, NeoVIM plugin directory structure, Ghostty optimization, API endpoint contracts, Mermaid interaction diagram, and performance targets.
+- **Design Decisions**:
+    - **Entrypoint**: `tt` via Typer (short, UNIX-style, from Grok/Cumulative)
+    - **TUI**: Textual framework (unanimous across all feedback)
+    - **NeoVIM Plugin**: Pure Lua, no rebuild needed (from Claude)
+    - **Keybindings**: Vi-first (`j/k`, `<leader>t*`) (from Claude/OpenAI)
+- **Status**: Documentation complete. Ready for Phase 24.0 implementation (CLI skeleton scaffolding).
 
 - **Session Focus**: Generating deep, incisive documentation for the consolidated agent collective.
 - **Key Accomplishments**:

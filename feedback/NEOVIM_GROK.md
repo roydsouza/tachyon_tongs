@@ -1,6 +1,11 @@
 # Question:
 
-
+I am interested in a design for a clean CLI that I can use to monitor
+and manage Tachyon Tongs, to run agents, to view their progress and outputs,
+using Ghostty and perhaps adding close NeoVIM integration
+(perhaps optionally through a new plug-in - do I need to build a new
+NeoVIM that supports Python?). Could you please give me a detailed
+markdown file I could use with AntiGravity for this design and implementation?
 
 # Grok:
 

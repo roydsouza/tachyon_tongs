@@ -16,9 +16,56 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[ENGINE]** Integrate `llama-cpp-python` as a local reasoning provider.
 - [ ] **[ROUTING]** Extend `ModelRouter` to support `LOCAL_LLM`.
 
-### 🔳 [PLANNED] Phase 21.9: Local Reasoning Substrate (llama.cpp)
-- [ ] **[ENGINE]** Integrate `llama-cpp-python` as a local reasoning provider.
-- [ ] **[ROUTING]** Extend `ModelRouter` to support `LOCAL_LLM`.
+### 🔳 [PLANNED] Phase 24: Event-Horizon Command Bridge (CLI/TUI/NeoVIM)
+
+#### Phase 24.0 — Core CLI Skeleton
+- [ ] **[SCAFFOLD]** Create `tachyon/cli/__init__.py` + `main.py` (Typer entrypoint).
+- [ ] **[PYPROJECT]** Register `tt` console script in `pyproject.toml`.
+- [ ] **[REFACTOR]** Extract `scripts/airlock_cli.py` → `tachyon/cli/airlock.py` library.
+- [ ] **[CMD]** Implement `tt status`, `tt health`, `tt verify` commands.
+- [ ] **[CMD]** Implement `tt agent list|run|stop|kill|restart|inspect|tail` commands.
+- [ ] **[CMD]** Implement `tt airlock list|show|approve|deny|test` commands.
+- [ ] **[CMD]** Implement `tt logs tail|search|export` commands.
+- [ ] **[CMD]** Implement `tt catalog search|show|export` commands.
+- [ ] **[OUTPUT]** Add `--json` flag for machine-readable output on all commands.
+
+#### Phase 24.1 — Textual TUI Dashboard
+- [ ] **[APP]** Create `tachyon/cli/tui/app.py` (Textual app shell).
+- [ ] **[WIDGET]** Substrate Health manifold (status, uptime, integrity, Merkle root).
+- [ ] **[WIDGET]** Active Agents manifold (status table with live PID/CPU/memory).
+- [ ] **[WIDGET]** Recent Activity manifold (scrolling event feed).
+- [ ] **[WIDGET]** Airlock Queue manifold (pending patches with debate status).
+- [ ] **[WIDGET]** Log Streaming manifold (filterable, follow mode, regex search).
+- [ ] **[NAV]** Vi-style keybindings (`j/k`, `Ctrl+d/u`, `:`, `/`).
+- [ ] **[WS]** WebSocket client for real-time agent state + log streaming.
+- [ ] **[REUSE]** Integrate existing `airlock_tui.py` widgets where applicable.
+
+#### Phase 24.2 — NeoVIM Plugin (`tachyon.nvim`)
+- [ ] **[SKELETON]** Create `plugin/tachyon.nvim/` directory with Lua structure.
+- [ ] **[API]** Implement HTTP API client in Lua (via `plenary.curl`).
+- [ ] **[UI]** Floating dashboard window (`:TachyonDash`).
+- [ ] **[UI]** Airlock 3-way split review (`:TachyonAirlock`).
+- [ ] **[UI]** Live log buffer with async job (`:TachyonLogs`).
+- [ ] **[TELESCOPE]** Register Telescope pickers (agents, debates, catalog).
+- [ ] **[LSP]** Rego LSP configuration via `lspconfig`.
+- [ ] **[SYNTAX]** Custom filetype detection (`.sig`, `SKILL.md`, debate transcripts).
+- [ ] **[SYNTAX]** Debate transcript syntax highlighting (`syntax/debate.vim`).
+- [ ] **[DOCS]** Write `:help tachyon` Vim documentation.
+- [ ] **[KEYBINDS]** Map `<leader>t*` keybindings (dashboard, agents, airlock, logs, catalog).
+
+#### Phase 24.3 — Ghostty Integration
+- [ ] **[CONFIG]** Create Ghostty configuration template with Tachyon color palette.
+- [ ] **[OSC]** Implement OSC 9 push notifications for critical alerts.
+- [ ] **[TITLE]** Dynamic Ghostty window titles (e.g., "Tachyon: 2 Patches Pending").
+- [ ] **[LINKS]** Clickable CVE links in terminal output (OSC 8 hyperlinks).
+
+#### Phase 24.4 — Polish, Testing & ADR
+- [ ] **[ADR]** Author and sign ADR-0025: Event-Horizon Command Bridge.
+- [ ] **[TEST]** Regression suite `tests/test_cli.py` for CLI commands.
+- [ ] **[TEST]** Textual snapshot tests for TUI dashboard.
+- [ ] **[DOCS]** Update ADMIN_CLI_NEOVIM.md with any implementation changes.
+- [ ] **[DOCS]** Update CHEATSHEET.md with `tt` command reference.
+- [ ] **[SIGN]** Sign and push via `/push`.
 
 ### 🔳 [PLANNED] Phase 23: Hardware-Level Isolation
 - [ ] **[SANDBOX]** Prototype WASM-based tool isolation.

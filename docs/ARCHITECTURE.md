@@ -366,3 +366,182 @@ graph TD
 
     F -. Forensic Anchor .-> I
 ```
+
+## 9. Event-Horizon Command Bridge (Phase 24)
+
+The **Event-Horizon Command Bridge** is the unified command-and-control interface for operating the Tachyon Tongs substrate. It replaces ad-hoc Python scripts with a single, composable `tt` entrypoint and provides three complementary tiers of interaction — all following a **NeoVIM-first, CLI-forward** philosophy with vi-style keybindings throughout.
+
+> **Reference:** See [ADMIN_CLI_NEOVIM.md](file:///Users/rds/antigravity/tachyon_tongs/ADMIN_CLI_NEOVIM.md) for the full operator reference.
+
+### 9.1 Three-Tier Component Topology
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│                   Event-Horizon Command Bridge                      │
+├────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ┌──────────────┐   ┌──────────────────┐   ┌───────────────────┐  │
+│  │ Tier 1: CLI  │   │ Tier 2: TUI      │   │ Tier 3: NeoVIM   │  │
+│  │   (Typer)    │   │   (Textual)      │   │ (tachyon.nvim)   │  │
+│  │              │   │                  │   │   (Pure Lua)     │  │
+│  │ • Composable │   │ • 5 Manifolds    │   │ • Floating UI    │  │
+│  │ • Scriptable │   │ • Live streaming │   │ • Telescope      │  │
+│  │ • JSON out   │   │ • Vi keybinds    │   │ • Rego LSP       │  │
+│  └──────┬───────┘   └────────┬─────────┘   └────────┬──────────┘  │
+│         │                    │                       │              │
+│         └────────────────────┼───────────────────────┘              │
+│                              │                                      │
+│                    ┌─────────▼──────────┐                           │
+│                    │ Substrate API      │                           │
+│                    │ (FastAPI/httpx)    │                           │
+│                    └─────────┬──────────┘                           │
+│                              │                                      │
+├──────────────────────────────┼──────────────────────────────────────┤
+│                              │                                      │
+│  ┌───────────────────────────▼─────────────────────────────────┐   │
+│  │           Tachyon Tongs Substrate Daemon                     │   │
+│  │  (PDP, PEP, StateManager, Agents, Integrity)                │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                      │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+**Design Principle:** *CLI = Source of Truth. TUI = Situational Awareness. NeoVIM = Deep Inspection.*
+
+### 9.2 Technology Stack
+
+| Component | Technology | Rationale |
+|-----------|------------|-----------|
+| **CLI** | Typer | UNIX-composable, auto-help, short `tt` entrypoint |
+| **TUI** | Textual (Python) | Async-native, rich widgets, excellent Ghostty support |
+| **API Client** | httpx | Async HTTP/2, connection pooling |
+| **NeoVIM Plugin** | Pure Lua | No rebuild needed, fast, uses native RPC/LSP/Treesitter |
+| **NeoVIM Deps** | plenary.nvim, telescope.nvim, nvim-lspconfig | HTTP client, fuzzy finding, LSP |
+| **Real-time** | WebSocket + SSE | Low-latency streaming for logs and agent state |
+| **Host Terminal** | Ghostty | GPU-accelerated, true color, ligatures, OSC support |
+| **Config** | TOML (`~/.config/tt/config.toml`) | Human-readable, standard |
+
+### 9.3 TUI Active Manifolds
+
+The TUI (`tt dash`) provides five resizable panels for real-time situational awareness:
+
+1. **Substrate Health**: Operational status, uptime, HITL/HOTL mode, Merkle root.
+2. **Active Agents**: Status table (🟢/🔵/🟡/⚫/🔴) with PID, CPU, memory, and last action.
+3. **Recent Activity**: Scrolling event feed from `EVOLUTION.md` and `RUN_LOG.md`.
+4. **Airlock Queue**: Pending patches with CVE, diff stats, and debate status.
+5. **Log Streaming**: Filterable, follow-mode log tail with regex search and quick presets.
+
+All panels use **semantic color coding** (🟢 Green=success, 🔵 Blue=info, 🟡 Yellow=warning, 🔴 Red=alert, 🟣 Purple=debates) and **vi-style navigation** (`j/k` scroll, `/` search, `:` command palette).
+
+### 9.4 NeoVIM Plugin Architecture (`tachyon.nvim`)
+
+```
+plugin/tachyon.nvim/
+├── lua/
+│   ├── tachyon/
+│   │   ├── init.lua           # Plugin entry + setup()
+│   │   ├── config.lua         # User configuration
+│   │   ├── api.lua            # HTTP client (plenary.curl)
+│   │   ├── ui/
+│   │   │   ├── dashboard.lua  # Floating dashboard window
+│   │   │   ├── airlock.lua    # 3-way split: debate | diff | controls
+│   │   │   └── picker.lua     # Telescope integration
+│   │   ├── lsp/
+│   │   │   └── rego.lua       # Rego LSP via lspconfig
+│   │   └── commands.lua       # :Tachyon* Ex commands
+│   └── telescope/
+│       └── _extensions/
+│           └── tachyon.lua    # Telescope pickers (agents/debates/catalog)
+├── ftdetect/
+│   └── tachyon.vim            # File type detection (.sig, SKILL.md, debates)
+├── syntax/
+│   ├── debate.vim             # Debate transcript highlighting
+│   └── skillmd.vim            # SKILL.md manifest syntax
+├── plugin/
+│   └── tachyon.vim            # Plugin initialization
+└── doc/
+    └── tachyon.txt            # :help tachyon documentation
+```
+
+**Key Features:**
+- **`:TachyonDash`**: Floating window with auto-refreshing substrate status.
+- **`:TachyonAirlock`**: 3-way split (debate transcript | unified diff | approval controls) with `<leader>aa` to approve, `<leader>ad` to deny.
+- **`:Telescope tachyon agents`**: Fuzzy-find agents with status icons.
+- **Rego LSP**: Inline diagnostics and autocompletion for `.rego` policy files via `regols`.
+- **Custom Syntax**: Debate transcripts and `SKILL.md` manifests get semantic highlighting.
+
+### 9.5 Ghostty Optimization
+
+Ghostty is the primary host terminal due to its Metal 4 GPU acceleration and comprehensive standard support:
+
+- **True Color (24-bit RGB)**: Semantic palette matching ANSI 0–7 to Tachyon threat levels.
+- **Nerd Font Icons**: Agent status indicators (🟢🔵🟡🔴) render perfectly.
+- **OSC 8 Hyperlinks**: CVE IDs in terminal output are clickable, opening NVD in the browser.
+- **OSC 9 Notifications**: Desktop push notifications for critical alerts (e.g., `INTEGRITY_FAILURE`).
+- **Zero Input Lag**: Critical for real-time TUI responsiveness at the Textual widget level.
+- **Custom Keybindings**: `Ctrl+Shift+T` opens a new `tt dash` tab, `Ctrl+Shift+A` opens Airlock.
+
+### 9.6 Substrate API Endpoints (CLI/TUI Consumer Contracts)
+
+The Command Bridge communicates with the Substrate Daemon via REST + WebSocket:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/status` | GET | Dashboard health metrics |
+| `/api/v1/agents` | GET | List agents with status |
+| `/api/v1/agents/{name}` | GET | Agent detail (PID, memory, recent actions) |
+| `/api/v1/agents/{name}/start` | POST | Start agent |
+| `/api/v1/agents/{name}/stop` | POST | Stop agent |
+| `/api/v1/airlock` | GET | List pending patches |
+| `/api/v1/airlock/{id}` | GET | Patch detail (diff, debate, metadata) |
+| `/api/v1/airlock/{id}/approve` | POST | Approve and deploy patch |
+| `/api/v1/airlock/{id}/deny` | POST | Deny patch with reason |
+| `/api/v1/logs/stream` | WS | Real-time log streaming |
+| `/api/v1/catalog` | GET | Browse exploitation catalog |
+| `/api/v1/catalog/{cve}` | GET | CVE detail |
+
+### 9.7 Interaction Flow
+
+```mermaid
+sequenceDiagram
+    participant Op as Operator
+    participant G as Ghostty Terminal
+    participant CLI as tt CLI (Typer)
+    participant TUI as tt dash (Textual)
+    participant NV as NeoVIM (tachyon.nvim)
+    participant API as Substrate API (FastAPI)
+    participant Sub as Substrate Daemon
+
+    Op->>G: Launch Ghostty
+    Op->>CLI: tt dash
+    CLI->>TUI: Launch Textual App
+    TUI->>API: GET /api/v1/status
+    API->>Sub: Query StateManager
+    Sub-->>API: Health + Agent Status
+    API-->>TUI: JSON Response
+    TUI-->>Op: Render Dashboard (5 Manifolds)
+
+    Note over TUI: Auto-refresh every 2s via WebSocket
+
+    Op->>TUI: Press 'a' (Airlock)
+    TUI->>API: GET /api/v1/airlock
+    API-->>TUI: Pending Patches
+    Op->>TUI: Press 'v' (View in NeoVIM)
+    TUI->>NV: Open diff + debate in 3-way split
+    Op->>NV: <leader>aa (Approve)
+    NV->>API: POST /api/v1/airlock/{id}/approve
+    API->>Sub: Apply Patch + Sign + Update Merkle
+    Sub-->>API: {status: "approved", deployed: true}
+    API-->>NV: Confirmation
+    NV-->>Op: "✓ Patch deployed"
+```
+
+### 9.8 Performance Targets
+
+| Metric | Target |
+|--------|--------|
+| Dashboard first paint | < 50ms |
+| Log line parse throughput | < 1ms per line |
+| API request latency (p95) | < 100ms |
+| Memory footprint | < 100MB (all panels open) |
+| Keystroke-to-screen latency | < 16ms |

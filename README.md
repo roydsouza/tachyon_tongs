@@ -78,6 +78,11 @@ python3 -m tachyon.main --role guardian --action verify_substrate
 ## 🧬 Phase 22: Autonomic Immune Response [ACTIVE]
 The **Evolutionary Substrate** is live. Phase 22 introduces the **ImmuneManager**, an autonomic immune system that detects defensive gaps via the **Canary** and self-synthesizes high-assurance policy updates. The substrate is now self-healing — proposed patches are staged in the **Airlock** for HITL oversight before deployment.
 
+## ⌨️ Command & Control: Event-Horizon Bridge [DESIGN]
+Tachyon Tongs is operated through a **NeoVIM-first, CLI-forward** architecture — the **Event-Horizon Command Bridge**. It provides three tiers of substrate control: a composable `tt` CLI for scripting and automation, a GPU-accelerated Textual TUI for real-time situational awareness, and a pure Lua NeoVIM plugin (`tachyon.nvim`) for deep code-level inspection and Airlock review — all optimized for Ghostty with vi-style keybindings throughout.
+
+👉 **[ADMIN_CLI_NEOVIM.md](ADMIN_CLI_NEOVIM.md)** — *Full operator reference: commands, keybindings, workflows, and configuration.*
+
 ## ⚡ Slash Commands
 - `/help`: View the command manifest.
 - `/catalog`: View the Exploitation Catalog.
