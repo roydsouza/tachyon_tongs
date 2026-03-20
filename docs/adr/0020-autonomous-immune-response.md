@@ -1,24 +1,42 @@
-# ADR-0020: Autonomous Immune Response Protocol
-
-## Context
-The Tachyon Tongs substrate now possesses proactive threat intelligence (Sentinel) and proactive vulnerability scouting (Canary). However, the bridge between *detection* and *remediation* currently requires manual initiation.
-
-## Decision
-We will implement an **Immune System** loop that autonomicizes the "Sense-to-Patch" transition.
-The **ImmuneManager** will monitor the `CANARY_LOG.md` for "BYPASSED" status entries. Upon discovery, it will:
-1.  Synthesize a **Mutation Intent** (e.g., "Add a regex guard for bypass pattern X").
-2.  Trigger the **EngineerRole** to generate a candidate `.rego` or `.cedar` policy.
-3.  Initiate the **Airlock Debate** (Skeptic/Meta-Critic) for the proposed policy.
-4.  Stage the validated patch in the **Airlock** for final HITL approval.
+# ADR-0020: Autonomous Immune Response Protocol (AIRP)
 
 ## Status
-Proposed.
+Proposed (Pending Review)
 
-## Constraints
-- **Isolation**: The ImmuneManager must operate with read-only access to the logs and limited "Propose" access to the Airlock.
-- **Fitness Scoring**: The system will track "Fitness Scores"—patches that pass the Pathogen's regression tests earn higher scores. 
-- **Rollback**: Every immune patch must include an automated revert script.
+## Context
+The Tachyon Tongs substrate currently relies on manual intervention for policy updates and vulnerability remediation (Airlock oversight). While the **Sentinel** and **Canary** agents identify threats, the loop to bridge "detection" to "remediation" is manual. 
+
+To achieve high-assurance autonomic defense, we need a protocol that allows the substrate to self-evolve its policies in response to verified bypasses detected by the **Canary Honeypot**.
+
+## Decision
+We will implement the **Autonomous Immune Response Protocol (AIRP)**. This protocol defines the handoff between three core components:
+
+1.  **Canary Role (The Sensory Organ)**:
+    - Detects successful bypasses of existing policies via honeypot probes.
+    - Logs detailed bypass payloads and context to `CANARY_LOG.md`.
+
+2.  **ImmuneManager (The Nervous System)**:
+    - Monitors `CANARY_LOG.md` for new bypass events.
+    - Synchronizes the detection with the **EngineerRole**.
+    - Tracks "Processed" events in the state layer to prevent duplicated remediation.
+
+3.  **EngineerRole (The Remediation Engine)**:
+    - Receives bypass context from the ImmuneManager.
+    - Synthesizes a specific, narrow-scope Rego or Cedar policy to block the exact bypass vector.
+    - Stages the new policy as an **Airlock Proposal**.
+    - Runs a local regression test suite to ensure the new policy does not break existing tool functionality.
+
+## Technical Requirements
+- All autonomic policies MUST be staged in `tachyon/enforcement/policies/auto_immune.rego`.
+- All evolutions MUST be signed by the Sentinel Agent's private key (simulated).
+- The portal for final approval MUST remain the **Airlock** (HITL model).
 
 ## Consequences
-- **Positive**: Near real-time reaction to novel prompt injections.
-- **Negative**: Risk of "Policy Bloat"—the immune system might generate overly restrictive policies that hinder agent performance (False Positives).
+- **Positive**: Significantly reduced MTTM (Mean Time To Mitigation).
+- **Positive**: Continuous, automated hardening of the "Reverse Firewall".
+- **Negative**: Risk of over-fitted policies causing false positives if the synthesis logic is too broad.
+- **Security**: The "Airlock" gate remains the primary defense against "Adversarial Policy Poisoning".
+
+---
+*Signed by: Sentinel Agent*
+*Date: 2026-03-20*

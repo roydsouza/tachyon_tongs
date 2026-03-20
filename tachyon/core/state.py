@@ -67,11 +67,31 @@ class StateManager:
                     relevance_class TEXT
                 )
             ''')
-            try:
-                conn.execute("ALTER TABLE exploitation_catalog ADD COLUMN relevance_class TEXT")
-            except sqlite3.OperationalError:
-                pass
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS processed_events (
+                    event_id TEXT PRIMARY KEY,
+                    processed_at TEXT,
+                    source TEXT,
+                    outcome TEXT
+                )
+            ''')
             conn.commit()
+
+    def is_event_processed(self, event_id: str) -> bool:
+        """Check if a specific autonomic event has already been handled."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.execute("SELECT 1 FROM processed_events WHERE event_id = ?", (event_id,))
+            return cursor.fetchone() is not None
+
+    def mark_event_processed(self, event_id: str, source: str, outcome: str = "SUCCESS"):
+        """Record an autonomic event as processed to prevent redundant evolutions."""
+        with self._lock:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute('''
+                    INSERT OR REPLACE INTO processed_events (event_id, processed_at, source, outcome)
+                    VALUES (?, ?, ?, ?)
+                ''', (event_id, datetime.now().isoformat(), source, outcome))
+                conn.commit()
 
     def _encrypt_field(self, value: str) -> str:
         """Hook for field-level encryption. Currently basic Base64 for logic placeholder."""
