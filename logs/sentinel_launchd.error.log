@@ -34,3 +34,19 @@ Traceback (most recent call last):
     patch_files = state["cve_context"].get("patch_files", {})
                   ^^^^^^^^^^^^^^^^^^^^^^^^
 AttributeError: 'NoneType' object has no attribute 'get'
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 71493.82it/s]
+Traceback (most recent call last):
+  File "/Users/rds/antigravity/tachyon_tongs/scripts/sentinel.py", line 161, in main
+    triad_result = run_supervisor(
+        "https://github.com/advisories",
+    ...<2 lines>...
+        harvest_mode=args.harvest
+    )
+  File "/Users/rds/antigravity/tachyon_tongs/tachyon/pipeline/orchestrator.py", line 73, in run_supervisor
+    final_state = app.invoke(initial_state)
+  File "/Users/rds/antigravity/tachyon_tongs/tachyon/core/google_adk_mock.py", line 44, in invoke
+    state = func(state)
+  File "/Users/rds/antigravity/tachyon_tongs/tachyon/agents/legacy/skeptic_agent.py", line 68, in skeptic_reasoning_node
+    patch_files = state["cve_context"].get("patch_files", {})
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
