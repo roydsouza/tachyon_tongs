@@ -188,3 +188,42 @@
 [Analyst] Accepting CVE-2025-54135 via Semantic match
 [Sentinel] [FATAL] Execution failed: 'NoneType' object has no attribute 'get'
 [Sentinel] Run finalized. Ledger printed to RUN_LOG.md.
+M	EVOLUTION.md
+[Sentinel] Initializing run. Trigger source: CRON_SCHEDULED
+[Sentinel] [FALLBACK] Proposal CVE is >12h old. Triggering autonomous remediation...
+[Sentinel] [REMEDIATION] Initiating backlog sweep...
+[Sentinel] [REMEDIATION] Found 6 threats in backlog. Processing...
+[Sentinel] [REMEDIATION] Investigating CVE-2024-52803...
+[Orchestrator] Bypassing Scout. Starting at Analyst for CVE-2024-52803
+[Analyst] [INVESTIGATION] Focusing on targeted threat: CVE-2024-52803
+⚙️  [MetalAccelerator] Loading model 'mlx-community/Llama-3.2-3B-Instruct-4bit' into Apple Unified Memory...
+[Orchestrator] Graph execution complete. Final keys: ['target_url', 'run_scraper', 'logger', 'allowed_domains', 'denylist', 'cve_context', 'harvest_mode', 'analysis', 'final_output', 'critique', 'verdict']
+[Sentinel] [REMEDIATION] Investigating CVE-2025-58371...
+[Orchestrator] Bypassing Scout. Starting at Analyst for CVE-2025-58371
+[Analyst] [INVESTIGATION] Focusing on targeted threat: CVE-2025-58371
+[Orchestrator] Graph execution complete. Final keys: ['target_url', 'run_scraper', 'logger', 'allowed_domains', 'denylist', 'cve_context', 'harvest_mode', 'analysis', 'final_output', 'critique', 'verdict']
+[Sentinel] [REMEDIATION] Investigating CVE-2021-21960...
+[Orchestrator] Bypassing Scout. Starting at Analyst for CVE-2021-21960
+[Analyst] [INVESTIGATION] Focusing on targeted threat: CVE-2021-21960
+[Orchestrator] Graph execution complete. Final keys: ['target_url', 'run_scraper', 'logger', 'allowed_domains', 'denylist', 'cve_context', 'harvest_mode', 'analysis', 'final_output', 'critique', 'verdict']
+[Sentinel] [REMEDIATION] Investigating CVE-2025-46725...
+[Orchestrator] Bypassing Scout. Starting at Analyst for CVE-2025-46725
+[Analyst] [INVESTIGATION] Focusing on targeted threat: CVE-2025-46725
+[Orchestrator] Graph execution complete. Final keys: ['target_url', 'run_scraper', 'logger', 'allowed_domains', 'denylist', 'cve_context', 'harvest_mode', 'analysis', 'final_output', 'patch_files', 'critique', 'verdict']
+[Sentinel] [REMEDIATION] Investigating CVE-2025-53002...
+[Orchestrator] Bypassing Scout. Starting at Analyst for CVE-2025-53002
+[Analyst] [INVESTIGATION] Focusing on targeted threat: CVE-2025-53002
+[Orchestrator] Graph execution complete. Final keys: ['target_url', 'run_scraper', 'logger', 'allowed_domains', 'denylist', 'cve_context', 'harvest_mode', 'analysis', 'final_output', 'critique', 'verdict']
+[Sentinel] [REMEDIATION] Investigating CVE-2025-58372...
+[Orchestrator] Bypassing Scout. Starting at Analyst for CVE-2025-58372
+[Analyst] [INVESTIGATION] Focusing on targeted threat: CVE-2025-58372
+[Orchestrator] Graph execution complete. Final keys: ['target_url', 'run_scraper', 'logger', 'allowed_domains', 'denylist', 'cve_context', 'harvest_mode', 'analysis', 'final_output', 'critique', 'verdict']
+[Sentinel] Empowering the Guardian Triad Supervisor Graph...
+[Analyst] Accepting CVE-2023-29374 via Semantic match
+[Analyst] Accepting CVE-2024-5184 via Semantic match
+[Analyst] Accepting CVE-2024-7042 via Semantic match
+[Analyst] Accepting CVE-2024-8309 via Semantic match
+[Analyst] Accepting CVE-2025-54130 via Semantic match
+[Analyst] Accepting CVE-2025-54135 via Semantic match
+[Sentinel] [FATAL] Execution failed: 'NoneType' object has no attribute 'get'
+[Sentinel] Run finalized. Ledger printed to RUN_LOG.md.

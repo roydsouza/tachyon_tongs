@@ -25,6 +25,14 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[SANDBOX]** Prototype WASM-based tool isolation.
 - [ ] **[ISOLATION]** Explore MicroVM (Firecracker/Lima) for Tier-0 agents.
 
+### ✅ [COMPLETED] Phase 24: Event-Horizon Command Bridge
+- [x] **[API]** Implement **Unified Substrate Daemon** (FastAPI) [DONE]
+- [x] **[TUI]** Implement **Textual Dashboard** for real-time telemetry [DONE]
+- [x] **[CLI]** Consolidate `tachyon-*` scripts into single **`tt`** command [DONE]
+- [x] **[NVIM]** Author **`tachyon.nvim`** pure-Lua plugin for Airlock review [DONE]
+- [x] **[ADR]** Author and sign **ADR-0025: Unified Substrate Bridge** [DONE]
+- [x] **[VERIFY]** Regression tests for CLI-to-API state bridge [DONE]
+
 ---
 
 ## 🛠️ Architectural Backlog
