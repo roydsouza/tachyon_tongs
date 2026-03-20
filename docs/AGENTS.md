@@ -1,38 +1,23 @@
-# 🧠 AGENTS.md: The Tachyon Tongs Map
+# 🤖 The Tachyon Tongs Agent Collective
 
-> [!IMPORTANT]
-> **🔁 ENTRY RITUAL**: Before starting work, you MUST run `git pull` and review [SYNC_LOG.md](file:///Users/rds/antigravity/tachyon_tongs/SYNC_LOG.md) to align with the latest mission state.
-> **🔁 EXIT RITUAL**: Before finishing work, you MUST update [SYNC_LOG.md](file:///Users/rds/antigravity/tachyon_tongs/SYNC_LOG.md) with session highlights and run the `/push` workflow.
+This document serves as the central directory for all specialized agents operating within the Tachyon Tongs substrate. Each agent is a discrete "immune cell" designed for a specific defensive or offensive role.
 
-This document is the primary entry point for AI agents. It defines the structural boundaries, behavioral principles, and the "Memory as Documentation" hierarchy of the Tachyon Tongs project.
+## 🗂️ Agent Directory (Alphabetical)
 
-## 🛡️ Control Plane
-- **Identity & Mission**: [.agent/rules/IDENTITY.md](file:///.agent/rules/IDENTITY.md)
-- **Behavioral Principles (Soul)**: [.agent/rules/SOUL.md](file:///.agent/rules/SOUL.md)
-- **Global Constraints**: [.agent/rules/MISSION.md](file:///.agent/rules/MISSION.md)
-- **ADR Governance**: [agents/adr_governance/SKILL.md](file:///Users/rds/antigravity/tachyon_tongs/agents/adr_governance/SKILL.md)
+- **[Canary (The Sacrificial Scout)](AGENT_CANARY.md)**: Honeypot for high-risk payload validation and forensic capture.
+- **[Engineer (The Automated Remediator)](AGENT_ENGINEER.md)**: Autonomous patch synthesis and recursive policy evolution.
+- **[Guardian (The Substrate Sentry)](AGENT_GUARDIAN.md)**: Substrate integrity verification via Merkle-trees and syscall monitoring.
+- **[Horizon Scout (The Competitive Intel)](AGENT_SCOUT.md)**: Continuous web-scouring for external threat research and competitive moats.
+- **[Pathogen (The Adversarial Adversary)](AGENT_PATHOGEN.md)**: Red-team mutation engine for stress-testing substrate resistance.
+- **[Sentinel (The Immune System)](AGENT_SENTINEL.md)**: Proactive reconnaissance and autonomous vulnerability aggregation.
+- **[Synthesizer (The Policy Architect)](AGENT_SYNTHESIZER.md)**: Translates analyzed threats into signed OPA-Rego or Cedar policies.
 
-## 📂 Project Hierarchy
-- **Core Substrate**: `src/` (The secure execution engine)
-- **Agent Manifests**: `agents/` (In-Band agent configurations)
-- **Intelligence Layer**: `intelligence/` (Threat catalogs and research sites)
-- **Memory Layer**: `memory/` (Episodic logs and architectural history)
-- **Governance**: `policies/` (OPA Rego intent gating)
-- **Administrative**: `scripts/` (Orchestration and administrative tools)
+---
 
-## 🧠 Memory Documents
-- **Long-term Memory**: [MEMORY.md](file:///MEMORY.md) (Standard procedures and key decisions)
-- **Active Task Plan**: [memory/task_plan.md](file:///memory/task_plan.md) (Current session focus)
-- **Evolutionary Ledger**: [memory/evolution.md](file:///memory/evolution.md) (Codebase mutations)
-- **Run Log**: [memory/run_log.md](file:///memory/run_log.md) (Execution audits)
+## 🏗️ Architectural Pattern
+All agents in this collective follow the **Logical Separation** pattern established in ADR-0024:
+1. **Skill (`SKILL.md`)**: Declarative intent and capability manifest.
+2. **Role (`*_role.py`)**: Substrate-integrated execution layer (forensics, sanitization).
+3. **Engine (`*_engine.py`)**: Core logic and specialized tools.
 
-## 📜 Execution Backlog
-- **Backlog**: [TASKS.md](file:///TASKS.md) (Primary engineering tracker)
-- **Roadmap**: [docs/ROADMAP.md](file:///docs/ROADMAP.md) (Strategic milestones)
-
-## 🤖 Automation Mandates
-All agents MUST follow these automation steps before task completion:
-1. **Task Currency**: Update `TASKS.md` to reflect current state.
-2. **Regression Testing**: Add and run regression tests for all new functionality.
-3. **Documentation**: Update all relevant `.md` files to match the implementation.
-4. **Sync**: Push all changes to the `tachyon_tongs` repository.
+For a deeper dive into how these agents interact, see **[ARCHITECTURE.md](ARCHITECTURE.md)**.

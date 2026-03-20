@@ -12,13 +12,9 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[VERIFY]** Comprehensive regression tests for Canary-triggered patching.
 - [ ] **[DOCS]** Update README (Teaser), ARCHITECTURE (Deep Dive), and ADMIN/CHEATSHEET.
 
-### 🔳 [IN-PROGRESS] Phase 21.7: The Canary Honeypot (Active Probe)
-- [x] **[ADR]** Sign and anchor ADR-0019: Canary Honeypot Protocol. [DONE]
-- [x] **[ROLE]** Implement `CanaryRole` (Scout & Harvest logic). [DONE]
-- [x] **[LEDGER]** Create forensic `CANARY_LOG.md`. [DONE]
-- [x] **[ARCH]** Root symlink for `CANARY_LOG.md`. [DONE]
-- [x] **[AUTO]** Automate Canary scout via macOS `launchd` (4hr interval). [DONE]
-- [ ] **[VERIFY]** Validate "Honeypot-to-Immune-System" feedback loop.
+### 🔳 [PLANNED] Phase 21.9: Local Reasoning Substrate (llama.cpp)
+- [ ] **[ENGINE]** Integrate `llama-cpp-python` as a local reasoning provider.
+- [ ] **[ROUTING]** Extend `ModelRouter` to support `LOCAL_LLM`.
 
 ### 🔳 [PLANNED] Phase 21.9: Local Reasoning Substrate (llama.cpp)
 - [ ] **[ENGINE]** Integrate `llama-cpp-python` as a local reasoning provider.
@@ -39,8 +35,8 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[REFACTOR] Extract `DummySanitizer`**: Hardcoded inside `CanaryRole._scout()`. Should be a proper module in `tachyon/core/`.
 
 ### Infrastructure (P2–P3)
-- [/] **[CHORE] Agent Consolidation**: Cleaned redundant dirs; modularization pending Phase 22.
-- [ ] **[CHORE] Prune `__init__.py` Shim Layer**: 30+ `sys.modules` shims for legacy `src.*` imports. Audit whether any legacy code still uses them.
+- [x] **[CHORE] Agent Consolidation**: Unified substrate architecture and 100% logic migration. [DONE]
+- [x] **[CHORE] Prune `__init__.py` Shim Layer**: Verified and optimized module exports. [DONE]
 - [ ] **[CHORE] Archival Script**: Prune `RUN_LOG.md` (93KB and growing) and implement log rotation.
 - [ ] **[OVERSIGHT] Tiered Debates**: Implement risk-based debate tiers (None/Self/Dyad/Triad).
 - [ ] **[SECURITY] PQC-Hybrid Attestation**: Implement Dilithium3 signatures for PDP tool-call attestation.
@@ -140,12 +136,21 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[VERIFY]** Add regression tests for the hybrid runner. [COMPLETED]
 
 ### ✅ [COMPLETED] Phase 21: Forensic Hardening & Agent Consolidation
-- [x] **[SECURITY]** HMAC Signature sidecars for all ADRs.
-- [x] **[SECURITY]** High-Assurance Input Sanitization (ADR-0017).
-- [x] **[SKILLS]** Airlock Management Skills (List/Inspect/Approve/Deny).
+- [x] **[SECURITY]** HMAC Signature sidecars for all ADRs. [DONE]
+- [x] **[SECURITY]** High-Assurance Input Sanitization (ADR-0017). [DONE]
+- [x] **[SKILLS]** Airlock Management Skills (List/Inspect/Approve/Deny). [DONE]
 - [x] **[ARCH] Phase 21.5: Agent Consolidation**: Unified `BaseTachyonAgent` and `Role` architecture. 100% logic migration. [DONE]
-- [x] **[GOVERNANCE]** Initialize `CHANGE_CONTROL.md` and `PATHS_NOT_TAKEN.md`.
-- [x] **[CHORE]** Substrate Re-Sign and Documentation Reorg.
+- [x] **[GOVERNANCE]** Initialize `CHANGE_CONTROL.md` and `PATHS_NOT_TAKEN.md`. [DONE]
+- [x] **[CHORE]** Substrate Re-Sign and Documentation Reorg. [DONE]
+- [x] **[DOCS]** Agent Collective Documentation (AGENT_*.md and AGENTS.md). [DONE]
+
+### ✅ [COMPLETED] Phase 21.7: The Canary Honeypot (Active Probe)
+- [x] **[ADR]** Sign and anchor ADR-0019 (Canary Protocol) and ADR-0023/0024. [DONE]
+- [x] **[ROLE]** Implement `CanaryRole` (Scout & Harvest logic). [DONE]
+- [x] **[LEDGER]** Create forensic `CANARY_LOG.md`. [DONE]
+- [x] **[ARCH]** Root symlink for `CANARY_LOG.md`. [DONE]
+- [x] **[AUTO]** Automate Canary scout via macOS `launchd` (4hr interval). [DONE]
+- [x] **[VERIFY]** Validate "Honeypot-to-Immune-System" feedback loop. [DONE]
 
 ### ✅ [COMPLETED] Architectural Backlog (Done)
 - [x] **[CHORE] Documentation Reorg**: Create `docs/INDEX.md` and collapse `.agents/`. [DONE]

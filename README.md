@@ -30,6 +30,12 @@ Tachyon Tongs is not a static defense system; it is an autonomic immune system d
 *   **The Engineer (Autopatcher)**: Self-synthesizes infrastructure patches and policy mutations to neutralize detected threats in response to the Canary's intelligence.
 *   **The Guardian (Auditor)**: Performs periodic forensic audits of the architectural substrate, ensuring HMAC signatures and Merkle roots remain untampered.
 
+## 🤖 The Agent Collective
+
+Tachyon Tongs is powered by a diverse set of specialized agents, each following the **Logical Separation** pattern. For a detailed breakdown of every agent's capabilities, operational mechanics, and integration points, see:
+
+👉 **[AGENTS.md](docs/AGENTS.md)** — *The central directory for the Tachyon Tongs immune system.*
+
 ## 4. Deployment Models
 
 *   **In-Band (Managed)**: Agents declared purely via `SKILL.md` manifests, running within substrate-provisioned sandboxes.

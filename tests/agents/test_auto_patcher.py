@@ -57,8 +57,12 @@ def test_autopatcher_failure_triggers_revert(mock_run):
     
     def side_effect(*args, **kwargs):
         cmd = args[0]
-        if isinstance(cmd, list) and "pytest" in cmd[0]:
-            return MagicMock(returncode=1, stdout="test failed")
+        # Specifically fail the pytest run
+        if isinstance(cmd, list) and "pytest" in cmd:
+            return MagicMock(returncode=1, stdout="test failed", stderr="")
+        # Allow git rev-parse to succeed so we enter the git blocks
+        if isinstance(cmd, list) and "rev-parse" in cmd:
+            return MagicMock(returncode=0, stdout="true")
         return MagicMock(returncode=0)
         
     mock_run.side_effect = side_effect

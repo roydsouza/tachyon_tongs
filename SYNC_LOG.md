@@ -1,5 +1,49 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+## [2026-03-19 19:30] - Agent Documentation Expansion & Registry Unification
+
+- **Session Focus**: Generating deep, incisive documentation for the consolidated agent collective.
+- **Key Accomplishments**:
+    - **Detailed Agent Docs**:
+        - Authored standalone markdown guides for **Sentinel**, **Engineer**, **Guardian**, **Pathogen**, **Synthesizer**, and **Horizon Scout**.
+        - Each guide details Overview, Operational Mechanics (Triggers, Config, Capabilities), and Substrate Integration.
+    - **Agent Registry Unification**:
+        - Created `docs/AGENTS.md` as the central alphabetical directory for the immune system.
+        - Integrated "The Agent Collective" section into `README.md` for high-level visibility.
+    - **Cross-Link Integrity**:
+        - Verified all documentation links between `README.md`, `AGENTS.md`, and individual agent files.
+        - Ensured consistent terminology across the substrate (e.g., "Logical Separation", "Surgical Patching").
+- **Verification Result**:
+    - **100% Documentation Coverage**: Every consolidated agent now has a corresponding deep-dive doc.
+    - **Substrate Readiness**: Directory structure, ADRs, and documentation are now fully synchronized and professional.
+- **Status**: Documentation Expansion Complete. Project is now highly readable and audit-ready. Ready for Phase 23.
+
+## [2026-03-19 18:30] - Agent Infrastructure Consolidation & Canary Formalization
+
+- **Session Focus**: Unifying the agent directory structure and formalizing the "Logical Separation" pattern.
+- **Key Accomplishments**:
+    - **Directory Consolidation**:
+        - Merged `agents/` and `tachyon/agents/` into a single, modular structure under `tachyon/agents/`.
+        - Established a standardized sub-directory pattern for all agents (e.g., `tachyon/agents/sentinel/`).
+    - **Logical Separation Pattern**:
+        - Implemented a clear split between declarative intent (`SKILL.md`) and substrate implementation (`*_role.py`, `*_engine.py`).
+        - Migrated **Sentinel**, **Engineer**, **Guardian**, and **Canary** to this new pattern.
+    - **Canary Agent Formalization**:
+        - Promoted the Canary agent to a first-class component with dedicated modules and detailed documentation (`docs/AGENT_CANARY.md`).
+        - Authored and signed **ADR-0023**.
+    - **Substrate Hardening**:
+        - Refactored `roles.py` into a lightweight delegation layer to support modular dispatch.
+        - Enhanced `BaseTachyonAgent` with unified result wrapping and status bubbling.
+        - Resolved path-handling and status-mapping regressions in `AutoPatcher` and `EngineerRole`.
+    - **ADR Implementation**:
+        - Authored and signed **ADR-0024** for Agent Consolidation.
+- **Comprehensive Verification**:
+    - **Full Regression Pass**: 14/14 tests passing 100%, including:
+        - `test_canary_agent.py`: Verified scout/harvest forensics.
+        - `test_auto_patcher.py`: Verified branch-revert and status mapping with fixed mock compatibility.
+        - All core enforcement and router security tests.
+- **Status**: Agent Infrastructure consolidated and verified. Substrate aesthetics and modularity significantly improved. Ready for hotl scale-out.
+
 ## [2026-03-19 15:45] - Substrate Refining & Stress Testing Implementation
 
 - **Session Focus**: Modularizing the core substrate and expanding regression testing to identify hidden flaws.

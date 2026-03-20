@@ -109,11 +109,15 @@ graph TD
     style Triggers fill:#fff7e6,stroke:#ffa940
 ```
 
-1.  **Scout Node:** Aggregates threat intelligence from Tier-1 sources (NVD API, GitHub Advisories). It uses `keywordExactMatch` and domain allowlisting to minimize noise.
-2.  **Analyst Node:** Performs semantic filtering and CWE taxonomy matching. It uses Apple-Silicon native **MLX acceleration** (`mlx_lm`) to classify threats.
-3.  **Engineer Node:** Commits validated threats to the `EXPLOITATION_CATALOG.md` and SQLite `StateManager`. It also stages remediation patches in the `/tmp/tachyon_airlock/` for human-in-the-loop approval.
+### 1.2 The Agent Collective (Modular Substrate)
+Tachyon Tongs follows a **Logical Separation** pattern (ADR-0024) where each agent is a discrete "immune cell" with its own declarative Intent (`SKILL.md`) and substrate Implementation (`*_role.py`, `*_engine.py`).
 
-### 1.2 The Goodness Framework (Self-Improvement)
+For a complete alphabetical directory of all active agents and their forensic capabilities, see:
+👉 **[AGENTS.md](AGENTS.md)**
+
+---
+
+### 1.3 The Goodness Framework (Self-Improvement)
 To enable autonomous evolution via AutoResearch, the system computes a **Composite Goodness Score** based on four dimensions:
 
 *   **Precision (Signal Purity):** Fraction of cataloged CVEs that are genuinely relevant to agentic security.

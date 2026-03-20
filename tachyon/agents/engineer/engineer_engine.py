@@ -23,15 +23,18 @@ class AutoPatcher:
             "test_code": test_content,
             "cve_id": cve_id
         })
-        result = res.get("result", res)
         
-        if result.get("status") == "staged":
+        role_result = res.get("result", {})
+        if not isinstance(role_result, dict):
+             return res # Fallback
+
+        if role_result.get("status") == "staged":
             # Legacy audit file for human oversight
             with open("PENDING_MERGE.md", "a") as f:
                 f.write(f"## {cve_id} | Staged for review\n- Branch: auto-patch/{cve_id.replace(' ', '-')}\n\n")
-            result["status"] = "pending_human_approval"
+            role_result["status"] = "pending_human_approval"
             
-        return result
+        return role_result
 
 def engineer_action_node(state: dict) -> dict:
     """Legacy pipeline node for the triad supervisor."""

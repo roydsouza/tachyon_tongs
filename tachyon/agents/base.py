@@ -29,15 +29,12 @@ class BaseTachyonAgent(ABC):
         # 3. Execute Role Logic
         try:
             result = self.execute_role_logic(action, sanitized_params)
-            status = "SUCCESS"
+            
+            # Substrate-level success
+            return {"status": "SUCCESS", "result": result}
         except Exception as e:
-            result = {"error": str(e)}
-            status = "ERROR"
-
-        # 4. Forensic Sign-off
-        # (This is where we'd sign the specific action footprint if needed)
-        
-        return {"status": status, "agent": self.agent_id, "role": self.role_name, "result": result}
+            self.state.log_evolution("Agent Failure", f"Agent {self.agent_id} failed: {str(e)}")
+            return {"status": "error", "message": str(e)}
 
     @abstractmethod
     def execute_role_logic(self, action: str, parameters: Dict[str, Any]) -> Any:
