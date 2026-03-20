@@ -1,37 +1,21 @@
--- Tachyon Tongs: NeoVim Plugin (tachyon.nvim)
--- Tier 3 of the Event-Horizon Command Bridge
-
 local M = {}
 
+M.ui = require('tachyon.ui')
+M.api = require('tachyon.api')
+M.config = require('tachyon.config')
+M.telescope = require('tachyon.telescope')
+
 M.setup = function(opts)
-    opts = opts or {}
-    local substrate_url = opts.substrate_url or "http://localhost:60461"
-    
-    -- Register commands
-    vim.api.nvim_create_user_command("TachyonDash", function()
-        M.open_dashboard()
-    end, {})
-    
-    print("Tachyon Tongs Bridge Initialized: " .. substrate_url)
+    M.config.setup(opts)
+    require('tachyon.commands').register()
+    print("Tachyon Tongs Bridge Initialized (V1 Unified)")
 end
 
 M.open_dashboard = function()
-    -- Create a floating window running 'tt dash'
-    local buf = vim.api.nvim_create_buf(false, true)
-    local width = math.floor(vim.o.columns * 0.8)
-    local height = math.floor(vim.o.lines * 0.8)
-    
-    local win = vim.api.nvim_open_win(buf, true, {
-        relative = "editor",
-        width = width,
-        height = height,
-        row = math.floor((vim.o.lines - height) / 2),
-        col = math.floor((vim.o.columns - width) / 2),
-        style = "minimal",
-        border = "double",
-    })
-    
+    -- Launch the interactive TUI dashboard in a floating terminal
+    local buf, win = M.ui.create_float("Tachyon tactical dashboard", 0.9, 0.9)
     vim.fn.termopen("tt dash")
+    vim.cmd("startinsert")
 end
 
 return M
