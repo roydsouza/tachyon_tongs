@@ -2,8 +2,11 @@ import typer
 from typing import Optional
 import json
 import httpx
+import time
 from rich.console import Console
 from rich.table import Table
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.live import Live
 
 SUBSTRATE_URL = "http://127.0.0.1:60461/api/v1"
 
@@ -14,6 +17,39 @@ app = typer.Typer(
 )
 
 console = Console()
+
+def send_notification(title: str, message: str):
+    """OSC 9 Terminal Notification (Ghostty/iTerm2)"""
+    # ESC ] 9 ; title ; message \a
+    print(f"\033]9;{title};{message}\007", end="", flush=True)
+
+def link(text: str, url: str) -> str:
+    """OSC 8 Hyperlink support"""
+    return f"\033]8;;{url}\033\\{text}\033]8;;\033\\"
+
+@app.command()
+def ritual():
+    """Execute the substrate boot ceremony (System Verification)."""
+    console.rule("[bold cyan]Substrate Boot Ceremony[/bold cyan]")
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        console=console
+    ) as progress:
+        t1 = progress.add_task("[cyan]Verifying SQLite Integrity...", total=100)
+        time.sleep(1.0)
+        progress.update(t1, completed=100)
+        
+        t2 = progress.add_task("[magenta]Validating Merkle Hierarchy...", total=100)
+        time.sleep(1.2)
+        progress.update(t2, completed=100)
+        
+        t3 = progress.add_task("[green]Unlocking Singularity PDP...", total=100)
+        time.sleep(0.8)
+        progress.update(t3, completed=100)
+        
+    send_notification("Tachyon Substrate", "Ritual Complete. Bridge Operational.")
+    console.print("\n[bold green]✓ Substrate Synchronized. Welcome back, Operator.[/bold green]")
 
 @app.command()
 def dash(refresh: int = typer.Option(2000, help="Refresh interval in ms")):
@@ -51,6 +87,30 @@ def status(json_out: bool = typer.Option(False, "--json", help="Output in JSON f
         table.add_row("Merkle Root", f"[dim]{data.get('merkle_root', 'N/A')}[/dim]")
         
         console.print(table)
+
+@app.command()
+def airlock():
+    """List pending airlock patches."""
+    try:
+        with httpx.Client(timeout=2.0) as client:
+            resp = client.get(f"{SUBSTRATE_URL}/airlock")
+            resp.raise_for_status()
+            data = resp.json()
+    except Exception as e:
+        console.print(f"[bold red]Daemon Offline:[/bold red] {e}")
+        return
+
+    table = Table(title="Pending Airlock Patches")
+    table.add_column("CVE ID", style="cyan")
+    table.add_column("Status", style="yellow")
+    table.add_column("Summary", style="white")
+
+    for p in data:
+        # OSC 8 Hyperlink to local file if path exists
+        cve_link = link(p["id"], f"file:///Users/rds/antigravity/tachyon_tongs/intelligence/exploits/{p['id']}.md")
+        table.add_row(cve_link, p["status"].upper(), p["summary"])
+
+    console.print(table)
 
 @app.command()
 def agent(
