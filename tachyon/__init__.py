@@ -64,6 +64,6 @@ sys.modules['src.monitoring'] = sys.modules['tachyon.monitoring']
 sys.modules['src.protocol'] = sys.modules['tachyon.protocol']
 
 try:
-    from tachyon.enforcement.daemon import app
+    from tachyon.api.server import app
 except ImportError:
     app = None
