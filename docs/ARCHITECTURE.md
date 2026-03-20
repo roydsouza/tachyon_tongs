@@ -574,3 +574,13 @@ The `ModelRouter` implements an intelligent fallback protocol:
 1. **Hybrid Execution**: Attempts cloud-based inference (Gemini 1.5 Pro) for maximum cognitive depth.
 2. **Offline Fallback**: Upon connection failure or timeout, the router automatically re-routes the task to the local LRS.
 3. **Local-First Purity**: Security-critical or air-gapped tasks can be forced to `LOCAL_ONLY` mode, ensuring zero data egress.
+
+## 12. Hardware Isolation Tiers (HIT)
+
+The HIT layer establishes a physical Trusted Computing Base (TCB) for agent execution, moving beyond software-defined policies to hardware-level boundaries.
+
+### 12.1 Tier 1: WASM Sandboxing
+Lightweight, memory-safe isolation for deterministic tools (parsers, math, data-transformers). Implemented via `wasmtime`, these tools have zero access to the host filesystem or network unless explicitly granted via WASI capabilities. This tier provides near-native performance with total memory safety.
+
+### 12.2 Tier 0: MicroVM Isolation
+Full hardware virtualization for high-privilege agents (Sentinel, Engineer). Orchestrated via Apple's `Virtualization.framework` (using `lima`), each agent runs in a minimal, dedicated Linux kernel. I/O is restricted to encrypted virtio channels, preventing Substrate Escape even in the event of an agent-level compromise.
