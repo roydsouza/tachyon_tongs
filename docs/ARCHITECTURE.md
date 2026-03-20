@@ -584,3 +584,69 @@ Lightweight, memory-safe isolation for deterministic tools (parsers, math, data-
 
 ### 12.2 Tier 0: MicroVM Isolation
 Full hardware virtualization for high-privilege agents (Sentinel, Engineer). Orchestrated via Apple's `Virtualization.framework` (using `lima`), each agent runs in a minimal, dedicated Linux kernel. I/O is restricted to encrypted virtio channels, preventing Substrate Escape even in the event of an agent-level compromise.
+
+## 13. Cryptographic Substrate & Secure SDLC (Phase 25)
+
+The substrate's development process is secured end-to-end via a hardware-backed, post-quantum-ready signing infrastructure. This section describes the target architecture defined in [docs/SDLC.md](file:///Users/rds/antigravity/tachyon_tongs/docs/SDLC.md).
+
+### 13.1 Signing Architecture Migration
+
+| Property | Current (Phase 21) | Target (Phase 25) |
+|----------|--------------------|--------------------|
+| **Algorithm** | HMAC-SHA256 (symmetric) | Ed25519 + ML-DSA-44 (hybrid asymmetric) |
+| **Key Storage** | `TACHYON_SECRET_KEY` env var | Apple Secure Enclave (Touch ID) |
+| **Non-Repudiation** | ❌ Shared secret | ✅ Per-identity private keys |
+| **Quantum Resistance** | ❌ | ✅ ML-DSA-44 (NIST FIPS 204) |
+| **Per-Agent Isolation** | ❌ Single key | ✅ Delegation certificates |
+| **Recovery** | Manual key transfer | Shamir 3-of-5 + iCloud Keychain |
+
+### 13.2 Key Hierarchy
+
+```mermaid
+graph TD
+    subgraph "🔐 Trust Hierarchy"
+        ROOT["Root Key<br/>(Secure Enclave)"] -->|delegates| DEV["Development Key<br/>(macOS Keychain)"]
+        DEV -->|issues| SENT["Sentinel Key<br/>(24h rotation)"]
+        DEV -->|issues| ENG["Engineer Key<br/>(7d rotation)"]
+        DEV -->|issues| AIR["Airlock Key<br/>(7d rotation)"]
+    end
+
+    subgraph "📝 Signing Flow"
+        AGENT["Agent Proposes Change"] --> SELF["Agent Self-Signs"]
+        SELF --> AIRLOCK["Airlock Review (HITL)"]
+        AIRLOCK --> COSIGN["Airlock Co-Signs"]
+        COSIGN --> MANIFEST["MANIFEST.json Updated"]
+    end
+
+    AIR -.->|"co-signature required"| COSIGN
+```
+
+### 13.3 Forensic ADR Chaining
+
+ADRs are linked via hash references, extending the existing Merkle tree in `MANIFEST.json`:
+
+```json
+{
+  "adr": "docs/adr/0028-secure-signing-substrate.md",
+  "hash": "sha256:a3f8...",
+  "parent_hash": "sha256:7b2c... (ADR-0027)",
+  "signatures": {
+    "agent": "ed25519:...",
+    "airlock": "ed25519:...",
+    "pqc": "ml-dsa-44:..."
+  },
+  "timestamp": "2026-03-20T13:55:00Z"
+}
+```
+
+Any tampering with a historical ADR breaks the hash chain, triggering a Merkle violation during the `tt ritual` boot ceremony.
+
+### 13.4 Threat Model Extensions (§9C–§9H)
+
+Phase 25 introduces six new threat vectors to the substrate's security model:
+- **§9C**: Signing key compromise → Secure Enclave hardware isolation
+- **§9D**: Cross-agent signature forgery → Per-agent keys with scoped delegation
+- **§9E**: Key substitution attack → Root key hash pinned in code
+- **§9F**: Signing oracle attack → Airlock displays diff + risk score before co-signing
+- **§9G**: Replay attack on signed artifacts → Timestamps + monotonic counters + hash chain
+- **§9H**: Harvest-now-decrypt-later → Hybrid Ed25519 + ML-DSA-44 signatures

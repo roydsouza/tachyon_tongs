@@ -171,12 +171,30 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Unified Daemon:** Consolidates PEP and Airlock layers on port 60461. [DONE]
 - **Reference:** See [ADMIN_CLI_NEOVIM.md](file:///Users/rds/antigravity/tachyon_tongs/ADMIN_CLI_NEOVIM.md) for the full operator reference.
 
-### Phase 23: Isolation & Attestation [PLANNED]
-- **Objective:** Eliminate substrate escape vectors and guarantee tool-call integrity.
+### Phase 23: Hardware-Level Isolation [COMPLETED]
+- **Objective:** Eliminate substrate escape vectors and guarantee tool-call integrity via hardware-level boundaries.
 - **Implementation:**
-  - **WASM Tool Sandbox**: Isolate lightweight tool execution.
-  - **MicroVM (Firecracker) Bounding**: Extreme isolation for high-risk reasoning tasks.
-  - **PQC-Hybrid Attestation**: Dilithium3 signatures for all tool-gate interactions.
+  - **WASM Tool Sandbox (Tier 1)**: `WasmRunner` via `wasmtime` for memory-safe, deterministic tool execution.
+  - **MicroVM Isolation (Tier 0)**: `VmRunner` via Apple Virtualization.framework (`lima`) for full agent-level isolation.
+  - **Substrate Stabilization**: 169/169 regression tests passing, `tt ritual` boot ceremony verified.
+- **ADR:** ADR-0027: Hardware Isolation Protocol.
+
+### Phase 25: Cryptographic Substrate & Secure SDLC [PLANNED]
+- **Objective:** Migrate from HMAC-SHA256 to a hardware-backed, post-quantum-ready asymmetric signing infrastructure with per-agent key isolation.
+- **Reference:** See [docs/SDLC.md](file:///Users/rds/antigravity/tachyon_tongs/docs/SDLC.md) for the full specification.
+- **Implementation:**
+  - **Phase 25.1 — Ed25519 Foundation**: Replace `IntegrityManager` HMAC with Ed25519 asymmetric signatures. Root key stored in Apple Secure Enclave (Touch ID-gated). Shamir 3-of-5 key backup.
+  - **Phase 25.2 — Per-Agent Key Hierarchy**: Delegation certificates scoping each agent's signing authority. Sentinel signs debates, Engineer signs patches, Airlock co-signs everything.
+  - **Phase 25.3 — Hybrid PQC + Forensic Chaining**: Add ML-DSA-44 (NIST FIPS 204) as hybrid overlay. Implement ADR hash-chaining in MANIFEST.json for immutable forensic timeline.
+
+### Phase 26: CI/CD Hardening & Supply Chain Defense [PLANNED]
+- **Objective:** Extend the Secure SDLC into automated pipelines and third-party dependency governance.
+- **Implementation:**
+  - **Pre-Commit Hooks**: Signature verification, unsigned ADR detection, secret scanning.
+  - **GitHub Actions Verification**: CI verifies signatures but NEVER signs (signing is local-only, Secure Enclave).
+  - **SBOM Generation**: CycloneDX Software Bill of Materials signed with each release.
+  - **Reproducible Builds**: Hash-pinned `requirements.txt` and deterministic build attestation.
+  - **Supply Chain Graduation**: Upgrade `is_package_whitelisted()` from stub to DB-backed check.
 
 ---
 

@@ -20,6 +20,18 @@ Tachyon Tongs is an implementation of a **Live Threat Model**. Every architectur
 *   **Tiered Workload Isolation**: High-risk actions run in dynamically generated macOS `sandbox-exec` (Seatbelt) profiles, providing bare-metal speed with microsecond overhead and strict resource lockdown.
 *   **Forensic Integrity Gating**: Every substrate mutation is cryptographically signed using high-assurance HMAC-SHA256 sidecars and anchored to a cumulative Merkle root in the `MANIFEST.json`.
 
+## 🔐 Secure Development Lifecycle (SDLC)
+
+Tachyon Tongs doesn't just *enforce* security at runtime — it **practices security in its own development process**. Every mutation to the substrate is cryptographically signed, forensically chained, and hardware-anchored:
+
+- **Hardware-Backed Signing**: Root signing keys live in the Apple **Secure Enclave** (Touch ID-gated, non-extractable). Agent-proposed changes carry per-agent Ed25519 signatures with scoped delegation certificates.
+- **Hybrid Post-Quantum Cryptography**: Signatures use **Ed25519 + ML-DSA-44** (NIST FIPS 204) in hybrid mode — classical security today, quantum resistance tomorrow.
+- **Forensic ADR Chaining**: Every Architecture Decision Record references the hash of its predecessor, creating an immutable timeline anchored to the Merkle root in `MANIFEST.json`.
+- **Airlock as Certificate Authority**: No artifact is "deployed" until it carries dual signatures — the proposing agent's key **and** the Airlock's co-signature (requiring human approval).
+- **Per-Agent Key Isolation**: Each agent (Sentinel, Engineer, Canary) holds its own rotating key with strict scope limits. A compromised Sentinel cannot sign Engineer artifacts.
+
+👉 **[docs/SDLC.md](docs/SDLC.md)** — *The full Secure SDLC reference: key hierarchy, recovery procedures, threat model, and operational runbooks.*
+
 ## 3. Evolutionary Architecture
 
 Tachyon Tongs is not a static defense system; it is an autonomic immune system driven by five modular roles:
