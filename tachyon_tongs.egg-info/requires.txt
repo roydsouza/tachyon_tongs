@@ -5,3 +5,6 @@ pydantic
 mlx-lm
 cryptography
 textual
+typer
+rich
+httpx

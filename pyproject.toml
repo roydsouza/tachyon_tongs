@@ -16,9 +16,13 @@ dependencies = [
     "mlx-lm",
     "cryptography",
     "textual",
+    "typer",
+    "rich",
+    "httpx",
 ]
 
 [project.scripts]
+tt = "tachyon.cli.main:app"
 tachyon-sentinel = "scripts.run_sentinel:main"
 tachyon-pathogen = "scripts.run_pathogen:main"
 tachyon-daemon = "scripts.run_daemon:main"
