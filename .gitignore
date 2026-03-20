@@ -21,3 +21,15 @@ opa_logs.txt
 .venv/
 venv/
 env/
+
+# Cryptographic Keys (Absolute Isolation)
+*.key
+*.pem
+*.sig_key
+*.pkcs8
+*.pfx
+*.p12
+.tachyon/keys/
+memory/keys/
+**/id_ed25519*
+**/id_rsa*

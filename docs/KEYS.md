@@ -1,52 +1,90 @@
-# Tachyon Tongs: Cryptographic Key Management & Lifecycle
+# Tachyon Tongs: Cryptographic Key Lifecycle & Management
 
-This document serves as the authoritative reference for the cryptographic keys protecting the Tachyon Tongs substrate. It outlines the generation, rotation, and protection of these keys to maintain a high-assurance forensic baseline.
+**Version:** 1.0 (Phase 25 Specification)
+**Date:** 2026-03-20
+**Security Classification:** INTERNAL
+**ADR Reference:** ADR-0028
 
-For a detailed analysis of attacks targeting these keys (e.g., exfiltration and leakage), see the [Key-Centric Threat Vectors](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md#5-key-centric-threat-vectors-the-root-of-trust) section of the Threat Model.
+---
 
-## 🛡️ Key Registry
+## 1. Overview: The Trust Anchor
 
-| Key Name | Type | Purpose | Quantization | Status |
-| :--- | :--- | :--- | :--- | :--- |
-| `TACHYON_SECRET_KEY` | HMAC-SHA256 (Symmetric) | Root of Trust for ADRs and Exploitation Catalog. | 256-bit | ACTIVE |
-| `TACHYON_SESSION_TOKEN` | Bearer Token | Airlock Dashboard API Authentication. | 128-bit | PLANNED |
-| `TACHYON_PQC_IDENTITY` | Dilithium3 (Asymmetric) | Post-Quantum Agent Attestation. | Asymmetric | BACKLOG |
+Tachyon Tongs employs a **tiered, hardware-bound cryptographic architecture** to ensure the integrity of its architectural decisions, code patches, and autonomic immune responses. This document details the lifecycle of every private key within the substrate, emphasizing our **Zero-Leak Policy** to ensure private keys never touch GitHub.
 
-## 🧬 Lifecycle Management
+---
 
-### 1. Generation
-- **Method**: Keys MUST be generated using cryptographically secure random number generators (CSPRNG).
-- **Tooling**: `openssl rand -hex 32` or equivalent OS-level entropy source.
-- **Environment**: Generation should occur on a trusted local machine.
+## 2. Key Inventory & Lifecycles
 
-### 2. Storage & Injection (Anti-Entropy Protocol)
-> [!IMPORTANT]
-> **KEYS ARE NEVER STORED IN VERSION CONTROL.**
-- **Storage**: Keys should be stored in a secured local password manager or hardware vault (e.g., Apple Keychain, Yubikey).
-- **Injection**: Injected into the substrate via Environment Variables only.
-- **Anti-Leakage**: The `.gitignore` and `IntegrityManager` specifically monitor for and block key file leakage.
+| Key Name | Role | Technology | Storage | Lifecycle | Rotation |
+|----------|------|------------|---------|-----------|----------|
+| **ROOT KEY** | The Trust Anchor | Ed25519 | **Apple Secure Enclave** | 10+ years | Never |
+| **DEV KEY** | Daily Operations | Ed25519 | macOS Keychain | 90 days | Quarterly |
+| **SENTINEL** | Threat Intel | Ed25519 | Resident Memory | 24 hours | Daily |
+| **ENGINEER** | Auto-Patching | Ed25519 | Resident Memory | 7 days | Weekly |
+| **AIRLOCK** | HITL Approval | Ed25519 | macOS Keychain | 7 days | Weekly |
 
-### 3. Rotation & Compromise Response
-- **Trigger**: Keys should be rotated if there is a suspected environment breach or as a quarterly security ritual.
-- **Procedure**:
-    1. Generate a new key.
-    2. Update the local environment variable.
-    3. Run `python3 scripts/sign_adrs.py` to re-baseline all forensic records.
-    4. Commit the new `.sig` files to GitHub.
+---
 
-## 🚀 Evolutionary Roadmap
+## 3. Detailed Key Lifecycle Procedures
 
-### Phase 1: Symmetric Root (Current)
-- Usage of `HMAC-SHA256` for deterministic integrity.
-- Focus on "Fail-Loudly" halt on missing keys.
+### 3.1 ROOT KEY (The Sovereign)
+*   **Generation**: On-device via Apple's `SecureEnclave` API. The private key is generated *inside* the dedicated security chip and is physically non-extractable.
+*   **Protection**: Hardware-isolated from the main Apple M5 CPU. Operations (signing) require **biometric presence** (Touch ID).
+*   **Usage**: Only used for high-privilege "Ceremonies": signing delegation certificates for Development keys and ultimate release approval.
+*   **Rotation**: None (bound to the project/hardware lifetime).
+*   **Recovery**: A one-time backup is performed during derivation, split into **Shamir 3-of-5 shares**. Shares are stored in physically separate, air-gapped locations (e.g., safe deposit box, 1Password vault, YubiKey).
 
-### Phase 2: Asymmetric Attestation (Upcoming)
-- Introduction of Dilithium3 (PQC) or Ed25519 (Classical) asymmetric pairs.
-- Enables public verification and private signing, isolating the signing root.
+### 3.2 DEVELOPMENT KEY (The Operator)
+*   **Generation**: Created in the macOS **System Keychain**.
+*   **Protection**: Encrypted by the user's login password + Apple's Secure Enclave for wrapping.
+*   **Usage**: Signs all ADRs (`docs/adr/`), `MANIFEST.json`, and issues temporary certificates to autonomous agents.
+*   **Rotation**: Rotated every 90 days via `tt keys rotate --dev`.
+*   **Roll**: Automated via CRL (Certificate Revocation List) update in the substrate's local state.
 
-### Phase 3: Hardware Root (Vision)
-- Integration with Secure Enclaves or Yubikeys for physical-presence signing.
-- Mandatory physical interaction for architectural mutations.
+### 3.3 AGENT KEYS (Sentinel / Engineer)
+*   **Generation**: Ephemeral keys generated in-memory upon agent invocation.
+*   **Protection**: Lives only in the agent's process memory (`Resident Memory`). Never written to disk.
+*   **Usage**: The agent self-signs its discoveries (debates, catalog entries, proposed patches).
+*   **Rotation**: Sentinel rotates daily; Engineer rotates weekly.
+*   **Roll**: Old keys are simply discarded; the Development key issues a new delegation certificate for the next window.
 
-## ⚖️ Governance Workflow
-Any modification to how keys are generated, stored, or utilized MUST be reflected in this document. The **`keybench-governor`** skill enforces consistency between the implementation and this registry.
+---
+
+## 4. Ironclad Protection: Prevent GitHub Leakage
+
+We enforce a **Hard Isolation Boundary** to ensure no private key material is ever accidentally committed to version control.
+
+### 4.1 Technical Gating (The "Zero-Leak" Boundary)
+1. **Physical Isolation**: All private keys are stored in the **macOS Keychain** or **Secure Enclave**. These are OS-level databases that Git cannot even "see." No `.key` or `.pem` files exist in the project root.
+2. **Deterministic `.gitignore`**: Our `.gitignore` enforces a "Deny-by-Default" policy for all potential key extensions:
+   ```bash
+   # Block all common key formats
+   *.key
+   *.pem
+   *.sig_key
+   *.pkcs8
+   # Block entire local security directories
+   .tachyon/keys/
+   memory/keys/
+   ```
+3. **Pre-Commit Entropy Scan**: Every `git commit` triggers a `tt audit` hook that scans for high-entropy strings, blocking any line that looks like a private key.
+4. **Agent Memory Purity**: Agents are architected to use `tachyon.core.signing` via a socket or internal API. They never physically touch a file containing a private key.
+
+### 4.2 GitHub Action "Verify-Only" Policy
+The CI environment (GitHub Actions) contains **Public Keys only**. 
+*   **Action**: CI runs `tt verify` to check ADR and code signatures.
+*   **Constraint**: CI lacks any private key. It is cryptographically incapable of signing. If an agent tries to "forge" a commit in CI, the verification step in the next local `tt ritual` will fail.
+
+---
+
+## 5. Summary: Key Flow
+
+1. **You** authenticate via Touch ID to the **Root Key**.
+2. **Root Key** authorizes the **Dev Key** for 90 days.
+3. **Dev Key** authorizes the **Sentinel** to sign the Catalog for 24 hours.
+4. **Sentinel** signs an exploit discovered in the wild.
+5. **Airlock** (you + Touch ID) co-signs the mitigation.
+6. **Result**: A forensically traceable, hardware-anchored security chain.
+
+---
+**End of Document**
