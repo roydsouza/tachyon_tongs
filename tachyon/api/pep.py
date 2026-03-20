@@ -13,6 +13,8 @@ from tachyon.enforcement import AppleSandbox
 from tachyon.policy.singularity import SingularityPDP
 from tachyon.core.routing import ModelRouter
 from tachyon.pipeline.orchestrator import run_supervisor
+from tachyon.sandbox.wasm_runner import WasmRunner
+from tachyon.sandbox.vm_runner import VmRunner
 
 class ToolRequest(BaseModel):
     agent_id: str
@@ -33,6 +35,8 @@ class PEPLayer:
         self.sandbox = AppleSandbox(workspace_dir="/tmp/tachyon_tier0")
         self.policy_engine = SingularityPDP()
         self.model_router = ModelRouter()
+        self.wasm_runner = WasmRunner()
+        self.vm_runner = VmRunner()
 
     async def execute(self, request: ToolRequest) -> ToolResponse:
         request_id = str(uuid.uuid4())
@@ -65,8 +69,21 @@ class PEPLayer:
                 bridge = StateBridge()
                 bridge.register_patch(patch_id, summary, status)
                 result = {"status": "SUCCESS", "result": f"Patch {patch_id} staged in Airlock."}
+            elif request.action == "SAFE_MATH":
+                # Tier 1: WASM Isolation
+                wasm_path = "tachyon/sandbox/tools/safe_math.wasm"
+                val1 = request.parameters.get("val1", 0)
+                val2 = request.parameters.get("val2", 0)
+                calc_result = self.wasm_runner.run_tool(wasm_path, "add", val1, val2)
+                result = {"status": "SUCCESS", "result": {"value": calc_result, "tier": 1}}
+            elif request.action == "AUTONOMIC_RECOVERY":
+                # Tier 0: MicroVM Isolation for high-risk recovery
+                self.vm_runner.provision_vm()
+                vm_cmd = request.parameters.get("command", "echo 'Substrate Secure'")
+                vm_result = self.vm_runner.execute_command(vm_cmd)
+                result = {"status": "SUCCESS", "result": {"output": vm_result, "tier": 0}}
             else:
-                # Generic action routing (to be extended)
+                # Generic action routing (Legacy Native Sandbox)
                 result = {"status": "SUCCESS", "result": f"Action {request.action} verified by Singularity."}
                 
         except Exception as e:

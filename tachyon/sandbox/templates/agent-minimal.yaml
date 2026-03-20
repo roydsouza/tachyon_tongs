@@ -1,0 +1,26 @@
+# Minimal Tachyon Agent MicroVM (Tier 0)
+# High-Assurance, Read-Only Rootfs, No Network by default.
+images:
+- location: "https://cloud-images.ubuntu.com/minimal/releases/noble/release/ubuntu-24.04-minimal-cloudimg-arm64.img"
+  arch: "aarch64"
+
+cpus: 1
+memory: "1GiB"
+
+mounts:
+- location: "/Users/rds/antigravity/tachyon_tongs/tachyon"
+  writable: false
+
+containerd:
+  system: false
+  user: false
+
+networks:
+- nix: "none"
+
+provision:
+- mode: boot
+  script: |
+    #!/bin/bash
+    echo "Tachyon Tongs Tier 0 MicroVM Bootstrapped."
+    # Lockdown: Disable SSH, restrict logs.
