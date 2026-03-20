@@ -21,9 +21,12 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[CORE]** Update **ModelRouter** for high-assurance local-first fallback [DONE]
 - [x] **[VERIFY]** Benchmarking and regression testing (3/3 passed) [DONE]
 
-### 🔳 [PLANNED] Phase 23: Hardware-Level Isolation
-- [ ] **[SANDBOX]** Prototype WASM-based tool isolation.
-- [ ] **[ISOLATION]** Explore MicroVM (Firecracker/Lima) for Tier-0 agents.
+# Phase 23: Hardware-Level Isolation [IN-PROGRESS]
+- [/] **[PLAN]** Research WASM and MicroVM orchestration for M5 [IN-PROGRESS]
+- [ ] **[ADR]** Author and sign **ADR-0027: Hardware Isolation Protocol**
+- [ ] **[CORE]** Implement **WasmRunner** (Tier 1) for lightweight tool-calls
+- [ ] **[CORE]** Implement **VmRunner** (Tier 0) for agent-level isolation
+- [ ] **[VERIFY]** Host-escape regression testing and performance benchmarking
 
 ### ✅ [COMPLETED] Phase 24: Event-Horizon Command Bridge
 - [x] **[API]** Implement **Unified Substrate Daemon** (FastAPI) [DONE]
