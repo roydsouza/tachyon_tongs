@@ -10,11 +10,11 @@ def test_is_package_whitelisted_blocks_unknown():
     # Should block unknown package
     assert not sm.is_package_whitelisted("malicious-pkg")
     
-    # Add an approved package to the catalog
+    # Add an approved package to the real whitelist table
     with sqlite3.connect("test_whitelist.db") as conn:
         conn.execute(
-            "INSERT OR REPLACE INTO exploitation_catalog (cve_id, relevance_class) VALUES (?, ?)",
-            ("safe-pkg", "APPROVED")
+            "INSERT OR REPLACE INTO package_whitelist (package_name, version, added_at) VALUES (?, ?, ?)",
+            ("safe-pkg", "1.0.0", "today")
         )
         conn.commit()
     
