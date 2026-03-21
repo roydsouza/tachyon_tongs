@@ -149,13 +149,13 @@ app.add_typer(keys_app, name="keys")
 @keys_app.command()
 def genesis():
     """Execute the Root Key Genesis Ceremony (Phase 25.1)."""
-    from scripts.generate_keys import genesis_ceremony
+    from tachyon.core.keys.operations import genesis_ceremony
     genesis_ceremony()
 
 @keys_app.command()
 def recover():
     """Execute the Resurrection Ceremony (3-of-5 recovery)."""
-    from scripts.generate_keys import recovery_drill
+    from tachyon.core.keys.operations import recovery_drill
     recovery_drill()
 
 @app.command()

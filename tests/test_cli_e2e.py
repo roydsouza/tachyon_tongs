@@ -22,6 +22,14 @@ class TestCLIArgParsing(unittest.TestCase):
         self.assertIn("genesis", result.stdout)
         self.assertIn("recover", result.stdout)
 
+    def test_tt_keys_import(self):
+        """Regression: Verify that the keys subcommand can actually import its logic."""
+        # This would have caught the scripts vs tachyon.core error
+        # We use --help on a subcommand which triggers the imports in the function body
+        result = subprocess.run(["tt", "keys", "genesis", "--help"], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("Execute the Root Key Genesis Ceremony", result.stdout)
+
     def test_cmd_routing(self):
         """Verify that basic commands return correct help or status without erroring on flags."""
         # Testing Typer-style commands (use --help to get 0 exit code for groups)
