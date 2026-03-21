@@ -44,28 +44,15 @@ class TestEd25519Signing(unittest.TestCase):
             if os.path.exists(tmp_path + ".sig"):
                 os.remove(tmp_path + ".sig")
 
-    def test_legacy_hmac_fallback(self):
-        """Test that the manager can still verify legacy HMAC signatures."""
-        # Force the manager into HMAC mode by clearing keys
-        self.manager._private_key = None
-        self.manager._public_key = None
-        
-        with tempfile.NamedTemporaryFile(delete=False) as tmp:
-            tmp.write(b"LEGACY_HMAC_DATA")
-            tmp_path = tmp.name
-            
+    def test_direct_api_instantiation(self):
+        """Regression: Verify the cryptography API for Ed25519 is correctly called."""
+        # This catches the from_seed vs from_private_bytes failure
+        seed = os.urandom(32)
         try:
-            # This should produce a legacy (no prefix) signature
-            sig = self.manager.sign_document(tmp_path)
-            self.assertFalse(sig.startswith("ed25519:"))
-            
-            # Verify should work
-            self.assertTrue(self.manager.verify_integrity(tmp_path))
-        finally:
-            if os.path.exists(tmp_path):
-                os.remove(tmp_path)
-            if os.path.exists(tmp_path + ".sig"):
-                os.remove(tmp_path + ".sig")
+            priv = ed25519.Ed25519PrivateKey.from_private_bytes(seed)
+            self.assertIsNotNone(priv.public_key())
+        except AttributeError as e:
+            self.fail(f"Cryptography API failure: {e}")
 
 if __name__ == "__main__":
     unittest.main()

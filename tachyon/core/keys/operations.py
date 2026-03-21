@@ -25,7 +25,7 @@ def genesis_ceremony():
     seed = secrets.token_bytes(32)
     
     # 2. Derive Ed25519 Public Key
-    priv_key = ed25519.Ed25519PrivateKey.from_seed(seed)
+    priv_key = ed25519.Ed25519PrivateKey.from_private_bytes(seed)
     pub_key = priv_key.public_key()
     pub_hex = pub_key.public_bytes_raw().hex()
     print(f"[+] Root Public Key Derived: {pub_hex}")
@@ -72,7 +72,7 @@ def recovery_drill():
         seed = reconstruct_secret(shares)
         
         # Verify via Public Key
-        priv_key = ed25519.Ed25519PrivateKey.from_seed(seed)
+        priv_key = ed25519.Ed25519PrivateKey.from_private_bytes(seed)
         pub_hex = priv_key.public_key().public_bytes_raw().hex()
         
         print(f"[✓] SIGN_OK: Reconstruction successful.")
