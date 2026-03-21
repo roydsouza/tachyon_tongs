@@ -95,12 +95,16 @@ Effector agents (such as the Engineer or Cleaner) making file-system mutations m
 
 ## 6. The Firewall Administrator & Operational Modes
 
-The **Firewall Administrator** acts as the overarching consciousness. It never performs raw labor (like scanning logs or writing code); instead, it orchestrates the collective based on predefined risk configurations and adaptive learning.
+The **Firewall Administrator** acts as the overarching consciousness of the entire substrate. It never performs raw labor (like scanning logs or writing code); instead, it orchestrates the collective based on predefined risk configurations and adaptive learning.
 
-**Handling Oversight:**
-- **HITL (Human-in-the-Loop):** Every change pauses in the Airlock. The Administrator pushes proposals with a "nag" styling demanding human confirmation.
-- **HOTL (Human-on-the-Loop):** Low/Medium risk patches execute automatically. High-risk actions send a Signal alert via the Herald with a time-bound veto window.
-- **HOOTL (Hands-out-of-the-Loop):** Fully autonomous operation. Generates a daily "Diplomatic Summary" via the Notifier without blocking operations.
+**Cognitive Engine (Local `llama.cpp` Inference):**
+To guarantee absolute operational security (OpSec), zero network latency, and continuous high availability, the Firewall Administrator is powered exclusively by a localized LLM (via `llama.cpp` compiled for Apple Silicon/Metal). This ensures that continuous, "always-on" meta-reasoning over sensitive substrate telemetry (alerts, file drifts, state changes, and patch strategies) *never* leaves the machine or incurs external cloud API bottlenecks.
+
+**Handling Oversight & Communication:**
+The Administrator manages the transition between oversight modes and adjusts verbosity thresholds. *Crucially, it is cryptographically air-gapped from external networks.* It does not integrate directly with Signal or email APIs. Instead, it delegates communication to the **Herald** agent via the EventBus:
+- **HITL (Human-in-the-Loop):** Every change pauses in the Airlock. The Administrator pushes an event to the Herald to format a "nag" styling demanding human confirmation via Signal.
+- **HOTL (Human-on-the-Loop):** Low/Medium risk patches execute automatically. High-risk actions prompt the Administrator to issue an alert through the Herald with a time-bound veto window.
+- **HOOTL (Hands-out-of-the-Loop):** Fully autonomous operation. Generates a daily "Diplomatic Summary" event, which the Herald consumes and transmits via Signal without blocking operations.
 
 ---
 
