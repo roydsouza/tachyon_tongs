@@ -49,6 +49,7 @@ tachyon/core/canary_sanitizer.py
 tachyon/core/capability_token.py
 tachyon/core/google_adk_mock.py
 tachyon/core/immune_manager.py
+tachyon/core/local_provider.py
 tachyon/core/metal_accelerator.py
 tachyon/core/routing.py
 tachyon/core/sanitizer.py
@@ -61,7 +62,6 @@ tachyon/core/wasm_benchmark.py
 tachyon/enforcement/__init__.py
 tachyon/enforcement/alignment_checker.py
 tachyon/enforcement/apple_sandbox.py
-tachyon/enforcement/daemon.py
 tachyon/enforcement/rate_limiter.py
 tachyon/enforcement/registry.py
 tachyon/enforcement/router.py
@@ -91,6 +91,8 @@ tachyon/protocol/__init__.py
 tachyon/protocol/client.py
 tachyon/protocol/mcp_gateway.py
 tachyon/protocol/mcp_resources.py
+tachyon/sandbox/vm_runner.py
+tachyon/sandbox/wasm_runner.py
 tachyon/utils/debate_logger.py
 tachyon_tongs.egg-info/PKG-INFO
 tachyon_tongs.egg-info/SOURCES.txt
@@ -98,16 +100,19 @@ tachyon_tongs.egg-info/dependency_links.txt
 tachyon_tongs.egg-info/entry_points.txt
 tachyon_tongs.egg-info/requires.txt
 tachyon_tongs.egg-info/top_level.txt
-tests/test_CVE.py
 tests/test_advanced.py
 tests/test_airlock_api.py
 tests/test_airlock_cli.py
 tests/test_airlock_oversight.py
 tests/test_alert_limiter.py
+tests/test_cli.py
 tests/test_future.py
 tests/test_immune_evolution.py
+tests/test_immune_loop.py
 tests/test_integrity_engine.py
+tests/test_local_routing.py
 tests/test_pdp_singularity.py
+tests/test_pep_isolation.py
 tests/test_policy_synthesis.py
 tests/test_quota_management.py
 tests/test_safe_fetch_regression.py
@@ -117,3 +122,4 @@ tests/test_sprint1_relevance.py
 tests/test_supply_chain.py
 tests/test_supply_chain_integrity.py
 tests/test_threat_filtering.py
+tests/test_wasm_sandbox.py

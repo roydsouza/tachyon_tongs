@@ -29,7 +29,7 @@ Tachyon Tongs employs a **tiered, hardware-bound cryptographic architecture** to
 ## 3. Detailed Key Lifecycle Procedures
 
 ### 3.1 ROOT KEY (The Sovereign)
-*   **Generation (The Genesis Ceremony)**: Triggered once via `tt keys genesis`. The substrate generates a 256-bit high-entropy **Seed** in volatile memory. This seed is used to derive the Ed25519 key *inside* the Apple Secure Enclave.
+*   **Generation (The Genesis Ceremony)**: [✓] **VERIFIED**. The Root of Trust was established on 2026-03-20. The substrate used a 256-bit high-entropy **Seed** in volatile memory to derive the initial Ed25519 key.
 *   **Backup (One-Time Execution)**: Immediately after generation, the **Seed** is split into 5 Shamir shares. These shares are displayed **once** in the terminal (hidden by default, revealed via Touch ID). 
     *   **Receiving Shares**: You must manually copy each share to its designated cold-storage location. The substrate **never** writes these shares to disk.
 *   **Protection**: Hardware-isolated. Operations (signing) happen inside the Enclave and are Touch ID-gated.
