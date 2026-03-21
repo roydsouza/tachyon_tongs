@@ -42,8 +42,12 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[CRYPTO]** Implement **Secure Enclave** root key via `pyobjc-framework-Security` [DONE]
 - [x] **[CRYPTO]** Implement **Shamir Secret Sharing** (3-of-5) for root key recovery [DONE]
 - [x] **[SCRIPTS]** Create `scripts/sign_artifact.py` (Ed25519), `scripts/verify_signature.py` [DONE]
-- [x] **[VERIFY]** Ironclad E2E regression tests for Ed25519 signing (SEC-001) [DONE]
-- [x] **[POST-MORTEM]** Codify Environment Identity & Retroactive Anchor [DONE]
+### 🔳 [IN-PROGRESS] Phase 25.2: Per-Agent Key Delegation
+- [x] **[CRYPTO]** Design HKDF derivation logic in `IntegrityManager` [DONE]
+- [ ] **[CRYPTO]** Implement `tt keys status` (Hierarchy Visualizer)
+- [ ] **[CRYPTO]** Generate and anchor sub-keys: **Sentinel**, **Engineer**, **Airlock**
+- [ ] **[CRYPTO]** Implement JSON **delegation certificates** (signed by Root)
+- [ ] **[VERIFY]** Tests for delegation certificate chain validation
 
 # Phase 26: CI/CD Hardening & Supply Chain Defense [PLANNED]
 - [ ] **[HOOKS]** Implement `.pre-commit-config.yaml` with signature verification

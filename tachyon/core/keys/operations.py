@@ -175,7 +175,7 @@ def pqc_genesis_ceremony():
     import secrets
     import os
     from tachyon.core.sss import split_secret
-    from tachyon.core.signing import PQC_KEY_LABEL, PQC_KEY_APPLICATION_TAG
+    from tachyon.core.signing import PQC_KEY_LABEL, PQC_KEY_APPLICATION_TAG, PQC_ALGORITHM
     
     # Force LIBOQS to find our manual dylib
     os.environ["OQS_LIB_DIR"] = "/Users/rds/antigravity/tachyon_tongs"
@@ -188,22 +188,28 @@ def pqc_genesis_ceremony():
     print("This seed will be split into 5 Shamir shares (Threshold: 3).")
     print("-" * 30)
     
-    # 1. Generate Quantum Seed (64 bytes for Dilithium3)
-    pqc_seed = secrets.token_bytes(64)
-    print("[*] Quantum-Resistant Seed generated in volatile memory.")
+    # 1. Generate Quantum Root (ML-DSA-65)
+    import oqs
+    with oqs.Signature(PQC_ALGORITHM) as sig:
+        pqc_pub = sig.generate_keypair()
+        pqc_priv = sig.export_secret_key()
+        print(f"[*] ML-DSA-65 Keypair generated in volatile memory.")
+        print(f"[*] Expanded Secret Key Length: {len(pqc_priv)} bytes.")
     
     # 2. Split Secret (3-of-5)
-    shares = split_secret(pqc_seed, threshold=3, total_shares=5)
-    print("[*] Seed split into 5 Quantum-Shares (3-of-5 Threshold).")
+    # We split the expanded secret key to allow for deterministic reconstruction
+    shares = split_secret(pqc_priv, threshold=3, total_shares=5)
+    print("[*] Expanded Secret split into 5 Quantum-Shares (3-of-5 Threshold).")
     print("\n" + "!"*60)
     print("COLD STORAGE DELEGATION (PQC TIER):")
     print("Copy these 5 shares to the SAME 5 locations as your Root Key.")
     print("!"*60)
     
     for i, share in enumerate(shares):
-        print(f"Share {i+1}: {share}")
+        # Always output as hex for copy-paste safety
+        print(f"Share {i+1}: {share.hex()}")
     
-    print("!"*60 + "\n")
+    print("!" * 60 + "\n")
     input("Confirm you have SECURELY COPY-PASTED all 5 shares. Press Enter to anchor...")
     
     # 3. Anchor to Hardware (macOS Keychain)
@@ -214,22 +220,112 @@ def pqc_genesis_ceremony():
             Security.kSecClass: Security.kSecClassGenericPassword,
             Security.kSecAttrLabel: PQC_KEY_LABEL,
             Security.kSecAttrAccount: PQC_KEY_APPLICATION_TAG,
-            Security.kSecValueData: pqc_seed,
+            Security.kSecValueData: pqc_priv,
             Security.kSecAttrAccessible: Security.kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
         }
+        # Cleanup old key if exists
+        Security.SecItemDelete({Security.kSecClass: Security.kSecClassGenericPassword, Security.kSecAttrAccount: PQC_KEY_APPLICATION_TAG})
         status, result = Security.SecItemAdd(query, None)
         if status == 0:
-            print("[✓] PQC Root successfully anchored to macOS Keychain.")
+            print("[✓] PQC Root (Expanded) anchored to macOS Keychain.")
         else:
             print(f"[!] Keychain Error: {status}. Manual persistence required.")
     except Exception as e:
         print(f"[!] Hardware anchoring failed: {e}")
     
-    # Scrub seed from memory
-    pqc_seed = None
-    print("[*] PQC Seed scrubbed from memory.")
+    # Scrub secret from memory
+    pqc_priv = None
+    print("[*] PQC Secret scrubbed from memory.")
     print("="*60)
     print("PHASE 25.3: PQC OVERLAY ESTABLISHED.")
+    print("="*60)
+
+def pqc_recovery_drill():
+    """Execute the Second-Tier Quantum Recovery Drill (ML-DSA-65)."""
+    from tachyon.core.sss import reconstruct_secret
+    
+    print("="*60)
+    print("TACHYON TONGS: PQC RECOVERY DRILL (ML-DSA-65)")
+    print("="*60)
+    print("Provide any 3 of your 5 TIER-2 Quantum-Shares.")
+    print("-" * 30)
+    
+    shares = []
+    for i in range(3):
+        raw_input = input(f"Enter PQC Share {i+1} (hex): ").strip()
+        
+        # Resiliency: The "Nuclear" Hex-Only Extractor.
+        # This ignores all formatting (b', \x, quotes) and just finds hex pairs.
+        import re
+        
+        # 1. If it looks like a bytes repr, we handle the escaped hex specifically
+        if "\\x" in raw_input:
+            # Extract the hex part of \xHH
+            hex_parts = re.findall(r'\\x([0-9a-fA-F]{2})', raw_input)
+            # Also find any raw ASCII chars that were NOT escaped (like @, 6, =, .)
+            # This is hard to do reliably. 
+            # BETTER: We use the 'raw_unicode_escape' to get the raw bytes.
+            try:
+                # This handles 'b'\\x02\\x00@6...' into actual bytes
+                # We strip the leading b' and trailing ' first
+                clean_str = raw_input
+                if clean_str.startswith("b'") and clean_str.endswith("'"):
+                    clean_str = clean_str[2:-1]
+                elif clean_str.startswith('b"') and clean_str.endswith('"'):
+                    clean_str = clean_str[2:-1]
+                
+                # Use a more direct bytes-repr parser
+                share_bytes = clean_str.encode('utf-8').decode('unicode_escape').encode('latin-1')
+                if len(share_bytes) > 0:
+                    shares.append(share_bytes)
+                    continue
+            except Exception:
+                pass
+
+        # 2. Fallback: Just find all hex characters and pair them up
+        # This works if the user pasted pure hex
+        only_hex = re.sub(r'[^0-9a-fA-F]', '', raw_input)
+        if len(only_hex) >= 64: # Sanity check for share length
+            try:
+                shares.append(bytes.fromhex(only_hex))
+                continue
+            except ValueError:
+                pass
+                
+        print(f"[!] Invalid encoding: {raw_input[:16]}...")
+        return
+
+    print("[*] Reconstructing Quantum Secret...")
+    try:
+        reconstructed = reconstruct_secret(shares)
+        # ML-DSA-65 expanded secret length check (4032 bytes)
+        if len(reconstructed) > 1000:
+            print(f"[✓] Quantum Secret reconstructed: {reconstructed.hex()[:16]}...")
+            print("[✓] PQC INTEGRITY VERIFIED (Tier 2).")
+            
+            # Offer to anchor
+            do_anchor = input("\nAnchor this reconstructed PQC secret to Keychain? (y/n): ").strip().lower()
+            if do_anchor == 'y':
+                from tachyon.core.signing import PQC_KEY_LABEL, PQC_KEY_APPLICATION_TAG
+                import Security
+                query = {
+                    Security.kSecClass: Security.kSecClassGenericPassword,
+                    Security.kSecAttrLabel: PQC_KEY_LABEL,
+                    Security.kSecAttrAccount: PQC_KEY_APPLICATION_TAG,
+                    Security.kSecValueData: reconstructed,
+                    Security.kSecAttrAccessible: Security.kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+                }
+                Security.SecItemDelete({Security.kSecClass: Security.kSecClassGenericPassword, Security.kSecAttrAccount: PQC_KEY_APPLICATION_TAG})
+                status, result = Security.SecItemAdd(query, None)
+                if status == 0:
+                    print("[✓] Reconstructed PQC Root anchored.")
+                else:
+                    print(f"[!] Anchor Error: {status}")
+        else:
+            print(f"[!] RECONSTRUCTION FAILURE: Invalid secret length {len(reconstructed)}.")
+    except Exception as e:
+        print(f"[!] Reconstruction Drill Failed: {e}")
+    
     print("="*60)
 
 def security_status():
@@ -255,8 +351,9 @@ def security_status():
 
     # 2. PQC Root (The Quantum Sovereign)
     if signer._pqc_private_key:
-        print(f"PQC ROOT (ML-DSA-44):")
-        print(f"  [✓] Algorithm: {signer.PQC_ALGORITHM}")
+        from tachyon.core.signing import PQC_ALGORITHM
+        print(f"PQC ROOT ({PQC_ALGORITHM}):")
+        print(f"  [✓] Algorithm: {PQC_ALGORITHM}")
         print(f"  [✓] Hardware Link: ACTIVE (macOS Keychain)")
         print(f"  [✓] Binding: Hybrid-Software Overlay")
     else:

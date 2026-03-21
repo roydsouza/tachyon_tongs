@@ -11,6 +11,8 @@ The architecture of Tachyon Tongs is a direct physical manifestation of its [THR
 - **Forensic Debate Monitoring**: Administrators can monitor the live cognitive reasoning of the Triad via the `debates/` directory. Each record captures the adversarial discourse (Engineer vs. Skeptic vs. Meta-Critic) in a humorous, high-fidelity markdown format, ensuring that security audits are both informative and transparent.
 - **Tamper Detection (Guardian IDS)**: Every ADR is a hybrid signed asset (Embedded JSON + External `.sig`). The `GuardianIDS` agent verifies these signatures against a cumulative **Merkle Root** stored in `docs/adr/MANIFEST.json`.
 - **Forensic Integrity**: Any structural drift or unauthorized mutation in the ADR history is detected as a Merkle violation.
+- **Tiered Sovereignty (PQC Overlay)**: Critically, all high-assurance artifacts are signed by a **Hybrid Root**. This combines hardware-bound Ed25519 (Physical Sovereign) with ML-DSA-65 (Quantum Sovereign, NIST Level 3) to ensure future-proofed integrity. 
+- **Deterministic Anchoring**: The PQC layer utilizes the **Expanded Secret Key** (4032 bytes) for hardware anchoring, ensuring that the public key remains deterministic across reloads from the macOS Keychain.
 - **Out-of-Band Resilience**: Planned integration with a remote attestation service for the Merkle Root ensures detection even if the local repository is compromised.
 
 ## 1. High-Level Component Topology

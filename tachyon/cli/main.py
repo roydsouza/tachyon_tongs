@@ -148,9 +148,21 @@ app.add_typer(keys_app, name="keys")
 
 @keys_app.command()
 def genesis():
-    """Execute the Root Key Genesis Ceremony (Phase 25.1)."""
+    """Execute the Root Key Genesis Ceremony (3-of-5 split)."""
     from tachyon.core.keys.operations import genesis_ceremony
     genesis_ceremony()
+
+@keys_app.command()
+def pqc_genesis():
+    """Execute the PQC Overlay Genesis Ceremony (ML-DSA-44)."""
+    from tachyon.core.keys.operations import pqc_genesis_ceremony
+    pqc_genesis_ceremony()
+
+@keys_app.command()
+def verify_pqc():
+    """Execute the PQC Recovery Drill (Tier 2)."""
+    from tachyon.core.keys.operations import pqc_recovery_drill
+    pqc_recovery_drill()
 
 @keys_app.command()
 def anchor():
@@ -159,10 +171,52 @@ def anchor():
     anchor_existing_key()
 
 @keys_app.command()
+def status():
+    """Show the current security status and key hierarchy."""
+    from tachyon.core.keys.operations import security_status
+    security_status()
+
+@keys_app.command()
 def recover():
     """Execute the Resurrection Ceremony (3-of-5 recovery)."""
     from tachyon.core.keys.operations import recovery_drill
     recovery_drill()
+
+@keys_app.command()
+def sign(file: str = typer.Argument(..., help="Path to the file to sign")):
+    """Sign a file with the Hybrid Root Key (ECC + PQC)."""
+    from tachyon.core.signing import IntegrityManager
+    import os
+    
+    if not os.path.exists(file):
+        console.print(f"[bold red]Error: File {file} not found.[/bold red]")
+        return
+        
+    signer = IntegrityManager()
+    with Progress(SpinnerColumn(), TextColumn("[cyan]Generating Hybrid Signature..."), console=console) as progress:
+        task = progress.add_task("Signing", total=None)
+        sig_path = signer.sign_document(file)
+        progress.update(task, completed=100)
+        
+    console.print(f"[bold green]✓ Signature created: {sig_path}[/bold green]")
+
+@keys_app.command()
+def verify(file: str = typer.Argument(..., help="Path to the file to verify")):
+    """Verify a file against its Hybrid signature."""
+    from tachyon.core.signing import IntegrityManager
+    import os
+    
+    if not os.path.exists(file):
+        console.print(f"[bold red]Error: File {file} not found.[/bold red]")
+        return
+        
+    signer = IntegrityManager()
+    result = signer.verify_integrity(file)
+    
+    if result:
+        console.print(f"[bold green]✓ {file}: Signature VALID (Hybrid Verified)[/bold green]")
+    else:
+        console.print(f"[bold red]✗ {file}: Signature INVALID or MISSING.[/bold red]")
 
 @app.command()
 def agent(

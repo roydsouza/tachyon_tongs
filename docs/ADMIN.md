@@ -7,8 +7,8 @@ The substrate uses a hierarchical, hardware-bound signing model (Phase 25.2+).
 
 ### 1.1 Root of Trust (The Sovereign)
 - **Primary**: Ed25519 key bound to macOS Keychain (Secure Enclave).
-- **Secondary (Planned)**: ML-DSA-44 (Dilithium3) for PQC-Hybrid assurance.
-- **Recovery**: 3-of-5 Shamir Secret Sharing (SSS).
+- **Secondary**: ML-DSA-65 (NIST Level 3) for PQC-Hybrid assurance. 
+- **Recovery**: 3-of-5 Shamir Secret Sharing (SSS) of the **Expanded Secret Key** (4032 bytes).
 
 ### 1.2 Agent Delegation (The Vassals)
 Agents do not hold the Root Key. They hold ephemeral Ed25519 sub-keys derived from the Root via HKDF.
@@ -20,10 +20,17 @@ Agents do not hold the Root Key. They hold ephemeral Ed25519 sub-keys derived fr
 
 ### 2.1 The Resurrection Ceremony (Key Recovery)
 If the host hardware is lost or compromised:
-1. Retrieve 3 of 5 Shamir shares from cold storage.
+
+#### TIER 1: Ed25519 Root (Physical Anchor)
+1. Retrieve 3 of 5 Ed25519 Shamir shares.
 2. Run `tt keys recover`.
 3. Provide shares to reconstruct the **Root Seed**.
-4. Anchor the reconstructed seed to the new hardware Keychain.
+
+#### TIER 2: ML-DSA-65 Root (Quantum Anchor)
+1. Retrieve 3 of 5 PQC Shamir shares.
+2. Run `tt keys verify-pqc`.
+3. Provide shares to reconstruct the **Quantum Seed**.
+4. Anchor to the new hardware Keychain.
 
 ### 2.2 Forensic Breach Response
 If an ADR signature or Manifest checksum fails:

@@ -264,3 +264,388 @@
 > INTEGRITY COMPROMISED: /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md was modified out-of-band! Halt.
 
 ---
+
+## [STATE_COMPROMISED] 2026-03-20 18:29:43
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> INTEGRITY COMPROMISED: Ed25519 signature mismatch for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 18:29:43
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> INTEGRITY COMPROMISED: Ed25519 signature mismatch for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 18:29:53
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> INTEGRITY COMPROMISED: Ed25519 signature mismatch for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 18:29:53
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> INTEGRITY COMPROMISED: Ed25519 signature mismatch for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 20:51:33
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 20:53:19
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 20:56:09
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 20:56:45
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 20:58:08
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 20:59:12
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 20:59:47
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:00:31
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:04:05
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Ed25519 signature detected but no public key available.
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:06:10
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:06:39
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:06:46
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:07:09
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:07:10
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:07:27
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:07:28
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:07:45
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:07:46
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:08:09
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:08:10
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:03
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:04
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:15
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:16
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:25
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:26
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:37
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:38
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:49
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:50
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:58
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:09:59
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:15
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:16
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:26
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:27
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:29
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:30
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:36
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:42
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:43
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:52
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:10:53
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:11:01
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:11:02
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:11:57
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:12:06
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:12:22
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:12:23
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:12:25
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---
+
+## [STATE_COMPROMISED] 2026-03-20 21:12:26
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> SECURITY BREACH: PQC Signature MISSING for /Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md in Hybrid Mode!
+
+---

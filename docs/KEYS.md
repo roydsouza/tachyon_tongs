@@ -17,10 +17,11 @@ Tachyon Tongs employs a **tiered, hardware-bound cryptographic architecture** to
 ## 2. The Chain of Trust (Hierarchical Delegation)
 Phase 25.2 introduces a **Vassal-Sovereign Delegation Model** to minimize the exposure of the hardware Root Key.
 
-### 2.1 The Sovereign (Root Key)
-- **Status**: [✓] **ANCHORED** to macOS Keychain.
-- **Role**: Signs the `ROOT_MANIFEST.json` and delegates authority to agent sub-keys.
-- **Protection**: Secure Enclave (SEP) hardware isolation.
+### 2.1.2 PQC Root (Tier 2 Sovereign)
+- **Status**: [✓] **ANCHORED** to macOS Keychain (Post PQC-Genesis).
+- **Role**: Provides quantum-resistant signing overlay (ML-DSA-65).
+- **Protection**: 2nd-Tier 3-of-5 Shamir Secret Sharing.
+- **Recovery**: `tt keys verify-pqc`
 
 ### 2.2 The Vassals (Agent Keys)
 - **Status**: [✓] **DERIVED** via HKDF-SHA256 from the Root.
@@ -66,14 +67,11 @@ Phase 25.2 introduces a **Vassal-Sovereign Delegation Model** to minimize the ex
 *   **Rotation**: Rotated every 90 days via `tt keys rotate --dev`.
 *   **Roll**: Automated via CRL (Certificate Revocation List) update in the substrate's local state.
 
-### 3.3 PHASE 3: Post-Quantum Hybrid (PQC)
-*   **Target**: Quantum Resistance (NIST FIPS 204).
-*   **Algorithm**: **ML-DSA-44** (Dilithium3).
-*   **Hardware Limitation**: Current Apple Silicon (M5) does not natively support ML-DSA-44 in the Secure Enclave.
-*   **Hybrid Strategy**: **The Hybrid Root**. We will use a dual-signature model:
-    1.  `Signature A`: Hardware-bound Ed25519 (Security).
-    2.  `Signature B`: Software-managed ML-DSA-44 (Quantum Resistance).
-*   **Verification**: The substrate requires **both** signatures to pass for high-assurance artifacts.
+### 3.2.2 PQC Root (Tier 2 Sovereign)
+*   **PQC Generation**: [✓] **VERIFIED**. Established on 2026-03-21.
+*   **PQC Algorithm**: **ML-DSA-65** (NIST Level 3).
+*   **PQC Backup**: Immediately after generation, the 4032-byte **Expanded Secret Key** is split into 5 Shamir shares (Tier 2).
+*   **PQC Recovery**: Triggered via `tt keys verify-pqc`. Reconstructs the expanded secret in-memory to verify integrity and re-anchor to the hardware Keychain.
 
 ### 3.3 AGENT KEYS (Sentinel / Engineer)
 *   **Generation**: Ephemeral keys generated in-memory upon agent invocation.

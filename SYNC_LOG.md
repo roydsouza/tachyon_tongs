@@ -326,3 +326,12 @@ This log tracks technical decisions, mission-critical state transitions, and syn
     - Established `/push` workflow in `.agent/workflows/push.md`.
     - Updated `AGENTS.md` with entry/exit protocols.
 - **Status**: Initialization complete. Ready for formal checkpoint.
+
+## [2026-03-21] - Phase 25.4: Hybrid PQC Overlay Finalized
+- **Session Focus**: Finalizing the Quantum-Resistant Hybrid Root (ECC + PQC).
+- **Key Changes**:
+    - Hardened  with stateless ML-DSA-65 (NIST Level 3) verification.
+    - Updated PQC storage to use **Expanded Secret Keys** (4032 bytes) for deterministic anchoring.
+    - Retroactively signed all 28 ADRs and  with Hybrid Root.
+    - Updated , , and  with tiered sovereignty details.
+- **Status**: Substrate is now Quantum-Ready. Hybrid signatures active.

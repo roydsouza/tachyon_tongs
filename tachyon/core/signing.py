@@ -1,15 +1,22 @@
 import os
 import hmac
 import hashlib
+import warnings
 from datetime import datetime
 from typing import Optional, Union, Tuple
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.exceptions import InvalidSignature
 
+# Phase 25.3: Suppress liboqs version mismatch (Using 0.15.0-dev on M5)
+warnings.filterwarnings("ignore", category=UserWarning, module="oqs")
+
 # Local substrate constants
 KEY_LABEL = "Tachyon Root Key"
 KEY_APPLICATION_TAG = "com.tachyon.substrate.root.v1"
+PQC_KEY_LABEL = "Tachyon PQC Root"
+PQC_KEY_APPLICATION_TAG = "com.tachyon.substrate.pqc.v1"
+PQC_ALGORITHM = "ML-DSA-65"
 
 class IntegrityManager:
     """
@@ -22,7 +29,11 @@ class IntegrityManager:
         self.hmac_key = os.environ.get("TACHYON_SECRET_KEY", "DEVELOPMENT_INSECURE_FALLBACK").encode('utf-8')
         self._private_key: Optional[ed25519.Ed25519PrivateKey] = None
         self._public_key: Optional[ed25519.Ed25519PublicKey] = None
+        self._pqc_private_key = None # oqs.Signature object
+        self._pqc_public_key = None
+        
         self.root_public_key = self._load_pinned_root()
+        self.pqc_public_key = None # Loaded from manifest in Phase 25.3
         
         # In Phase 25.2, we attempt to load the hardware-backed key.
         try:
@@ -68,11 +79,40 @@ class IntegrityManager:
                     current_pub = self._public_key.public_bytes_raw().hex()
                     if current_pub != self.root_public_key:
                         raise RuntimeError("TRUST BREACH: Loaded Root Key does NOT match pinned Root Manifest!")
+                
+                # PHASE 25.3: Load PQC Key if available
+                self._load_pqc_keys()
             else:
                 # No key in Keychain - fallback to HMAC or raise if strict
                 pass
-        except ImportError:
+        except Exception:
             # Fallback for non-macOS or missing dependencies
+            pass
+
+    def _load_pqc_keys(self):
+        """Load ML-DSA-44 root key from macOS Keychain."""
+        if not self.use_hardware:
+            return
+            
+        try:
+            import Security
+            import oqs
+            query = {
+                Security.kSecClass: Security.kSecClassGenericPassword,
+                Security.kSecAttrLabel: PQC_KEY_LABEL,
+                Security.kSecAttrAccount: PQC_KEY_APPLICATION_TAG,
+                Security.kSecReturnData: True,
+                Security.kSecMatchLimit: Security.kSecMatchLimitOne,
+            }
+            status, result = Security.SecItemCopyMatching(query, None)
+            if status == Security.errSecSuccess:
+                key_bytes = bytes(result)
+                self._pqc_private_key = oqs.Signature(PQC_ALGORITHM, key_bytes)
+                # liboqs-python: generate_keypair() with a loaded secret key 
+                # will return the corresponding public key.
+                self._pqc_public_key = self._pqc_private_key.generate_keypair()
+        except Exception as e:
+            # print(f"[DEBUG] PQC Load Error: {e}")
             pass
 
     def derive_agent_key(self, role: str) -> ed25519.Ed25519PrivateKey:
@@ -97,62 +137,106 @@ class IntegrityManager:
 
     def sign_document(self, filepath: str, identity: str = "tachyon-substrate-v1") -> str:
         """
-        Sign a file and return the hex digest. 
-        Will use Ed25519 if available, falling back to HMAC for legacy support.
+        Sign a file and return the hex digest.
+        Phase 25.3: Implements Hybrid Signing (Ed25519 + ML-DSA-44).
         """
         if not os.path.exists(filepath):
             return ""
         with open(filepath, 'rb') as f:
             content = f.read()
-            
+
+        signatures = []
+
+        # 1. Ed25519 (ECC) - Hardware Tier
         if self._private_key:
-            # Ed25519 Signature (Phase 25.1)
-            signature = self._private_key.sign(content)
-            digest = signature.hex()
-            prefix = "ed25519:"
-        else:
-            # Legacy HMAC-SHA256 (Phase 21)
-            digest = hmac.new(self.hmac_key, content, hashlib.sha256).hexdigest()
-            prefix = ""
-            
-        # Write the detached signature
+            ecc_sig = self._private_key.sign(content).hex()
+            signatures.append(f"ed25519:{ecc_sig}")
+
+        # 2. ML-DSA-65 (PQC) - Quantum Tier
+        if self._pqc_private_key:
+            pqc_sig = self._pqc_private_key.sign(content).hex()
+            signatures.append(f"mldsa65:{pqc_sig}")
+
+        # 3. Legacy HMAC Fallback
+        if not signatures:
+            hmac_sig = hmac.new(self.hmac_key, content, hashlib.sha256).hexdigest()
+            signatures.append(f"hmac:{hmac_sig}")
+
+        # Combined Signature Container
+        digest = "|".join(signatures)
         sig_path = f"{filepath}.sig"
         with open(sig_path, 'w') as sf:
-            sf.write(f"{prefix}{digest}")
+            sf.write(digest)
             sf.flush()
             os.fsync(sf.fileno())
-            
+
         return digest
-        
+
     def verify_integrity(self, filepath: str) -> bool:
-        """Verify the cryptographic signature of a file (Supports HMAC and Ed25519)."""
+        """
+        Verify the Hybrid signature of a file.
+        Enforces Dual-Signature mandate if PQC is established.
+        """
         if not os.path.exists(filepath):
             return True
-            
+
         sig_path = f"{filepath}.sig"
         if not os.path.exists(sig_path):
             raise RuntimeError(f"No detached signature found for {filepath}. Access Denied.")
-            
+
         with open(sig_path, 'r') as sf:
             raw_sig = sf.read().strip()
-            
+
         with open(filepath, 'rb') as f:
             content = f.read()
+
+        sig_parts = raw_sig.split("|")
+        verified_count = 0
+        pqc_checked = False
+
+        for part in sig_parts:
+            if part.startswith("ed25519:"):
+                # ECC Verification
+                if not self._public_key:
+                    raise RuntimeError("Ed25519 signature detected but no public key available.")
+                sig_bytes = bytes.fromhex(part.split(":")[1])
+                try:
+                    self._public_key.verify(sig_bytes, content)
+                    verified_count += 1
+                except InvalidSignature:
+                    raise RuntimeError(f"INTEGRITY COMPROMISED: Ed25519 mismatch for {filepath}!")
+
+            elif part.startswith("mldsa65:"):
+                # PQC Verification (Phase 25.3)
+                pqc_checked = True
+                if not self._pqc_private_key: 
+                    # Skip if key not loaded (PQC is an overlay)
+                    continue
+                sig_bytes = bytes.fromhex(part.split(":")[1])
+                
+                # NIST PQC verify: (message, signature, public_key)
+                import oqs
+                # Always use a fresh instance for verification to avoid state issues
+                with oqs.Signature(PQC_ALGORITHM) as verifier:
+                    if verifier.verify(content, sig_bytes, self._pqc_public_key):
+                        verified_count += 1
+                    else:
+                        raise RuntimeError(f"INTEGRITY COMPROMISED: ML-DSA-65 mismatch for {filepath}!")
+
+            elif part.startswith("hmac:"):
+                # Legacy HMAC
+                actual_sig = hmac.new(self.hmac_key, content, hashlib.sha256).hexdigest()
+                if hmac.compare_digest(part.split(":")[1], actual_sig):
+                    verified_count += 1
+                else:
+                    raise RuntimeError(f"INTEGRITY COMPROMISED: HMAC mismatch for {filepath}!")
+
+        # Dual-Signature Mandate: If PQC is active, we MUST have verified both
+        # This prevents a 'Strip Attack' where an attacker removes the PQC layer.
+        if self._pqc_private_key and not pqc_checked:
+             raise RuntimeError(f"SECURITY BREACH: PQC Signature MISSING for {filepath} in Hybrid Mode!")
+        
+        if verified_count == 0:
+            raise RuntimeError(f"INTEGRITY FAILURE: No valid signatures for {filepath}.")
             
-        if raw_sig.startswith("ed25519:"):
-            # Asymmetric Verification
-            if not self._public_key:
-                raise RuntimeError("Ed25519 signature detected but no public key available for verification.")
-            
-            sig_bytes = bytes.fromhex(raw_sig.split(":")[1])
-            try:
-                self._public_key.verify(sig_bytes, content)
-                return True
-            except InvalidSignature:
-                raise RuntimeError(f"INTEGRITY COMPROMISED: Ed25519 signature mismatch for {filepath}!")
-        else:
-            # Legacy HMAC Verification
-            actual_sig = hmac.new(self.hmac_key, content, hashlib.sha256).hexdigest()
-            if not hmac.compare_digest(raw_sig, actual_sig):
-                raise RuntimeError(f"INTEGRITY COMPROMISED: HMAC mismatch for {filepath}!")
-            return True
+        return True

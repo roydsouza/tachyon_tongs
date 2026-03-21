@@ -138,10 +138,25 @@ The GitHub repository is the "Source of Truth" for the substrate's architecture.
     - **Log Rotation**: Implement the planned archival script to prune historical phases to `ACCOMPLISHMENTS.md` and rotate `RUN_LOG.md` at a configurable size threshold.
     - **Anomaly Detection**: The Guardian audit should flag unusual log-write velocity as a potential DoS indicator.
 
-### B. Singleton State Poisoning
-- **Description**: The `StateManager` uses a thread-locked Singleton pattern (`_instance`). If any agent (or test) corrupts the singleton's internal state (e.g., by modifying `db_path` or `integrity`), the corruption propagates to all subsequent agents in the same process.
-- **Impact**: Silent integrity bypass across the entire substrate. A compromised Canary could poison the state that the Guardian later trusts.
+## 10. Key Delegation & Sub-Key Compromise (Phase 25.2)
+
+The transition to a hierarchical key model introduces specific risks regarding derived agent keys.
+
+### A. Sub-Key Exfiltration (Sentinel/Engineer)
+- **Description**: An attacker compromises an active agent session and steals the derived Ed25519 sub-key from volatile memory.
+- **Impact**: Attacker can forge signatures for that specific agent (e.g., a Sentinel can forge a "Clean" report). However, they CANNOT forge the Root Key or other agent keys.
+- **Tachyon Mitigation**: 
+    - **Ephemeral Sub-Keys**: Agent keys are derived from the hardware Root Key on-demand and are never persisted to disk.
+    - **Session Gating**: Sub-key derivation requires a hardware "unlock" (Touch ID) if strict mode is enabled.
+
+### B. Keychain Poisoning (Local Persistence)
+- **Description**: An attacker with local admin access modifies the macOS Keychain entry to replace the legitimate Root Seed with a malicious one.
+- **Impact**: The substrate continues to function but signs against an attacker-controlled key, allowing for "Shadow Substrate" operations.
 - **Tachyon Mitigation**:
-    - **Immutable Singleton Fields**: After initialization, `db_path` and `integrity` references should be frozen (e.g., via `__setattr__` guard or dataclass wrapping).
-    - **Per-Agent State Isolation (Planned)**: In HOTL/HOOTL modes, each agent role should operate with a scoped `StateManager` view rather than a shared global singleton.
-    - **Integrity Re-verification**: The Guardian should re-verify catalog integrity *after* each agent action, not just at boot.
+    - **Manifest Pinning**: The `ROOT_MANIFEST.json` contains the expected Public Key fingerprint. The substrate performs a "Sanity Check" on boot; if the Keychain key does not match the pinned manifest, it triggers a `TRUST_BREACH` halt.
+
+## 11. Environment Identity & Path Hijacking (N-Version)
+- **Description**: An attacker exploits an "Environmental Disconnect" (like the Phase 25.2 debacle) to run a malicious version of the substrate in a shadow environment (e.g., a poisoned `pyenv` shim) that the user mistakes for the real one.
+- **Tachyon Mitigation**:
+    - **SEC-001 (Environment Identity)**: Mandatory zero-mock E2E testing against the user's active `python3` binary.
+    - **Signed Path Discovery**: The `tt` command verifies its own absolute path against a signed manifest on startup.
