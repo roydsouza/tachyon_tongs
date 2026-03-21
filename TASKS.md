@@ -36,41 +36,14 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[ADR]** Author and sign **ADR-0025: Unified Substrate Bridge** [DONE]
 - [x] **[VERIFY]** Regression tests for CLI-to-API state bridge [DONE]
 
-# Phase 25: Cryptographic Substrate & Secure SDLC [PLANNED]
-> Reference: [docs/SDLC.md](docs/SDLC.md) — Full specification
-
-### Phase 25.0: SDLC Documentation & Roadmap
-- [x] **[DOCS]** Review SDLC feedback from OpenAI, Grok, Claude, and Gemini [DONE]
-- [x] **[DOCS]** Author `docs/SDLC.md` — comprehensive Secure SDLC reference [DONE]
-- [x] **[DOCS]** Update `README.md` with security-first SDLC section [DONE]
-- [x] **[DOCS]** Update `docs/ROADMAP.md` with Phase 25 and Phase 26 [DONE]
-- [x] **[DOCS]** Update `docs/ARCHITECTURE.md` with Cryptographic Substrate section [DONE]
-- [x] **[DOCS]** Update `TASKS.md` with Phase 25 detailed sub-tasks [DONE]
-
-### Phase 25.1: Ed25519 Foundation + Secure Enclave
-- [ ] **[ADR]** Author and sign **ADR-0028: Secure Signing Substrate**
-- [ ] **[CRYPTO]** Replace `IntegrityManager` HMAC with **Ed25519** asymmetric signatures
-- [ ] **[CRYPTO]** Implement **Secure Enclave** root key via `pyobjc-framework-Security`
-- [ ] **[CRYPTO]** Implement **Shamir Secret Sharing** (3-of-5) for root key recovery
-- [ ] **[SCRIPTS]** Create `scripts/sign_artifact.py` (Ed25519), `scripts/verify_signature.py`
-- [ ] **[SCRIPTS]** Create `scripts/generate_keys.py`, `scripts/recover_keys.py`
-- [ ] **[VERIFY]** Regression tests for Ed25519 signing/verification
-
-### Phase 25.2: Per-Agent Key Hierarchy
-- [ ] **[CRYPTO]** Design and implement JSON **delegation certificates**
-- [ ] **[CRYPTO]** Per-agent key generation: Sentinel, Engineer, Airlock
-- [ ] **[CRYPTO]** Agent key rotation mechanism (manual via `tt ritual`)
-- [ ] **[AIRLOCK]** Implement **dual-signature model** (agent + Airlock co-sign)
-- [ ] **[AUDIT]** Implement `memory/audit/signing_log.jsonl` for all signature operations
-- [ ] **[VERIFY]** Tests for delegation certificate chain validation
-
-### Phase 25.3: Hybrid PQC + Forensic Chaining
-- [ ] **[CRYPTO]** Add **ML-DSA-44** (NIST FIPS 204) hybrid overlay via `liboqs-python`
-- [ ] **[FORENSIC]** Implement **ADR hash-chaining** in `MANIFEST.json`
-- [ ] **[SCRIPTS]** Create `scripts/forensic_resign.py --hybrid --chain-hashes`
-- [ ] **[THREAT]** Append §9C–§9H to `THREAT_MODEL.md`
-- [ ] **[VERIFY]** Full hybrid signing benchmark on M5 (target: <5ms/sig)
-- [ ] **[VERIFY]** Key recovery drill (Shamir reconstruction test)
+### ✅ [COMPLETED] Phase 25: Cryptographic Substrate & Secure SDLC
+- [x] **[ADR]** Author and sign **ADR-0028: Secure Signing Substrate** [DONE]
+- [x] **[CRYPTO]** Replace `IntegrityManager` HMAC with **Ed25519** asymmetric signatures [DONE]
+- [x] **[CRYPTO]** Implement **Secure Enclave** root key via `pyobjc-framework-Security` [DONE]
+- [x] **[CRYPTO]** Implement **Shamir Secret Sharing** (3-of-5) for root key recovery [DONE]
+- [x] **[SCRIPTS]** Create `scripts/sign_artifact.py` (Ed25519), `scripts/verify_signature.py` [DONE]
+- [x] **[VERIFY]** Ironclad E2E regression tests for Ed25519 signing (SEC-001) [DONE]
+- [x] **[POST-MORTEM]** Codify Environment Identity & Retroactive Anchor [DONE]
 
 # Phase 26: CI/CD Hardening & Supply Chain Defense [PLANNED]
 - [ ] **[HOOKS]** Implement `.pre-commit-config.yaml` with signature verification

@@ -40,4 +40,5 @@ To guarantee that the backup is ironclad without permanently storing the secret 
 - **Negative**: Risk of "Share Loss" if more than 2 locations are compromised or destroyed.
 
 ## Integrity Attestation
-*(To be signed upon Phase 25.1 execution)*
+**[✓] SIGNED** by Root Key `1a2ff0...81047` on 2026-03-20.
+Verified hardware anchor status.
