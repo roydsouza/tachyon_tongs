@@ -139,6 +139,22 @@ def immune():
     else:
         console.print(f"[bold red]Scan Failed:[/bold red] {results.get('reason')}")
 
+# --- Key Management Command Group ---
+keys_app = typer.Typer(help="Manage cryptographic keys and hardware anchors.")
+app.add_typer(keys_app, name="keys")
+
+@keys_app.command()
+def genesis():
+    """Execute the Root Key Genesis Ceremony (Phase 25.1)."""
+    from scripts.generate_keys import genesis_ceremony
+    genesis_ceremony()
+
+@keys_app.command()
+def recover():
+    """Execute the Resurrection Ceremony (3-of-5 recovery)."""
+    from scripts.generate_keys import recovery_drill
+    recovery_drill()
+
 @app.command()
 def agent(
     action: str = typer.Argument(..., help="list|run|stop|restart"),
