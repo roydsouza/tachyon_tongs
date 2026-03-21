@@ -8,6 +8,8 @@ class BaseTachyonAgent(ABC):
     """
     Unified Base Substrate for all Tachyon Tongs Agents.
     Provides forensic signing, input sanitization, and state management.
+    Includes an asynchronous 'heartbeat' mechanism to validate identity against 
+    the substrate's Certificate Revocation List (CRL) via TelemetryBus.
     """
     def __init__(self, agent_id: str, role_name: str):
         self.agent_id = agent_id

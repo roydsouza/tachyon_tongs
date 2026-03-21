@@ -21,7 +21,11 @@ class KeychainProvider:
     def _load_pinned_root(self) -> Optional[str]:
         """Retrieve the pinned Root Public Key from ROOT_MANIFEST.json."""
         import json
-        manifest_path = "ROOT_MANIFEST.json"
+        # Resolve project root (tachyon/core/keys/provider.py -> root)
+        this_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(this_dir)))
+        manifest_path = os.path.join(project_root, "ROOT_MANIFEST.json")
+        
         if os.path.exists(manifest_path):
             try:
                 with open(manifest_path, 'r') as f:

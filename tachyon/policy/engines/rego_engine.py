@@ -93,12 +93,21 @@ class RegoPolicyEngine(PolicyEngine):
 
     def _verify_policy_integrity(self):
         """Recursively verifies all .rego files in the policy directory."""
+        if not os.path.exists(self.policy_dir):
+            return
+            
         for root, _, files in os.walk(self.policy_dir):
             for file in files:
                 if file.endswith(".rego"):
                     path = os.path.join(root, file)
-                    # IntegrityManager.verify_integrity raises RuntimeError if digest mismatch
-                    self.integrity_manager.verify_integrity(path)
+                    sig_path = path + ".sig"
+                    
+                    if not os.path.exists(sig_path):
+                        raise RuntimeError(f"Missing mandatory signature sidecar: {file}.sig")
+                        
+                    # IntegrityManager.verify_integrity returns False if mismatch
+                    if not self.integrity_manager.verify_integrity(path):
+                        raise RuntimeError(f"Integrity check failed for {file}")
 
     @property
     def engine_id(self) -> str:

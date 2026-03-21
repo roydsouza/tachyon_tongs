@@ -39,14 +39,8 @@ def test_state_manager_integrity_signing(clean_state):
     assert os.path.exists(catalog_path)
     assert os.path.exists(sig_path)
     
-    with open(sig_path, "r") as f:
-        sig = f.read().strip()
-        
-    with open(catalog_path, "rb") as f:
-        content = f.read()
-        
-    expected_sig = hmac.new(sm.integrity.secret_key, content, hashlib.sha256).hexdigest()
-    assert sig == expected_sig
+    # Verify via the official IntegrityManager logic (handles Hybrid PQC)
+    assert sm._verify_catalog_integrity(catalog_path) is True
 
 def test_state_manager_tampering_detection(clean_state):
     sm, catalog_path, sig_path = clean_state

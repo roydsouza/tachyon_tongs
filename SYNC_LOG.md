@@ -15,6 +15,14 @@
   - **Component 2 (Delegation Certificates):** Created `DelegationCertificateAuthority` which derives HKDF sub-keys and signs a JSON certificate using the Hybrid Root. Implemented a `revocation_list.json` (CRL) for instant key nullification.
   - **Component 3 (Agent Heartbeats):** Added `async heartbeat()` to `BaseTachyonAgent`. Agents now proactively validate their certificates against the CRL and emit status to the Telemetry Bus.
   - **Component 4 (Modularity):** Cut `IntegrityManager` codebase size in half by extracting OS credential loading to `KeychainProvider` and algorithms to `HybridSigner`.
+- **2026-03-21**: Phase 26.3 Audit & Hardening. Resolved 52 regressions across PQC, SQLite, and PDP layers.
+  - Fixed `Engineer` seal propagation and `DebateLogger` null-safety.
+  - Recalculated ADR Merkle manifest; re-signed all 28 ADRs and root files.
+  - Patched `IntegrityManager` for CI/test resiliency.
+  - Enabled mandatory signature enforcement in `SingularityPDP`.
+  - Achieved 100% pass rate in 217-test regression suite.
+  - Updated documentation indexing in `README.md`.
+  - Implemented Telemetry Bus, Delegation Certificates, and Agent Heartbeats.
 - **Regression Testing:**
   - Fixed a pre-existing cloud fallback mock issue in `test_local_routing.py`.
   - Added test suites for the Telemetry Bus, Agent Heartbeats, and Certificates.

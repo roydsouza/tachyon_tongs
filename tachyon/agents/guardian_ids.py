@@ -76,15 +76,18 @@ class GuardianIDS:
             calculated_hashes[filename] = actual_hash
 
             # B. Sidecar Verification (High-Assurance HMAC)
-            try:
-                self.integrity.verify_integrity(filepath)
-            except RuntimeError as e:
-                if "No detached signature found" in str(e):
-                    report["status"] = "WARNING"
-                    report["findings"].append(f"MISSING_SIDECAR: {filename}.sig is missing.")
-                else:
+            if not os.path.exists(sig_path):
+                report["status"] = "WARNING"
+                report["findings"].append(f"MISSING_SIDECAR: {filename}.sig is missing.")
+            else:
+                try:
+                    is_valid = self.integrity.verify_integrity(filepath)
+                    if not is_valid:
+                        report["status"] = "CRITICAL"
+                        report["findings"].append(f"INTEGRITY_VIOLATION: HMAC Sidecar mismatch for {filename}")
+                except Exception as e:
                     report["status"] = "CRITICAL"
-                    report["findings"].append(f"INTEGRITY_VIOLATION: HMAC Sidecar mismatch for {filename} ({str(e)})")
+                    report["findings"].append(f"INTEGRITY_VIOLATION: Signature error for {filename}: {str(e)}")
 
             # C. Embedded Verification
             embedded_hash = self.extract_embedded_hash(filepath)

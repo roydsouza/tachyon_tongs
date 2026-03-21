@@ -22,7 +22,7 @@ class TestTriadSupervisor(unittest.TestCase):
         
     @patch('tachyon.agents.sentinel.scraper.VulnerabilityScraper.scrape_new_threats')
     def test_supervisor_routes_scraped_threats(self, mock_scrape):
-        mock_scrape.return_value = [{"cve_id": "TEST-1", "description": "foo"}]
+        mock_scrape.return_value = [{"cve_id": "TEST-1", "description": "LLM Prompt Injection attack discovered."}]
         
         # When the Supervisor is run
         final_state = run_supervisor("", run_scraper=True)

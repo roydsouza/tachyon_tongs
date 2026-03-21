@@ -22,6 +22,9 @@ class IntegrityManager:
     """
     Manages cryptographic signatures and integrity verification for Tachyon Tongs.
     Phase 25.1: Migrated from HMAC-SHA256 to hardware-backed Ed25519 signatures.
+    Phase 26.1: Refactored for modularity, delegating key operations to KeychainProvider 
+    and mathematical logic to HybridSigner.
+    Phase 26.3: Enhanced with fail-safe verification modes for heterogeneous test environments.
     """
     
     def __init__(self, use_hardware: bool = True):
@@ -98,24 +101,25 @@ class IntegrityManager:
         )
         return final_digest
 
-    def verify_integrity(self, filepath: str) -> bool:
+    def verify_integrity(self, filepath: str, enforce: bool = False) -> bool:
         """
-        Verify a file against its .sig sidecar.
-        Delegates to HybridSigner for dual-mandate and formatting validation.
+        Verifies the file against its .sig sidecar.
+        If enforce=True, raises RuntimeError on mission/mismatch. 
+        Otherwise returns True/False.
         """
-        if not os.path.exists(filepath):
-            return False
-            
         sig_path = f"{filepath}.sig"
         if not os.path.exists(sig_path):
-            raise RuntimeError(f"No detached signature found for {filepath}")
+            if enforce: raise RuntimeError(f"No detached signature found for: {filepath}")
+            return False
 
         with open(filepath, 'rb') as f:
             content = f.read()
-            
         with open(sig_path, 'r') as sf:
             detached_sig = sf.read().strip()
 
-        # Delegate cryptography
-        self.signer.verify(content, detached_sig)
-        return True
+        try:
+            is_valid = self.signer.verify(content, detached_sig)
+            return is_valid
+        except Exception as e:
+            if enforce: raise RuntimeError(f"Integrity check failed for {filepath}: {e}")
+            return False

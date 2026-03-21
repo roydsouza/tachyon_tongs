@@ -17,11 +17,16 @@ def test_rego_integrity_enforcement():
         f.write('package test\ndefault allow = false')
     
     # Sig file is missing, so Rego engine should return DENY with integrity error
+    # We must configure the PDP to look in the manual dir
     pdp = SingularityPDP()
+    for engine in pdp.engines:
+        if engine.engine_id == "REGO_OPA":
+            engine.policy_dir = "policies/rego/manual"
     verdict = pdp.evaluate("agent_x", "do_something", {})
     
     assert verdict.verdict == Verdict.DENY
     assert "INTEGRITY FAILURE" in verdict.reason
+    assert "test_integrity.rego" in verdict.reason
 
 def test_rego_integrity_pass():
     rego_path = "policies/rego/manual/test_integrity.rego"
@@ -30,6 +35,9 @@ def test_rego_integrity_pass():
     
     # Now it should pass integrity check (and use the mock allow logic)
     pdp = SingularityPDP()
+    for engine in pdp.engines:
+        if engine.engine_id == "REGO_OPA":
+            engine.policy_dir = "policies/rego/manual"
     verdict = pdp.evaluate("agent_x", "do_something", {})
     
     assert verdict.verdict == Verdict.ALLOW

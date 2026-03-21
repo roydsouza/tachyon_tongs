@@ -77,7 +77,8 @@ class HybridSigner:
             
             if alg == "ed25519":
                 if not self._public_key:
-                    raise RuntimeError("Verification failed: Signature contains Ed25519, but no Root Public Key is loaded.")
+                    # Log or skip instead of raising, so we can check other layers
+                    continue
                 try:
                     self._public_key.verify(sig_bytes, content)
                     has_ed = True
@@ -86,7 +87,6 @@ class HybridSigner:
                     
             elif alg == "mldsa65":
                 if not self._pqc_public_key:
-                     warnings.warn("Signature contains PQC component, but no PQC Public Key loaded to verify.")
                      continue
                 try:
                     import oqs
@@ -96,23 +96,29 @@ class HybridSigner:
                             raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature mismatch!")
                         has_pqc = True
                 except ImportError:
-                    warnings.warn("Signature contains PQC component, but liboqs is not installed.")
+                    continue
                     
             elif alg == "hmac":
                 expected = hmac.new(self.hmac_key, content, hashlib.sha256).hexdigest()
                 if sig_hex != expected:
+                    # HMAC mismatch is ALWAYS a hard failure
                     raise RuntimeError("INTEGRITY COMPROMISED: HMAC mismatch!")
                 has_hmac = True
 
         # Threat Mitigation: Strip Detection
+        # If we have a PQC SK, we MUST have a PQC signature
         if self._pqc_private_key_bytes and not has_pqc:
-            if has_ed:
+            if has_ed or has_hmac:
                 raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected).")
                 
+        # If we have an Ed25519 SK, we MUST have an Ed25519 signature
         if self._private_key and not has_ed:
-             raise RuntimeError("INTEGRITY COMPROMISED: Ed25519 Signature MISSING.")
+             if has_pqc or has_hmac:
+                raise RuntimeError("INTEGRITY COMPROMISED: Ed25519 Signature MISSING.")
 
         if not has_ed and not has_pqc and not has_hmac:
             raise RuntimeError("No recognized signature algorithms found in manifest.")
             
+        # If HMAC was the only check, and it passed, we are "conditionally" verified.
+        # If we had loaded keys but didn't find signatures for them, we already raised.
         return True

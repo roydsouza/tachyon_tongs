@@ -43,6 +43,8 @@ class StateManager:
         self.db_path = db_path
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("PRAGMA journal_mode=WAL")
+            
+            # 1. run_logs (Execution history)
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS run_logs (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,6 +59,8 @@ class StateManager:
                     verbose_level INTEGER
                 )
             ''')
+            
+            # 2. exploitation_catalog (CVE intelligence)
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS exploitation_catalog (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,6 +71,8 @@ class StateManager:
                     relevance_class TEXT
                 )
             ''')
+            
+            # 3. patches (Airlock proposals)
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS patches (
                     id TEXT PRIMARY KEY,
@@ -79,7 +85,8 @@ class StateManager:
                     debate_status TEXT
                 )
             ''')
-            conn.commit()
+            
+            # 4. processed_events (Idempotency)
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS processed_events (
                     event_id TEXT PRIMARY KEY,

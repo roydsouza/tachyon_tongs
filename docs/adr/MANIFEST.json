@@ -1,5 +1,5 @@
 {
-  "merkle_root": "33418db5f08684f9e9e881befd09eb92d41b0dc2d2766751b8bcb7dc5815ef38",
+  "merkle_root": "1a60c91db64d594a4063ee5bfba012fe6b3215e08b160be4d9f90ae5dc31fcaa",
   "algorithm": "sha256",
   "timestamp": "2026-03-21T01:10:00Z",
   "files": {
@@ -31,6 +31,7 @@
     "0026-local-model-fallback.md": "c900ec7ed62f118044afe8294b6386da3fcc757affbd69bd3d242ccf29ff58c3",
     "0027-hardware-isolation-protocol.md": "d1d1a2006c1be220232cd94591458d52dc0a9bb2c4f9cb486ee54ded37c6099a",
     "0028-secure-signing-and-recovery-protocol.md": "4b311233350b8f290e72e42cb21ed756b960933ce51d5024264c45c6fd6c693d",
+    "0029-agentic-observability-and-control.md": "ebd09d3ca55439683de31a0f97e3577948b3cb4540c8311653a36eab470cfb9c",
     "PATHS_NOT_TAKEN.md": "2d9bcd718a42ff9fcaedfc49afcc28f17bbd03b472a6dc794d3cd6120d659160"
   }
 }

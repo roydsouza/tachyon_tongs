@@ -112,7 +112,11 @@ def engineer_action_node(state: dict) -> dict:
                         json.dump(proposal_data, f, indent=2)
                     
                     if logger: logger.add_file_updated(proposal_path, details=f"Staged autonomous proposal for '{cve_id}' in the Airlock.")
-                    state["final_output"] = {"status": "staged", "proposal_path": proposal_path}
+                    state["final_output"] = {
+                        "status": "staged", 
+                        "proposal_path": proposal_path,
+                        "verified": state["final_output"].get("verified", False)
+                    }
                 else:
                     # Legacy Auto-Apply Path (Stub for now)
                     pass

@@ -61,6 +61,16 @@ async def test_agent_heartbeat_revoked(monkeypatch, tmp_path):
     ca.revoke_key(fingerprint, reason="Test Revocation")
     
     heartbeat_result = await agent.heartbeat()
-    
     assert heartbeat_result["status"] == "REVOKED"
     assert "Key revoked" in heartbeat_result["message"]
+
+@pytest.mark.asyncio
+async def test_agent_heartbeat_no_cert():
+    """Verify that heartbeat returns WARNING if the agent has no certificate."""
+    # Create an agent but manually strip its cert (simulating derivation failure)
+    agent = DummyAgent("dummy_03", "pathogen")
+    agent.agent_cert = None
+    
+    heartbeat_result = await agent.heartbeat()
+    assert heartbeat_result["status"] == "WARNING"
+    assert "No delegation certificate" in heartbeat_result["message"]

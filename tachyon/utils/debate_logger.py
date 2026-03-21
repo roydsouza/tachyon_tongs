@@ -27,7 +27,8 @@ class DebateLogger:
         """
         now_dt = datetime.now()
         timestamp = now_dt.strftime("%Y%m%d_%H%M%S")
-        cve_id = state.get("cve_context", {}).get("id", "UNKNOWN_THREAT")
+        cve_context = state.get("cve_context") or {}
+        cve_id = cve_context.get("id", "UNKNOWN_THREAT")
         
         # 🛡️ Deduplication Gating
         for existing_file in os.listdir(self.base_dir):
