@@ -84,9 +84,6 @@ def save_to_keychain(seed: bytes):
     except ImportError:
         print("[!] Warning: pyobjc-framework-Security not found. Skipping Keychain persistence.")
     
-    # 5. Pin Root Public Key to Manifest (Phase 25.2)
-    pin_root_key(pub_hex)
-
 def pin_root_key(pub_hex: str):
     """Pin the Root Public Key to ROOT_MANIFEST.json with an Integrity Attestation."""
     import json
