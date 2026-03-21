@@ -54,6 +54,14 @@ def reconstruct_secret(shares: List[bytes]) -> bytes:
     if not shares:
         raise ValueError("No shares provided.")
     
+    # Deduplicate shares based on x value (index 0)
+    unique_shares = {}
+    for s in shares:
+        if s[0] not in unique_shares:
+            unique_shares[s[0]] = s
+    
+    shares = list(unique_shares.values())
+    
     xs = [s[0] for s in shares]
     ys = [int.from_bytes(s[1:], 'big') for s in shares]
     
