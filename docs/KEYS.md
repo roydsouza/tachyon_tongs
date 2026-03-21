@@ -14,7 +14,25 @@ Tachyon Tongs employs a **tiered, hardware-bound cryptographic architecture** to
 
 ---
 
-## 2. Key Inventory & Lifecycles
+## 2. The Chain of Trust (Hierarchical Delegation)
+Phase 25.2 introduces a **Vassal-Sovereign Delegation Model** to minimize the exposure of the hardware Root Key.
+
+### 2.1 The Sovereign (Root Key)
+- **Status**: [✓] **ANCHORED** to macOS Keychain.
+- **Role**: Signs the `ROOT_MANIFEST.json` and delegates authority to agent sub-keys.
+- **Protection**: Secure Enclave (SEP) hardware isolation.
+
+### 2.2 The Vassals (Agent Keys)
+- **Status**: [✓] **DERIVED** via HKDF-SHA256 from the Root.
+- **Roles**:
+    - **Sentinel**: Signs threat intelligence artifacts.
+    - **Engineer**: Signs patch proposals and code mutations.
+    - **Developer**: Signs administrative records and ADRs.
+- **Protection**: Ephemeral (In-Memory Only). No disk persistence.
+
+---
+
+## 3. Key Inventory & Lifecycles
 
 | Key Name | Role | Technology | Storage | Lifecycle | Rotation |
 |----------|------|------------|---------|-----------|----------|
@@ -32,7 +50,7 @@ Tachyon Tongs employs a **tiered, hardware-bound cryptographic architecture** to
 *   **Generation (The Genesis Ceremony)**: [✓] **VERIFIED**. Established on 2026-03-20.
 *   **Fingerprint**: `1a2ff0fd4ab235bb010d76e3363d9d906ec88a4a9b86cebb61f48dea5ae81047`
 *   **Hardware Binding**: [✓] **ANCHORED** to macOS Keychain via `pyobjc-framework-Security`.
-*   **Backup (One-Time Execution)**: Immediately after generation, the **Seed** is split into 5 Shamir shares. These shares are displayed **once** in the terminal (hidden by default, revealed via Touch ID). 
+*   **Backup (One-Time Execution)**: Immediately after generation, the **Seed** is split into 5 Shamir shares. These shares are displayed **once** in the terminal (hidden by default, revealed via Touch ID).
     *   **Receiving Shares**: You must manually copy each share to its designated cold-storage location. The substrate **never** writes these shares to disk.
 *   **Protection**: Hardware-isolated. Operations (signing) happen inside the Enclave and are Touch ID-gated.
 *   **Recovery (The Resurrection Ceremony)**: Triggered via `tt keys recovery`. You are prompted to input any 3 of the 5 shares.
@@ -47,6 +65,15 @@ Tachyon Tongs employs a **tiered, hardware-bound cryptographic architecture** to
 *   **Usage**: Signs all ADRs (`docs/adr/`), `MANIFEST.json`, and issues temporary certificates to autonomous agents.
 *   **Rotation**: Rotated every 90 days via `tt keys rotate --dev`.
 *   **Roll**: Automated via CRL (Certificate Revocation List) update in the substrate's local state.
+
+### 3.3 PHASE 3: Post-Quantum Hybrid (PQC)
+*   **Target**: Quantum Resistance (NIST FIPS 204).
+*   **Algorithm**: **ML-DSA-44** (Dilithium3).
+*   **Hardware Limitation**: Current Apple Silicon (M5) does not natively support ML-DSA-44 in the Secure Enclave.
+*   **Hybrid Strategy**: **The Hybrid Root**. We will use a dual-signature model:
+    1.  `Signature A`: Hardware-bound Ed25519 (Security).
+    2.  `Signature B`: Software-managed ML-DSA-44 (Quantum Resistance).
+*   **Verification**: The substrate requires **both** signatures to pass for high-assurance artifacts.
 
 ### 3.3 AGENT KEYS (Sentinel / Engineer)
 *   **Generation**: Ephemeral keys generated in-memory upon agent invocation.
