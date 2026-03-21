@@ -1,2 +1,2 @@
 from .guardian_role import GuardianRole
-from .guardian_ids import GuardianIDS
+from tachyon.agents.guardian_ids import GuardianIDS

@@ -1,7 +1,7 @@
 {
-  "merkle_root": "5e17441be84d8cc39908c691f1ad651914c6e8e81882d2454a8494b8e5c3c3a1",
+  "merkle_root": "23e5bb7c7bc56698be8cc47c2cd436e2510125257557d75a016b2a60ecb56dd8",
   "algorithm": "sha256",
-  "timestamp": "2026-03-22T06:41:00Z",
+  "timestamp": "2026-03-21T01:10:00Z",
   "files": {
     "0001-record-architecture-decisions.md": "13f67ade1ddb28c59dbb84bedde65985ee0198be2883af7b813565c487db3161",
     "0002-adopt-acdc-methodology.md": "1926043baa467a368ef85056102f77e560f92cffef657de6827a32fa843ac0e5",
@@ -35,6 +35,6 @@
     "0030-signal-purification-via-mutant-lock.md": "d9fe9db29b9670fa27f081392709be80d555582e6d8e33fc2433ae1434c865dd",
     "0031-graduated-supply-chain-and-toctou-hardening.md": "06ff5617a5e0ccd78b15308ca569edce0e0b1b8606d9392d2e1ad1665d35c982",
     "0032-expansion-of-the-agent-collective.md": "c19877cb959058c6617dda48115b60078c2785aa719312184090d4ace4b57e26",
-    "PATHS_NOT_TAKEN.md": "2d9bcd718a42ff9fcaedfc49afcc28f17bbd03b472a6dc794d3cd6120d659160"
+    "PATHS_NOT_TAKEN.md": "0b8ae14f747a97b8500fa9741a72770dd5b306e36f3b9bb6dd383517760c1138"
   }
 }
