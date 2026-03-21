@@ -1,6 +1,7 @@
 import unittest
 import subprocess
 import os
+import sys
 
 class TestCLIArgParsing(unittest.TestCase):
     """
@@ -10,30 +11,28 @@ class TestCLIArgParsing(unittest.TestCase):
 
     def test_tt_help(self):
         """Test that 'tt --help' works and contains 'keys'."""
-        result = subprocess.run(["tt", "--help"], capture_output=True, text=True)
+        # Use sys.executable -m to ensure we test the SAME environment we are running in
+        result = subprocess.run([sys.executable, "-m", "tachyon.cli.main", "--help"], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0)
         self.assertIn("keys", result.stdout)
         self.assertIn("Manage cryptographic keys", result.stdout)
 
     def test_tt_keys_help(self):
         """Test that 'tt keys --help' contains genesis and recover."""
-        result = subprocess.run(["tt", "keys", "--help"], capture_output=True, text=True)
+        result = subprocess.run([sys.executable, "-m", "tachyon.cli.main", "keys", "--help"], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0)
         self.assertIn("genesis", result.stdout)
         self.assertIn("recover", result.stdout)
 
     def test_tt_keys_import(self):
         """Regression: Verify that the keys subcommand can actually import its logic."""
-        # This would have caught the scripts vs tachyon.core error
-        # We use --help on a subcommand which triggers the imports in the function body
-        result = subprocess.run(["tt", "keys", "genesis", "--help"], capture_output=True, text=True)
+        result = subprocess.run([sys.executable, "-m", "tachyon.cli.main", "keys", "genesis", "--help"], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0)
         self.assertIn("Execute the Root Key Genesis Ceremony", result.stdout)
 
     def test_cmd_routing(self):
         """Verify that basic commands return correct help or status without erroring on flags."""
-        # Testing Typer-style commands (use --help to get 0 exit code for groups)
-        result = subprocess.run(["tt", "keys", "--help"], capture_output=True, text=True)
+        result = subprocess.run([sys.executable, "-m", "tachyon.cli.main", "keys", "--help"], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0)
         self.assertIn("genesis", result.stdout)
 
