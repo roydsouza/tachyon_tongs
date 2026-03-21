@@ -1,131 +1,97 @@
-# Tachyon Tongs: Multi-Agent Security Substrate
+# 🌌 Tachyon Tongs: Multi-Agent Security Substrate
 
 > [!IMPORTANT]
-> **Development Status**: Tachyon Tongs is under heavy active development and operates as an **Agent Firewall Experimentation Lab** in **HITL (Human-In-The-Loop)** mode. It is **not yet production-ready**. All autonomous mutations require explicit human approval via the Airlock.
+> **Development Status**: Tachyon Tongs is an **Agent Firewall Experimentation Lab** operating in **HITL (Human-In-The-Loop)** mode. It is a high-assurance substrate designed for protecting autonomous agent architectures via strict isolation and semantic intent gating.
 
-Tachyon Tongs is a high-performance, Apple Silicon-native security substrate and AI firewall. It is designed to protect autonomous agent architectures by enforcing strict isolation, semantic intent gating, and active threat intelligence aggregation.
+Tachyon Tongs is a high-performance, Apple Silicon-native security substrate. It protects autonomous agents by enforcing strict isolation, semantic intent gating, and active threat intelligence aggregation.
 
-## 1. Problem Statement
+---
 
-Autonomous AI agents introduce critical new attack surfaces to organizational infrastructure:
-*   **Prompt Injection & Agent Hijacking**: Untrusted external inputs (scraped websites, API payloads) can contain steganographic instructions that override the agent's core system prompt.
-*   **Capability Over-Reach**: Agents with broad tool access (filesystem, network, shell) lack a centralized "Least Privilege" enforcement point, allowing minor prompts to escalate into major infrastructure breaches.
-*   **Zero-Day Threat Velocity**: The rapid evolution of offensive ML techniques makes static, hardcoded defensive measures obsolete almost instantly.
+## 🛡️ Live Threat Model
+Every architectural decision is mapped directly to a specific vector in the [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md).
 
-## 2. Threat-Model-Driven Design
+*   🧠 **Semantic Intent Gating**: All tool requests are routed through a Policy Enforcement Point and evaluated by the **Singularity Meta-PDP**.
+*   🧊 **Tiered Workload Isolation**: High-risk actions run in dynamically generated macOS `sandbox-exec` (Seatbelt) profiles.
+*   🔐 **Forensic Integrity Gating**: Every substrate mutation is cryptographically signed using **Ed25519 + ML-DSA-65** hybrid sidecars.
 
-Tachyon Tongs is an implementation of a **Live Threat Model**. Every architectural decision is mapped directly to a specific vector in the [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md).
+---
 
-*   **Semantic Intent Gating (PDP/PEP)**: All tool requests are routed through a Policy Enforcement Point and evaluated by the **Singularity Meta-PDP** against declarative OPA (Rego) and Cedar policies.
-*   **Tiered Workload Isolation**: High-risk actions run in dynamically generated macOS `sandbox-exec` (Seatbelt) profiles, providing bare-metal speed with microsecond overhead and strict resource lockdown.
-*   **Forensic Integrity Gating**: Every substrate mutation is cryptographically signed using **Ed25519 + ML-DSA-65** hybrid sidecars and anchored to a cumulative Merkle root in the `MANIFEST.json`.
+## 🔐 Secure SDLC: Hardware-Anchored Trust
+Tachyon Tongs practices forensic security in its own development process. Every mutation is cryptographically signed and hardware-anchored.
 
-## 🔐 Secure Development Lifecycle (SDLC)
+*   🆔 **Hardware-Backed Signing**: Root keys live in the Apple **Secure Enclave** (Touch ID-gated, non-extractable).
+*   ⚛️ **Hybrid Post-Quantum Cryptography**: Signatures use **Ed25519 + ML-DSA-65** (NIST FIPS 204, Level 3).
+*   ⛓️ **Forensic ADR Chaining**: Every Architecture Decision Record references the hash of its predecessor, anchored to the Merkle root in `MANIFEST.json`.
+*   🛃 **Airlock co-signing**: No artifact is deployed without dual signatures (proposing agent + Airlock).
 
-Tachyon Tongs doesn't just *enforce* security at runtime — it **practices security in its own development process**. Every mutation to the substrate is cryptographically signed, forensically chained, and hardware-anchored:
+👉 **[docs/SDLC.md](docs/SDLC.md)** — *The full Secure SDLC reference.*
 
-- **Hardware-Backed Signing**: Root signing keys live in the Apple **Secure Enclave** (Touch ID-gated, non-extractable). Agent-proposed changes carry per-agent Ed25519 signatures with scoped delegation certificates.
-- **Hybrid Post-Quantum Cryptography**: Signatures use **Ed25519 + ML-DSA-65** (NIST FIPS 204, Level 3) in hybrid mode — classical security today, quantum resistance tomorrow. Both the expanded secret key and the public key are hardware-anchored in the macOS Keychain.
-- **Forensic ADR Chaining**: Every Architecture Decision Record references the hash of its predecessor, creating an immutable timeline anchored to the Merkle root in `MANIFEST.json`.
-- **Airlock as Certificate Authority**: No artifact is "deployed" until it carries dual signatures — the proposing agent's key **and** the Airlock's co-signature (requiring human approval).
-- **Per-Agent Key Isolation**: Each agent (Sentinel, Engineer, Canary) holds its own rotating key with strict scope limits. A compromised Sentinel cannot sign Engineer artifacts.
-
-👉 **[docs/SDLC.md](docs/SDLC.md)** — *The full Secure SDLC reference: key hierarchy, recovery procedures, threat model, and operational runbooks.*
-
-## 3. Evolutionary Architecture
-
-Tachyon Tongs is not a static defense system; it is an autonomic immune system driven by five modular roles:
-
-*   **The Sentinel (Blue Team)**: Continuously polls the NVD, GitHub Advisories, and arXiv to discover and sign novel AI exploits into the [EXPLOITATION_CATALOG.md](file:///Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md).
-*   **The Pathogen (Red Team)**: Synthesizes mutated injection payloads to stress-test the substrate and ensure zero regressions against the cataloged threat landscape.
-*   **The Canary (Honeypot)**: Proactively scouts malicious endpoints in a secure sandbox, logging intelligence to [CANARY_LOG.md](file:///Users/rds/antigravity/tachyon_tongs/CANARY_LOG.md).
-*   **The Engineer (Autopatcher)**: Self-synthesizes infrastructure patches and policy mutations to neutralize detected threats in response to the Canary's intelligence.
-*   **The Guardian (Auditor)**: Performs periodic forensic audits of the architectural substrate, ensuring HMAC signatures and Merkle roots remain untampered.
+---
 
 ## 🏛️ Agentic Architecture: The Immune Collective
+Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture modeled after the autonomic immune system.
 
-Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture modeled after the autonomic immune system. Unlike monolithic AI applications, Tachyon decomposes security logic into a collective of specialized, cryptographically isolated agents.
+*   🏰 **Defense in Depth**: High-value administrative components (like the **Firewall Administrator**) are air-gapped from the network.
+*   📡 **The Herald Proxy**: All external communication (Signal, Webhooks) is proxied through the Herald agent, ensuring no direct network exposure for the brain.
+*   🏥 **Immune Response**: Specialized agents (Sentinel, Pathogen, Engineer) collaborate to detect, simulate, and remediate threats autonomously.
+*   📼 **Immutable Forensics**: Every agent interaction creates a tamper-evident audit trail for post-facto decision reconstruction.
 
-*   **Defense in Depth**: High-value administrative components (like the **Firewall Administrator**) are air-gapped from the network. Communication with the outside world (Signal, Webhooks) is proxied through the **Herald** agent, ensuring that a compromise of the communication layer cannot escalate to executive substrate control.
-*   **Hardware-Optimized Sovereignty**: While capable of running on any standard laptop or workstation, the architecture is specifically designed for hosting in **Secure Hardware Gateway** devices. By leveraging local `llama.cpp` inference, the system maintains absolute operational security (OpSec) with zero external telemetry leaks.
-*   **Immutable Forensics**: Every agent interaction is cryptographically signed and recorded, creating a tamper-evident audit trail for post-facto decision reconstruction.
+👉 **[AGENTIC_ARCHITECTURE.md](docs/AGENTIC_ARCHITECTURE.md)** — *Deep dive into the 6-tier taxonomy and trust boundaries.*
 
-👉 **[AGENTIC_ARCHITECTURE.md](docs/AGENTIC_ARCHITECTURE.md)** — *Deep dive into the 6-tier taxonomy, event-driven backplane, and trust boundaries.*
+---
 
 ## 🤖 The Agent Collective
+*   🔭 **The Sentinel**: Discovers and signs novel AI exploits into the [EXPLOITATION_CATALOG.md](file:///Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md).
+*   🧪 **The Pathogen**: Synthesizes mutated injection payloads to stress-test the substrate.
+*   🦢 **The Canary**: Proactively scouts malicious endpoints in secure sandboxes.
+*   🛠️ **The Engineer**: Self-synthesizes infrastructure patches and policy mutations.
+*   ⚖️ **The Guardian**: Performs real-time forensic audits of the architectural substrate.
+*   📬 **The Herald**: Translates alerts into diplomatic dispatches delivered via Signal.
 
-## 4. Deployment Models
+---
 
-*   **In-Band (Managed)**: Agents declared purely via `SKILL.md` manifests, running within substrate-provisioned sandboxes.
-*   **Out-of-Band (Proxied)**: Independent local applications using the `tachyon_client` to route tool requests through the secure proxy.
-*   **Standard Protocol (MCP)**: Implements the **Model Context Protocol**. Standards-compliant agents (Claude, IDEs) can discover and use Tachyon tools via `stdio`.
-
-## 5. Forensic Debate Monitoring
-
-Tachyon Tongs employs **Scalable Oversight** via the **Airlock Debate Triad**. Every autonomous patch proposed by the Engineer is debated by a **Skeptic** and a **Meta-Critic** before reaching the operator.
-- **Visibility**: Monitor real-time adversarial discourse in the `memory/operational/debates/` directory.
-- **Humorous Oversight**: Debates are recorded in high-fidelity markdown, making security audits both informative and engaging.
-
-## 6. Architectural Justifications
-
-*   **Apple Silicon Native**: Leveraging macOS `sandbox-exec` and Metal-accelerated reasoning (`mlx_lm`) avoids the resource overhead and latency of virtualization (Docker/Lima).
-*   **Declarative Policy (OPA/Rego)**: Decoupling security logic from application code allows for transparent third-party auditing without parsing Python.
-*   **SQLite WAL over Filesystem**: Using a Write-Ahead Log for state management ensures atomic, non-corruptible writes during multi-agent concurrency.
-
-## 7. Roadmap to Autonomy (Operational Modes)
-
+## 🚦 Operational Maturity
 Tachyon Tongs follows a tiered evolution path toward fully autonomous security governance:
 
-1.  **HITL (Human-In-The-Loop) - [CURRENT]**: Every mutation requires explicit human approval in the **Airlock** via `airlock-approve` or the Dashboard.
-2.  **HOTL (Human-On-The-Loop) - [EVOLVING]**: The substrate autonomously applies low-risk patches with a mandatory reversibility window. Humans move to a supervisory monitoring role.
-3.  **HOOTL (Human-Out-Of-The-Loop) - [VISION]**: Full autonomous detection, synthesis, and remediation with formal verification. Humans shift to strategic policy governance.
+*   🟢 **HITL (Human-In-The-Loop) - [CURRENT]**: Every mutation requires explicit human approval in the **Airlock**.
+*   🟡 **HOTL (Human-On-The-Loop) - [EVOLVING]**: The substrate autonomously applies low-risk patches with a reversibility window.
+*   🔴 **HOOTL (Human-Out-Of-The-Loop) - [VISION]**: Full autonomous detection, synthesis, and remediation.
 
-## 8. Quickstart Guide
-- 🧠 **Local Reasoning Substrate**: High-assurance offline reasoning via `llama.cpp` on M5.
-- 🛡️ **Autonomous Immune System**: Self-evolving policies that remediate bypasses in real-time.
-- 🧱 **Singularity PDP**: A high-assurance Policy Decision Point for LLM tool-calling.
-- 📡 **Command Bridge**: Unified NeoVim/TUI interface for real-time substrate oversight.
-Tachyon Tongs is operated through a **NeoVIM-first, CLI-forward** architecture — the **Event-Horizon Command Bridge**. It provides three tiers of substrate control: a composable `tt` CLI for scripting and automation, a GPU-accelerated Textual TUI for real-time situational awareness, and a pure Lua NeoVIM plugin (`tachyon.nvim`) for deep code-level inspection and Airlock review — all optimized for Ghostty with vi-style keybindings throughout.
+---
 
-👉 **[ADMIN_CLI_NEOVIM.md](ADMIN_CLI_NEOVIM.md)** — *Full operator reference: commands, keybindings, workflows, and configuration.*
+## ⌨️ Command & Control: Event-Horizon Bridge
+The **Event-Horizon Command Bridge** provides a NeoVIM-first, CLI-forward interface for substrate oversight.
 
-## ⚡ Slash Commands
-- `/help`: View the command manifest.
-- `/catalog`: View the Exploitation Catalog.
-- `/airlock`: Manage the patch staging area.
-- `/sentinel`: Trigger a threat sweep.
-- `/report`: Generate a substrate health report.
+*   🧠 **Local Reasoning**: High-assurance offline reasoning via `llama.cpp` on M5.
+*   🧱 **Singularity PDP**: High-assurance Policy Decision Point for LLM tool-calling.
+*   📡 **Unified Console**: Composable `tt` CLI, GPU-accelerated TUI, and `tachyon.nvim` Lua plugin.
 
-## 📚 Documentation Directory
+👉 **[ADMIN_CLI_NEOVIM.md](ADMIN_CLI_NEOVIM.md)** — *Full operator reference.*
 
-The Tachyon Tongs repository is heavily documented to support the **Human-In-The-Loop** and **Human-On-The-Loop** operational modes. Below is a curated index of the most critical architectural and operational literature.
+---
 
-### 🏛️ Core Architecture & Design
-*   **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Deep dive into the Substrate Daemon, Guardian Triad, and Control Plane.
-*   **[THREAT_MODEL.md](docs/THREAT_MODEL.md)**: The foundational Live Threat Model dictating all architectural boundaries (Prompt Injection, Supply Chain, Agent Escapes).
-*   **[ROADMAP.md](docs/ROADMAP.md)**: The phased evolution from HITL to HOOTL, including all active and historical sprints.
-*   **[SDLC.md](docs/SDLC.md)**: The hardware-backed, post-quantum cryptographic Secure Development Lifecycle.
+## ⚡ Quickstart & Commands
+```bash
+# Initialize and Install
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt && pip install -e .
+./scripts/start_opa.sh
 
-### 🤖 The Agent Collective
-*   **[AGENTS.md](docs/AGENTS.md)**: The master directory of the autonomous immune system.
-*   **[AGENT_SENTINEL.md](docs/AGENT_SENTINEL.md)**: The Blue Team (Threat Intelligence via NVD/GitHub).
-*   **[AGENT_PATHOGEN.md](docs/AGENT_PATHOGEN.md)**: The Red Team (Adversarial Mutation Engine).
-*   **[AGENT_ENGINEER.md](docs/AGENT_ENGINEER.md)**: The Autopatcher (Self-Healing Mitigations).
-*   **[AGENT_CANARY.md](docs/AGENT_CANARY.md)**: The Sacrificial Scout (Honeypot payload validation).
-*   **[AGENT_SCOUT.md](docs/AGENT_SCOUT.md)**: The Competitive Intel (Continuous web-scouring and threat research).
-*   **[AGENT_GUARDIAN.md](docs/AGENT_GUARDIAN.md)**: The Substrate Sentry (Substrate integrity and Merkle-tree auditing).
-*   **[AGENT_SYNTHESIZER.md](docs/AGENT_SYNTHESIZER.md)**: The Policy Architect (Translates threats into executable OPA-Rego policies).
+# Run Substrate Audit
+tt audit status
+```
 
-### ⚙️ Operations & Governance
-*   **[ADMIN.md](docs/ADMIN.md)**: Operational protocols for Cryptographic Governance, Forensic Audits, and Agentic Revocation (Kill Switches).
-*   **[ADMIN_CLI_NEOVIM.md](ADMIN_CLI_NEOVIM.md)**: Reference for the Event-Horizon Command Bridge (CLI `tt`, TUI, Ghostty/NeoVIM).
-*   **[KEYS.md](docs/KEYS.md)**: Master taxonomy of all Hybrid PQC keys, their rotation schedules, and derivation paths.
-*   **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** & **[TAILSCALE.md](docs/TAILSCALE.md)**: Deployment topologies and zero-trust WireGuard mesh bounding.
-*   **[GENESIS_RECOVERY_CEREMONY.md](docs/GENESIS_RECOVERY_CEREMONY.md)**: Disaster recovery procedures via Shamir Secret Sharing.
+*   `/help`: View the command manifest.
+*   `/catalog`: View the Exploitation Catalog.
+*   `/airlock`: Manage the patch staging area.
+*   `/sentinel`: Trigger a threat sweep.
+*   `/report`: Generate a substrate health report.
 
-### 📊 Logs & Ledger (The Somatic State)
-*   **[SYNC_LOG.md](SYNC_LOG.md)**: The heartbeat of the Substrate — inverse-chronological ledger of all agentic breakthroughs and architectural hardening.
-*   **[TASKS.md](TASKS.md)**: Granular checklist for active engineering sprints.
-*   **[EVOLUTION.md](EVOLUTION.md)** & **[RUN_LOG.md](RUN_LOG.md)**: Autonomous discoveries, somatic modifications, and raw event traces.
-*   **[ALERT.md](ALERT.md)** & **[CANARY_LOG.md](CANARY_LOG.md)**: Active security incidents and Honeypot intelligence.
-*   **[EXPLOITATION_CATALOG.md](EXPLOITATION_CATALOG.md)** (Encrypted): The master repository of synthesized adversarial logic (Protected by Hybrid Signatures).
+---
+
+## 📚 Documentation Index
+*   📖 **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Core Daemon and Guardian Triad.
+*   🎯 **[THREAT_MODEL.md](docs/THREAT_MODEL.md)**: Foundational Live Threat Model.
+*   🗺️ **[ROADMAP.md](docs/ROADMAP.md)**: Phased evolution roadmap.
+*   🔑 **[KEYS.md](docs/KEYS.md)**: Hybrid PQC key taxonomy.
+*   📻 **[SYNC_LOG.md](SYNC_LOG.md)**: Inverse-chronological record of all agentic breakthroughs.
