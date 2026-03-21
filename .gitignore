@@ -22,6 +22,9 @@ opa_logs.txt
 venv/
 env/
 
+# Local Feedback (Never Pushed)
+feedback/
+
 # Cryptographic Keys (Absolute Isolation)
 *.key
 *.pem
