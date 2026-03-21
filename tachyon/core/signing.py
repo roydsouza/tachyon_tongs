@@ -104,12 +104,18 @@ class IntegrityManager:
     def verify_integrity(self, filepath: str, enforce: bool = False) -> bool:
         """
         Verifies the file against its .sig sidecar.
-        If enforce=True, raises RuntimeError on mission/mismatch. 
+        If enforce=True or TACHYON_STRICT_MODE is set, raises RuntimeError on mission/mismatch. 
         Otherwise returns True/False.
         """
         sig_path = f"{filepath}.sig"
+        strict = enforce or os.environ.get("TACHYON_STRICT_MODE") == "1"
+        
         if not os.path.exists(sig_path):
-            if enforce: raise RuntimeError(f"No detached signature found for: {filepath}")
+            if strict:
+                err = f"INTEGRITY FAILURE: No detached signature found for mission-critical file: {filepath}. This change is UNTRUSTED."
+                from tachyon.core.state_manager import StateManager
+                StateManager().emit_alert("INTEGRITY_VIOLATION", err)
+                raise RuntimeError(err)
             return False
 
         with open(filepath, 'rb') as f:
@@ -119,7 +125,16 @@ class IntegrityManager:
 
         try:
             is_valid = self.signer.verify(content, detached_sig)
+            if not is_valid and strict:
+                err = f"INTEGRITY FAILURE: Signature mismatch for {filepath}. File has been tampered with or ritual was incomplete."
+                from tachyon.core.state_manager import StateManager
+                StateManager().emit_alert("SIGNATURE_MISMATCH", err)
+                raise RuntimeError(err)
             return is_valid
         except Exception as e:
-            if enforce: raise RuntimeError(f"Integrity check failed for {filepath}: {e}")
+            if strict:
+                err = f"INTEGRITY FAILURE: Cryptographic error during verification of {filepath}: {e}"
+                from tachyon.core.state_manager import StateManager
+                StateManager().emit_alert("CRYPTO_ERROR", err)
+                raise RuntimeError(err)
             return False
