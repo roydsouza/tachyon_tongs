@@ -86,6 +86,64 @@ def genesis_ceremony():
     # 5. Pin Root Public Key to Manifest (Phase 25.2)
     pin_root_key(pub_hex)
 
+def anchor_existing_key():
+    """Retroactively anchor a verified root key to the hardware Keychain."""
+    print("="*60)
+    print("TACHYON TONGS: RETROACTIVE HARDWARE ANCHOR")
+    print("="*60)
+    print("Use this to anchor your existing 3-of-5 verified shares to the hardware Keychain.")
+    
+    shares = []
+    print("Please provide 3 of your 5 Shamir shares:")
+    for i in range(3):
+        share_str = input(f"Enter Share {i+1}: ").strip()
+        if share_str.startswith("sss-v1:"):
+            share_str = share_str[7:]
+        shares.append(bytes.fromhex(share_str))
+        
+    try:
+        print("[*] Reconstructing Seed...")
+        seed = reconstruct_secret(shares)
+        
+        # Sanity Check
+        seed_int = int.from_bytes(seed, 'big')
+        from tachyon.core.sss import P
+        if seed_int >= P or seed_int == 0:
+            raise ValueError("Invalid shares.")
+
+        # Persist
+        priv_key = ed25519.Ed25519PrivateKey.from_private_bytes(seed)
+        pub_hex = priv_key.public_key().public_bytes_raw().hex()
+        
+        print("[*] Anchoring to hardware...")
+        # 4. Storage (Phase 25.2)
+        try:
+            import Security
+            from tachyon.core.signing import KEY_LABEL, KEY_APPLICATION_TAG
+            
+            attributes = {
+                Security.kSecClass: Security.kSecClassGenericPassword,
+                Security.kSecAttrLabel: KEY_LABEL,
+                Security.kSecAttrAccount: KEY_APPLICATION_TAG,
+                Security.kSecValueData: seed,
+                Security.kSecAttrAccessible: Security.kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            }
+            Security.SecItemDelete({Security.kSecClass: Security.kSecClassGenericPassword, Security.kSecAttrAccount: KEY_APPLICATION_TAG})
+            result = Security.SecItemAdd(attributes, None)
+            status = result[0] if isinstance(result, tuple) else result
+            
+            if status == Security.errSecSuccess:
+                print("[✓] Root Key successfully anchored to macOS Keychain.")
+                # Pin the manifest
+                pin_root_key(pub_hex)
+            else:
+                print(f"[✗] Failed to save key (Status: {status})")
+        except ImportError:
+            print("[✗] Error: pyobjc-framework-Security is still missing in this environment.")
+            
+    except Exception as e:
+        print(f"[✗] ANCHOR FAILED: {e}")
+
 def pin_root_key(pub_hex: str):
     """Pin the Root Public Key to ROOT_MANIFEST.json with an Integrity Attestation."""
     import json

@@ -153,6 +153,12 @@ def genesis():
     genesis_ceremony()
 
 @keys_app.command()
+def anchor():
+    """Retroactively anchor existing shares to the hardware Keychain."""
+    from tachyon.core.keys.operations import anchor_existing_key
+    anchor_existing_key()
+
+@keys_app.command()
 def recover():
     """Execute the Resurrection Ceremony (3-of-5 recovery)."""
     from tachyon.core.keys.operations import recovery_drill
