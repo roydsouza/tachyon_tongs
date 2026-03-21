@@ -71,6 +71,12 @@ def recovery_drill():
         print("[*] Reconstructing Seed...")
         seed = reconstruct_secret(shares)
         
+        # Sanity Check: If the seed represents an integer >= P, it's junk
+        seed_int = int.from_bytes(seed, 'big')
+        from tachyon.core.sss import P
+        if seed_int >= P or seed_int == 0:
+            raise ValueError("Reconstructed seed is mathematically invalid (Prime Field Overflow).")
+
         # Verify via Public Key
         priv_key = ed25519.Ed25519PrivateKey.from_private_bytes(seed)
         pub_hex = priv_key.public_key().public_bytes_raw().hex()
