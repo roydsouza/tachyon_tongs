@@ -32,6 +32,12 @@ class ModelRouter:
             "L3": "gemini-1.5-pro"
         }
         
+    async def _simulate_cloud_call(self, prompt: str, target_model: str, mode: str) -> str:
+        """Isolated cloud simulation for testing."""
+        if mode == "CLOUD_ONLY":
+            raise ConnectionError("Cloud API Unreachable")
+        return f"[CLOUD:{target_model}] Result for: {prompt[:20]}..."
+
     async def route_and_generate(self, prompt: str, system_prompt: Optional[str] = None, mode: str = "HYBRID", **kwargs) -> str:
         """
         Route to appropriate model and handle execution with fallback logic.
@@ -43,15 +49,8 @@ class ModelRouter:
         if mode == "LOCAL_ONLY":
             return await self.local_provider.generate(prompt, system_prompt, **kwargs)
 
-        # In a real implementation, this would call the Cloud provider (Gemini/OpenAI)
-        # For this phase, we mock the cloud call and focus on the fallback.
         try:
-            if mode == "CLOUD_ONLY":
-                # Mocking a cloud call that fails if we want to demonstrate fallback
-                raise ConnectionError("Cloud API Unreachable")
-            
-            # Simulated successful cloud call
-            return f"[CLOUD:{target_model}] " + "Result for: " + prompt[:20] + "..."
+            return await self._simulate_cloud_call(prompt, target_model, mode)
         except Exception as e:
             if mode == "HYBRID":
                 logger.warning(f"Cloud fallback triggered: {e}")

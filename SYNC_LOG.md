@@ -1,7 +1,21 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-21: Phase 26.1 — Agentic Observability & Control
+- **Objective:** Eliminate agent observability blindspots and cryptographically bind derived keys to specific agent identities.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **Component 1 (Telemetry Bus):** Created `tachyon/core/telemetry.py` implementing a robust JSONL event bus with atomic `flock` locking. Integrated into `ToolRouter` (logging blocks/allows) and `IntegrityManager` (logging signatures).
+  - **Component 2 (Delegation Certificates):** Created `DelegationCertificateAuthority` which derives HKDF sub-keys and signs a JSON certificate using the Hybrid Root. Implemented a `revocation_list.json` (CRL) for instant key nullification.
+  - **Component 3 (Agent Heartbeats):** Added `async heartbeat()` to `BaseTachyonAgent`. Agents now proactively validate their certificates against the CRL and emit status to the Telemetry Bus.
+  - **Component 4 (Modularity):** Cut `IntegrityManager` codebase size in half by extracting OS credential loading to `KeychainProvider` and algorithms to `HybridSigner`.
+- **Regression Testing:**
+  - Fixed a pre-existing cloud fallback mock issue in `test_local_routing.py`.
+  - Added test suites for the Telemetry Bus, Agent Heartbeats, and Certificates.
+  - Ran comprehensive `pytest tests/` (18/18 operations PASSING on Mac M5).
+- **Documentation Updated:** `ROADMAP.md` (marked Phase 26.1 Operational), `THREAT_MODEL.md` (marked §13 threats as mitigated), `ADR-0029` created.
+- **Verification:** Signed all documentation via Guardian Triad.
+
 ### 2026-03-21: Phase 25.5 — Deep Audit & Hardening
-- **Objective:** Comprehensive audit of the entire substrate identifying and fixing code defects, documentation drift, threat model gaps, and test coverage holes.
 - **Status:** [COMPLETED]
 - **Critical Finding (P0):** The PQC signing path was **completely dead** — `sign_document()` checked `self._pqc_private_key` which was never populated after the Phase 25.4 refactor. All `.sig` files contained only Ed25519 signatures. **Fixed.**
 - **Code Fixes (11 total in `signing.py` + `operations.py`):**

@@ -58,6 +58,9 @@ class ToolRouter:
         self.rate_limiter = rate_limiter or AdaptiveRateLimiter()
         self.alignment_checker = alignment_checker or AlignmentChecker(threshold=0.2)
         
+        from tachyon.core.telemetry import TelemetryBus
+        self.telemetry = TelemetryBus()
+        
         # Initialize Tool Registry with standard handlers
         from .registry import registry as tool_registry
         self.registry = tool_registry
@@ -91,6 +94,7 @@ class ToolRouter:
         if self.rate_limiter:
             allowed, reason = self.rate_limiter.is_allowed(request.agent_id, request.action)
             if not allowed:
+                self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "BLOCKED", {"reason": f"RATE_LIMIT: {reason}"})
                 return {
                     "status": "BLOCKED",
                     "error": f"RATE_LIMIT_EXCEEDED: {reason}"
@@ -100,6 +104,7 @@ class ToolRouter:
         if "intent" in request.params:
             alignment = self.alignment_checker.check_alignment(request.params["intent"], request.params)
             if not alignment["is_aligned"]:
+                self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "BLOCKED", {"reason": f"ALIGNMENT: {alignment['reason']}"})
                 return {
                     "status": "BLOCKED",
                     "error": f"Alignment Violation: {alignment['reason']}"
@@ -110,6 +115,7 @@ class ToolRouter:
         
         # 4. Policy Enforcement Check (Pass the immutable request)
         if not self.policy_engine.is_action_allowed(request.agent_id, request.action, request.params):
+            self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "BLOCKED", {"reason": "PDP_DENY"})
             return {
                 "status": "BLOCKED",
                 "error": f"Policy violation: Action '{request.action}' denied for agent '{request.agent_id}'."
@@ -119,10 +125,14 @@ class ToolRouter:
         try:
             result = await self.registry.execute(request.action, request.agent_id, request.params)
             if isinstance(result, dict) and result.get("status") == "BLOCKED":
+                 self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "BLOCKED", {"reason": "REGISTRY_BLOCK"})
                  return result
             if isinstance(result, dict) and result.get("status") == "ERROR":
+                 self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "ERROR", {"error": result.get("error")})
                  return result
                  
+            self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "SUCCESS")
             return {"status": "SUCCESS", "result": result}
         except Exception as e:
+            self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "ERROR", {"error": str(e)})
             return {"status": "ERROR", "error": str(e)}

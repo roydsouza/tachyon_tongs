@@ -16,6 +16,52 @@ class BaseTachyonAgent(ABC):
         self.integrity = IntegrityManager()
         self.sanitizer = InputSanitizer()
         self.config = {} # Fix: Initialize config to prevent AttributeErrors
+        
+        # Issue an ephemeral delegation certificate for this agent session
+        # If the root key isn't loaded (e.g. CI), these will be None
+        self.agent_key = None
+        self.agent_cert = None
+        
+        # Only derive keys if the root is present (e.g., in production)
+        if self.integrity._private_key:
+            try:
+                self.agent_key, self.agent_cert = self.integrity.derive_agent_key(self.role_name)
+            except Exception as e:
+                import sys
+                print(f"[Substrate] Failed to derive delegation cert for {agent_id}: {e}", file=sys.stderr)
+
+    async def heartbeat(self) -> dict:
+        """
+        Agent Heartbeat Protocol:
+        Periodically pinged by the supervisor to validate the agent's delegation 
+        certificate against the CRL. Revoked agents will be isolated.
+        """
+        from tachyon.core.telemetry import TelemetryBus
+        bus = TelemetryBus()
+        
+        if not self.agent_cert:
+            bus.emit_event("AGENT_HEARTBEAT", self.agent_id, action="ping", status="WARNING", details={"reason": "No Certificate"})
+            return {"status": "WARNING", "message": "No delegation certificate"}
+            
+        from tachyon.core.keys.certificates import DelegationCertificateAuthority
+        ca = DelegationCertificateAuthority(self.integrity)
+        
+        is_valid, reason = ca.validate_certificate(self.agent_cert)
+        
+        status = "SUCCESS" if is_valid else "REVOKED"
+        bus.emit_event(
+            "AGENT_HEARTBEAT",
+            self.agent_id,
+            action="ping",
+            status=status,
+            details={"cert_valid": is_valid, "reason": reason}
+        )
+        
+        return {
+            "status": status,
+            "message": reason,
+            "agent_id": self.agent_id
+        }
 
     def handle_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
         """Unified entry point for all agent actions."""

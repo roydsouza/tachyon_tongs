@@ -11,9 +11,9 @@ async def test_hybrid_fallback_on_failure():
     # Mock local provider to succeed
     router.local_provider.generate = AsyncMock(return_value="Local Result")
     
-    # Trigger a complexity that would normally go to cloud
-    # And simulate cloud failure by forcing mode="HYBRID" and letting the mock raise an error
-    with patch("tachyon.core.routing.ModelRouter.select_model", return_value="gemini-1.5-pro"):
+    # Simulate cloud failure so it falls back to local
+    with patch("tachyon.core.routing.ModelRouter._simulate_cloud_call", new_callable=AsyncMock) as mock_cloud:
+        mock_cloud.side_effect = Exception("Simulated Cloud Outage")
         result = await router.route_and_generate("High complexity task", mode="HYBRID")
         
     assert result == "Local Result"

@@ -184,9 +184,18 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 - **Reference:** See [docs/SDLC.md](file:///Users/rds/antigravity/tachyon_tongs/docs/SDLC.md) for the full specification.
 - **Implementation:**
   - **Phase 25.1 — Ed25519 Foundation**: Replace `IntegrityManager` HMAC with Ed25519 asymmetric signatures. Root key stored in Apple Keychain (Touch ID-gated). Shamir 3-of-5 key backup. [DONE]
-  - **Phase 25.2 — Per-Agent Key Hierarchy**: HKDF delegation scoping each agent's signing authority. Sentinel signs debates, Engineer signs patches, Airlock co-signs everything. [IN-PROGRESS]
+  - **Phase 25.2 — Per-Agent Key Hierarchy**: HKDF delegation scoping each agent's signing authority. Sentinel signs debates, Engineer signs patches, Airlock co-signs everything. [DONE]
   - **Phase 25.3 — Hybrid PQC**: Add ML-DSA-65 (NIST FIPS 204, Level 3) as hybrid overlay. Implement ADR hash-chaining in MANIFEST.json for immutable forensic timeline. [DONE]
   - **Phase 25.4 — Deterministic PQC Anchoring**: Store expanded ML-DSA-65 secret key (4032 bytes) AND public key (1952 bytes) as dual Keychain entries. PQC Rekey ceremony with full roundtrip verification. [DONE]
+
+### Phase 26.1: Agentic Observability & Control [OPERATIONAL]
+- **Objective:** Eliminate agentic observability blindspots and cryptographically bind agent identities to sub-keys.
+- **Reference:** See [docs/adr/0029-agentic-observability-and-control.md](file:///Users/rds/antigravity/tachyon_tongs/docs/adr/0029-agentic-observability-and-control.md).
+- **Implementation:**
+  - **Telemetry Bus**: Structured JSONL forensic logging for all tool blocks, approvals, and cryptographic signatures.
+  - **Delegation Certificates**: Hybrid-signed JSON certificates containing scoped HKDF keys, proving agent identity and role.
+  - **Heartbeat Protocol**: Agents perform periodic checking against a Certificate Revocation List (CRL) to proactively isolate compromised keys.
+  - **Cryptographic Modularity**: Hardened `signing.py` by extracting `KeychainProvider` and `HybridSigner`.
 
 ### Phase 26: CI/CD Hardening & Supply Chain Defense [PLANNED]
 - **Objective:** Extend the Secure SDLC into automated pipelines and third-party dependency governance.

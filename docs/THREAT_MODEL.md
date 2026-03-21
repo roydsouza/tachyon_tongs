@@ -192,14 +192,14 @@ As Tachyon Tongs matures toward HOTL/HOOTL autonomy, the observability and contr
 ### A. Agent Observability Blindspot
 - **Description**: There is no centralized telemetry for agent key usage, tool invocations, or signature operations. An attacker who compromises an agent session has no audit trail beyond filesystem entries.
 - **Impact**: Forensic analysis after a breach is limited to file-level diffs and git history, with no structured event timeline.
-- **Tachyon Mitigation (Planned)**: **Agent Telemetry Bus** — structured JSONL event emission from `ToolRouter`, `IntegrityManager`, and `BaseTachyonAgent` to `memory/operational/telemetry.jsonl`.
+- **Tachyon Mitigation (Implemented in Phase 26.1)**: **Agent Telemetry Bus** — structured JSONL event emission from `ToolRouter`, `IntegrityManager`, and `BaseTachyonAgent` directly to the `TelemetryBus` isolating the exact step of attack vectors.
 
 ### B. Key Delegation Orphaning
 - **Description**: HKDF-derived agent keys have no formal certificate binding them to the Root. There is no revocation mechanism short of rotating the Root Key itself.
 - **Impact**: A compromised agent key remains valid indefinitely. There is no way to express "Sentinel key #3 is revoked but Engineer key #2 is still valid."
-- **Tachyon Mitigation (Planned)**: **JSON Delegation Certificates** — signed by the Root Key, scoping each agent's signing authority with issue/expiry dates and revocation list.
+- **Tachyon Mitigation (Implemented in Phase 26.1)**: **JSON Delegation Certificates** — issued by the `DelegationCertificateAuthority`, dynamically signed by the Hybrid Root, scoping each agent's signing authority with automatic heartbeats validating against a CRL.
 
 ### C. Agent Identity Spoofing
 - **Description**: There is no cryptographic binding between an agent's `SKILL.md` identity (e.g., `role: sentinel`) and its derived sub-key. An attacker who gains access to the Root Key (or its HKDF derivation path) can impersonate any agent.
 - **Impact**: False-flag operations: a compromised Sentinel could sign artifacts as the Engineer.
-- **Tachyon Mitigation (Planned)**: Each agent's `SKILL.md` includes a `key_fingerprint` field containing the expected derived public key. The `ToolRouter` verifies this binding before routing tool calls.
+- **Tachyon Mitigation (Implemented in Phase 26.1)**: Each agent dynamically stores its `DelegationCertificate`. The Key itself is generated uniquely per-agent-role, mathematically sealing the output signatures to the specific agent executing the computation.
