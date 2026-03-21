@@ -121,7 +121,10 @@ The Tachyon Tongs repository is heavily documented to support the **Human-In-The
 *   **[AGENT_SENTINEL.md](docs/AGENT_SENTINEL.md)**: The Blue Team (Threat Intelligence via NVD/GitHub).
 *   **[AGENT_PATHOGEN.md](docs/AGENT_PATHOGEN.md)**: The Red Team (Adversarial Mutation Engine).
 *   **[AGENT_ENGINEER.md](docs/AGENT_ENGINEER.md)**: The Autopatcher (Self-Healing Mitigations).
-*   **[AGENT_CANARY.md](docs/AGENT_CANARY.md)**, **[AGENT_SCOUT.md](docs/AGENT_SCOUT.md)**, **[AGENT_GUARDIAN.md](docs/AGENT_GUARDIAN.md)**, **[AGENT_SYNTHESIZER.md](docs/AGENT_SYNTHESIZER.md)**
+*   **[AGENT_CANARY.md](docs/AGENT_CANARY.md)**: The Sacrificial Scout (Honeypot payload validation).
+*   **[AGENT_SCOUT.md](docs/AGENT_SCOUT.md)**: The Competitive Intel (Continuous web-scouring and threat research).
+*   **[AGENT_GUARDIAN.md](docs/AGENT_GUARDIAN.md)**: The Substrate Sentry (Substrate integrity and Merkle-tree auditing).
+*   **[AGENT_SYNTHESIZER.md](docs/AGENT_SYNTHESIZER.md)**: The Policy Architect (Translates threats into executable OPA-Rego policies).
 
 ### ⚙️ Operations & Governance
 *   **[ADMIN.md](docs/ADMIN.md)**: Operational protocols for Cryptographic Governance, Forensic Audits, and Agentic Revocation (Kill Switches).
