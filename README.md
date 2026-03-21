@@ -105,3 +105,34 @@ Tachyon Tongs is operated through a **NeoVIM-first, CLI-forward** architecture �
 - `/airlock`: Manage the patch staging area.
 - `/sentinel`: Trigger a threat sweep.
 - `/report`: Generate a substrate health report.
+
+## 📚 Documentation Directory
+
+The Tachyon Tongs repository is heavily documented to support the **Human-In-The-Loop** and **Human-On-The-Loop** operational modes. Below is a curated index of the most critical architectural and operational literature.
+
+### 🏛️ Core Architecture & Design
+*   **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Deep dive into the Substrate Daemon, Guardian Triad, and Control Plane.
+*   **[THREAT_MODEL.md](docs/THREAT_MODEL.md)**: The foundational Live Threat Model dictating all architectural boundaries (Prompt Injection, Supply Chain, Agent Escapes).
+*   **[ROADMAP.md](docs/ROADMAP.md)**: The phased evolution from HITL to HOOTL, including all active and historical sprints.
+*   **[SDLC.md](docs/SDLC.md)**: The hardware-backed, post-quantum cryptographic Secure Development Lifecycle.
+
+### 🤖 The Agent Collective
+*   **[AGENTS.md](docs/AGENTS.md)**: The master directory of the autonomous immune system.
+*   **[AGENT_SENTINEL.md](docs/AGENT_SENTINEL.md)**: The Blue Team (Threat Intelligence via NVD/GitHub).
+*   **[AGENT_PATHOGEN.md](docs/AGENT_PATHOGEN.md)**: The Red Team (Adversarial Mutation Engine).
+*   **[AGENT_ENGINEER.md](docs/AGENT_ENGINEER.md)**: The Autopatcher (Self-Healing Mitigations).
+*   **[AGENT_CANARY.md](docs/AGENT_CANARY.md)**, **[AGENT_SCOUT.md](docs/AGENT_SCOUT.md)**, **[AGENT_GUARDIAN.md](docs/AGENT_GUARDIAN.md)**, **[AGENT_SYNTHESIZER.md](docs/AGENT_SYNTHESIZER.md)**
+
+### ⚙️ Operations & Governance
+*   **[ADMIN.md](docs/ADMIN.md)**: Operational protocols for Cryptographic Governance, Forensic Audits, and Agentic Revocation (Kill Switches).
+*   **[ADMIN_CLI_NEOVIM.md](ADMIN_CLI_NEOVIM.md)**: Reference for the Event-Horizon Command Bridge (CLI `tt`, TUI, Ghostty/NeoVIM).
+*   **[KEYS.md](docs/KEYS.md)**: Master taxonomy of all Hybrid PQC keys, their rotation schedules, and derivation paths.
+*   **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** & **[TAILSCALE.md](docs/TAILSCALE.md)**: Deployment topologies and zero-trust WireGuard mesh bounding.
+*   **[GENESIS_RECOVERY_CEREMONY.md](docs/GENESIS_RECOVERY_CEREMONY.md)**: Disaster recovery procedures via Shamir Secret Sharing.
+
+### 📊 Logs & Ledger (The Somatic State)
+*   **[SYNC_LOG.md](SYNC_LOG.md)**: The heartbeat of the Substrate — inverse-chronological ledger of all agentic breakthroughs and architectural hardening.
+*   **[TASKS.md](TASKS.md)**: Granular checklist for active engineering sprints.
+*   **[EVOLUTION.md](EVOLUTION.md)** & **[RUN_LOG.md](RUN_LOG.md)**: Autonomous discoveries, somatic modifications, and raw event traces.
+*   **[ALERT.md](ALERT.md)** & **[CANARY_LOG.md](CANARY_LOG.md)**: Active security incidents and Honeypot intelligence.
+*   **[EXPLOITATION_CATALOG.md](EXPLOITATION_CATALOG.md)** (Encrypted): The master repository of synthesized adversarial logic (Protected by Hybrid Signatures).

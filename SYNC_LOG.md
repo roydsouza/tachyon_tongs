@@ -1,5 +1,12 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-21: Phase 26.2 — Documentation Indexing
+- **Objective:** Curate an aggregated "Contents" taxonomy outlining all architecture, operations, and forensic documentation.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - Injected an onboarding-friendly `📚 Documentation Directory` to the root `README.md`.
+  - Sorted 20+ specialized Markdown files into categories (Core Architecture, Agent Collective, Operations, Somatic Ledgers).
+
 ### 2026-03-21: Phase 26.1 — Agentic Observability & Control
 - **Objective:** Eliminate agent observability blindspots and cryptographically bind derived keys to specific agent identities.
 - **Status:** [OPERATIONAL]
