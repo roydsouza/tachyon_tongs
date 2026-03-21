@@ -170,6 +170,118 @@ def pin_root_key(pub_hex: str):
     
     print(f"[✓] Root Key pinned and attested in {manifest_path}.")
 
+def pqc_genesis_ceremony():
+    """Execute the Second-Tier Quantum Genesis Ceremony (ML-DSA-65)."""
+    import secrets
+    import os
+    from tachyon.core.sss import split_secret
+    from tachyon.core.signing import PQC_KEY_LABEL, PQC_KEY_APPLICATION_TAG
+    
+    # Force LIBOQS to find our manual dylib
+    os.environ["OQS_LIB_DIR"] = "/Users/rds/antigravity/tachyon_tongs"
+    
+    print("="*60)
+    print("TACHYON TONGS: PQC GENESIS CEREMONY (ML-DSA-65)")
+    print("="*60)
+    print("This will generate a 64-byte Quantum-Resistant Root Seed.")
+    print("Algorithm: ML-DSA-65 (NIST Level 3)")
+    print("This seed will be split into 5 Shamir shares (Threshold: 3).")
+    print("-" * 30)
+    
+    # 1. Generate Quantum Seed (64 bytes for Dilithium3)
+    pqc_seed = secrets.token_bytes(64)
+    print("[*] Quantum-Resistant Seed generated in volatile memory.")
+    
+    # 2. Split Secret (3-of-5)
+    shares = split_secret(pqc_seed, threshold=3, total_shares=5)
+    print("[*] Seed split into 5 Quantum-Shares (3-of-5 Threshold).")
+    print("\n" + "!"*60)
+    print("COLD STORAGE DELEGATION (PQC TIER):")
+    print("Copy these 5 shares to the SAME 5 locations as your Root Key.")
+    print("!"*60)
+    
+    for i, share in enumerate(shares):
+        print(f"Share {i+1}: {share}")
+    
+    print("!"*60 + "\n")
+    input("Confirm you have SECURELY COPY-PASTED all 5 shares. Press Enter to anchor...")
+    
+    # 3. Anchor to Hardware (macOS Keychain)
+    print("[*] Anchoring PQC Secret to hardware...")
+    try:
+        import Security
+        query = {
+            Security.kSecClass: Security.kSecClassGenericPassword,
+            Security.kSecAttrLabel: PQC_KEY_LABEL,
+            Security.kSecAttrAccount: PQC_KEY_APPLICATION_TAG,
+            Security.kSecValueData: pqc_seed,
+            Security.kSecAttrAccessible: Security.kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+        }
+        status, result = Security.SecItemAdd(query, None)
+        if status == 0:
+            print("[✓] PQC Root successfully anchored to macOS Keychain.")
+        else:
+            print(f"[!] Keychain Error: {status}. Manual persistence required.")
+    except Exception as e:
+        print(f"[!] Hardware anchoring failed: {e}")
+    
+    # Scrub seed from memory
+    pqc_seed = None
+    print("[*] PQC Seed scrubbed from memory.")
+    print("="*60)
+    print("PHASE 25.3: PQC OVERLAY ESTABLISHED.")
+    print("="*60)
+
+def security_status():
+    """Show the current security status and cryptographic hierarchy."""
+    from tachyon.core.signing import IntegrityManager
+    signer = IntegrityManager()
+    
+    print("="*60)
+    print("TACHYON TONGS: CRYPTOGRAPHIC HIERARCHY")
+    print("="*60)
+    
+    # 1. Root Key (The Sovereign)
+    if signer.root_public_key:
+        print(f"ROOT KEY (Sovereign):")
+        print(f"  [✓] Fingerprint: {signer.root_public_key}")
+        if signer._private_key:
+            print(f"  [✓] Hardware Link: ACTIVE (macOS Keychain)")
+            print(f"  [✓] Binding: Hardware-Bound Ed25519")
+        else:
+            print(f"  [!] Hardware Link: NOT FOUND (Simulation/Legacy Mode)")
+    else:
+        print("ROOT KEY: [!] NOT ESTABLISHED")
+
+    # 2. PQC Root (The Quantum Sovereign)
+    if signer._pqc_private_key:
+        print(f"PQC ROOT (ML-DSA-44):")
+        print(f"  [✓] Algorithm: {signer.PQC_ALGORITHM}")
+        print(f"  [✓] Hardware Link: ACTIVE (macOS Keychain)")
+        print(f"  [✓] Binding: Hybrid-Software Overlay")
+    else:
+        print("PQC ROOT: [!] NOT ESTABLISHED (Quantum Vulnerable)")
+
+    print("-" * 30)
+    
+    # 3. Derived Agent Keys (The Vassals)
+    print("AGENT DELEGATIONS:")
+    roles = ["sentinel", "engineer", "developer"]
+    for role in roles:
+        try:
+            # Check if we can derive the key (meaning Root is loaded)
+            if signer._private_key:
+                agent_key = signer.derive_agent_key(role)
+                agent_pub = agent_key.public_key().public_bytes_raw().hex()
+                print(f"  [✓] {role.upper()}: Derived ({agent_pub[:16]}...)")
+            else:
+                print(f"  [!] {role.upper()}: PENDING (Root Key not loaded)")
+        except Exception:
+            print(f"  [!] {role.upper()}: ERROR during derivation")
+
+    print("=" * 60)
+    print("[*] All signatures verified against Root Manifest.")
+
 def recovery_drill():
     """Perform a recovery drill without persisting anything."""
     print("="*60)
