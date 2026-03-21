@@ -13,7 +13,7 @@ The Canary is typically triggered in two scenarios:
 ### 2. Configuration
 The Canary reads its environment from standard substrate config, but maintains specific isolated paths:
 - **Sandbox Directory**: `/tmp/tachyon_canary_sandbox` (Wiped after every run).
-- **Log Path**: `memory/strategic/CANARY_LOG.md` (The primary feedback loop).
+- **Log Path**: `logs/CANARY_LOG.md` (The primary feedback loop).
 
 ### 3. Capabilities
 - `scout(targets)`: Takes a list of `id` and `payload` pairs. Applies the `CanarySanitizer`, evaluates the "neutralization" status, and logs forensics.

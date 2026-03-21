@@ -12,8 +12,8 @@ class ImmuneManager:
     """
     def __init__(self, agent_id: str = "immune-system"):
         self.agent_id = agent_id
-        self.canary_log = "memory/strategic/CANARY_LOG.md"
-        self.evolution_ledger = "memory/strategic/EVOLUTION.md"
+        self.canary_log = "logs/CANARY_LOG.md"
+        self.evolution_ledger = "logs/EVOLUTION.md"
         self.state = StateManager()
         self.engineer = EngineerRole(f"{agent_id}-engineer")
 

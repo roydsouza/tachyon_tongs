@@ -2,6 +2,30 @@
 
 This file tracks the structural and cognitive growth of the Tachyon Tongs substrate.
 
+## [Agent Failure] 2026-03-21 08:04:32
+Agent tachyon-master failed: run_supervisor() got an unexpected keyword argument 'target_url'
+
+---
+## [Agent Action] 2026-03-21 08:04:32
+Agent tachyon-master (Sentinel) initiating run_sweep
+
+---
+## [Agent Failure] 2026-03-21 08:04:23
+Agent tachyon-master failed: Unknown action for Sentinel: vuln_sweep
+
+---
+## [Agent Action] 2026-03-21 08:04:23
+Agent tachyon-master (Sentinel) initiating vuln_sweep
+
+---
+## [Agent Failure] 2026-03-21 08:04:07
+Agent tachyon-master failed: Unknown action for Sentinel: run
+
+---
+## [Agent Action] 2026-03-21 08:04:07
+Agent tachyon-master (Sentinel) initiating run
+
+---
 ## [Agent Action] 2026-03-21 05:04:07
 Agent tachyon-master (Canary) initiating scout
 

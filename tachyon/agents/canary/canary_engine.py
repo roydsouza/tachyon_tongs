@@ -13,7 +13,7 @@ class CanaryAgent(BaseTachyonAgent):
     def __init__(self, agent_id: str = "canary-001"):
         super().__init__(agent_id, "Canary")
         self.sandbox_dir = "/tmp/tachyon_canary_sandbox"
-        self.canary_log = "memory/strategic/CANARY_LOG.md"
+        self.canary_log = "logs/CANARY_LOG.md"
         self.sanitizer = CanarySanitizer()
 
     def execute_role_logic(self, action: str, parameters: Dict[str, Any]) -> Any:
