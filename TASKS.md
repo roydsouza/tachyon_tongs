@@ -42,7 +42,21 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[CRYPTO]** Implement **Secure Enclave** root key via `pyobjc-framework-Security` [DONE]
 - [x] **[CRYPTO]** Implement **Shamir Secret Sharing** (3-of-5) for root key recovery [DONE]
 - [x] **[SCRIPTS]** Create `scripts/sign_artifact.py` (Ed25519), `scripts/verify_signature.py` [DONE]
-### 🔳 [IN-PROGRESS] Phase 25.2: Per-Agent Key Delegation
+### ✅ [COMPLETED] Phase 25.3: Hybrid PQC Root (ML-DSA-65)
+- [x] **[CRYPTO]** Implement **ML-DSA-65** (NIST Level 3) signing overlay [DONE]
+- [x] **[CRYPTO]** Implement **Expanded Secret Key** (4032 bytes) anchoring to Keychain [DONE]
+- [x] **[CRYPTO]** Implement **Shamir Secret Sharing** for expanded PQC secret [DONE]
+- [x] **[CLI]** Implement **`tt keys verify-pqc`** and **`tt keys sign/verify`** [DONE]
+- [x] **[VERIFY]** Retroactive Hybrid Signing of all 28 ADRs and README.md [DONE]
+
+### 🔳 [IN-PROGRESS] Phase 26: CI/CD Hardening & Supply Chain Defense
+- [ ] **[HOOKS]** Implement `.pre-commit-config.yaml` with hybrid signature verification
+- [ ] **[CI]** Create `.github/workflows/verify-integrity.yml` (verify-only, never sign)
+- [ ] **[SBOM]** Generate CycloneDX SBOM and sign with each release
+- [ ] **[SUPPLY]** Graduate `is_package_whitelisted()` from stub to DB-backed check
+- [ ] **[BUILD]** Hash-pinned `requirements.txt` for reproducible builds
+
+## 🔳 [IN-PROGRESS] Phase 25.2: Per-Agent Key Delegation
 - [x] **[CRYPTO]** Design HKDF derivation logic in `IntegrityManager` [DONE]
 - [ ] **[CRYPTO]** Implement `tt keys status` (Hierarchy Visualizer)
 - [ ] **[CRYPTO]** Generate and anchor sub-keys: **Sentinel**, **Engineer**, **Airlock**
@@ -69,7 +83,7 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[CHORE] Prune `__init__.py` Shim Layer**: Verified and optimized module exports. [DONE]
 - [ ] **[CHORE] Archival Script**: Prune `RUN_LOG.md` (93KB and growing) and implement log rotation.
 - [ ] **[OVERSIGHT] Tiered Debates**: Implement risk-based debate tiers (None/Self/Dyad/Triad).
-- [ ] **[SECURITY] PQC-Hybrid Attestation**: Implement Dilithium3 signatures for PDP tool-call attestation.
+- [x] **[SECURITY] PQC-Hybrid Attestation**: Implement ML-DSA-65 signatures for substrate-wide integrity. [DONE]
 - [ ] **Containerization**: Dockerize the Substrate Daemon for CI/CD.
 
 ### 🔭 New Opportunities (Identified 2026-03-19)

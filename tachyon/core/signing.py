@@ -107,10 +107,13 @@ class IntegrityManager:
             status, result = Security.SecItemCopyMatching(query, None)
             if status == Security.errSecSuccess:
                 key_bytes = bytes(result)
-                self._pqc_private_key = oqs.Signature(PQC_ALGORITHM, key_bytes)
-                # liboqs-python: generate_keypair() with a loaded secret key 
-                # will return the corresponding public key.
-                self._pqc_public_key = self._pqc_private_key.generate_keypair()
+                # liboqs-python: We need to ensure the PK is correctly derived from the expanded SK.
+                # In ML-DSA-65, the expanded SK (4032 bytes) typically contains the PK.
+                with oqs.Signature(PQC_ALGORITHM) as sig:
+                    # In some oqs-python versions, we must load the secret key into a signature instance
+                    # to correctly derive the public key.
+                    self._pqc_public_key = sig.generate_keypair(key_bytes)
+                    self._pqc_private_key_bytes = key_bytes
         except Exception as e:
             # print(f"[DEBUG] PQC Load Error: {e}")
             pass
@@ -209,8 +212,8 @@ class IntegrityManager:
             elif part.startswith("mldsa65:"):
                 # PQC Verification (Phase 25.3)
                 pqc_checked = True
-                if not self._pqc_private_key: 
-                    # Skip if key not loaded (PQC is an overlay)
+                if not self._pqc_public_key: 
+                    # Skip if key not loaded (PQC is an optional integrity overlay)
                     continue
                 sig_bytes = bytes.fromhex(part.split(":")[1])
                 

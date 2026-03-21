@@ -329,9 +329,13 @@ This log tracks technical decisions, mission-critical state transitions, and syn
 
 ## [2026-03-21] - Phase 25.4: Hybrid PQC Overlay Finalized
 - **Session Focus**: Finalizing the Quantum-Resistant Hybrid Root (ECC + PQC).
-- **Key Changes**:
-    - Hardened  with stateless ML-DSA-65 (NIST Level 3) verification.
-    - Updated PQC storage to use **Expanded Secret Keys** (4032 bytes) for deterministic anchoring.
-    - Retroactively signed all 28 ADRs and  with Hybrid Root.
-    - Updated , , and  with tiered sovereignty details.
-- **Status**: Substrate is now Quantum-Ready. Hybrid signatures active.
+- **Key Accomplishments**:
+    - **Stateless Verification**: Hardened `signing.py` with stateless ML-DSA-65 (NIST Level 3) verification logic. Solved the `liboqs-python` state-mismatch issue by creating fresh `oqs.Signature` instances for each `verify()` call.
+    - **Expanded Key Anchoring**: Updated PQC storage to use **Expanded Secret Keys** (4032 bytes). This ensures that key reconstruction is deterministic and that the public key remains constant across reloads from the macOS Keychain.
+    - **Retroactive Signing Ceremony**: Successfully signed all 28 ADRs, `docs/adr/MANIFEST.json`, and `README.md` with the Hybrid Root.
+    - **Systems Governance**: Updated `ARCHITECTURE.md`, `KEYS.md`, and `ADMIN.md` with tiered sovereignty and expanded key recovery details.
+- **Verification**: 
+    - `tt keys verify README.md` [✓] **PASS**
+    - `tt keys verify-pqc` [✓] **PASS**
+    - `python3 tests/test_oqs_loop_deep_debug.py` [✓] **PASS**
+- **Status**: Substrate is now Quantum-Ready. Hybrid signatures active. All assets pushed to GitHub.
