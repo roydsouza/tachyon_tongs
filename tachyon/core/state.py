@@ -260,7 +260,7 @@ class StateManager:
                     fcntl.flock(lock_f, fcntl.LOCK_UN)
 
     def emit_alert(self, alert_type: str, message: str):
-        """Emits a high-priority alert to the top-level ALERT.md ledger. Rate-bounded."""
+        """Emits a high-priority alert to the top-level ALERT.md ledger. Prepend via LIFO."""
         if hasattr(self, "alert_limiter") and not self.alert_limiter.should_allow(alert_type):
             return # Suppress loud alerts
             
@@ -269,11 +269,34 @@ class StateManager:
         if not os.path.exists(alert_path): alert_path = "ALERT.md"
             
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        alert_block = f"\n## [{alert_type}] {timestamp}\n> [!CAUTION]\n> **CRITICAL SECURITY ALERT:**\n> {message}\n\n---\n"
+        alert_block = f"## [{alert_type}] {timestamp}\n> [!CAUTION]\n> **CRITICAL SECURITY ALERT:**\n> {message}\n\n---\n\n"
         
         try:
-            with open(alert_path, "a") as f:
-                f.write(alert_block)
+            content = ""
+            if os.path.exists(alert_path):
+                with open(alert_path, "r") as f:
+                    content = f.read()
+            
+            # Prepend after header if exists, else just prepend
+            header = "# 🚨 Tachyon Tongs: High-Priority Alert Hub\n\nThis file tracks critical violations and integrity failures. The newest alerts appear at the top.\n\n"
+            if content.startswith("# 🚨"):
+                parts = content.split("\n\n") # Use simpler split
+                if len(parts) >= 2:
+                    content_without_header = "\n\n".join(parts[2:])
+                    new_content = parts[0] + "\n\n" + parts[1] + "\n\n" + alert_block + content_without_header
+                else:
+                    new_content = header + alert_block
+            else:
+                new_content = header + alert_block + content
+
+            with open(alert_path, "w") as f:
+                f.write(new_content)
+                f.flush()
+                os.fsync(f.fileno())
+
+            # Emit to Telemetry for Herald/Signal bridge
+            from .telemetry import TelemetryBus
+            TelemetryBus().emit_event("SECURITY_ALERT", "substrate", alert_type, "EMITTED", {"message": message})
         except Exception as e:
             print(f"[StateManager] Failed to emit alert: {e}")
 
@@ -370,9 +393,9 @@ class StateManager:
                 conn.commit()
 
     def log_evolution(self, event_type, details, evolution_file="EVOLUTION.md"):
-        """Logs architectural or structural evolution of the substrate."""
+        """Logs architectural or structural evolution of the substrate. Prepend via LIFO."""
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        entry = f"## [{event_type}] {timestamp}\n{details}\n\n---\n"
+        entry = f"## [{event_type}] {timestamp}\n{details}\n\n---\n\n"
         
         header = "# 🧬 The Evolutionary Ledger\n\nThis file tracks the structural and cognitive growth of the Tachyon Tongs substrate.\n\n"
         
@@ -382,17 +405,17 @@ class StateManager:
                 content = f.read()
         
         if not content.startswith("# 🧬"):
-            content = header + entry + content
+            new_content = header + entry + content
         else:
             # Prepend after header
             parts = content.split("\n\n", 2)
             if len(parts) >= 2:
-                 content = parts[0] + "\n\n" + parts[1] + "\n\n" + entry + (parts[2] if len(parts) > 2 else "")
+                 new_content = parts[0] + "\n\n" + parts[1] + "\n\n" + entry + (parts[2] if len(parts) > 2 else "")
             else:
-                 content = header + entry
+                 new_content = header + entry
         
         with open(evolution_file, "w") as f:
-            f.write(content)
+            f.write(new_content)
             f.flush()
             os.fsync(f.fileno())
 
