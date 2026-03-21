@@ -140,7 +140,10 @@ def immune():
         console.print(f"[bold red]Scan Failed:[/bold red] {results.get('reason')}")
 
 # --- Key Management Command Group ---
-keys_app = typer.Typer(help="Manage cryptographic keys and hardware anchors.")
+keys_app = typer.Typer(
+    help="Manage cryptographic keys and hardware anchors.",
+    no_args_is_help=True
+)
 app.add_typer(keys_app, name="keys")
 
 @keys_app.command()
