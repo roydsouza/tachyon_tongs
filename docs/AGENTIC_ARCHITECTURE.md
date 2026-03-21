@@ -15,8 +15,10 @@ The ad hoc and organic growth of Tachyon Tongs into an Agentic Firewall mirrors 
 2. **Event-First Backplane:** Agents never call each other directly. All coordination flows through pub/sub on a unified, SQLite-backed Telemetry Bus.
 3. **Sign Everything:** Every output is signed; every input payload is verified. Trust is anchored in Post-Quantum Cryptography (PQC) using Ed25519 + ML-DSA-65 hybrid signatures.
 4. **Oversight Built-In:** Human-In-The-Loop (HITL), Human-On-The-Loop (HOTL), and Human-Out-Of-The-Loop (HOOTL) modes are integrated natively into all execution patterns.
-5. **Architectural Purity:** Single Responsibility holds true. Each agent does one thing well, signs for it, and leaves a complete forensic trail. Agents are never merged to "reduce count."
+5. **Architectural Purity:** Single Responsibility holds true. Agents do one thing well, sign for it, and leave a complete forensic trail. Agents are never merged to "reduce count."
 6. **Forensic by Default:** Every action produces an immutable `ActionRecord`. Any past decision can be fully reconstructed and replayed.
+7. **Defense in Depth via Asymmetric Trust:** Communication with the outside world is strictly proxied through specialized agents (e.g., the Herald). High-value administrative agents are air-gapped from the network, ensuring that even a compromised "mouth" (communicator) cannot speak for the "brain" (orchestrator).
+8. **Secure Gateway Portability:** The entire substrate is designed to run locally on a standard workstation (Apple Silicon) or as a dedicated, high-assurance security gateway device on hardened hardware.
 
 ---
 
@@ -473,8 +475,8 @@ Allowing agents unstructured or overly broad access to internal systems to facil
 
 ### ❌ Firewall Administrator with Direct Network Access
 Suggestions to have the Firewall Administrator directly integrate with Signal or external APIs for notifications and C2.
-**Rationale:** The Administrator holds the keys to the kingdom (Mutant Lock issuance, oversight mode control, strategy). Granting it external network access creates an unacceptable attack surface. The Herald proxy pattern ensures the "brain" is air-gapped from the "mouth."
+**Rationale:** The Administrator holds the keys to the kingdom (Mutant Lock issuance, oversight mode control, strategy). Granting it external network access creates an unacceptable attack surface. The Herald proxy pattern ensures the "brain" is air-gapped from the "mouth," providing a critical layer of **Defense in Depth** where the attacker must compromise multiple isolated agent identities to reach the executive controller.
 
 ### ❌ Cloud-Hosted LLM for the Administrator
 Using external cloud LLM APIs (OpenAI, Anthropic, etc.) for the Firewall Administrator's cognitive engine.
-**Rationale:** Continuous meta-reasoning over the substrate's exact defensive posture would constitute massive intelligence leakage. Local `llama.cpp` inference guarantees zero data exfiltration, zero latency, zero cost, and immunity to cloud provider outages.
+**Rationale:** Continuous meta-reasoning over the substrate's exact defensive posture would constitute massive intelligence leakage. Local `llama.cpp` inference guarantees zero data exfiltration, zero latency, zero cost, and immunity to cloud provider outages. This local-first constraint makes the architecture an optimal candidate for **Secure Hardware Gateway** deployments where the entire security logic resides in a trusted, air-gapped physical envelope.

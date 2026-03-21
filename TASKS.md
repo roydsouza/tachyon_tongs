@@ -45,7 +45,20 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[CLI] Formalize `/debate` Command**: Expose `tt debate <patch-id>` as first-class command that streams Skeptic/Meta-Critic/Engineer exchange in real-time
 - [ ] **[TUI] Health Score Dashboard**: Surface PQC Coverage %, Catalog Integrity Age, Airlock Queue Age, and Pathogen Block Rate in TUI
 - [ ] **[DOCS] SBOM with Cryptographic Attestation**: Generate automated SBOMs (CycloneDX) with Sigstore/SLSA build provenance
-- [ ] **[VERIFY]** Automated HOTL readiness score in `tt status`
+### 🚧 Phase 33: The Immune Collective (Core Framework) [PLANNED]
+> **Source**: `docs/AGENTIC_ARCHITECTURE.md` — Synthesized v2.0
+- [ ] **[P0] [INFRA] EventBus Implementation**: Build the SQLite-WAL event broker in `tachyon/core/bus.py`.
+- [ ] **[P0] [INFRA] BaseAgent Protocol**: Implement the `BaseAgent` ABC with mandatory PQC signature verification and `ActionRecord` generation.
+- [ ] **[P1] [AGENT] The Firewall Administrator (v1)**: Local `llama.cpp` integration via `mlx_lm` for executive orchestration.
+- [ ] **[P1] [AGENT] The Herald (v2)**: Formalize Signal C2 proxy with strict network isolation.
+- [ ] **[VERIFY]** Successful Sentinel-to-Administrator event loop.
+
+### 🚧 Phase 34: Forensic Reconstruction & Learning [PLANNED]
+> **Source**: `docs/AGENTIC_ARCHITECTURE.md` — Synthesized v2.0
+- [ ] **[P1] [FORENSICS] Action Replay**: Implement `reconstruct_agent_decision(record_id)` to audit historical traces.
+- [ ] **[P1] [CORE] Adaptive Learning**: Implement the Administrator's `KnowledgeBase` and `AdaptiveLearning` effectiveness tracker.
+- [ ] **[P2] [SECURITY] Mutant Lock v2**: Cryptographically sign mutation tokens issued by the Administrator.
+- [ ] **[VERIFY]** 100% forensic coverage for all Pilot Agent actions.
 
 ### 🔳 Phase 25.2: Per-Agent Key Delegation [IN-PROGRESS]
 - [x] **[CRYPTO]** Design HKDF derivation logic in `IntegrityManager` [DONE]

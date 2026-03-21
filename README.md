@@ -42,11 +42,17 @@ Tachyon Tongs is not a static defense system; it is an autonomic immune system d
 *   **The Engineer (Autopatcher)**: Self-synthesizes infrastructure patches and policy mutations to neutralize detected threats in response to the Canary's intelligence.
 *   **The Guardian (Auditor)**: Performs periodic forensic audits of the architectural substrate, ensuring HMAC signatures and Merkle roots remain untampered.
 
+## 🏛️ Agentic Architecture: The Immune Collective
+
+Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture modeled after the autonomic immune system. Unlike monolithic AI applications, Tachyon decomposes security logic into a collective of specialized, cryptographically isolated agents.
+
+*   **Defense in Depth**: High-value administrative components (like the **Firewall Administrator**) are air-gapped from the network. Communication with the outside world (Signal, Webhooks) is proxied through the **Herald** agent, ensuring that a compromise of the communication layer cannot escalate to executive substrate control.
+*   **Hardware-Optimized Sovereignty**: While capable of running on any standard laptop or workstation, the architecture is specifically designed for hosting in **Secure Hardware Gateway** devices. By leveraging local `llama.cpp` inference, the system maintains absolute operational security (OpSec) with zero external telemetry leaks.
+*   **Immutable Forensics**: Every agent interaction is cryptographically signed and recorded, creating a tamper-evident audit trail for post-facto decision reconstruction.
+
+👉 **[AGENTIC_ARCHITECTURE.md](docs/AGENTIC_ARCHITECTURE.md)** — *Deep dive into the 6-tier taxonomy, event-driven backplane, and trust boundaries.*
+
 ## 🤖 The Agent Collective
-
-Tachyon Tongs is powered by a diverse set of specialized agents, each following the **Logical Separation** pattern. For a detailed breakdown of every agent's capabilities, operational mechanics, and integration points, see:
-
-👉 **[AGENTS.md](docs/AGENTS.md)** — *The central directory for the Tachyon Tongs immune system.*
 
 ## 4. Deployment Models
 

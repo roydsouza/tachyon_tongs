@@ -210,11 +210,12 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 
 ## Stage 7: Autonomous Maturity (HITL → HOTL → HOOTL)
 
-- [ ] **Hybrid Oversight Platform**: Transition from manual "Airlock" clicks to "Policy-Based Exceptions."
-- [ ] **Oversight Trajectory Definition**:
-    - **HITL (Human-In-The-Loop)**: Fail-closed on every anomaly.
-    - **HOTL (Human-On-The-Loop)**: Bounded risk with automated 72-hour rollback window.
-    - **HOOTL (Human-Out-Of-The-Loop)**: Probabilistic gating + post-hoc audit.
+- [ ] **Phase 31: The Immune Collective (Architecture v2.0)**: Transition from monolithic role-based scripts to a formal, event-driven agentic collective.
+    - **EventBus**: SQLite-WAL based pub/sub for all agent coordination.
+    - **BaseAgent Protocol**: Standardized signature-verifying, intent-gated execution lifecycle.
+    - **Firewall Administrator**: Local `llama.cpp` powered orchestrator for executive decisioning.
+    - **The Herald**: Air-gapped Signal proxy for secure C2 and alerts.
+- [ ] **High-Assurance Gateway Optimization**: Optimizing the substrate for dedicated, secure hardware gateway deployments.
 - [ ] **Retrospective Audit Engine**: Implement the 72-hour rollback window for autonomous patches.
 - [ ] **Formal Verification Integration**: Auto-generating formal proofs for substrate mutations.
 - [ ] **Self-Healing Substrate**: Zero-latency autonomous mitigation.
