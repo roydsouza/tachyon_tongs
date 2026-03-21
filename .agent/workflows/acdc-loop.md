@@ -18,6 +18,7 @@ Follow this loop for every feature or mitigation:
 
 ## 3. 🛡️ VERIFY (Validation)
 - **Deterministic Check**: Run `pytest` and any substrate-specific verification scripts (e.g., `verify_substrate.py`).
+- **Ironclad Verification**: For security-critical components (Genesis, Recovery, Signing), perform zero-mock E2E verification via `subprocess` against the real binary (See `SEC-001.md`).
 - **Policy Audit**: Ensure no new tool calls bypass `policies/tool_access.rego`.
 
 ## 4. 🧠 SOLVE (Finalization)
