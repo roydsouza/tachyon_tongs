@@ -50,13 +50,6 @@ def genesis_ceremony():
         print("\n"*50)
         
     # 4. Storage (Phase 25.2)
-    save_to_keychain(seed)
-
-    print("[+] Genesis Ceremony Complete.")
-    print("[*] Private key seed scrubbed from volatile memory.")
-
-def save_to_keychain(seed: bytes):
-    """Store the root seed in the macOS Keychain."""
     try:
         import Security
         from tachyon.core.signing import KEY_LABEL, KEY_APPLICATION_TAG
@@ -76,14 +69,23 @@ def save_to_keychain(seed: bytes):
             Security.kSecAttrAccount: KEY_APPLICATION_TAG,
         })
         
-        status = Security.SecItemAdd(attributes, None)
+        # SecItemAdd returns (OSStatus, SecKeychainItemRef) tuple
+        result = Security.SecItemAdd(attributes, None)
+        status = result[0] if isinstance(result, tuple) else result
+        
         if status == Security.errSecSuccess:
             print("[*] Root Key successfully persisted to macOS Keychain.")
         else:
             print(f"[!] Warning: Failed to save key to Keychain (Status: {status})")
     except ImportError:
         print("[!] Warning: pyobjc-framework-Security not found. Skipping Keychain persistence.")
-    
+
+    print("[+] Genesis Ceremony Complete.")
+    print("[*] Private key seed scrubbed from volatile memory.")
+
+    # 5. Pin Root Public Key to Manifest (Phase 25.2)
+    pin_root_key(pub_hex)
+
 def pin_root_key(pub_hex: str):
     """Pin the Root Public Key to ROOT_MANIFEST.json with an Integrity Attestation."""
     import json
