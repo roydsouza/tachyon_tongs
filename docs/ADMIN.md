@@ -48,6 +48,45 @@ The `ROOT_MANIFEST.json` is the sole source of truth for public key pinning.
 - Any change to the Root Key requires a manual update and signing of the manifest.
 - ADRs must be re-signed after structural modifications to maintain the forensic chain.
 
+## 5. Agentic Observability & Control Operations
+Phase 26.1 established a hardened Agent Control Plane. Operators must utilize the following subsystems to monitor and revoke autonomous behavior.
+
+### 5.1 The Telemetry Bus
+All agent actions, tool blocks, and cryptographic signatures are emitted as structured JSON objects.
+- **Location**: `memory/operational/telemetry.jsonl`
+- **Tailing Live Traffic**: 
+  ```bash
+  tail -f memory/operational/telemetry.jsonl | jq '.'
+  ```
+- **Auditing Blocked Intents**: To see exactly *why* the Policy Decision Point (PDP) rejected an agent's reasoning:
+  ```bash
+  cat memory/operational/telemetry.jsonl | jq 'select(.event_type == "TOOL_CALL" and .status == "BLOCKED")'
+  ```
+- **Forensic Key Binding**: Every time an agent signs an ADR or debate, it logs to the `AGENT_SIGNATURE` event stream, allowing operators to definitively assign algorithmic accountability to a specific sub-key.
+
+### 5.2 Agent Revocation (The Kill Switch)
+If an agent begins exhibiting severe alignment drift or if its ephemeral sub-key is compromised, the operator can isolate it instantly without needing to rotate the Sovereign Root Key.
+
+1. **Locate the Fingerprint**: 
+   Find the rogue agent's key fingerprint via the Telemetry Bus:
+   ```bash
+   cat memory/operational/telemetry.jsonl | jq 'select(.event_type == "AGENT_HEARTBEAT" and .agent_id == "rogue_agent_id")'
+   ```
+2. **Execute Revocation**:
+   Open the Certificate Revocation List (CRL) at `memory/operational/revocation_list.json`.
+   Add the fingerprint:
+   ```json
+   {
+     "revoked_fingerprints": {
+       "a1b2c3d4e5f6g7h8": {
+         "revocation_date": "2026-03-20T23:00:00Z",
+         "reason": "Severe Contextual Alignment Drift"
+       }
+     }
+   }
+   ```
+3. **Heartbeat Failure**: Within seconds, the compromised agent's `async heartbeat()` will fail validation against the CRL, and it will be systematically isolated from the substrate.
+
 ---
 **[✓] SIGNED BY ROOT KEY 1a2ff0...81047**
 *Timestamp: 2026-03-20*

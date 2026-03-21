@@ -645,10 +645,26 @@ Any tampering with a historical ADR breaks the hash chain, triggering a Merkle v
 
 ### 13.4 Threat Model Extensions (§9C–§9H)
 
-Phase 25 introduces six new threat vectors to the substrate's security model:
-- **§9C**: Signing key compromise → Secure Enclave hardware isolation
-- **§9D**: Cross-agent signature forgery → Per-agent keys with scoped delegation
-- **§9E**: Key substitution attack → Root key hash pinned in code
-- **§9F**: Signing oracle attack → Airlock displays diff + risk score before co-signing
-- **§9G**: Replay attack on signed artifacts → Timestamps + monotonic counters + hash chain
 - **§9H**: Harvest-now-decrypt-later → Hybrid Ed25519 + ML-DSA-44 signatures
+
+## 14. Agentic Control Plane (Phase 26.1)
+
+The Substrate utilizes an explicit Control Plane to guarantee real-time visibility and immediate revocation capabilities over executing autonomous agents.
+
+### 14.1 Distributed Telemetry Bus
+Instead of relying on ephemeral stdout routing, all critical enforcement nodes (`ToolRouter`, `IntegrityManager`, `BaseTachyonAgent`) dump asynchronous, structured records directly to a standardized `TelemetryBus`. 
+- **Atomic Locking**: Uses pure-POSIX `fcntl` (`flock`) locks on the `telemetry.jsonl` file, ensuring dozens of concurrently executing node processes output logs without race condition corruption.
+- **Event Traceability**: Provides a deterministic stream of JSON objects detailing exactly which parameters were passed to which tool, and specifically *why* the PEP evaluated them as blocked.
+
+### 14.2 Ephemeral JSON Delegation
+To prevent Key Orphaning (Threat §13.B):
+- The Hybrid Root initializes a localized `DelegationCertificateAuthority`.
+- As agents are spawned, they are provided a unique Ed25519 sub-key derived via HMAC-based Key Derivation Function (HKDF).
+- The Local CA binds this sub-key to a `role` constraint via a **JSON Certificate**.
+- The Root Key officially hybrid-signs this certificate, establishing cryptographic provenance over the agent's identity.
+
+### 14.3 Substrate Heartbeats
+To rapidly address identity spoofing or misalignment, the system utilizes active health checks rather than static revocation checks.
+- Every instantiation of `BaseTachyonAgent` binds an `async heartbeat()` event loop.
+- The heartbeat manually reads the agent's JSON Certificate and mathematically validates the Root signature against it.
+- Finally, it asserts the certificate's fingerprint against a live SQLite/JSON **Certificate Revocation List (CRL)** (`memory/operational/revocation_list.json`). If the heartbeat detects revocation, the node halts execution and self-isolates.
