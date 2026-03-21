@@ -55,9 +55,9 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ### 🔳 Phase 34: The Herald & Signal Purification [IN-PROGRESS]
 > **Source**: `docs/AGENTIC_ARCHITECTURE.md` — Synthesized v2.0
-- [ ] **[P0] [AGENT] The Herald Implementation**: Build the `HeraldAgent` for Signal integration.
-- [ ] **[P0] [INFRA] Telemetry-to-Signal Bridge**: Hook the `TelemetryBus` alerts to the Herald.
-- [ ] **[P1] [UX] Alert Prepending**: Update `ALERT.md` and `EVOLUTION.md` to use LIFO (Last-In-First-Out) ordering.
+- [x] **[P0] [AGENT] The Herald Implementation**: Build the `HeraldAgent` for Signal integration. [DONE]
+- [x] **[P0] [INFRA] Telemetry-to-Signal Bridge**: Hook the `TelemetryBus` alerts to the Herald. [DONE]
+- [x] **[P1] [UX] Alert Prepending**: Update `ALERT.md` and `EVOLUTION.md` to use LIFO (Last-In-First-Out) ordering. [DONE]
 - [x] **[P1] [SECURITY] Transactional ADRs**: Implement the "Transactional ADR" guard in `IntegrityManager`. [DONE]
 - [x] **[P1] [DOCS] Threat Model Refinement**: Document "Crunchy Nougat" and "Immune Collective" in `THREAT_MODEL.md`. [DONE]
 - [ ] **[VERIFY]** End-to-end Signal alert flow.
