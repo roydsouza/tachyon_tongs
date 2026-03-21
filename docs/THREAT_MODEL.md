@@ -203,3 +203,21 @@ As Tachyon Tongs matures toward HOTL/HOOTL autonomy, the observability and contr
 - **Description**: There is no cryptographic binding between an agent's `SKILL.md` identity (e.g., `role: sentinel`) and its derived sub-key. An attacker who gains access to the Root Key (or its HKDF derivation path) can impersonate any agent.
 - **Impact**: False-flag operations: a compromised Sentinel could sign artifacts as the Engineer.
 - **Tachyon Mitigation (Implemented in Phase 26.1)**: Each agent dynamically stores its `DelegationCertificate`. The Key itself is generated uniquely per-agent-role, mathematically sealing the output signatures to the specific agent executing the computation.
+
+## 14. Cognitive & Substrate Architecture Threats (N-Tier)
+
+As the architecture evolves toward a multi-agent immune system, the interactions between discrete cognitive units become a primary security boundary.
+
+### A. The "Crunchy Nougat" Problem (Substrate Compromise)
+- **Description**: An attacker achieves a partial compromise of the host environment or the main substrate controller (the "crunchy" outer shell). In traditional systems, this leads to a "soft" interior where all other components (agents/tools) are implicitly trusted.
+- **Impact**: Lateral movement across the entire agent collective. A compromised controller could command the Engineer to delete defensive policies or force the Sentinel to sign malicious reports.
+- **Tachyon Mitigation**: **Immune Defense via Independent Signing**. Each agent is cryptographically isolated. Even if the controller is compromised, it cannot forge the unique ML-DSA-65 signatures required for an agent to "speak" or "act." Agents verify each other's signed intents, creating a zero-trust network where the controller is merely a transport layer, not a root of trust.
+
+### B. Controller-to-Agent "Infection" (Propagation)
+- **Description**: An attacker uses a compromised controller to send malformed or malicious messages to independent agents, attempting to exploit vulnerabilities in their message parsing or reasoning logic.
+- **Impact**: Escalation from a substrate compromise to a full cognitive compromise of specific high-value agents (like the Auditor or Firewall Administrator).
+- **Tachyon Mitigation**: **Signed Message Isolation**. Agents only process messages that carry a valid delegation certificate and a fresh PQC signature. The "Immune Collective" ensures that an infection in one agent does not automatically spread to others, as their execution loops are strictly separated and their cross-communications are cryptographically gated.
+
+### C. The "Immune Collective" Resilience (Isolation)
+- **Description**: Ensuring that the failure or compromise of a single agent (e.g., the Herald proxy) does not compromise the security of the high-value internal agents (e.g., the Firewall Administrator).
+- **Tachyon Mitigation**: **Defense-in-Depth via Discrete Agents**. The Herald agent handles external Signal communication but has zero write access to the substrate. The Firewall Administrator handles high-level policy but never touches the network. They communicate only via signed, schema-validated events on the Telemetry Bus.

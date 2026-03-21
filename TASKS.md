@@ -53,12 +53,27 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[P1] [AGENT] The Herald (v2)**: Formalize Signal C2 proxy with strict network isolation.
 - [ ] **[VERIFY]** Successful Sentinel-to-Administrator event loop.
 
-### 🚧 Phase 34: Forensic Reconstruction & Learning [PLANNED]
+### 🔳 Phase 34: The Herald & Signal Purification [IN-PROGRESS]
+> **Source**: `docs/AGENTIC_ARCHITECTURE.md` — Synthesized v2.0
+- [ ] **[P0] [AGENT] The Herald Implementation**: Build the `HeraldAgent` for Signal integration.
+- [ ] **[P0] [INFRA] Telemetry-to-Signal Bridge**: Hook the `TelemetryBus` alerts to the Herald.
+- [ ] **[P1] [UX] Alert Prepending**: Update `ALERT.md` and `EVOLUTION.md` to use LIFO (Last-In-First-Out) ordering.
+- [x] **[P1] [SECURITY] Transactional ADRs**: Implement the "Transactional ADR" guard in `IntegrityManager`. [DONE]
+- [x] **[P1] [DOCS] Threat Model Refinement**: Document "Crunchy Nougat" and "Immune Collective" in `THREAT_MODEL.md`. [DONE]
+- [ ] **[VERIFY]** End-to-end Signal alert flow.
+
+### 🚧 Phase 35: Forensic Reconstruction & Learning [PLANNED]
 > **Source**: `docs/AGENTIC_ARCHITECTURE.md` — Synthesized v2.0
 - [ ] **[P1] [FORENSICS] Action Replay**: Implement `reconstruct_agent_decision(record_id)` to audit historical traces.
 - [ ] **[P1] [CORE] Adaptive Learning**: Implement the Administrator's `KnowledgeBase` and `AdaptiveLearning` effectiveness tracker.
 - [ ] **[P2] [SECURITY] Mutant Lock v2**: Cryptographically sign mutation tokens issued by the Administrator.
 - [ ] **[VERIFY]** 100% forensic coverage for all Pilot Agent actions.
+
+### 🚧 Phase 36: Substrate Robustness & Silent Failure Audit [PLANNED]
+- [ ] **[P1] [AUDIT] Silent Failure Sweep**: Identify all no-op `except` blocks and silent failure modes.
+- [ ] **[P1] [FIX] Robust Error Handling**: Implement structured alerting for all substrate-level failures.
+- [ ] **[P2] [FIX] Dead Code Purge**: Remove any leftover shims or stubs identified as "Silent Failure" risks.
+- [ ] **[VERIFY]** Comprehensive "Chaos Test" suite.
 
 ### 🔳 Phase 25.2: Per-Agent Key Delegation [IN-PROGRESS]
 - [x] **[CRYPTO]** Design HKDF derivation logic in `IntegrityManager` [DONE]
