@@ -18,14 +18,14 @@ Tachyon Tongs is an implementation of a **Live Threat Model**. Every architectur
 
 *   **Semantic Intent Gating (PDP/PEP)**: All tool requests are routed through a Policy Enforcement Point and evaluated by the **Singularity Meta-PDP** against declarative OPA (Rego) and Cedar policies.
 *   **Tiered Workload Isolation**: High-risk actions run in dynamically generated macOS `sandbox-exec` (Seatbelt) profiles, providing bare-metal speed with microsecond overhead and strict resource lockdown.
-*   **Forensic Integrity Gating**: Every substrate mutation is cryptographically signed using high-assurance HMAC-SHA256 sidecars and anchored to a cumulative Merkle root in the `MANIFEST.json`.
+*   **Forensic Integrity Gating**: Every substrate mutation is cryptographically signed using **Ed25519 + ML-DSA-65** hybrid sidecars and anchored to a cumulative Merkle root in the `MANIFEST.json`.
 
 ## 🔐 Secure Development Lifecycle (SDLC)
 
 Tachyon Tongs doesn't just *enforce* security at runtime — it **practices security in its own development process**. Every mutation to the substrate is cryptographically signed, forensically chained, and hardware-anchored:
 
 - **Hardware-Backed Signing**: Root signing keys live in the Apple **Secure Enclave** (Touch ID-gated, non-extractable). Agent-proposed changes carry per-agent Ed25519 signatures with scoped delegation certificates.
-- **Hybrid Post-Quantum Cryptography**: Signatures use **Ed25519 + ML-DSA-44** (NIST FIPS 204) in hybrid mode — classical security today, quantum resistance tomorrow.
+- **Hybrid Post-Quantum Cryptography**: Signatures use **Ed25519 + ML-DSA-65** (NIST FIPS 204, Level 3) in hybrid mode — classical security today, quantum resistance tomorrow. Both the expanded secret key and the public key are hardware-anchored in the macOS Keychain.
 - **Forensic ADR Chaining**: Every Architecture Decision Record references the hash of its predecessor, creating an immutable timeline anchored to the Merkle root in `MANIFEST.json`.
 - **Airlock as Certificate Authority**: No artifact is "deployed" until it carries dual signatures — the proposing agent's key **and** the Airlock's co-signature (requiring human approval).
 - **Per-Agent Key Isolation**: Each agent (Sentinel, Engineer, Canary) holds its own rotating key with strict scope limits. A compromised Sentinel cannot sign Engineer artifacts.

@@ -1,5 +1,31 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-21: Phase 25.5 — Deep Audit & Hardening
+- **Objective:** Comprehensive audit of the entire substrate identifying and fixing code defects, documentation drift, threat model gaps, and test coverage holes.
+- **Status:** [COMPLETED]
+- **Critical Finding (P0):** The PQC signing path was **completely dead** — `sign_document()` checked `self._pqc_private_key` which was never populated after the Phase 25.4 refactor. All `.sig` files contained only Ed25519 signatures. **Fixed.**
+- **Code Fixes (11 total in `signing.py` + `operations.py`):**
+  - Restored PQC signing: uses `oqs.Signature(PQC_ALGORITHM, sk_bytes)` constructor + `sign(content)` API
+  - Implemented **Dual-Entry Keychain Model**: SK (4032 bytes) and PK (1952 bytes) stored as separate Keychain entries
+  - **PQC Rekey Ceremony** (`scripts/pqc_rekey.py`): generated fresh ML-DSA-65 keypair with roundtrip verification
+  - Replaced 4 bare `except Exception: pass` blocks with `warnings.warn()` — substrate now logs key-load failures
+  - Fixed dual-signature mandate check: `_pqc_private_key_bytes` instead of dead `_pqc_private_key`
+  - Fixed `security_status()` in `operations.py` to check `_pqc_public_key`
+  - Updated genesis ceremony to store PK companion entry at key generation time
+- **Documentation Sync (4 files):**
+  - `README.md`: "HMAC-SHA256" → "Ed25519 + ML-DSA-65", "ML-DSA-44" → "ML-DSA-65 Level 3"
+  - `ROADMAP.md`: Phase 25 → [OPERATIONAL], added Phase 25.4 entry, fixed Phase 21.7/22 statuses
+  - `THREAT_MODEL.md`: Added §12 (PQC Threats: downgrade, buffer corruption, version drift, state contamination) and §13 (Agentic Visibility: observability blindspot, key delegation orphaning, identity spoofing)
+  - `TASKS.md`: Added Phase 25.5 with all sub-tasks marked [DONE]
+- **New Regression Tests (9/9 PASS):**
+  - `tests/test_hybrid_signing.py`: Ed25519 roundtrip, hybrid roundtrip, PQC strip detection, stale sig detection, missing sig, HMAC fallback
+  - `tests/test_guardian_ids.py`: Merkle root integrity, ADR tamper detection, missing manifest
+- **Agentic Architecture (P2 — Documented, not yet implemented):**
+  - Agent Telemetry Bus: structured JSONL event emission from ToolRouter/IntegrityManager
+  - Agent Heartbeat Protocol: periodic derived-key validation against Root
+  - Key Delegation Certificates: JSON-signed scope documents with issue/expiry
+- **Verification:** `tt keys verify MANIFEST.json` and `tt keys verify README.md` both PASS with true hybrid (Ed25519 + ML-DSA-65) signatures.
+
 ### 2026-03-19: Event-Horizon Command Bridge Phase 24.1 & 24.2
 - **Objective:** Consolidate Substrate API and implement the 3-tier Command Bridge (CLI/TUI/NeoVIM).
 - **Status:** [OPERATIONAL]

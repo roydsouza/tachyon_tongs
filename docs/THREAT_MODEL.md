@@ -160,3 +160,46 @@ The transition to a hierarchical key model introduces specific risks regarding d
 - **Tachyon Mitigation**:
     - **SEC-001 (Environment Identity)**: Mandatory zero-mock E2E testing against the user's active `python3` binary.
     - **Signed Path Discovery**: The `tt` command verifies its own absolute path against a signed manifest on startup.
+
+## 12. Post-Quantum Cryptography Threats (Phase 25.4)
+
+The Hybrid PQC overlay introduces specific risks around the ML-DSA-65 layer.
+
+### A. PQC Algorithm Downgrade (Signature Stripping)
+- **Description**: An attacker modifies a `.sig` file to remove the `mldsa65:` layer, leaving only `ed25519:`. If the substrate does not enforce the dual-signature mandate, the verification passes with only classical security.
+- **Impact**: Silent downgrade to non-quantum-resistant integrity.
+- **Tachyon Mitigation**: The **Dual-Signature Mandate** in `verify_integrity()` checks `_pqc_private_key_bytes and not pqc_checked` — if PQC keys are loaded but the signature lacks a PQC component, a `SECURITY BREACH` is raised.
+
+### B. Expanded Key Buffer Corruption
+- **Description**: The 4032-byte ML-DSA-65 expanded secret key stored in the macOS Keychain is corrupted (truncated, zeroed, or partially overwritten).
+- **Impact**: The `oqs.Signature(PQC_ALGORITHM, sk)` constructor silently accepts malformed keys. Signatures produced with a corrupt key are valid but cannot be verified with the original public key, effectively orphaning the entire signature chain.
+- **Tachyon Mitigation**: **Dual-Entry Keychain Model** stores SK and PK as separate entries. The `_load_pqc_keys()` method performs a roundtrip probe: sign with loaded SK, verify with loaded PK. Failure triggers a `TRUST_BREACH` halt.
+
+### C. liboqs Version Drift
+- **Description**: The `liboqs` native library (0.15.0) differs from `liboqs-python` (0.14.1). A major API change (e.g., argument order in `verify()`, key format changes) could cause silent verification bypass or signing failures.
+- **Impact**: Signatures generated with one version may not verify with another.
+- **Tachyon Mitigation**: Version mismatch warning is logged (not suppressed). The `PQC_ALGORITHM` constant ensures consistent algorithm naming. Planned: pin `liboqs-python==0.15.0` when stable.
+
+### D. PQC State Contamination
+- **Description**: The `oqs.Signature` C wrapper is **stateful** — reusing a single instance across sign and verify operations can produce incorrect results due to internal buffer reuse.
+- **Impact**: False negatives in verification (file passes integrity check when it shouldn't).
+- **Tachyon Mitigation**: All PQC operations use ephemeral `with oqs.Signature(...) as sig:` context managers, ensuring the C state is freed after each operation.
+
+## 13. Agentic Visibility & Control Threats
+
+As Tachyon Tongs matures toward HOTL/HOOTL autonomy, the observability and control of autonomous agents becomes a critical attack surface.
+
+### A. Agent Observability Blindspot
+- **Description**: There is no centralized telemetry for agent key usage, tool invocations, or signature operations. An attacker who compromises an agent session has no audit trail beyond filesystem entries.
+- **Impact**: Forensic analysis after a breach is limited to file-level diffs and git history, with no structured event timeline.
+- **Tachyon Mitigation (Planned)**: **Agent Telemetry Bus** — structured JSONL event emission from `ToolRouter`, `IntegrityManager`, and `BaseTachyonAgent` to `memory/operational/telemetry.jsonl`.
+
+### B. Key Delegation Orphaning
+- **Description**: HKDF-derived agent keys have no formal certificate binding them to the Root. There is no revocation mechanism short of rotating the Root Key itself.
+- **Impact**: A compromised agent key remains valid indefinitely. There is no way to express "Sentinel key #3 is revoked but Engineer key #2 is still valid."
+- **Tachyon Mitigation (Planned)**: **JSON Delegation Certificates** — signed by the Root Key, scoping each agent's signing authority with issue/expiry dates and revocation list.
+
+### C. Agent Identity Spoofing
+- **Description**: There is no cryptographic binding between an agent's `SKILL.md` identity (e.g., `role: sentinel`) and its derived sub-key. An attacker who gains access to the Root Key (or its HKDF derivation path) can impersonate any agent.
+- **Impact**: False-flag operations: a compromised Sentinel could sign artifacts as the Engineer.
+- **Tachyon Mitigation (Planned)**: Each agent's `SKILL.md` includes a `key_fingerprint` field containing the expected derived public key. The `ToolRouter` verifies this binding before routing tool calls.

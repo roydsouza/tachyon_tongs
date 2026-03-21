@@ -213,23 +213,38 @@ def pqc_genesis_ceremony():
     input("Confirm you have SECURELY COPY-PASTED all 5 shares. Press Enter to anchor...")
     
     # 3. Anchor to Hardware (macOS Keychain)
-    print("[*] Anchoring PQC Secret to hardware...")
+    print("[*] Anchoring PQC Keypair to hardware...")
     try:
         import Security
-        query = {
+        # 3a. Store the expanded Secret Key
+        sk_attrs = {
             Security.kSecClass: Security.kSecClassGenericPassword,
             Security.kSecAttrLabel: PQC_KEY_LABEL,
             Security.kSecAttrAccount: PQC_KEY_APPLICATION_TAG,
             Security.kSecValueData: pqc_priv,
             Security.kSecAttrAccessible: Security.kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
         }
-        # Cleanup old key if exists
         Security.SecItemDelete({Security.kSecClass: Security.kSecClassGenericPassword, Security.kSecAttrAccount: PQC_KEY_APPLICATION_TAG})
-        status, result = Security.SecItemAdd(query, None)
+        status, result = Security.SecItemAdd(sk_attrs, None)
         if status == 0:
-            print("[✓] PQC Root (Expanded) anchored to macOS Keychain.")
+            print("[✓] PQC Root SK (Expanded) anchored to macOS Keychain.")
         else:
-            print(f"[!] Keychain Error: {status}. Manual persistence required.")
+            print(f"[!] SK Keychain Error: {status}. Manual persistence required.")
+        
+        # 3b. Store the Public Key as a companion entry
+        pk_attrs = {
+            Security.kSecClass: Security.kSecClassGenericPassword,
+            Security.kSecAttrLabel: PQC_KEY_LABEL + " PK",
+            Security.kSecAttrAccount: PQC_KEY_APPLICATION_TAG + ".pk",
+            Security.kSecValueData: pqc_pub,
+            Security.kSecAttrAccessible: Security.kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+        }
+        Security.SecItemDelete({Security.kSecClass: Security.kSecClassGenericPassword, Security.kSecAttrAccount: PQC_KEY_APPLICATION_TAG + ".pk"})
+        pk_status, _ = Security.SecItemAdd(pk_attrs, None)
+        if pk_status == 0:
+            print(f"[✓] PQC Root PK ({len(pqc_pub)} bytes) anchored to macOS Keychain.")
+        else:
+            print(f"[!] PK Keychain Error: {pk_status}.")
     except Exception as e:
         print(f"[!] Hardware anchoring failed: {e}")
     
@@ -237,8 +252,9 @@ def pqc_genesis_ceremony():
     pqc_priv = None
     print("[*] PQC Secret scrubbed from memory.")
     print("="*60)
-    print("PHASE 25.3: PQC OVERLAY ESTABLISHED.")
+    print("PHASE 25.4: PQC OVERLAY ESTABLISHED (SK + PK Anchored).")
     print("="*60)
+
 
 def pqc_recovery_drill():
     """Execute the Second-Tier Quantum Recovery Drill (ML-DSA-65)."""
@@ -350,7 +366,7 @@ def security_status():
         print("ROOT KEY: [!] NOT ESTABLISHED")
 
     # 2. PQC Root (The Quantum Sovereign)
-    if signer._pqc_private_key:
+    if signer._pqc_public_key is not None:
         from tachyon.core.signing import PQC_ALGORITHM
         print(f"PQC ROOT ({PQC_ALGORITHM}):")
         print(f"  [✓] Algorithm: {PQC_ALGORITHM}")

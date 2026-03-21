@@ -138,16 +138,16 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 - **Objective:** Unified agent architecture, HMAC signatures for ADRs, and governance documentation.
 - **Implementation:** `BaseTachyonAgent` ABC, `Role` architecture, Airlock Skills, `CHANGE_CONTROL.md`.
 
-### Phase 21.7: The Canary Honeypot (Active Probe) [IN-PROGRESS]
+### Phase 21.7: The Canary Honeypot (Active Probe) [COMPLETED]
 - **Objective:** Proactive threat scouting via sandboxed honeypot endpoints.
 - **Implementation:** `CanaryRole`, `CANARY_LOG.md`, `launchd` automation. ADR-0019.
-- **Remaining:** Validate "Honeypot-to-Immune-System" feedback loop.
+- **Validated:** Honeypot-to-Immune-System feedback loop operational.
 
 ---
 
 ## Stage 6: Autonomous Evolution
 
-### Phase 22: Self-Evolving Policies & Immune Response [ACTIVE]
+### Phase 22: Self-Evolving Policies & Immune Response [OPERATIONAL]
 - **Objective:** Shift from reactive firewalling to an adaptive, self-improving security layer.
 - **Implementation:**
   - **ImmuneManager**: Orchestrates the Canary→Engineer feedback loop.
@@ -179,13 +179,14 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Substrate Stabilization**: 169/169 regression tests passing, `tt ritual` boot ceremony verified.
 - **ADR:** ADR-0027: Hardware Isolation Protocol.
 
-### Phase 25: Cryptographic Substrate & Secure SDLC [PLANNED]
+### Phase 25: Cryptographic Substrate & Secure SDLC [OPERATIONAL]
 - **Objective:** Migrate from HMAC-SHA256 to a hardware-backed, post-quantum-ready asymmetric signing infrastructure with per-agent key isolation.
 - **Reference:** See [docs/SDLC.md](file:///Users/rds/antigravity/tachyon_tongs/docs/SDLC.md) for the full specification.
 - **Implementation:**
-  - **Phase 25.1 — Ed25519 Foundation**: Replace `IntegrityManager` HMAC with Ed25519 asymmetric signatures. Root key stored in Apple Secure Enclave (Touch ID-gated). Shamir 3-of-5 key backup.
-  - **Phase 25.2 — Per-Agent Key Hierarchy**: Delegation certificates scoping each agent's signing authority. Sentinel signs debates, Engineer signs patches, Airlock co-signs everything.
-  - **Phase 25.3 — Hybrid PQC + Forensic Chaining**: Add ML-DSA-44 (NIST FIPS 204) as hybrid overlay. Implement ADR hash-chaining in MANIFEST.json for immutable forensic timeline.
+  - **Phase 25.1 — Ed25519 Foundation**: Replace `IntegrityManager` HMAC with Ed25519 asymmetric signatures. Root key stored in Apple Keychain (Touch ID-gated). Shamir 3-of-5 key backup. [DONE]
+  - **Phase 25.2 — Per-Agent Key Hierarchy**: HKDF delegation scoping each agent's signing authority. Sentinel signs debates, Engineer signs patches, Airlock co-signs everything. [IN-PROGRESS]
+  - **Phase 25.3 — Hybrid PQC**: Add ML-DSA-65 (NIST FIPS 204, Level 3) as hybrid overlay. Implement ADR hash-chaining in MANIFEST.json for immutable forensic timeline. [DONE]
+  - **Phase 25.4 — Deterministic PQC Anchoring**: Store expanded ML-DSA-65 secret key (4032 bytes) AND public key (1952 bytes) as dual Keychain entries. PQC Rekey ceremony with full roundtrip verification. [DONE]
 
 ### Phase 26: CI/CD Hardening & Supply Chain Defense [PLANNED]
 - **Objective:** Extend the Secure SDLC into automated pipelines and third-party dependency governance.

@@ -49,6 +49,17 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[CLI]** Implement **`tt keys verify-pqc`** and **`tt keys sign/verify`** [DONE]
 - [x] **[VERIFY]** Retroactive Hybrid Signing of all 28 ADRs and README.md [DONE]
 
+### ✅ [COMPLETED] Phase 25.5: Deep Audit & Hardening
+- [x] **[P0]** Fix dead PQC signing path (`_pqc_private_key` → `_pqc_private_key_bytes`) [DONE]
+- [x] **[P0]** Fix OQS API: SK via constructor, sign() takes only message [DONE]
+- [x] **[P0]** PQC Rekey: Dual-entry Keychain model (SK + PK stored separately) [DONE]
+- [x] **[P0]** Replace exception swallowing with logged warnings in key loading [DONE]
+- [x] **[P0]** Fix dual-signature mandate check and security_status() references [DONE]
+- [x] **[P1]** Documentation sync: ML-DSA-44 → ML-DSA-65 across README, ROADMAP, KEYS [DONE]
+- [x] **[P1]** THREAT_MODEL: Added §12 PQC Threats + §13 Agentic Visibility Threats [DONE]
+- [x] **[P1]** Created `test_hybrid_signing.py` (6 tests) and `test_guardian_ids.py` (3 tests) — 9/9 PASS [DONE]
+- [x] **[P1]** Updated ROADMAP Phase 25 to [OPERATIONAL] with Phase 25.4 entry [DONE]
+
 ### 🔳 [IN-PROGRESS] Phase 26: CI/CD Hardening & Supply Chain Defense
 - [ ] **[HOOKS]** Implement `.pre-commit-config.yaml` with hybrid signature verification
 - [ ] **[CI]** Create `.github/workflows/verify-integrity.yml` (verify-only, never sign)
