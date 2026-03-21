@@ -1,13 +1,13 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
-### 2026-03-21: Phase 26.2 — Documentation Indexing
+### 2026-03-20: Phase 26.2 — Documentation Indexing
 - **Objective:** Curate an aggregated "Contents" taxonomy outlining all architecture, operations, and forensic documentation.
 - **Status:** [OPERATIONAL]
 - **Key Accomplishments:**
   - Injected an onboarding-friendly `📚 Documentation Directory` to the root `README.md`.
   - Sorted 20+ specialized Markdown files into categories (Core Architecture, Agent Collective, Operations, Somatic Ledgers).
 
-### 2026-03-21: Phase 26.1 — Agentic Observability & Control
+### 2026-03-20: Phase 26.1 — Agentic Observability & Control
 - **Objective:** Eliminate agent observability blindspots and cryptographically bind derived keys to specific agent identities.
 - **Status:** [OPERATIONAL]
 - **Key Accomplishments:**
@@ -22,7 +22,7 @@
 - **Documentation Updated:** `ROADMAP.md` (marked Phase 26.1 Operational), `THREAT_MODEL.md` (marked §13 threats as mitigated), `ADR-0029` created.
 - **Verification:** Signed all documentation via Guardian Triad.
 
-### 2026-03-21: Phase 25.5 — Deep Audit & Hardening
+### 2026-03-20: Phase 25.5 — Deep Audit & Hardening
 - **Status:** [COMPLETED]
 - **Critical Finding (P0):** The PQC signing path was **completely dead** — `sign_document()` checked `self._pqc_private_key` which was never populated after the Phase 25.4 refactor. All `.sig` files contained only Ed25519 signatures. **Fixed.**
 - **Code Fixes (11 total in `signing.py` + `operations.py`):**
