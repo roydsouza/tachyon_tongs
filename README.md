@@ -77,26 +77,10 @@ Tachyon Tongs employs **Scalable Oversight** via the **Airlock Debate Triad**. E
 Tachyon Tongs follows a tiered evolution path toward fully autonomous security governance:
 
 1.  **HITL (Human-In-The-Loop) - [CURRENT]**: Every mutation requires explicit human approval in the **Airlock** via `airlock-approve` or the Dashboard.
-2.  **HOTL (Human-On-The-Loop) - [PHASE 22]**: The substrate autonomously applies low-risk patches with a mandatory reversibility window. Humans move to a supervisory monitoring role.
+2.  **HOTL (Human-On-The-Loop) - [EVOLVING]**: The substrate autonomously applies low-risk patches with a mandatory reversibility window. Humans move to a supervisory monitoring role.
 3.  **HOOTL (Human-Out-Of-The-Loop) - [VISION]**: Full autonomous detection, synthesis, and remediation with formal verification. Humans shift to strategic policy governance.
 
 ## 8. Quickstart Guide
-
-```bash
-# Initialize and Install
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-pip install -e .  # Register substrate
-./scripts/start_opa.sh
-
-# Run the Substrate Controller
-python3 -m tachyon.main --role guardian --action verify_substrate
-```
-
-## 🧬 Phase 22: Autonomic Immune Response [ACTIVE]
-The **Evolutionary Substrate** is live. Phase 22 introduces the **ImmuneManager**, an autonomic immune system that detects defensive gaps via the **Canary** and self-synthesizes high-assurance policy updates. The substrate is now self-healing — proposed patches are staged in the **Airlock** for HITL oversight before deployment.
-
-## ⌨️ Command & Control: Event-Horizon Bridge [DESIGN]
 - 🧠 **Local Reasoning Substrate**: High-assurance offline reasoning via `llama.cpp` on M5.
 - 🛡️ **Autonomous Immune System**: Self-evolving policies that remediate bypasses in real-time.
 - 🧱 **Singularity PDP**: A high-assurance Policy Decision Point for LLM tool-calling.
