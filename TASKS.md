@@ -60,12 +60,13 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[P1]** Created `test_hybrid_signing.py` (6 tests) and `test_guardian_ids.py` (3 tests) — 9/9 PASS [DONE]
 - [x] **[P1]** Updated ROADMAP Phase 25 to [OPERATIONAL] with Phase 25.4 entry [DONE]
 
-### 🔳 [IN-PROGRESS] Phase 26: CI/CD Hardening & Supply Chain Defense
-- [ ] **[HOOKS]** Implement `.pre-commit-config.yaml` with hybrid signature verification
-- [ ] **[CI]** Create `.github/workflows/verify-integrity.yml` (verify-only, never sign)
-- [ ] **[SBOM]** Generate CycloneDX SBOM and sign with each release
-- [ ] **[SUPPLY]** Graduate `is_package_whitelisted()` from stub to DB-backed check
-- [ ] **[BUILD]** Hash-pinned `requirements.txt` for reproducible builds
+# Phase 27: Feedback-Driven Hardening & Agentic Expansion [PLANNED]
+- [ ] **[SECURITY] Signal Purification**: Implement "Mutant Lock" in `EngineerEngine` to suppress Guardian alerts during legitimate mutations.
+- [ ] **[SECURITY] Supply Chain Defense**: Graduate `is_package_whitelisted()` to a real DB-backed check.
+- [ ] **[CORE] TOCTOU Hardening**: Fix `ImmutableToolRequest.params` by using `MappingProxyType`.
+- [ ] **[AGENT] Auditor**: Implement the Compliance/Audit agent for SOC2/NIST mapping.
+- [ ] **[AGENT] Forge**: Implement the synthetic adversary generator for Pathogen stress-testing.
+- [ ] **[CHORE] Archival**: Implement `RUN_LOG.md` auto-pruning and archival.
 
 ## 🔳 [IN-PROGRESS] Phase 25.2: Per-Agent Key Delegation
 - [x] **[CRYPTO]** Design HKDF derivation logic in `IntegrityManager` [DONE]

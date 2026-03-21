@@ -45,12 +45,30 @@ class GuardianIDS:
         Performs a full forensic audit of the ADR substrate.
         Returns a detailed integrity report.
         """
+        # Check for Mutant Lock
+        lock_path = ".mutant.lock"
+        is_mutating = False
+        mutant_info = None
+
+        if os.path.exists(lock_path) and os.path.exists(lock_path + ".sig"):
+            try:
+                # Use current IntegrityManager to verify the lock itself
+                if self.integrity.verify_integrity(lock_path):
+                    with open(lock_path, "r") as f:
+                        mutant_info = json.load(f)
+                    is_mutating = True
+            except Exception:
+                pass
+
         report = {
-            "status": "SECURE",
-            "timestamp": "2026-03-18T19:40:00Z",
+            "status": "MUTATING" if is_mutating else "SECURE",
+            "timestamp": datetime.now().isoformat(),
             "findings": [],
             "merkle_verification": "INCOMPLETE"
         }
+        
+        if is_mutating:
+            report["findings"].append(f"INFO: Substrate mutation in progress by {mutant_info.get('agent_id')} for {mutant_info.get('cve_id')}")
 
         if not os.path.exists(self.manifest_path):
             report["status"] = "VULNERABLE"
@@ -101,8 +119,11 @@ class GuardianIDS:
         current_merkle_root = hashlib.sha256(all_hashes_str.encode()).hexdigest()
 
         if current_merkle_root != expected_merkle_root:
-            report["status"] = "COMPROMISED"
-            report["findings"].append(f"CRITICAL: Merkle Root Mismatch! Expected: {expected_merkle_root}, Found: {current_merkle_root}")
+            if not is_mutating:
+                report["status"] = "COMPROMISED"
+                report["findings"].append(f"CRITICAL: Merkle Root Mismatch! Expected: {expected_merkle_root}, Found: {current_merkle_root}")
+            else:
+                report["findings"].append(f"INFO: Merkle Root Mismatch expected during mutation. Found: {current_merkle_root}")
             report["merkle_verification"] = "FAILED"
         else:
             report["merkle_verification"] = "PASSED"

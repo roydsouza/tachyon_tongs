@@ -68,7 +68,10 @@ class StateManager:
                     description TEXT,
                     source TEXT,
                     date_added TEXT,
-                    relevance_class TEXT
+                    relevance_class TEXT,
+                    cvss REAL,
+                    status TEXT,
+                    mitigation_patch TEXT
                 )
             ''')
             
@@ -93,6 +96,27 @@ class StateManager:
                     processed_at TEXT,
                     source TEXT,
                     outcome TEXT
+                )
+            ''')
+
+            # 5. pathogen_metrics (Adversarial Tuning)
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS pathogen_metrics (
+                    mutation_id TEXT PRIMARY KEY,
+                    cve_target TEXT,
+                    bypass_vector TEXT,
+                    block_rate REAL,
+                    detected_by TEXT
+                )
+            ''')
+
+            # 6. package_whitelist (Supply Chain Defense)
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS package_whitelist (
+                    package_name TEXT PRIMARY KEY,
+                    version TEXT,
+                    checksum TEXT,
+                    added_at TEXT
                 )
             ''')
             conn.commit()
@@ -187,14 +211,15 @@ class StateManager:
             with sqlite3.connect(self.db_path) as conn:
                 for threat in threats:
                     try:
+                        # Updated to match new exploitation_catalog schema
                         conn.execute('''
-                            INSERT OR IGNORE INTO exploitation_catalog (cve_id, description, source, date_added)
+                            INSERT OR IGNORE INTO exploitation_catalog (cve_id, description, status, mitigation_patch)
                             VALUES (?, ?, ?, ?)
                         ''', (
                             threat.get('cve_id') or threat.get('id', 'UNKNOWN'),
                             threat.get('description') or threat.get('summary', 'No description.'),
-                            threat.get('source', 'Unknown Source'),
-                            threat.get('timestamp') or datetime.now().isoformat()
+                            threat.get('status', 'Identified'),
+                            threat.get('mitigation_patch')
                         ))
                     except sqlite3.Error as e:
                         print(f"[StateManager] Failed to insert threat {threat.get('id')}: {e}")
@@ -208,7 +233,7 @@ class StateManager:
         
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
-            cursor = conn.execute('SELECT * FROM exploitation_catalog ORDER BY id DESC')
+            cursor = conn.execute('SELECT * FROM exploitation_catalog ORDER BY cve_id DESC') # Changed ORDER BY to cve_id
             rows = cursor.fetchall()
             
             with open(lock_path, "w") as lock_f:
@@ -222,9 +247,10 @@ class StateManager:
                         else:
                             for row in rows:
                                 f.write(f"### {row['cve_id']}\n")
-                                f.write(f"- **Source:** {row['source']}\n")
-                                f.write(f"- **Date Discovered:** {row['date_added']}\n")
-                                f.write(f"- **Description:** {row['description']}\n\n")
+                                f.write(f"- **Description:** {row['description']}\n")
+                                f.write(f"- **CVSS:** {row['cvss'] if row['cvss'] else 'N/A'}\n")
+                                f.write(f"- **Status:** {row['status']}\n")
+                                f.write(f"- **Mitigation Patch:** {row['mitigation_patch'] if row['mitigation_patch'] else 'None'}\n\n")
                         f.flush()
                         os.fsync(f.fileno())
                     
@@ -317,19 +343,31 @@ class StateManager:
         pass
 
     def is_package_whitelisted(self, package_name: str) -> bool:
-        """
-        Checks if a package is whitelisted for installation/import.
-        Demonstrates supply chain defense by checking against the exploitation catalog.
-        """
+        """Checks if a package is present in the authorized whitelist."""
         with sqlite3.connect(self.db_path) as conn:
-            conn.row_factory = sqlite3.Row
-            # Check if package exists in catalog and is NOT marked as malicious, 
-            # or exists in a specific 'approved_packages' metadata (simulated here)
-            cursor = conn.execute(
-                "SELECT 1 FROM exploitation_catalog WHERE cve_id = ? AND relevance_class = 'APPROVED'", 
-                (package_name,)
-            )
+            cursor = conn.execute("SELECT 1 FROM package_whitelist WHERE package_name = ?", (package_name,))
             return cursor.fetchone() is not None
+
+    def sync_whitelist_from_manifest(self, manifest_path: str = "docs/adr/MANIFEST.json"):
+        """Syncs the DB whitelist with the Merkle manifest."""
+        if not os.path.exists(manifest_path):
+            return
+            
+        with open(manifest_path, "r") as f:
+            manifest = json.load(f)
+            
+        whitelist = manifest.get("supply_chain_whitelist", {})
+        if not whitelist:
+             return
+
+        with self._lock:
+            with sqlite3.connect(self.db_path) as conn:
+                for pkg, details in whitelist.items():
+                    conn.execute("""
+                        INSERT OR REPLACE INTO package_whitelist (package_name, version, checksum, added_at)
+                        VALUES (?, ?, ?, ?)
+                    """, (pkg, details.get("version"), details.get("checksum"), datetime.now().isoformat()))
+                conn.commit()
 
     def log_evolution(self, event_type, details, evolution_file="EVOLUTION.md"):
         """Logs architectural or structural evolution of the substrate."""

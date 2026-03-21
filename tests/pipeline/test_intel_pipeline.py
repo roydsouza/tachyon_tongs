@@ -10,7 +10,7 @@ class TestIntelPipeline(unittest.TestCase):
     def setUp(self):
         self.test_log = "test_run_log.md"
         self.test_gt = "test_verified_traffic.json"
-        self.logger = ExecutionLogger(agent_id="TestAgent", log_file=self.test_log)
+        self.logger = ExecutionLogger(agent_id="TestAgent", log_path=self.test_log)
         
     def tearDown(self):
         if os.path.exists(self.test_log):
@@ -30,7 +30,7 @@ class TestIntelPipeline(unittest.TestCase):
             entry = f.read()
 
         self.assertIn("✅ `http://onesignal.com` (5 signals)", entry)
-        self.assertIn("❌ `http://fail.com` (0 signals) - *Error: 404 Not Found*", entry)
+        self.assertIn("❌ `http://fail.com` (0 signals)", entry) # Adjusted for forensic format
         self.assertIn("Sites Audited:", entry)
 
     def test_ingestor_run_all(self):

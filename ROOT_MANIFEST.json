@@ -1,0 +1,6 @@
+{
+  "version": "1.0",
+  "root_public_key": "ed0b6e8eeff14b30f2e5ecfd22c1be35da32b9ae3dc9bf9eb0eef2325b4356c1",
+  "created_at": "2026-03-20T23:29:58.428861",
+  "attestation": "HARDWARE_BOUND_ED25519"
+}

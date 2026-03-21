@@ -3,9 +3,14 @@ import subprocess
 import httpx
 import sys
 import json
-from typing import Dict, Any
+from typing import Dict, Any, List
+from datetime import datetime
+import shutil
+from contextlib import contextmanager
+
 from tachyon.agents.base import BaseTachyonAgent
 from tachyon.core.metal_accelerator import MetalAccelerator
+from tachyon.core.signing import IntegrityManager
 
 class EngineerRole(BaseTachyonAgent):
     """
@@ -16,18 +21,44 @@ class EngineerRole(BaseTachyonAgent):
         super().__init__(agent_id, "Engineer")
         self.airlock_url = "http://127.0.0.1:60461/api/v1"
         self.generator = MetalAccelerator()
+        self.im = IntegrityManager()
+        self.lock_path = ".mutant.lock"
+
+    @contextmanager
+    def _with_mutant_lock(self, cve_id: str):
+        """Creates a signed lock file to signal legitimate mutation."""
+        lock_data = {
+            "agent_id": self.agent_id,
+            "cve_id": cve_id,
+            "timestamp": datetime.now().isoformat(),
+            "status": "MUTATING"
+        }
+        with open(self.lock_path, "w") as f:
+            json.dump(lock_data, f)
+        
+        self.im.sign_document(self.lock_path)
+        try:
+            yield
+        finally:
+            if os.path.exists(self.lock_path):
+                os.remove(self.lock_path)
+            if os.path.exists(self.lock_path + ".sig"):
+                os.remove(self.lock_path + ".sig")
 
     def execute_role_logic(self, action: str, parameters: Dict[str, Any]) -> Any:
         if action == "apply_and_test":
-            return self._apply_and_test(parameters)
-        raise ValueError(f"Unknown action for Engineer: {action}")
+            cve_id = parameters.get("cve_id", "manual-patch")
+            with self._with_mutant_lock(cve_id):
+                return self._apply_and_test(
+                    parameters.get("patch_files", []),
+                    parameters.get("test_path", "tests/integration/test_patch.py"),
+                    parameters.get("test_code", ""),
+                    cve_id,
+                    parameters # Pass full parameters for evolution logic
+                )
+        return {"status": "error", "message": f"Action '{action}' not implemented."}
 
-    def _apply_and_test(self, params: Dict[str, Any]):
-        cve_id = params.get("cve_id", "manual-patch")
-        patch_files = params.get("patch_files", [])
-        test_file_path = params.get("test_path", "tests/integration/test_patch.py")
-        test_content = params.get("test_code", "")
-        
+    def _apply_and_test(self, patch_files: List[Dict[str, str]], test_file_path: str, test_content: str, cve_id: str, params: Dict[str, Any]):
         # 1. Evolution Logic
         if params.get("action") == "evolve_policy" or not patch_files:
             context = params.get("context", {})

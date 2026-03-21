@@ -21,10 +21,9 @@ def test_oqs_api():
             # Test verification
             is_valid = sig.verify(msg, signature, pub)
             print(f"[✓] Verification result: {is_valid}")
-            
-            # Test export
-            exported_pub = sig.export_public_key()
-            print(f"[✓] Exported public key len: {len(exported_pub) if exported_pub else 'NONE'}")
+            # Test export (Not present in this version, pub is already exported)
+            # exported_pub = sig.export_public_key()
+            print(f"[✓] Public key (already exported) len: {len(pub)}")
             
     except Exception as e:
         print(f"[!] OQS Error: {e}")
