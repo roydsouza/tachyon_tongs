@@ -9,7 +9,7 @@ from tachyon.agents.roles import SentinelRole, EngineerRole, GuardianRole, Canar
 
 def main():
     parser = argparse.ArgumentParser(description="Tachyon Tongs Unified Substrate Controller")
-    parser.add_argument("--role", required=True, choices=["sentinel", "engineer", "guardian", "canary"], help="Agent role to assume")
+    parser.add_argument("--role", required=True, choices=["sentinel", "engineer", "guardian", "canary", "keys"], help="Agent role to assume")
     parser.add_argument("--action", required=True, help="Action to execute")
     parser.add_argument("--params", type=str, help="JSON parameters for the action")
     parser.add_argument("--agent-id", default="tachyon-master", help="Identity of the agent")
@@ -18,6 +18,18 @@ def main():
 
     import json
     params = json.loads(args.params) if args.params else {}
+
+    # Key Management (Phase 25.1)
+    if args.role == "keys":
+        from scripts.generate_keys import genesis_ceremony, recovery_drill
+        if args.action == "genesis":
+            genesis_ceremony()
+        elif args.action == "recover":
+            recovery_drill()
+        else:
+            print(f"Error: Unknown keys action {args.action}")
+            sys.exit(1)
+        return
 
     # Role Factory
     if args.role == "sentinel":
