@@ -1,3 +1,11 @@
+# Roy manually added
+scripts/opa
+liboqs.dylib
+assets/*
+tachyon_state.db 
+memory/operational/telemetry.jsonl 
+intelligence/tachyon_state.db 
+dashboard/package-lock.json 
 # Python Caches
 __pycache__/
 *.pyc
