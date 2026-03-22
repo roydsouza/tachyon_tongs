@@ -265,3 +265,5 @@ M	EVOLUTION.md
 [Orchestrator] Graph execution complete. Final keys: ['target_url', 'run_scraper', 'logger', 'allowed_domains', 'denylist', 'cve_context', 'harvest_mode', 'raw_html', 'scraped_threats', 'analysis', 'final_output', 'critique', 'verdict']
 [Sentinel] [FATAL] Execution failed: 'NoneType' object has no attribute 'get'
 [Sentinel] Run finalized. Ledger printed to RUN_LOG.md.
+[Sentinel] Initializing run. Trigger source: CRON_SCHEDULED
+[Sentinel] Initializing run. Trigger source: CRON_SCHEDULED

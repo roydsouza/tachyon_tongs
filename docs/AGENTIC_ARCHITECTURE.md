@@ -295,9 +295,9 @@ Every agent's access to internal tools is restricted via Semantic Intent Gating:
 
 The **Firewall Administrator** acts as the overarching consciousness of the entire substrate. It never performs raw labor (scanning, coding, patching); instead, it orchestrates the collective based on predefined risk configurations and adaptive learning.
 
-### 6.1 Cognitive Engine (Local `llama.cpp` Inference)
+### 6.1 Cognitive Engine (Local `mlx_lm` Inference)
 
-To guarantee absolute operational security (OpSec), zero network latency, and continuous high availability, the Firewall Administrator is powered exclusively by a localized LLM (via `llama.cpp` compiled for Apple Silicon / Metal). This ensures that continuous, "always-on" meta-reasoning over sensitive substrate telemetry (alerts, file drifts, state changes, and patch strategies) *never* leaves the machine or incurs external cloud API bottlenecks.
+To guarantee absolute operational security (OpSec), zero network latency, and continuous high availability, the Firewall Administrator is powered exclusively by a localized LLM (via `mlx_lm` optimized for Apple Silicon / Metal). This ensures that continuous, "always-on" meta-reasoning over sensitive substrate telemetry (alerts, file drifts, state changes, and patch strategies) *never* leaves the machine or incurs external cloud API bottlenecks.
 
 **Design Rationale:**
 - **Zero Intelligence Leakage:** The Administrator's constant awareness of the substrate's exact defensive posture never traverses the network.
@@ -444,7 +444,7 @@ To introduce this framework safely, Tachyon Tongs will adopt a **Zero-Disruption
 3. **BaseAgent Protocol:** Update the `BaseAgent` Python class to enforce the Uniform Lifecycle, while keeping existing ad hoc scripts running in parallel.
 4. **First Migration (Sentinel):** Convert the noisiest agent to the new protocol to validate stability and correctness.
 5. **Iterative Migration:** Issue Airlock approvals to migrate Guardian, Engineer, and Pathogen one by one.
-6. **New Agents:** Instantiate the Firewall Administrator (with `llama.cpp`), Herald (with Signal integration), and Cleaner.
+6. **New Agents:** Instantiate the Firewall Administrator (with `mlx_lm`), Herald (with Signal integration), and Cleaner.
 7. **Debate Integration:** Wire the existing Debater/Skeptic/Meta-Critic into the EventBus as first-class participants.
 
 ---
@@ -479,4 +479,4 @@ Suggestions to have the Firewall Administrator directly integrate with Signal or
 
 ### ❌ Cloud-Hosted LLM for the Administrator
 Using external cloud LLM APIs (OpenAI, Anthropic, etc.) for the Firewall Administrator's cognitive engine.
-**Rationale:** Continuous meta-reasoning over the substrate's exact defensive posture would constitute massive intelligence leakage. Local `llama.cpp` inference guarantees zero data exfiltration, zero latency, zero cost, and immunity to cloud provider outages. This local-first constraint makes the architecture an optimal candidate for **Secure Hardware Gateway** deployments where the entire security logic resides in a trusted, air-gapped physical envelope.
+**Rationale:** Continuous meta-reasoning over the substrate's exact defensive posture would constitute massive intelligence leakage. Local `mlx_lm` inference guarantees zero data exfiltration, zero latency, zero cost, and immunity to cloud provider outages. This local-first constraint makes the architecture an optimal candidate for **Secure Hardware Gateway** deployments where the entire security logic resides in a trusted, air-gapped physical envelope.

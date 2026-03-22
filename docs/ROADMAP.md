@@ -155,11 +155,11 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Pathogen Fitness Scoring**: Only persist attacks that stress state boundaries.
   - **Constitutional AI**: Runtime policy critiquing based on high-level security principles.
 
-### Phase 21.9: Local Reasoning Substrate (llama.cpp) [PLANNED]
-- **Objective:** Eliminate cloud dependencies for core security reasoning, providing a zero-latency, offline fallback.
+### Phase 21.9: Local Reasoning Substrate (mlx_lm) [PLANNED]
+- **Objective:** Eliminate cloud dependencies for core security reasoning, providing a zero-latency, offline fallback using Apple Silicon Native architecture.
 - **Implementation:**
-  - **Llama 3.2 MLX/llama.cpp**: Local inference engine for L1/L2 tasks.
-  - **Substrate-Bridge**: Middleware to route `ModelRouter` requests to the local socket when quota is low or network is absent.
+  - **Llama 3.2 via mlx_lm**: Local inference engine for L1/L2 tasks, leveraging Apple Unified Memory.
+  - **Substrate-Bridge**: Middleware to route `ModelRouter` requests to the local `mlx_lm` engine when quota is low or network is absent.
   - **Context-Surgical Pruning**: Optimized local prompt templates for M5 Neural Engine.
 
 ### Phase 24: Event-Horizon Command Bridge (CLI/TUI/NeoVIM) [OPERATIONAL]
@@ -213,8 +213,8 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 - [ ] **Phase 31: The Immune Collective (Architecture v2.0)**: Transition from monolithic role-based scripts to a formal, event-driven agentic collective.
     - **EventBus**: SQLite-WAL based pub/sub for all agent coordination.
     - **BaseAgent Protocol**: Standardized signature-verifying, intent-gated execution lifecycle.
-    - **Firewall Administrator**: Local `llama.cpp` powered orchestrator for executive decisioning.
-    - **The Herald**: Air-gapped Signal proxy for secure C2 and alerts.
+    - **Firewall Administrator**: The "Thinker" LLM Agent powered locally exclusively by `mlx_lm` for executive decisioning and traffic observation.
+    - **The Herald**: The "Mouth/Ear" Custom Agent acting as the deterministic air-gapped proxy for UI, CLI, NeoVIM and secure C2 and alerts.
 - [ ] **High-Assurance Gateway Optimization**: Optimizing the substrate for dedicated, secure hardware gateway deployments.
 - [ ] **Retrospective Audit Engine**: Implement the 72-hour rollback window for autonomous patches.
 - [ ] **Formal Verification Integration**: Auto-generating formal proofs for substrate mutations.

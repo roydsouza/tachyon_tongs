@@ -6,102 +6,114 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ## 🔳 Active & Priority
 
-### 🚧 Phase 29: Signal Purification & Integrity Stabilization [PLANNED]
-> **Source**: Grok & Gemini feedback — "#1 blocker to moving beyond HITL"
+### 🔳 Phase 34: The Herald Integration (CLI-First) [IN-PROGRESS]
+> **Source**: `docs/AGENTIC_ARCHITECTURE.md` and `feedback/03_HERALD_INTEGRATION.md`
+- [x] **[P0] [AGENT] The Herald Implementation**: Build the `HeraldAgent` for Signal integration.
+- [x] **[P0] [INFRA] Telemetry-to-Signal Bridge**: Hook the `TelemetryBus` alerts to the Herald.
+- [x] **[P1] [UX] Alert Prepending**: Update `ALERT.md` and `EVOLUTION.md` to use LIFO ordering.
+- [x] **[P1] [SECURITY] Transactional ADRs**: Implement the "Transactional ADR" guard.
+- [x] **[P1] [DOCS] Threat Model Refinement**: Document "Crunchy Nougat" and "Immune Collective" in `THREAT_MODEL.md`.
+- [ ] **[P0] [INFRA] Herald CLI Server**: Implement Unix Domain Socket server (`CLITransport`) and core text router.
+- [ ] **[P0] [UX] Herald Client & NeoVIM Logic**: Build `herald_cli.py` and NeoVIM plugins for rapid CLI interactions.
+- [ ] **[VERIFY]** End-to-end CLI command flow to local agents.
 
-- [ ] **[P0] [BUG] Fix ALERT.md Flooding**: Purge 1,176 lines of stale CONCURRENCY_TEST, STATE_COMPROMISED, and DOS_ATTACK test entries from `logs/ALERT.md`
-- [ ] **[P0] [SECURITY] Fix PQC/Guardian Race Condition**: Guardian fires STATE_COMPROMISED alerts during legitimate Engineer mutations. Implement **Mutant Lock** (Gemini's "Gold" suggestion) — a signed lock acquired by the Engineer during `apply_and_test` that Guardian respects
-- [ ] **[P1] [SECURITY] Strip Attack Canary**: Create a dedicated test payload that truncates `.sig` files and verifies Guardian halts instantly (9 false-positive strip attacks detected in current ALERT.md)
-- [ ] **[P1] [BUG] Fix `BaseTachyonAgent.get_metadata()`**: References non-existent `self.config` — will crash if called
-- [ ] **[P1] [SECURITY] Rate-Bounded Logging**: Implement per-category rate limiting in AlertManager to prevent Log Flooding DoS
-- [ ] **[VERIFY]** 24h clean ALERT.md (zero false-positive integrity alerts)
-
-### 🚧 Phase 30: Test Debt & Integration Hardening [PLANNED]
-> **Source**: Grok feedback — "test debt" and "concurrency races"
-
-- [ ] **[P1] [TEST] Replace `assert True` Stubs**: Fill in `test_immune_*.py` with real assertions
-- [ ] **[P1] [TEST] Pathogen Mutation Survival Suite**: Add `--mutation-count 50` for critical CVEs in `AutoPatcher.apply_and_test`
-- [ ] **[P2] [TEST] Concurrency Stress Tests**: Fix Airlock staging + git branch thrashing under load (CONCURRENCY_TEST alerts)
-- [ ] **[P2] [SECURITY] Singleton Immutability Guard**: Freeze `StateManager` fields after initialization
-- [ ] **[P2] [SECURITY] Tool Schema Allowlist**: Add strict schema validation in `ToolRouter`
-- [ ] **[VERIFY]** 100% Regression Pass with no stub tests remaining
-
-### 🚧 Phase 31: New Agent Deployment [PLANNED]
-> **Source**: Claude, Grok, & Gemini feedback — agent proposals
-
-- [ ] **[AGENT] The Historian** (Claude): Temporal pattern analysis across debates & threats. Detects slow-moving attacks invisible in single-incident analysis
-- [ ] **[AGENT] The Oracle** (Grok): Threat Forecasting agent. Pulls arXiv + NVD + catalog, runs lightweight Llama-3.2-3B forecasting, pre-stages "what-if" policy skeletons in Airlock
-- [ ] **[AGENT] The Diplomat** (Claude): Inter-agent coordinator. Reduces debate overhead via pre-filtering obvious decisions, optimizes agent invocation order, implements backpressure
-- [ ] **[AGENT] Debate Arena** (Grok): Spawns temporary Skeptic/Meta-Critic pairs for *external* patches (e.g., PRs from other projects). Turns Tachyon into a "PR security co-pilot"
-- [ ] **[AGENT] Semantic Decoy / Honeypot** (Gemini): Synthesizes "fake internal documentation" that attracts IPI-controlled agents, triggering lockdown on access
-- [ ] **[AGENT] Quota Warden** (Gemini): Game-theoretic token reasoning budget allocation between Skeptic and Analyst during zero-day response
-- [ ] **[VERIFY]** Each agent passes isolated regression + Pathogen stress test
-
-### 🚧 Phase 32: Operational Excellence & Graduated Autonomy [PLANNED]
-> **Source**: Claude & Gemini feedback — "HOTL transition" and "performance visibility"
-
-- [ ] **[OVERSIGHT] Tiered Debates**: Risk-based debate tiers (None/Self/Dyad/Triad) — not all operations need full adversarial oversight
-- [ ] **[OVERSIGHT] Formalize HOTL Transition**: Define quantified milestones (95% auto-approve rate, 0 critical incidents in 30 days, debate agreement >90%)
-- [ ] **[CLI] Formalize `/debate` Command**: Expose `tt debate <patch-id>` as first-class command that streams Skeptic/Meta-Critic/Engineer exchange in real-time
-- [ ] **[TUI] Health Score Dashboard**: Surface PQC Coverage %, Catalog Integrity Age, Airlock Queue Age, and Pathogen Block Rate in TUI
-- [ ] **[DOCS] SBOM with Cryptographic Attestation**: Generate automated SBOMs (CycloneDX) with Sigstore/SLSA build provenance
-### 🚧 Phase 33: The Immune Collective (Core Framework) [PLANNED]
-> **Source**: `docs/AGENTIC_ARCHITECTURE.md` — Synthesized v2.0
-- [ ] **[P0] [INFRA] EventBus Implementation**: Build the SQLite-WAL event broker in `tachyon/core/bus.py`.
-- [ ] **[P0] [INFRA] BaseAgent Protocol**: Implement the `BaseAgent` ABC with mandatory PQC signature verification and `ActionRecord` generation.
-- [ ] **[P1] [AGENT] The Firewall Administrator (v1)**: Local `llama.cpp` integration via `mlx_lm` for executive orchestration.
-- [ ] **[P1] [AGENT] The Herald (v2)**: Formalize Signal C2 proxy with strict network isolation.
-- [ ] **[VERIFY]** Successful Sentinel-to-Administrator event loop.
-
-### 🔳 Phase 34: The Herald & Signal Purification [IN-PROGRESS]
-> **Source**: `docs/AGENTIC_ARCHITECTURE.md` — Synthesized v2.0
-- [x] **[P0] [AGENT] The Herald Implementation**: Build the `HeraldAgent` for Signal integration. [DONE]
-- [x] **[P0] [INFRA] Telemetry-to-Signal Bridge**: Hook the `TelemetryBus` alerts to the Herald. [DONE]
-- [x] **[P1] [UX] Alert Prepending**: Update `ALERT.md` and `EVOLUTION.md` to use LIFO (Last-In-First-Out) ordering. [DONE]
-- [x] **[P1] [SECURITY] Transactional ADRs**: Implement the "Transactional ADR" guard in `IntegrityManager`. [DONE]
-- [x] **[P1] [DOCS] Threat Model Refinement**: Document "Crunchy Nougat" and "Immune Collective" in `THREAT_MODEL.md`. [DONE]
-- [ ] **[VERIFY]** End-to-end Signal alert flow.
-
-### 🚧 Phase 35: Forensic Reconstruction & Learning [PLANNED]
-> **Source**: `docs/AGENTIC_ARCHITECTURE.md` — Synthesized v2.0
-- [ ] **[P1] [FORENSICS] Action Replay**: Implement `reconstruct_agent_decision(record_id)` to audit historical traces.
-- [ ] **[P1] [CORE] Adaptive Learning**: Implement the Administrator's `KnowledgeBase` and `AdaptiveLearning` effectiveness tracker.
-- [ ] **[P2] [SECURITY] Mutant Lock v2**: Cryptographically sign mutation tokens issued by the Administrator.
-- [ ] **[VERIFY]** 100% forensic coverage for all Pilot Agent actions.
-
-### 🚧 Phase 36: Substrate Robustness & Silent Failure Audit [PLANNED]
-- [ ] **[P1] [AUDIT] Silent Failure Sweep**: Identify all no-op `except` blocks and silent failure modes.
-- [ ] **[P1] [FIX] Robust Error Handling**: Implement structured alerting for all substrate-level failures.
-- [ ] **[P2] [FIX] Dead Code Purge**: Remove any leftover shims or stubs identified as "Silent Failure" risks.
-- [ ] **[VERIFY]** Comprehensive "Chaos Test" suite.
-
-### 🔳 Phase 25.2: Per-Agent Key Delegation [IN-PROGRESS]
-- [x] **[CRYPTO]** Design HKDF derivation logic in `IntegrityManager` [DONE]
+### 🚧 Phase 25.2: Per-Agent Key Delegation (Crypto Core) [PLANNED]
+- [x] **[CRYPTO]** Design HKDF derivation logic in `IntegrityManager`
 - [ ] **[CRYPTO]** Implement `tt keys status` (Hierarchy Visualizer)
 - [ ] **[CRYPTO]** Generate and anchor sub-keys: **Sentinel**, **Engineer**, **Airlock**
 - [ ] **[CRYPTO]** Implement JSON **delegation certificates** (signed by Root)
 - [ ] **[VERIFY]** Tests for delegation certificate chain validation
 
+### 🚧 Phase 29: Signal Purification & Integrity Stabilization [PLANNED]
+- [ ] **[P0] [BUG] Fix ALERT.md Flooding**: Purge stale CONCURRENCY_TEST, STATE_COMPROMISED logs.
+- [ ] **[P0] [SECURITY] Fix PQC/Guardian Race Condition**: Implement **Mutant Lock**.
+- [ ] **[P1] [SECURITY] Strip Attack Canary**: Create payload forcing `.sig` truncation test.
+- [ ] **[P1] [BUG] Fix `BaseTachyonAgent.get_metadata()`**: Resolve `self.config` lookup error.
+- [ ] **[P1] [SECURITY] Rate-Bounded Logging**: Prevent Log Flooding DoS in AlertManager.
+- [ ] **[VERIFY]** 24h clean ALERT.md.
+
+### 🚧 Phase 30: Test Debt & Integration Hardening [PLANNED]
+- [ ] **[P1] [TEST] Replace `assert True` Stubs**: Apply strict property tests.
+- [ ] **[P1] [TEST] Pathogen Mutation Survival Suite**: `--mutation-count 50` in `AutoPatcher.apply_and_test`.
+- [ ] **[P2] [TEST] Concurrency Stress Tests**: Resolve git branch thrashing under load.
+- [ ] **[P2] [SECURITY] Singleton Immutability Guard**: Freeze `StateManager` fields.
+- [ ] **[P2] [SECURITY] Tool Schema Allowlist**: Add schema validation in `ToolRouter`.
+- [ ] **[VERIFY]** 100% Regression Pass with no stub tests.
+
+### 🚧 Phase 31: New Agent Deployment [PLANNED]
+- [ ] **[AGENT] The Historian**: Temporal pattern analysis across debates & threats.
+- [ ] **[AGENT] The Oracle**: Threat Forecasting via arXiv/NVD + local LLM.
+- [ ] **[AGENT] The Diplomat**: Inter-agent coordinator to optimize the internal debate paths.
+- [ ] **[AGENT] Debate Arena**: External PR Security co-pilot via temporary agent pairs.
+- [ ] **[AGENT] Semantic Decoy / Honeypot**: Synthesize fake docs attracting rogue agents.
+- [ ] **[VERIFY]** Each agent passes isolated regression.
+
+### 🚧 Phase 32: Operational Excellence & Graduated Autonomy [PLANNED]
+- [ ] **[OVERSIGHT] Tiered Debates**: Risk-based tier bypasses.
+- [ ] **[OVERSIGHT] Formalize HOTL Transition**: 95% auto-approve milestone metrics.
+- [ ] **[CLI] Formalize `/debate` Command**: Stream agent disputes live.
+- [ ] **[TUI] Health Score Dashboard**: Monitor PQC Coverage %, Airlock Queue Age.
+- [ ] **[DOCS] SBOM with Cryptographic Attestation**: CycloneDX + Sigstore integration.
+
+### 🚧 Phase 33: The Immune Collective (Core Framework) [PLANNED]
+- [ ] **[P0] [INFRA] EventBus Implementation**: Build SQLite-WAL broker.
+- [ ] **[P0] [INFRA] BaseAgent Protocol**: Base module handling PQC signatures & `ActionRecord`.
+- [ ] **[P1] [AGENT] The Firewall Administrator**: Orchestrator via `mlx_lm`.
+
+### 🚧 Phase 35: Forensic Reconstruction & Learning [PLANNED]
+- [ ] **[P1] [FORENSICS] Action Replay**: `reconstruct_agent_decision(record_id)`.
+- [ ] **[P1] [CORE] Adaptive Learning**: Implement Administrator's `KnowledgeBase`.
+- [ ] **[P2] [SECURITY] Mutant Lock v2**: Cryptographically signed mutation tokens.
+
+### 🚧 Phase 36: Substrate Robustness & Silent Failure Audit [PLANNED]
+- [ ] **[P1] [AUDIT] Silent Failure Sweep**: Identify no-op `except` blocks.
+- [ ] **[P1] [FIX] Robust Error Handling**.
+- [ ] **[P2] [FIX] Dead Code Purge**.
+
+### 🚧 Phase 37: Resilience & Graceful Degradation [PLANNED]
+> **Source**: `feedback/01_ARCHITECTURE_ENHANCEMENTS.md`
+- [ ] **[P1] [CORE] Capability Tiers**: Establish structured emergency degradation tiers.
+- [ ] **[P1] [CORE] Circuit Breakers**: Agent-to-agent failure circuit breaks.
+- [ ] **[P2] [INFRA] Agent Health Monitors**: Implement liveness pulse checks.
+
+### 🚧 Phase 38: System Durability & Persistent State [PLANNED]
+> **Source**: `feedback/01_ARCHITECTURE_ENHANCEMENTS.md`
+- [ ] **[P1] [INFRA] Persistent Agent Memory**: Add durable checkpointing to agent logic arrays.
+- [ ] **[P1] [INFRA] Write-Ahead Logging (WAL)**: Guard critical state changes with WAL.
+- [ ] **[VERIFY]** Chaos testing agent death-and-restore loops.
+
+### 🚧 Phase 39: Transparent Audit & Explainability [PLANNED]
+> **Source**: `feedback/01_ARCHITECTURE_ENHANCEMENTS.md`
+- [ ] **[P1] [OBSERVABILITY] Causal Lineage Chains**: Link agent generation outputs historically.
+- [ ] **[P1] [DASHBOARD] Explainability Dashboard**: Display human-readable LLM reasoning summaries.
+- [ ] **[VERIFY]** Export standardized daily audit trails.
+
 ---
 
-## 🚧 Partially Completed & Backlog
+## 🏛️ Partially Completed & Backlog
 
-### 🏛️ Architectural Backlog
-- [ ] **[REFACTOR] Extract `DummySanitizer`**: Hardcoded inside `CanaryRole._scout()`. Should be a proper module in `tachyon/core/`
-- [ ] **[REFACTOR] Registry Pattern for `main.py`**: Replace if/elif role chain
-- [ ] **[CHORE] Archival Script Enhancement**: Improve `RUN_LOG.md` auto-pruning with intelligent summarization (LLM-compressed executive summaries)
-- [ ] **Containerization**: Dockerize the Substrate Daemon for CI/CD
+- [ ] **[REFACTOR] Extract `DummySanitizer`**: Should be a standalone module in `tachyon/core/`.
+- [ ] **[REFACTOR] Registry Pattern for `main.py`**: Clean up role if/elif blocks.
+- [ ] **[CHORE] Archival Script Enhancement**: Implement intelligent LLM summarization of pruned `RUN_LOG.md`.
+- [ ] **Containerization**: Dockerize the Substrate Daemon for strictly isolated sandbox CD.
 
 ---
 
 ## ✅ Chronological Archive (Completed Phases)
 
+### ✅ Phase 34 (Partial): The Herald & Signal Purification
+- [x] **[P0] [AGENT] The Herald Implementation**: Build the `HeraldAgent` for Signal integration. 
+- [x] **[P0] [INFRA] Telemetry-to-Signal Bridge**: Hook the `TelemetryBus` alerts to the Herald. 
+- [x] **[P1] [UX] Alert Prepending**: Update `ALERT.md` and `EVOLUTION.md` to use LIFO ordering. 
+- [x] **[P1] [SECURITY] Transactional ADRs**: Implement the "Transactional ADR" guard. 
+- [x] **[P1] [DOCS] Threat Model Refinement**: Document "Crunchy Nougat" and "Immune Collective" in `THREAT_MODEL.md`. 
+
 ### ✅ Phase 28: Substrate Maintenance & Governance
-- [x] **[CHORE]** Reorganize root directory (Move logs/memory/libs) [DONE]
-- [x] **[DOCS]** Refactor `TASKS.md` for clarity and hierarchy [DONE]
-- [x] **[GOVERNANCE]** Implement `TASKS_GOVERNANCE.md` and `HYGIENE.md` agent rules [DONE]
-- [x] **[GOVERNANCE]** Implement AC/DC workflow [DONE]
-- [x] **[VERIFY]** Final Sentinel health check pass [DONE]
+- [x] **[CHORE]** Reorganize root directory (Move logs/memory/libs) 
+- [x] **[DOCS]** Refactor `TASKS.md` for clarity and hierarchy 
+- [x] **[GOVERNANCE]** Implement `TASKS_GOVERNANCE.md` and `HYGIENE.md` agent rules 
+- [x] **[GOVERNANCE]** Implement AC/DC workflow 
+- [x] **[VERIFY]** Final Sentinel health check pass 
 
 ### ✅ Phase 27: Feedback-Driven Hardening & Agentic Expansion
 - [x] **[SECURITY] Signal Purification**: Implement "Mutant Lock" to suppress false alarms.
@@ -117,6 +129,14 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[CI]** Integrity verification workflows.
 - [x] **[SBOM]** CycloneDX signing.
 - [x] **[BUILD]** Hash-pinned requirements.
+
+### ✅ Phase 25.5: Deep Audit & Hardening
+- [x] **[P0]** Fix dead PQC signing path
+- [x] **[P0]** PQC Rekey: Dual-entry Keychain model
+- [x] **[P1]** Documentation sync: ML-DSA-44 → ML-DSA-65
+
+### ✅ Phase 25.2 (Partial): Per-Agent Key Delegation
+- [x] **[CRYPTO]** Design HKDF derivation logic in `IntegrityManager`
 
 ### ✅ Phase 25: Cryptographic Substrate (Hybrid PQC)
 - [x] **[CRYPTO]** Ed25519 + ML-DSA-65 Hybrid Signatures.
@@ -138,13 +158,7 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **[CORE]** ImmuneManager for autonomic feedback loops.
 - [x] **[VERIFY]** Canary-to-Engineer evolution validation.
 
-### ✅ Phase 25.5: Deep Audit & Hardening
-- [x] **[P0]** Fix dead PQC signing path
-- [x] **[P0]** PQC Rekey: Dual-entry Keychain model
-- [x] **[P1]** Documentation sync: ML-DSA-44 → ML-DSA-65
-
 ### ✅ Phase 21.9: Local Reasoning Substrate (llama.cpp)
 - [x] **[CORE]** LocalModelProvider + ModelRouter local-first fallback
 
----
-*Older phases (1-21) available in [ROADMAP.md](docs/ROADMAP.md) history.*
+*(Phases 1-21 available in [ROADMAP.md](docs/ROADMAP.md) history)*

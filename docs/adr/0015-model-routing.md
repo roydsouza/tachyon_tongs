@@ -15,7 +15,7 @@ We will implement an autonomous **ModelRouter** integrated into the **SubstrateD
 
 1.  **Complexity-Based Routing**: Tasks will be classified into L1 (Reconnaissance), L2 (Verification), and L3 (Mutation/ADR) based on prompt analysis.
 2.  **Model Matrix**: 
-    - L1/L2 -> `gemini-3-flash` (or local `llama.cpp` instance).
+    - L1/L2 -> `gemini-3-flash` (or local `mlx_lm` instance).
     - L3 -> `gemini-3.1-pro` / `ultra`.
 3.  **Low-Power Mode (LPM)**: A global threshold (15% quota) will trigger an automatic shift to the lowest-cost model for all tasks.
 4.  **Fallback Mechanism**: The router will support prioritized fallbacks (e.g., Gemini Flash -> Local LLM) to ensure zero-latency execution even under provider failures.

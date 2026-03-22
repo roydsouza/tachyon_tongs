@@ -81,3 +81,17 @@ Traceback (most recent call last):
     cve_id = state.get("cve_context", {}).get("id", "UNKNOWN_THREAT")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AttributeError: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/Users/rds/antigravity/tachyon_tongs/sentinel.py", line 18, in <module>
+    main()
+    ~~~~^^
+  File "/Users/rds/antigravity/tachyon_tongs/scripts/sentinel.py", line 149, in main
+    logger = ExecutionLogger(log_file=args.log_file, verbose_level=args.verbose)
+TypeError: ExecutionLogger.__init__() got an unexpected keyword argument 'log_file'
+Traceback (most recent call last):
+  File "/Users/rds/antigravity/tachyon_tongs/sentinel.py", line 18, in <module>
+    main()
+    ~~~~^^
+  File "/Users/rds/antigravity/tachyon_tongs/scripts/sentinel.py", line 149, in main
+    logger = ExecutionLogger(log_file=args.log_file, verbose_level=args.verbose)
+TypeError: ExecutionLogger.__init__() got an unexpected keyword argument 'log_file'

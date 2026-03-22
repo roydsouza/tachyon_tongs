@@ -8,7 +8,7 @@ logger = logging.getLogger("tachyon.core.local_provider")
 
 class LocalModelProvider:
     """
-    High-Assurance Local Model Provider using llama.cpp (llama-server).
+    High-Assurance Local Model Provider using mlx_lm.
     Provides an OpenAI-compatible interface for local reasoning on Apple Silicon.
     """
     
@@ -18,7 +18,7 @@ class LocalModelProvider:
 
     async def generate(self, prompt: str, system_prompt: Optional[str] = None, **kwargs) -> str:
         """
-        Generates a completion using the local llama-server.
+        Generates a completion using the local mlx_lm engine.
         """
         messages = []
         if system_prompt:
@@ -43,7 +43,7 @@ class LocalModelProvider:
             raise
 
     async def is_healthy(self) -> bool:
-        """Checks if the local llama-server is online and responding."""
+        """Checks if the local mlx_lm engine is online and responding."""
         try:
             response = await self.client.get(f"{self.base_url}/models")
             return response.status_code == 200

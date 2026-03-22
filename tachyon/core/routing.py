@@ -11,7 +11,7 @@ class ModelRouter:
     """
     Autonomous Model Router for Substrate Optimization.
     Routes tasks to the appropriate model based on complexity and skill-defined logic.
-    Supports Local-First fallback via llama.cpp.
+    Supports Local-First fallback via mlx_lm.
     """
     
     DEFAULT_SKILL_PATH = "agents/skills/substrate-optimizer/SKILL.md"

@@ -114,6 +114,10 @@ graph TD
 ### 1.2 The Agent Collective (Modular Substrate)
 Tachyon Tongs follows a **Logical Separation** pattern (ADR-0024) where each agent is a discrete "immune cell" with its own declarative Intent (`SKILL.md`) and substrate Implementation (`*_role.py`, `*_engine.py`).
 
+Key organizational roles within the collective include:
+- **The Firewall Administrator (LLM Agent):** The "Thinker" that provides macro-level architectural reasoning, leveraging `mlx_lm` locally to continuously observe traffic logs and govern substrate capabilities.
+- **The Herald (Custom Agent):** The "Mouth/Ear" that acts as the communication aggregator and deterministic command router, formatting complex telemetry for NeoVIM/CLI/Signal.
+
 For a complete alphabetical directory of all active agents and their forensic capabilities, see:
 👉 **[AGENTS.md](AGENTS.md)**
 
@@ -178,7 +182,7 @@ The ingestion of untrusted external web data is the primary vector for indirect 
 3.  **VerifierNode (Engineer):** Before returning the data to the client, the Engineer verifies the Analyst's output JSON for trailing shell-execution signatures or malicious Markdown downloads, raising Exceptions on contamination.
 
 ### 2.6 Substrate-Aware Model Routing
-The `ModelRouter` manages the cognitive load distribution across different reasoning substrates. By analyzing intent complexity, it reserves high-cost capacity (Pro/Ultra) for critical architectural changes while routing reconnaissance and verification tasks to Gemini 1.5 Flash or local `llama.cpp` instances.
+The `ModelRouter` manages the cognitive load distribution across different reasoning substrates. By analyzing intent complexity, it reserves high-cost capacity (Pro/Ultra) for critical architectural changes while routing reconnaissance and verification tasks to Gemini 1.5 Flash or local `mlx_lm` instances.
 ### C. Bi-Directional Intent Gating (PEP)
 The Substrate Daemon acts as a **Policy Enforcement Point (PEP)**.
 *   **Inbound PEP**: Protects the agent from the Internet using the Guardian Triad and Rego/Cedar threat policies.
@@ -375,7 +379,9 @@ The **Event-Horizon Command Bridge** is the unified command-and-control interfac
 
 > **Reference:** See [ADMIN_CLI_NEOVIM.md](file:///Users/rds/antigravity/tachyon_tongs/ADMIN_CLI_NEOVIM.md) for the full operator reference.
 
-### 9.1 Three-Tier Component Topology
+### 9.1 Three-Tier Component Topology (via The Herald)
+
+The Command Bridge is physically operated and routed by the **Herald Agent**, which acts as the Custom Agent proxy between the human operator and the backend Substrate API.
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
@@ -564,12 +570,12 @@ All structural changes and policy evolutions are recorded in the `EVOLUTION.md` 
 
 ## 11. Local Reasoning Substrate (LRS)
 
-To ensure high-assurance resilience, the Tachyon Tongs substrate includes a **Local Reasoning Substrate (LRS)**. This allows agents to perform critical security analysis and policy synthesis completely offline, mitigating risks associated with cloud dependency.
+To ensure high-assurance resilience, the Tachyon Tongs substrate includes a **Local Reasoning Substrate (LRS)**. This allows agents, specifically the **Firewall Administrator**, to perform critical security analysis and policy synthesis completely offline, mitigating risks associated with cloud dependency.
 
 ### 11.1 Local Model Provider
-The LRS is powered by `llama.cpp`, optimized for Apple Silicon M5. It operates in a persistent daemon mode via `llama-server`, providing an OpenAI-compatible API for internal requests.
-- **Hardware Acceleration**: Inference is offloaded to the Metal GPU (`-ngl 99`) for near-instantaneous response times.
-- **Model Selection**: Defaulting to **Llama-3.1-8B (Q5_K_M)** specifically quantized to maximize reasoning accuracy within M5 memory constraints.
+The LRS is powered natively by **`mlx_lm`**, exclusively optimized for the Apple Silicon M5 architecture. It operates entirely within the unified memory space, providing direct Python inference without the overhead of an HTTP API.
+- **Hardware Acceleration**: Inference is seamlessly offloaded to the Metal GPU for near-instantaneous response times, fully replacing any older `llama.cpp` or `llama-server` bridging mechanisms.
+- **Model Selection**: Defaulting to **Llama-3.1-8B** specifically quantized via MLX to maximize reasoning accuracy within M5 memory constraints.
 
 ### 11.2 Autonomous Fallback
 The `ModelRouter` implements an intelligent fallback protocol:

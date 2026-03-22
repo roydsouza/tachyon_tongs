@@ -356,31 +356,72 @@ This SDLC strategy was synthesized from independent assessments by four LLMs:
 
 ---
 
-## 12. Path Not Taken
+## 12. Deterministic SDLC Framework
+
+### 12.1 Specification-First Development
+**Principle**: Explicit, machine-verifiable specifications must be created before any code generation begins. All requirements must have defined types, acceptance criteria, and explicit test strategies.
+
+### 12.2 Contract-First Interface Design
+Agents and systems must adhere to strict type-checking and runtime protocols. Contract compliance must be verified dynamically.
+
+---
+
+## 13. Test-Driven Agent Development (TDAD)
+
+**Pattern**: Write tests BEFORE generating implementation code.
+
+The SDLC strictly mandates the TDAD workflow for agent execution:
+1. **Phase 1**: Generate a comprehensive test suite from the specification.
+2. **Phase 2**: Verify tests fail (Baseline verification).
+3. **Phase 3**: Generate the implementation intended to pass the tests.
+4. **Phase 4**: Verify tests pass with the implementation.
+5. **Phase 5**: Verify determinism by running the test suite multiple times to explicitly ensure no flaky behaviors.
+
+---
+
+## 14. Prompt Engineering for Reliability
+
+- **Structured Prompt Templates**: Prompts must restrict agents to deterministic generation (e.g., `temperature=0.0`) and mandate strictly formatted outputs.
+- **Few-Shot Learning**: Standardized examples must be injected into prompts to ensure consistent agent output formatting, focusing heavily on proper error handling and type safety.
+
+---
+
+## 15. Verification and Validation Pipeline
+
+The pipeline enforces multiple stages of CI/CD-like validations on agent-generated code prior to any execution or deployment.
+- **Stage 1 (Syntax Check)**: Standard parser checks.
+- **Stage 2 (Type Check)**: Strict static type analysis (e.g., `mypy --strict`).
+- **Stage 3 (Security Scan)**: Static vulnerability scanning (e.g., `bandit`).
+- **Stage 4 (Unit Tests)**: Execution of the pre-written `pytest` suite.
+- **Stage 5 (Property Tests)**: Fuzzing edge cases (e.g., `hypothesis`).
+
+---
+
+## 16. Path Not Taken
 
 The following ideas were proposed by the LLM panel but **deferred or rejected** for documented reasons:
 
-### 12.1 Swift `tachyon-sign` CLI (Grok)
+### 16.1 Swift `tachyon-sign` CLI (Grok)
 **Proposal**: Build a Swift CLI using Apple CryptoKit for native Secure Enclave access and ML-DSA signing.
 **Why Deferred**: Introduces a second language (Swift) into a Python-centric codebase. The maintenance burden outweighs the benefit. Python's `cryptography` library + `pyobjc-framework-Security` provides equivalent Keychain access. If CryptoKit-exclusive features are needed later, this can be revisited as a thin shim.
 
-### 12.2 Full Directory Restructure (Claude)
+### 16.2 Full Directory Restructure (Claude)
 **Proposal**: Reorganize the entire repo into `src/`, `runtime/`, `security/`, `data/`, `build/` directories, moving debates, logs, and tasks out of the root.
 **Why Deferred**: Too disruptive for a mature, actively developed codebase with 170+ tests, extensive import paths, and multiple agent configurations. The *principles* of trust segmentation (signed vs. unsigned data separation) are adopted, but the *physical reorganization* is not worth the breakage risk. May revisit in a major version bump.
 
-### 12.3 Nix for Reproducible Builds (Grok)
+### 16.3 Nix for Reproducible Builds (Grok)
 **Proposal**: Use `nix-darwin` to guarantee deterministic, reproducible builds on Apple Silicon.
 **Why Rejected**: Over-engineered for a single-developer, HITL-mode experimentation lab. The complexity of maintaining Nix flakes outweighs the reproducibility benefit at this stage. Python's `pip freeze` + hash pinning in `requirements.txt` provides sufficient reproducibility for now.
 
-### 12.4 12-Week Phased Rollout (Claude)
+### 16.4 12-Week Phased Rollout (Claude)
 **Proposal**: A 12-week, 6-phase implementation timeline including team training.
 **Why Compressed**: Tachyon Tongs is a single-developer project with a high-velocity development cycle. The 12-week timeline is calibrated for enterprise teams. We compress this into 3 focused phases (25.1, 25.2, 25.3) without sacrificing security rigor.
 
-### 12.5 X.509 Certificate Wrapping (OpenAI Tier 2)
+### 16.5 X.509 Certificate Wrapping (OpenAI Tier 2)
 **Proposal**: Wrap Ed25519 keys in X.509 certificates for identity binding, rotation tracking, and revocation infrastructure.
 **Why Deferred**: X.509 PKI is a significant infrastructure commitment (CRLs, OCSP responders, cert chains). Our lightweight JSON delegation certificates achieve the same per-agent scoping with far less operational overhead. If Tachyon Tongs evolves into a multi-operator deployment, X.509 can be layered on.
 
-### 12.6 Daily Agent Key Rotation via LaunchDaemon (Claude)
+### 16.6 Daily Agent Key Rotation via LaunchDaemon (Claude)
 **Proposal**: Automatic daily key rotation for Sentinel via a macOS LaunchAgent at 3 AM.
 **Why Deferred**: Automated key rotation without operator awareness creates a silent failure mode. If the rotation fails (disk full, keychain locked), the Sentinel silently loses signing capability. We prefer explicit rotation triggered during `tt ritual` so failures are immediately visible.
 

@@ -9,11 +9,11 @@ The Tachyon Tongs substrate currently relies on external LLM APIs (e.g., Google 
 To achieve true autonomy and resilience, the substrate must have a "Local Reasoning Substrate" (LRS) capable of performing tool-routing and safety-checks completely offline.
 
 ## Decision
-We will implement the **Local Reasoning Substrate (LRS)** using `llama.cpp` optimized for Apple Silicon M5.
+We will implement the **Local Reasoning Substrate (LRS)** using `mlx_lm` optimized for Apple Silicon M5.
 
 1.  **Local Model Provider**:
     - A new `LocalModelProvider` class will be added to the `ModelRouter`.
-    - It will wrap the `llama-cli` or `llama-server` process to perform inference on GGUF models.
+    - It will wrap the `mlx_lm` process to perform inference on MLX converted models.
     - Default model: **Llama-3.1-8B-Lexi-GGUF (Q5_K_M)** for optimal size/performance on 24GB RAM.
 
 2.  **Fallback Strategy**:
@@ -26,7 +26,7 @@ We will implement the **Local Reasoning Substrate (LRS)** using `llama.cpp` opti
     - inference MUST use `GGML_METAL=ON` to leverage the M5 GPU via the `-ngl 99` flag.
 
 ## Technical Requirements
-- Models must be stored in `/Users/rds/antigravity/wormhole/llama.cpp/models/`.
+- Models must be stored in `/Users/rds/antigravity/wormhole/mlx_lm/models/`.
 - The `LocalModelProvider` must handle token streaming and JSON-mode forcing where possible (via GBNF grammars).
 
 ## Consequences
