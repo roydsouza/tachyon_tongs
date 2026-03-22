@@ -18,7 +18,8 @@ __pycache__/
 *.db
 *.db-shm
 *.db-wal
-!tachyon_state.db
+*.sqlite
+*.sqlite3
 
 # Logs
 *.log
@@ -29,6 +30,17 @@ opa_logs.txt
 .venv/
 venv/
 env/
+
+# Binaries and Large Files
+*.dylib
+*.bin
+*.exe
+*.o
+*.a
+*.so
+*.node
+*.dll
+*.pcap
 
 # Local Feedback (Never Pushed)
 feedback/

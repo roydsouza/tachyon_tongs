@@ -55,10 +55,10 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [ ] **[TUI] Health Score Dashboard**: Monitor PQC Coverage %, Airlock Queue Age.
 - [ ] **[DOCS] SBOM with Cryptographic Attestation**: CycloneDX + Sigstore integration.
 
-### 🚧 Phase 33: The Immune Collective (Core Framework) [PLANNED]
-- [ ] **[P0] [INFRA] EventBus Implementation**: Build SQLite-WAL broker.
-- [ ] **[P0] [INFRA] BaseAgent Protocol**: Base module handling PQC signatures & `ActionRecord`.
-- [ ] **[P1] [AGENT] The Firewall Administrator**: Orchestrator via `mlx_lm`.
+### 🔳 Phase 33: The Immune Collective (Core Framework) [IN-PROGRESS]
+- [x] **[P0] [INFRA] EventBus Implementation**: Build SQLite-WAL broker.
+- [x] **[P0] [INFRA] BaseAgent Protocol**: Base module handling PQC signatures & `ActionRecord`.
+- [ ] **[P1] [AGENT] The Firewall Administrator**: Orchestrator via `mlx_lm`. (See ADR-0005)
 
 ### 🚧 Phase 35: Forensic Reconstruction & Learning [PLANNED]
 - [ ] **[P1] [FORENSICS] Action Replay**: `reconstruct_agent_decision(record_id)`.
