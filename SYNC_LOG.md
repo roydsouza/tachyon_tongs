@@ -396,7 +396,7 @@ This log tracks technical decisions, mission-critical state transitions, and syn
 ## [2026-03-16 20:55] - Threat Modeling & Documentation Core
 - **Session Focus**: Formalizing the security posture and threat landscape.
 - **Key Accomplishments**:
-    - **Threat Modeling**: Authored [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md) covering Inbound (IPI, Hijacking) and Outbound (DLP, Leakage) vectors.
+    - **Threat Modeling**: Authored [THREAT_MODEL.md](docs/THREAT_MODEL.md) covering Inbound (IPI, Hijacking) and Outbound (DLP, Leakage) vectors.
     - **Documentation Refinement**: Updated `README.md` and `docs/ARCHITECTURE.md` to integrate the threat model.
     - **Sync**: Completed a full synchronized state push to GitHub.
 - **Decisions**:

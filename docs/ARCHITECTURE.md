@@ -4,7 +4,7 @@ This document details the technical architecture of the **Tachyon Tongs** securi
 
 ## 📜 Threat-Model-Driven Governance (ADR-as-IDS)
 
-The architecture of Tachyon Tongs is a direct physical manifestation of its [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md). To maintain high-assurance security, all significant mutations to this substrate are governed by **Architecture Decision Records (ADRs)**, which must always be justified against a specific threat vector.
+The architecture of Tachyon Tongs is a direct physical manifestation of its [THREAT_MODEL.md](THREAT_MODEL.md). To maintain high-assurance security, all significant mutations to this substrate are governed by **Architecture Decision Records (ADRs)**, which must always be justified against a specific threat vector.
 
 - **Intrusion Detection (IDS)**: ADRs are **cryptographically signed** assets serving as a forensic baseline. By comparing the signed state of the architecture against the current implementation, operators can detect "Structural Drifts" or unauthorized mutations. 
 - **Agent Plugin Architecture (ADR-0033)**: The substrate is decoupled from agent logic. Agents reside in `agents/` and are categorized as **Code-Only**, **Skill-Only**, or **Hybrid**. They are discovered at runtime via the `AgentRegistry`.
@@ -203,7 +203,7 @@ Controlled by the `StateManager` (`tachyon/core/state.py`), this mechanism ensur
 #### C. Real-time Vulnerability Gating
 The Integrity Agent can dynamically poll `pip-audit` or `safety` APIs. If a dependency contains a known CRITICAL CVE, the Substrate Daemon will halt the sandbox creation and emit a high-priority alert to **ALERT.md**.
 
-For a granular breakdown of specific attack vectors (such as Indirect Prompt Injection, Agent Hijacking, and Outbound Data Exfiltration) and their corresponding substrate mitigations, please refer to the [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md).
+For a granular breakdown of specific attack vectors (such as Indirect Prompt Injection, Agent Hijacking, and Outbound Data Exfiltration) and their corresponding substrate mitigations, please refer to the [THREAT_MODEL.md](THREAT_MODEL.md).
 
 ### B. The Guardian Triad (Data Sanitization)
 The ingestion of untrusted external web data is the primary vector for indirect prompt injections. Tachyon Tongs handles `safe_fetch` requests using a strictly isolated three-stage pipeline:
@@ -412,7 +412,7 @@ graph TD
 
 The **Event-Horizon Command Bridge** is the unified command-and-control interface for operating the Tachyon Tongs substrate. It replaces ad-hoc Python scripts with a single, composable `tt` entrypoint and provides three complementary tiers of interaction — all following a **NeoVIM-first, CLI-forward** philosophy with vi-style keybindings throughout.
 
-> **Reference:** See [ADMIN_CLI_NEOVIM.md](file:///Users/rds/antigravity/tachyon_tongs/ADMIN_CLI_NEOVIM.md) for the full operator reference.
+> **Reference:** See [ADMIN.md](../ADMIN.md) for the full operator reference.
 
 ### 9.1 Three-Tier Component Topology (via The Herald)
 
@@ -630,7 +630,7 @@ Full hardware virtualization for high-privilege agents (Sentinel, Engineer). Orc
 
 ## 13. Cryptographic Substrate & Secure SDLC (Phase 25)
 
-The substrate's development process is secured end-to-end via a hardware-backed, post-quantum-ready signing infrastructure. This section describes the target architecture defined in [docs/SDLC.md](file:///Users/rds/antigravity/tachyon_tongs/docs/SDLC.md).
+The substrate's development process is secured end-to-end via a hardware-backed, post-quantum-ready signing infrastructure. This section describes the target architecture defined in [SDLC.md](SDLC.md).
 
 ### 13.1 Signing Architecture Migration
 

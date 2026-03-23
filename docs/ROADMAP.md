@@ -104,7 +104,7 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 ### Phase 13: Sentinel Hybrid Migration [COMPLETED]
 - **Objective:** Transition the Sentinel from a monolithic script to a declarative, substrate-managed agent.
 - **Implementation:** `SKILL.md` manifest parsing, `runner.py` for hybrid execution, and ADR-0006.
-- **Cross-ref:** See [TASKS.md Phase 13](file:///Users/rds/antigravity/tachyon_tongs/TASKS.md).
+- **Cross-ref:** See [TASKS.md Phase 13](../TASKS.md).
 
 ### Phase 14: Bi-Directional Capability Firewall (Scale-Out PDP/PEP) [COMPLETED]
 - **Objective:** Establish a centralized Meta-PDP (Singularity) that federates policy across multiple engines (Rego/Cedar).
@@ -169,7 +169,7 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Tier 2 — TUI (`tt dash`):** Textual-framework dashboard with live manifolds and unified API telemetry. [DONE]
   - **Tier 3 — NeoVIM Plugin (`tachyon.nvim`):** Pure Lua plugin with floating dashboard, Telescope integration, and syntax highlighting. [DONE]
   - **Unified Daemon:** Consolidates PEP and Airlock layers on port 60461. [DONE]
-- **Reference:** See [ADMIN_CLI_NEOVIM.md](file:///Users/rds/antigravity/tachyon_tongs/ADMIN_CLI_NEOVIM.md) for the full operator reference.
+- **Reference:** See [ADMIN.md](../ADMIN.md) for the full operator reference.
 
 ### Phase 23: Hardware-Level Isolation [COMPLETED]
 - **Objective:** Eliminate substrate escape vectors and guarantee tool-call integrity via hardware-level boundaries.
@@ -181,7 +181,7 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 
 ### Phase 25: Cryptographic Substrate & Secure SDLC [OPERATIONAL]
 - **Objective:** Migrate from HMAC-SHA256 to a hardware-backed, post-quantum-ready asymmetric signing infrastructure with per-agent key isolation.
-- **Reference:** See [docs/SDLC.md](file:///Users/rds/antigravity/tachyon_tongs/docs/SDLC.md) for the full specification.
+- **Reference:** See [SDLC.md](SDLC.md) for the full specification.
 - **Implementation:**
   - **Phase 25.1 — Ed25519 Foundation**: Replace `IntegrityManager` HMAC with Ed25519 asymmetric signatures. Root key stored in Apple Keychain (Touch ID-gated). Shamir 3-of-5 key backup. [DONE]
   - **Phase 25.2 — Per-Agent Key Hierarchy**: HKDF delegation scoping each agent's signing authority. Sentinel signs debates, Engineer signs patches, Airlock co-signs everything. [DONE]
@@ -190,7 +190,7 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 
 ### Phase 26.1: Agentic Observability & Control [OPERATIONAL]
 - **Objective:** Eliminate agentic observability blindspots and cryptographically bind agent identities to sub-keys.
-- **Reference:** See [docs/adr/0029-agentic-observability-and-control.md](file:///Users/rds/antigravity/tachyon_tongs/docs/adr/0029-agentic-observability-and-control.md).
+- **Reference:** See [adr/0029-agentic-observability-and-control.md](adr/0029-agentic-observability-and-control.md).
 - **Implementation:**
   - **Telemetry Bus**: Structured JSONL forensic logging for all tool blocks, approvals, and cryptographic signatures.
   - **Delegation Certificates**: Hybrid-signed JSON certificates containing scoped HKDF keys, proving agent identity and role.

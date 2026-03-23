@@ -5,7 +5,7 @@ Tachyon Tongs is a high-performance, Apple Silicon-native security substrate. It
 ---
 
 ## 🛡️ Live Threat Model
-Every architectural decision is mapped directly to a specific vector in the [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md).
+Every architectural decision is mapped directly to a specific vector in the [THREAT_MODEL.md](docs/THREAT_MODEL.md).
 
 *   🧠 **Semantic Intent Gating**: All tool requests are routed through a Policy Enforcement Point and evaluated by the **Singularity Meta-PDP**.
 *   🧊 **Tiered Workload Isolation**: High-risk actions run in dynamically generated macOS `sandbox-exec` (Seatbelt) profiles.
@@ -76,7 +76,7 @@ Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture
 ---
 
 ## 🤖 The Agent Collective
-*   🔭 **The Sentinel**: Discovers and signs novel AI exploits into the [EXPLOITATION_CATALOG.md](file:///Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md).
+*   🔭 **The Sentinel**: Discovers and signs novel AI exploits into the [EXPLOITATION_CATALOG.md](EXPLOITATION_CATALOG.md).
 *   🧪 **The Sentry**: Unified active probing and passive semantic honeypotting for early intrusion detection.
 *   🧬 **The Forge**: Adversarial architect generating synthetic zero-day scenarios and stress-testing substrate logic.
 *   🦠 **The Pathogen**: Red-team mutation engine for autonomously evolving exploit variants to find bypasses.

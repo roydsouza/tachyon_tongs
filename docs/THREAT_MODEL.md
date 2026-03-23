@@ -104,7 +104,7 @@ As Tachyon Tongs moves toward a forensic IDS model, the protection of cryptograp
 - **Tachyon Mitigation**: 
     - **Anti-Entropy Protocol**: Keys are never stored in the repo. 
     - **Automated Verification**: `IntegrityManager` checks for environment injection only.
-    - **Reference**: See [Generation & Storage](file:///Users/rds/antigravity/tachyon_tongs/docs/KEYS.md#storage--injection-anti-entropy-protocol).
+    - **Reference**: See [Generation & Storage](KEYS.md#storage--injection-anti-entropy-protocol).
 
 ### B. Malicious Key Exfiltration (Local Malware)
 - **Description**: Malware running on the host attempts to read environment variables or memory to steal the `TACHYON_SECRET_KEY`.
@@ -112,7 +112,7 @@ As Tachyon Tongs moves toward a forensic IDS model, the protection of cryptograp
 - **Tachyon Mitigation**: 
     - **Volatile Injection**: The key exists only in the environment/memory of the daemon.
     - **Hardware Moat (Planned)**: Transition to asymmetric hardware signing (Yubikey/Secure Enclave) ensures that the private key is never exposed to the OS-level memory, even to the substrate itself.
-    - **Reference**: See [Evolutionary Roadmap](file:///Users/rds/antigravity/tachyon_tongs/docs/KEYS.md#phase-3-hardware-root-vision).
+    - **Reference**: See [Evolutionary Roadmap](KEYS.md#phase-3-hardware-root-vision).
 
 ## 8. Supply Chain & Repository Integrity (GitHub)
 

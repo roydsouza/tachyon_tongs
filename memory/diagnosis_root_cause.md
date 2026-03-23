@@ -9,7 +9,7 @@
 The failure was caused by a **Python Environment Disconnect** between the Agent Workspace and the User Interactive Shell.
 
 ### 1. Agent Workspace Environment
-- **Path**: `/Users/rds/antigravity/tachyon_tongs/venv/bin/python3` (A Python 3.14.3 virtual environment)
+- **Path**: `venv/bin/python3` (A Python 3.14.3 virtual environment)
 - **Status**: `pyobjc-framework-Security` is correctly installed here.
 - **Verification**: `python3 tests/test_ceremony_ironclad.py` PASSES because it runs within this `venv`.
 

@@ -115,7 +115,7 @@ Add the following to your MCP client configuration (e.g., `claude_desktop_config
   "mcpServers": {
     "tachyon-tongs": {
       "command": "python3",
-      "args": ["/Users/rds/antigravity/tachyon_tongs/src/mcp_gateway.py"]
+      "args": ["src/mcp_gateway.py"]
     }
   }
 }
