@@ -1,5 +1,14 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-23: Phase 32 Legacy Cleanup & Role Modernization
+- **Objective:** Finalize agentic refactor by modernizing the CLI role factory and LaunchAgent plists.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **Role Factory Modernization:** Updated `tachyon/main.py` and `agents/_core/roles.py` to use a unified `AgentRegistry`-based delegation pattern.
+  - **LaunchAgent Migration:** Retired `com.tachyon.canary.plist` in favor of `com.tachyon.sentry.plist`, reflecting the new Sentry Agent's role.
+  - **Registry Hardening:** Fixed `AgentRegistry` to correctly discover and dynamic-load plugins from hyphenated directory paths (e.g., `code-only`).
+- **Verification:** Verified `python3 -m tachyon.main --role sentry --action check_signals` successfully triggers the SentryPlugin.
+
 ### 2026-03-23: Phase 31 Sentry & Healer Deployment
 - **Objective:** Deploy unified Sentry agent and autonomous Healer agent.
 - **Status:** [OPERATIONAL]

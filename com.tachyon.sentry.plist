@@ -3,24 +3,24 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.tachyon.canary</string>
+    <string>com.tachyon.sentry</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/opt/homebrew/bin/python3</string>
+        <string>/usr/bin/python3</string>
         <string>-m</string>
         <string>tachyon.main</string>
         <string>--role</string>
-        <string>canary</string>
+        <string>sentry</string>
         <string>--action</string>
-        <string>scout</string>
+        <string>check_signals</string>
     </array>
     <key>WorkingDirectory</key>
     <string>/Users/rds/antigravity/tachyon_tongs</string>
     <key>StartInterval</key>
     <integer>14400</integer> <!-- 4 hours -->
     <key>StandardOutPath</key>
-    <string>/Users/rds/antigravity/tachyon_tongs/memory/operational/canary_stdout.log</string>
+    <string>/Users/rds/antigravity/tachyon_tongs/memory/operational/sentry_stdout.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/rds/antigravity/tachyon_tongs/memory/operational/canary_stderr.log</string>
+    <string>/Users/rds/antigravity/tachyon_tongs/memory/operational/sentry_stderr.log</string>
 </dict>
 </plist>

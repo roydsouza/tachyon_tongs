@@ -5,11 +5,11 @@ import os
 # Ensure tachyon is in path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from tachyon.agents.roles import SentinelRole, EngineerRole, GuardianRole, CanaryRole
+from agents._core.roles import SentinelRole, EngineerRole, GuardianRole, SentryRole, HealerRole
 
 def main():
     parser = argparse.ArgumentParser(description="Tachyon Tongs Unified Substrate Controller")
-    parser.add_argument("--role", required=True, choices=["sentinel", "engineer", "guardian", "canary", "keys"], help="Agent role to assume")
+    parser.add_argument("--role", required=True, choices=["sentinel", "engineer", "guardian", "sentry", "healer", "keys"], help="Agent role to assume")
     parser.add_argument("--action", required=True, help="Action to execute")
     parser.add_argument("--params", type=str, help="JSON parameters for the action")
     parser.add_argument("--agent-id", default="tachyon-master", help="Identity of the agent")
@@ -38,8 +38,10 @@ def main():
         agent = EngineerRole(args.agent_id)
     elif args.role == "guardian":
         agent = GuardianRole(args.agent_id)
-    elif args.role == "canary":
-        agent = CanaryRole(args.agent_id)
+    elif args.role == "sentry":
+        agent = SentryRole(args.agent_id)
+    elif args.role == "healer":
+        agent = HealerRole(args.agent_id)
     else:
         print(f"Error: Unknown role {args.role}")
         sys.exit(1)

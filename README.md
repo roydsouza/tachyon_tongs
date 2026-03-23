@@ -78,6 +78,8 @@ Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture
 ## 🤖 The Agent Collective
 *   🔭 **The Sentinel**: Discovers and signs novel AI exploits into the [EXPLOITATION_CATALOG.md](file:///Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md).
 *   🧪 **The Sentry**: Unified active probing and passive semantic honeypotting for early intrusion detection.
+*   🧬 **The Forge**: Adversarial architect generating synthetic zero-day scenarios and stress-testing substrate logic.
+*   🦠 **The Pathogen**: Red-team mutation engine for autonomously evolving exploit variants to find bypasses.
 *   🛠️ **The Engineer**: Self-synthesizes infrastructure patches and policy mutations.
 *   ⚖️ **The Guardian**: Performs real-time forensic audits of the architectural substrate.
 *   🏥 **The Healer**: Autonomous somatic repair and automated patch coordination.

@@ -1,6 +1,6 @@
 import os
 import yaml
-import importlib
+import importlib.util
 from typing import Dict, Type, Optional
 from agents._core.base import BaseAgentPlugin
 
@@ -31,9 +31,13 @@ class AgentRegistry:
                 plugin_module_name = ".".join(module_parts) + ".agent"
                 
                 try:
-                    importlib.import_module(plugin_module_name)
-                except ImportError as e:
-                    print(f"[AgentRegistry] Failed to load plugin {agent_name} from {plugin_module_name}: {e}")
+                    # Use importlib.util to support hyphenated paths
+                    module_path = os.path.join(root, "agent.py")
+                    spec = importlib.util.spec_from_file_location(plugin_module_name, module_path)
+                    module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(module)
+                except Exception as e:
+                    print(f"[AgentRegistry] Failed to load plugin {agent_name} from {module_path}: {e}")
 
     @classmethod
     def get_plugin(cls, name: str) -> Optional[Type[BaseAgentPlugin]]:

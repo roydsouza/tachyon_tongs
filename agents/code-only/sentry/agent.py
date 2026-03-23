@@ -69,8 +69,8 @@ class SentryPlugin(BaseAgentPlugin):
     def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
         if action == "scout":
             return self.engine.scout(parameters)
-        if action == "check_integrity":
-            # Manual trigger for bait check
-            accessed = self.engine.check_bait()
-            return {"status": "SUCCESS", "compromised": accessed}
+        if action == "check_signals":
+            # Manual trigger for bait and signal check
+            self.check_signals()
+            return {"status": "SUCCESS", "message": "Signal check complete."}
         return {"status": "error", "message": f"Unknown action: {action}"}
