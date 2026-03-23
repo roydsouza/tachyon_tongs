@@ -50,12 +50,17 @@ class StateManager:
                 
                 # LOCK DOWN: Phase 30.3 Singleton Immutability Guard
                 def _frozen_setattr(instance, name, value):
+                    # Phase 40: Allow mocking if TACHYON_TEST_MODE is set
+                    if os.environ.get("TACHYON_TEST_MODE") == "1":
+                        object.__setattr__(instance, name, value)
+                        return
+
                     # We allow setting private internal state if needed, but not public config
                     if name.startswith("_"):
                         object.__setattr__(instance, name, value)
                     else:
                         raise AttributeError(f"StateManager is FROZEN for security. Cannot set '{name}'.")
-                
+
                 cls._instance.__class__.__setattr__ = _frozen_setattr
                 
             return cls._instance

@@ -16,9 +16,9 @@ Every architectural decision is mapped directly to a specific vector in the [THR
 ## 💎 The Crown Jewels: Proactive Defense & Autoresearch
 Tachyon Tongs is not just a reactive proxy; it is a **self-evolving security organism**.
 
-*   🦠 **Pathogen (Proactive Adversarial Substrate)**: Every 24 hours, the Pathogen agent executes a full-spectrum adversarial sweep. It uses 11 authoritative **OWASP ASI Playbooks** (ASI01–ASI11) to synthesize and mutate hybrid attacks, ensuring the substrate's defenses stay ahead of emergent AI-native threats.
+*   🦠 **Pathogen (Metamorphic Adversarial Reasoning)**: Every 24 hours, the Pathogen agent executes a deep adversarial sweep. Moving beyond static templates, it now utilizes a **Reflector Node** to "think" about substrate defenses. It ingests ADRs and blueprints to identify blind spots, synthesizing **Goal-Aliased** attacks that masquerade as legitimate telemetry to bypass intent-based filters.
 *   🔭 **Sentinel (Autonomous Intelligence Research)**: The Sentinel performs Karpathy-style "Autoresearch"—not just searching for CVEs, but autonomously browsing, synthesizing, and mapping novel vulnerabilities into high-signal "Adversarial Guidance" for the Pathogen.
-*   🧬 **Adversarial Co-Evolution**: This continuous loop between the Sentinel (Discovery) and the Pathogen (Verification) creates a biological-grade immune response that hardens the substrate in real-time.
+*   🧬 **Metamorphic Co-Evolution**: This continuous loop between the Sentinel (Discovery) and the Pathogen (Reasoning & Verification) creates a biological-grade immune response that self-hardens the substrate against human-level adversarial logic.
 
 ---
 

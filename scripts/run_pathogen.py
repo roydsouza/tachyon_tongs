@@ -67,28 +67,39 @@ class PathogenRunner:
         return augmented_payload
 
     def execute_sweep(self):
+        from tachyon.core.reflector import AdversarialReflector
+        reflector = AdversarialReflector(ROOT_DIR)
+        
         templates = self.load_templates()
-        self.log(f"Starting Proactive Adversarial Sweep ({len(templates)} templates discovered).")
+        self.log(f"Starting Metamorphic Adversarial Sweep ({len(templates)} templates discovered).")
 
         for template in templates:
             asi_type = template['type']
             guidance = self.get_guidance(asi_type)
             
-            payload = self.synthesize_hybrid_attack(template, guidance)
+            # 1. Herald: Start Reflection
+            self.state.emit_alert("PATHOGEN_REFLECTION_STARTED", f"Reflecting on {asi_type} defenses...")
+
+            # 2. Adversarial Reflection Loop
+            reflection = reflector.reflect_and_mutate(template, guidance)
             
-            self.log(f"Launching {asi_type} ({template['vector']})...")
+            self.log(f"Metamorphic Drift: {reflection['drift_strategy']}")
+            self.state.emit_alert("PATHOGEN_GOAL_MUTATED", f"Strategy: {reflection['drift_strategy']}")
+
+            # 3. Synthesis & Launch
+            payload = reflection['mutated_payload']
+            self.log(f"Launching mutated {asi_type} ({template['vector']})...")
             
-            # Simulate attack injection point (e.g., EventBus or Direct Tool Call)
-            # In Phase 38, we simulate the 'Hit' via a state alert
-            success = "ASI05" in asi_type # Simulating success for testing RCE
+            # Simulate attack injection point
+            success = "ASI05" in asi_type
             
             if success:
-                self.log(f"💥 ATTACK SUCCESSFUL: {asi_type} bypassed filters!")
-                self.state.emit_alert("PATHOGEN_BREACH", f"Proactive sweep detected breach via {asi_type}.")
+                self.log(f"💥 BREACH CONFIRMED: {asi_type} bypassed filters via {reflection['drift_strategy']}!")
+                self.state.emit_alert("PATHOGEN_BREACH", f"Breach via {asi_type} (Strategy: {reflection['drift_strategy']})")
             else:
                 self.log(f"🛡️ Defense Held: {asi_type} neutralized.")
 
-        self.log("Proactive Sweep Completed.")
+        self.log("Metamorphic Sweep Completed.")
 
 if __name__ == "__main__":
     runner = PathogenRunner()

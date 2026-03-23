@@ -239,8 +239,20 @@ Tachyon Tongs is designed as an autonomic, self-healing organism rather than a s
 4.  **Assault:** Pathogen attempts to inject the mutated payload into the Substrate's Event Horizon to verify whether the Engineer's autonomous patch successfully drops the threat.
 5.  **Proactive Sweep (Phase 38):** The Pathogen executes a periodic (24h) sweep via a template-driven hybrid engine. It traverses the OWASP ASI playbooks, extracting guidance to mutate baseline templates into novel, substrate-aware attacks.
 6.  **Zero-Day Fuzzing (`zero_day_drill.py`):** A continuous architectural fitness function orchestrates Pathogen asynchronously, generating massive variations of un-cataloged prompt attacks to map the NPU performance and resilience ceiling of the Triad.
+7.  **Metamorphic Reasoning (Phase 40):** The Pathogen core is now augmented with a **Reflector Node** capable of "Adversarial Reflection." It ingests the substrate's own ADR history and performance logs to synthesize metamorphic bypasses that exploit semantic gaps in the defense layer.
 
-## 5. Autonomous Intelligence Research (Sentinel Autoresearch) [PHASE 39]
+## 5. Metamorphic Adversarial Reasoning (The Reflector) [PHASE 40]
+
+The substrate's red-team capability has evolved from template-driven fuzzing to metamorphic reasoning. This ensures that defenses are tested against intentional, defense-aware bypasses.
+
+### 5.1 The Reflection Loop
+The Reflector node (`tachyon/core/reflector.py`) implements a three-stage cognitive cycle:
+1.  **Reconnaissance (Knowledge Ingestion)**: The node read-locks the `docs/adr/` directory and `ARCHITECTURE.md` to map the substrate's current defensive topology.
+2.  **Adversarial Reflection (The Critique)**: The LLM role-plays as an attacker, analyzing why a baseline attack (e.g., ASI05) would be caught by the existing **Guardian** or **Sentinel** logic.
+3.  **Semantic Drift (Goal Aliasing)**: The engine synthesizes a mutated payload that maintains its malicious functional intent while masquerading as a benign system process (e.g., "Telemetry Heartbeat" or "Identity Audit").
+
+### 5.2 Herald Visibility
+Every stage of the metamorphic loop is broadcast via the **Telemetry Bus**, allowing the operator to observe the Pathogen's "thinking process" in real-time via `tt_herald` or remote Signal/Slack notifications.
 
 Sentinel represents the "Autoresearch" capability of the substrate. It moves beyond raw vulnerability scraping to high-signal intelligence synthesis.
 
