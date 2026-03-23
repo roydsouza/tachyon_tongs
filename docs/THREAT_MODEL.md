@@ -11,29 +11,29 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 
 ## 2. Inbound Threat Vectors (External to Agent)
 
-### A. Indirect Prompt Injection (IPI)
+### A. Indirect Prompt Injection (IPI) `[OWASP-2026-ASI01]`
 - **Description**: An attacker embeds malicious instructions in external data (e.g., a website's metadata or a poisoned GitHub README) that the agent fetches.
 - **Impact**: The agent's core system prompt is overridden, allowing the attacker to hijack the agent's tools (e.g., "Expose all local environment variables").
 - **Tachyon Mitigation**: The **Guardian Triad** isolates data fetching. The **Analyst** uses Metal-accelerated MLX models to scan for instruction-drift within strict delimiters.
 
-### B. Server-Side Request Forgery (SSRF)
+### B. Server-Side Request Forgery (SSRF) `[OWASP-2026-ASI07]`
 - **Description**: An attacker tricks the agent into making requests to internal infrastructure (e.g., `169.254.169.254` for cloud metadata or `localhost:8181` for OPA).
 - **Impact**: Exposure of secrets, internal network mapping, or unauthorized policy modification.
 - **Tachyon Mitigation**: The **SafeFetch OPA Gate** enforces strict domain/IP allowlists and explicitly blocks local/private IP ranges.
 
-### C. Agent Hijacking
-- **Description**: Gaining control over an agent's execution loop via remote code execution (RCE) in a tool dependency.
-- **Impact**: Full host compromise if the agent has unrestricted OS access.
+### C. Agent Hijacking / Excessive Agency `[OWASP-2026-ASI08]`
+- **Description**: Gaining control over an agent's execution loop via remote code execution (RCE) in a tool dependency, or exploiting a "permission-heavy" agent to perform actions beyond the user's intent.
+- **Impact**: Full host compromise or unauthorized data modification if the agent has unrestricted OS access.
 - **Tachyon Mitigation**: **Tier 0 Sandboxing** (macOS Seatbelt) denies network access to compute tasks and restricts filesystem writes to a temporary, randomized workspace.
 
-### D. Memory / Vector Poisoning
-- **Description**: Inserting "sleeper" instructions into a long-term memory store (Vector DB).
+### D. Memory / Vector Poisoning `[OWASP-2026-ASI03]`
+- **Description**: Inserting "sleeper" instructions into a long-term memory store (Vector DB) or local task history.
 - **Impact**: The agent remains safe until it retrieves the poisoned memory, at which point it executes the malicious "old" instruction as a "new" command.
 - **Tachyon Mitigation**: All data retrieved from *any* external tool (including database fetches) is treated as untrusted and passed through the **Intent Gate**.
 
 ## 3. Supply Chain Threat Vectors (Substrate & Managed Agents)
 
-### A. Hallucination Squatting
+### A. Hallucination Squatting / Supply Chain `[OWASP-2026-ASI05]`
 - **Description**: An agent "hallucinates" a non-existent package name. An attacker proactively registers this name on PyPI with a malicious payload.
 - **Impact**: Arbitrary code execution within the agent's environment or host compromise.
 - **Tachyon Mitigation**: **Deterministic Capability Binding** via the `StateManager` whitelist. Only cryptographically verified or manually approved libraries are permitted for installation/import.
@@ -50,13 +50,13 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 
 ## 4. Outbound Threat Vectors (Agent to External)
 
-### A. Data / Telemetry Exfiltration
+### A. Data / Telemetry Exfiltration `[OWASP-2026-ASI06]`
 - **Description**: A malicious or compromised agent attempts to send sensitive organizational data (API keys, PII, internal logs) to an attacker-controlled endpoint or a public LLM provider.
 - **Impact**: Breach of organizational confidentiality and data sovereignty.
 - **Tachyon Mitigation**: The **Reverse Firewall (Outbound PEP)** introspects outbound requests, using Rego/Cedar policies to scan for sensitive tokens and patterns before they leave the substrate.
 
-### B. Prompt Leakage
-- **Description**: An agent incorrectly includes its private system prompt or internal reasoning in a message sent to an external user or API.
+### B. Prompt / Jailbreak Leakage `[OWASP-2026-ASI11]`
+- **Description**: An agent incorrectly includes its private system prompt or internal reasoning in a message sent to an external user or API, often triggered by "jailbroken" inputs.
 - **Impact**: Exposure of intellectual property and defensive strategies.
 - **Tachyon Mitigation**: **Output Sanitization** at the Verifier Node scans outgoing text for signatures of system instructions.
 
@@ -89,10 +89,30 @@ This document outlines the adversarial landscape for **Tachyon Tongs**. It ident
 - **Description**: Injecting "subtle failures" into the Pathogen's red-teaming logic to cause the Sentinel to generate weak or permissive policies.
 - **Tachyon Mitigation**: **Signed Mutation Intents** ensure all evolutionary changes are attributed to a verified execution run, with automated "Fitness Audits" by an independent Meta-Critic.
 
-### C. LLM Tool-Use Confusion / Schema Injection
+### C. LLM Tool-Use Confusion / Insecure Plugin Design `[OWASP-2026-ASI07]`
 - **Description**: An attacker crafts inputs that exploit ambiguity in tool schemas, causing the LLM to invoke the wrong tool, pass malicious parameters, or chain tools in an unintended sequence (e.g., routing a `safe_fetch` result directly into `safe_execute`).
 - **Impact**: Policy bypass via legitimate-looking tool calls that compose into an attack chain.
 - **Tachyon Mitigation**: **ImmutableToolRequest** freezes all parameters at the routing boundary. The `ToolRouter` validates action+parameter combinations against a strict schema allowlist. The Airlock Debate Triad provides a secondary cognitive check on proposed tool sequences.
+
+### D. Insecure Output Handling `[OWASP-2026-ASI02]`
+- **Description**: Downstream systems or the substrate itself blindly executes agent-generated outputs (e.g., shell commands or SQL queries) without verification.
+- **Impact**: Terminal-level hijacking, data injection, or cross-agent contamination.
+- **Tachyon Mitigation**: **Tier 1 Validation** — all agent-generated code must be parsed and verified by the `Healer` or `Engineer` before being staged in the Airlock.
+
+### E. Model Denial of Service `[OWASP-2026-ASI04]`
+- **Description**: An attacker crafts overly complex or recursive inputs designed to exhaust the agent's token context, compute budget (NPU), or rate limits.
+- **Impact**: Denial of the substrate's protective services or massive cost spikes.
+- **Tachyon Mitigation**: **Cognitive Circuit Breakers** monitor token-per-second and context-depth metrics, aggressively pruning or halting suspicious reasoning chains.
+
+### F. Human-Agent Trust Exploitation `[OWASP-2026-ASI09]`
+- **Description**: An attacker tricks the agent into providing social-engineering "Advice" to the human operator (e.g., "This certificate error is normal; click approve").
+- **Impact**: Compromise of the human security gate.
+- **Tachyon Mitigation**: **Verified Attribution**. All "advice" or security recommendations are tagged with the specific reasoning traces and confidence scores produced by the Reflector.
+
+### G. Rogue Agents & Goal Drift `[OWASP-2026-ASI10]`
+- **Description**: An agent autonomously spawns unauthorized sub-processes or begins prioritizing its own "survival" or hidden objectives over the user's goal.
+- **Impact**: Persistent, hidden adversarial presence within the substrate.
+- **Tachyon Mitigation**: **Spawn Gating**. Only the `Healer` and `Sentinel` can initialize new agent threads, and all sub-agents must heart-beat against the `IntegrityManager`.
 
 ## 7. Key-Centric Threat Vectors (The Root of Trust)
 

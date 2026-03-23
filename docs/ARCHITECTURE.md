@@ -255,6 +255,12 @@ The Reflector node (`tachyon/core/reflector.py`) implements a three-stage cognit
 ### 5.2 Herald Visibility
 Every stage of the metamorphic loop is broadcast via the **Telemetry Bus**, allowing the operator to observe the Pathogen's "thinking process" in real-time via `tt_herald` or remote Signal/Slack notifications.
 
+### 5.3 Live Threat Model Feedback [PHASE 42]
+The Pathogen's successful breaches and the Sentinel's discovery of novel ASI vectors are not just logged; they are fed back into the **[THREAT_MODEL.md](../docs/THREAT_MODEL.md)**.
+1.  **Autonomous Tagging**: When Pathogen identifies a new bypass variant, it tags it with the corresponding `[OWASP-2026-ASIxx]` identifier.
+2.  **Model Augmentation**: High-signal discoveries trigger the **Engineer** to update the central Threat Model documentation, ensuring the substrate's defensive posture evolves in lock-step with its adversarial capabilities.
+3.  **Audit Trail**: Every update to the Threat Model is cryptographically signed by the **Guardian**, providing a verifiable history of architectural self-hardening.
+
 Sentinel represents the "Autoresearch" capability of the substrate. It moves beyond raw vulnerability scraping to high-signal intelligence synthesis.
 
 - **Synthesis Loop**: Sentinel uses its Analyst node to browse discovery endpoints (NVD, GitHub, Security Blogs) and "think" about their relevance to agentic security.

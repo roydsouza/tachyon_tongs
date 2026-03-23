@@ -8,6 +8,7 @@ Tachyon Tongs is a high-performance, Apple Silicon-native security substrate. It
 Every architectural decision is mapped directly to a specific vector in the [THREAT_MODEL.md](docs/THREAT_MODEL.md).
 
 *   🧠 **Semantic Intent Gating**: All tool requests are routed through a Policy Enforcement Point and evaluated by the **Singularity Meta-PDP**.
+*   🛡️ **Live, Self-Updating Threat Model**: The substrate's [THREAT_MODEL.md](docs/THREAT_MODEL.md) is not a static document. It is dynamically augmented by the **Pathogen** and **Sentinel**, with each new adversarial discovery mapped to the **OWASP-2026-ASI** taxonomy.
 *   🧊 **Tiered Workload Isolation**: High-risk actions run in dynamically generated macOS `sandbox-exec` (Seatbelt) profiles.
 *   🔐 **Forensic Integrity Gating**: Every substrate mutation is cryptographically signed using **Ed25519 + ML-DSA-65** hybrid sidecars.
 
