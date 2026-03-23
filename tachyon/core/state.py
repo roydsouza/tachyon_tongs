@@ -42,7 +42,7 @@ class StateManager:
                 
                 # ENFORCEMENT: Verify core catalog integrity on boot
                 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-                catalog_path = os.path.join(root_dir, "EXPLOITATION_CATALOG.md")
+                catalog_path = os.path.join(root_dir, "exploits", "CATALOG.md")
                 try:
                     cls._instance.integrity.verify_integrity(catalog_path)
                 except RuntimeError as e:
@@ -256,9 +256,12 @@ class StateManager:
                     f.write(entry)
                     f.write("\n\n---\n\n")
 
-    def log_exploitation(self, threats, catalog_file="EXPLOITATION_CATALOG.md"):
+    def log_exploitation(self, threats, catalog_file=None):
         """Log batch of validated threats and export them to Markdown."""
         if not threats: return
+        
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        catalog_file = catalog_file or os.path.join(root_dir, "exploits", "CATALOG.md")
 
         with self._lock:
             with sqlite3.connect(self.db_path) as conn:
@@ -279,8 +282,10 @@ class StateManager:
                 conn.commit()
             self.export_catalog(catalog_file)
 
-    def export_catalog(self, catalog_file="EXPLOITATION_CATALOG.md"):
+    def export_catalog(self, catalog_file=None):
         """Materializes SQLite catalog index back out to human-readable Markdown (with signing)."""
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        catalog_file = catalog_file or os.path.join(root_dir, "exploits", "CATALOG.md")
         # USE LOCK FILE for atomic catalog access to prevent TOCTOU race conditions
         lock_path = catalog_file + ".lock"
         

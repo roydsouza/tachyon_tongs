@@ -84,7 +84,7 @@ def approve_patch(patch_id):
 
     # Re-sign the state if necessary
     sm = StateManager()
-    catalog_path = os.path.join(ROOT_DIR, "EXPLOITATION_CATALOG.md")
+    catalog_path = os.path.join(ROOT_DIR, "exploits", "CATALOG.md")
     sm.integrity.sign_document(catalog_path)
     print(f"[Approved] Re-signed {catalog_path}")
 

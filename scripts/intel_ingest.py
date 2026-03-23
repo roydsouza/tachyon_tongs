@@ -179,4 +179,4 @@ if __name__ == "__main__":
         StateManager().log_exploitation(threats)
     
     print(f"\n📑 Intelligence Manifest (Consolidated):\n{json.dumps(threats, indent=2)}")
-    print(f"\n📜 Results have been logged to RUN_LOG.md and EXPLOITATION_CATALOG.md")
+    print(f"\n📜 Results have been logged to RUN_LOG.md and exploits/CATALOG.md")

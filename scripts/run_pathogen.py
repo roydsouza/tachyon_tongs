@@ -28,7 +28,7 @@ def generate_adversarial_payload(catalog_content: str) -> str:
 
 def run_pathogen_cycle():
     skill_path = os.path.join(os.path.dirname(__file__), '..', 'agents', 'pathogen', 'SKILL.md')
-    catalog_path = os.path.join(os.path.dirname(__file__), '..', 'EXPLOITATION_CATALOG.md')
+    catalog_path = os.path.join(os.path.dirname(__file__), '..', 'exploits', 'CATALOG.md')
 
     print(f"🦠 Waking up Pathogen (via {skill_path})...")
     

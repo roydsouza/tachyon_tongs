@@ -53,9 +53,9 @@ The Tachyon Tongs substrate and its operational artifacts are organized for scal
 
 | Directory | Purpose | Key Contents |
 |-----------|---------|--------------|
-| `agents/` | **Plugins** | Categorized agents (`code-only/`, `skill-only/`, `hybrid/`) with colocated tests and docs. |
+| `agents/` | **Plugins** | Unified agent collective with colocated tests and docs. |
 | `docs/` | **Knowledge** | ADRs, system architecture, and security threat models. |
-| `intelligence/` | **Signals** | `EXPLOITATION_CATALOG.md` and related threat intelligence data. |
+| `exploits/` | **Intelligence** | Master `CATALOG.md` and raw research payloads. |
 | `logs/` | **History** | `ALERT.md`, `RUN_LOG.md`, and `EVOLUTION.md` (Forensic ledgers). |
 | `memory/` | **State** | `tachyon_state.db` (Operational DB) and `archive/` (Pruned logs). |
 | `tests/` | **Verification** | Comprehensive regression suites (Functional & Adversarial). |
