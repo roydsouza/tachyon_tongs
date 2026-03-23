@@ -128,8 +128,13 @@ The **Event-Horizon Command Bridge** provides a NeoVIM-first interface for subst
 
 ## 📚 Documentation Index
 *   📖 **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Core Daemon and Guardian Triad.
+*   🧬 **[AGENTIC_ARCHITECTURE.md](docs/AGENTIC_ARCHITECTURE.md)**: Deep dive into the autonomic immune system design.
+*   🧩 **[AGENTS.md](docs/AGENTS.md)**: The 6-tier agentic taxonomy and immune collective.
 *   🎯 **[THREAT_MODEL.md](docs/THREAT_MODEL.md)**: Foundational Live Threat Model.
+*   🔐 **[SDLC.md](docs/SDLC.md)**: Secure SDLC and Hardware-Anchored Trust.
+*   🦞 **[CLAWS.md](docs/CLAWS.md)**: The Claw ecosystem and safe import bridge.
 *   🗺️ **[ROADMAP.md](docs/ROADMAP.md)**: Phased evolution roadmap.
 *   🔑 **[KEYS.md](docs/KEYS.md)**: Hybrid PQC key taxonomy.
 *   📻 **[SYNC_LOG.md](SYNC_LOG.md)**: Inverse-chronological record of all agentic breakthroughs.
 *   📋 **[TASKS.md](TASKS.md)**: Active engineering sprint backlog.
+*   📜 **[ADRs](docs/adr/)**: Complete history of signed Architectural Decision Records.
