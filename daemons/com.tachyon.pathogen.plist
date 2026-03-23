@@ -9,13 +9,15 @@
         <string>/usr/bin/python3</string>
         <string>/Users/rds/antigravity/tachyon_tongs/scripts/run_pathogen.py</string>
     </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/rds/antigravity/tachyon_tongs</string>
     <key>StartInterval</key>
-    <integer>86400</integer>
+    <integer>43200</integer>
     <key>RunAtLoad</key>
     <true/>
     <key>StandardErrorPath</key>
-    <string>/tmp/com.tachyon.pathogen.stderr</string>
+    <string>/Users/rds/antigravity/tachyon_tongs/logs/pathogen.err</string>
     <key>StandardOutPath</key>
-    <string>/tmp/com.tachyon.pathogen.stdout</string>
+    <string>/Users/rds/antigravity/tachyon_tongs/logs/pathogen.out</string>
 </dict>
 </plist>

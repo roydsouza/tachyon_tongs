@@ -237,9 +237,10 @@ Tachyon Tongs is designed as an autonomic, self-healing organism rather than a s
 2.  **Code-Patching (The Engineer):** When the Sentinel discovers a new zero-day, it physically writes a Python/Rego patch into the Substrate's source code, tests it, and logs the mutation to `EVOLUTION.md`. The patch is staged in `PENDING_MERGE.md` as a strict human-in-the-loop validation gateway.
 3.  **Adversarial Synthesis (The Pathogen):** The Sentinel dynamically rewrites the Pathogen's `SKILL.md` to hyper-focus on the newly mitigated threat. The Pathogen reads the `EXPLOITATION_CATALOG.md` and generates hallucinated, metamorphic permutations of the payload.
 4.  **Assault:** Pathogen attempts to inject the mutated payload into the Substrate's Event Horizon to verify whether the Engineer's autonomous patch successfully drops the threat.
-5.  **Proactive Sweep (Phase 38):** The Pathogen executes a periodic (24h) sweep via a template-driven hybrid engine. It traverses the OWASP ASI playbooks, extracting guidance to mutate baseline templates into novel, substrate-aware attacks.
-6.  **Zero-Day Fuzzing (`zero_day_drill.py`):** A continuous architectural fitness function orchestrates Pathogen asynchronously, generating massive variations of un-cataloged prompt attacks to map the NPU performance and resilience ceiling of the Triad.
-7.  **Metamorphic Reasoning (Phase 40):** The Pathogen core is now augmented with a **Reflector Node** capable of "Adversarial Reflection." It ingests the substrate's own ADR history and performance logs to synthesize metamorphic bypasses that exploit semantic gaps in the defense layer.
+5.  **Pathogen (Metamorphic Adversary):** Periodic (12h) adversarial sweep triggered via LaunchAgent (`daemons/com.tachyon.pathogen.plist`). It utilizes a **Reflector Node** to synthesize metamorphic bypasses based on substrate ADRs.
+6.  **Sentinel (Autoresearch Node):** Periodic (4h) signal check via LaunchAgent (`daemons/com.tachyon.sentry.plist`). Performs Karpathy-style synthesis of internet-born threats.
+7.  **Zero-Day Fuzzing (`zero_day_drill.py`):** A continuous architectural fitness function orchestrates Pathogen asynchronously, generating massive variations of un-cataloged prompt attacks to map the NPU performance and resilience ceiling of the Triad.
+8.  **Metamorphic Reasoning (Phase 40):** The Pathogen core is now augmented with a **Reflector Node** capable of "Adversarial Reflection." It ingests the substrate's own ADR history and performance logs to synthesize metamorphic bypasses that exploit semantic gaps in the defense layer.
 
 ## 5. Metamorphic Adversarial Reasoning (The Reflector) [PHASE 40]
 

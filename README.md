@@ -57,23 +57,26 @@ Import 5,700+ skills from the [ClawHub](docs/CLAWS.md) ecosystem.
 
 ---
 
-## 🗺️ Project Geography
-The Tachyon Tongs substrate and its operational artifacts are organized for scale and forensic integrity:
+## 📁 Substrate Topology
 
-| Directory | Purpose | Key Contents |
-|-----------|---------|--------------|
-| `agents/` | **Plugins** | Unified agent collective with colocated tests and docs. |
-| `docs/` | **Knowledge** | ADRs, system architecture, and security threat models. |
-| `exploits/` | **Intelligence** | Master `CATALOG.md` and raw research payloads. |
-| `logs/` | **History** | `ALERT.md`, `RUN_LOG.md`, and `EVOLUTION.md` (Forensic ledgers). |
-| `memory/` | **State** | `tachyon_state.db` (Operational DB) and `archive/` (Pruned logs). |
-| `tests/` | **Verification** | Comprehensive regression suites (Functional & Adversarial). |
-| `policies/` | **Guardrails** | OPA-Rego policies and Enforcer configurations. |
-| `libs/` | **Support** | Architecture-specific binaries (e.g., `liboqs.dylib` for PQC). |
+The Tachyon Tongs filesystem is designed for high-assurance modularity:
+
+```text
+├── agents/             # The Immune Cell Collective (Pathogen, Sentinel, etc.)
+├── daemons/            # macOS LaunchAgent & System Daemon configurations
+├── docs/               # Architecture, ADRs, and API documentation
+├── exploits/           # Master CATALOG.md and raw research payloads.
+├── logs/               # ALERT.md, RUN_LOG.md, and EVOLUTION.md (Forensic ledgers).
+├── memory/             # tachyon_state.db (Operational DB) and archive/ (Pruned logs).
+├── policies/           # OPA-Rego policies and Enforcer configurations.
+├── libs/               # Architecture-specific binaries (e.g., liboqs.dylib for PQC).
+├── tests/              # Comprehensive regression suites (Functional & Adversarial).
+```
 
 ---
 
-## 🏛️ Agentic Architecture: The Immune Collective
+## ⚡ Quick Start: The Herald Setup
+re: The Immune Collective
 Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture modeled after the autonomic immune system.
 
 *   🏰 **Defense in Depth**: High-value administrative components (like the **Firewall Administrator**) are air-gapped from the network.
