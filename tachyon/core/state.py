@@ -283,40 +283,62 @@ class StateManager:
             self.export_catalog(catalog_file)
 
     def export_catalog(self, catalog_file=None):
-        """Materializes SQLite catalog index back out to human-readable Markdown (with signing)."""
+        """Materializes SQLite catalog index back out to human-readable Markdown (with synthesis)."""
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         catalog_file = catalog_file or os.path.join(root_dir, "exploits", "CATALOG.md")
-        # USE LOCK FILE for atomic catalog access to prevent TOCTOU race conditions
         lock_path = catalog_file + ".lock"
         
+        from .research import ResearchSynthesizer
+        synthesizer = ResearchSynthesizer()
+
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
-            cursor = conn.execute('SELECT * FROM exploitation_catalog ORDER BY cve_id DESC') # Changed ORDER BY to cve_id
+            cursor = conn.execute('SELECT * FROM exploitation_catalog ORDER BY cve_id DESC')
             rows = cursor.fetchall()
-            
-            with open(lock_path, "w") as lock_f:
-                fcntl.flock(lock_f, fcntl.LOCK_EX)
-                try:
-                    with open(catalog_file, "w") as f:
-                        f.write("# 📘 EXPLOITATION CATALOG\n\n")
-                        f.write("This file is the single source of truth for internet-born AI/LLM threats.\n\n")
-                        if not rows:
-                            f.write("No catalog entries yet.\n")
-                        else:
-                            for row in rows:
-                                d = dict(row)
-                                f.write(f"### {d.get('cve_id', 'UNKNOWN')}\n")
-                                f.write(f"- **Description:** {d.get('description', 'No description.')}\n")
-                                f.write(f"- **CVSS:** {d.get('cvss', 'N/A')}\n")
-                                f.write(f"- **Status:** {d.get('status', 'Identified')}\n")
-                                f.write(f"- **Mitigation Patch:** {d.get('mitigation_patch', 'None')}\n\n")
-                        f.flush()
-                        os.fsync(f.fileno())
+            threats = [dict(r) for r in rows]
+
+        # Perform Autoresearch Synthesis
+        synthesis = synthesizer.synthesize(threats)
+
+        with open(lock_path, "w") as lock_f:
+            fcntl.flock(lock_f, fcntl.LOCK_EX)
+            try:
+                with open(catalog_file, "w") as f:
+                    f.write("# 📘 EXPLOITATION CATALOG (High-Signal)\n\n")
+                    f.write("This file is the single source of truth for internet-born AI/LLM threats, synthesized via autonomous research.\n\n")
                     
-                    # High-Assurance Signing (Ensures signature matches the locked state)
-                    self.integrity.sign_document(catalog_file)
-                finally:
-                    fcntl.flock(lock_f, fcntl.LOCK_UN)
+                    if synthesis:
+                        f.write("## 💎 Crown Jewels: Synthesized Intelligence\n")
+                        f.write(f"> **Executive Summary:** {synthesis.get('executive_summary')}\n\n")
+                        
+                        f.write("### 🚀 Top Priority Threats\n")
+                        for t in synthesis.get('top_threats', []):
+                            f.write(f"- **{t['id']}** ({t['asi']}): {t['insight']}\n")
+                            f.write(f"  - *Pathogen Guidance:* {t['pathogen_guidance']}\n")
+                        f.write("\n")
+
+                        f.write("### 🧬 ASI Taxonomy Mapping\n")
+                        for asi, cves in synthesis.get('asi_mapping', {}).items():
+                            if cves:
+                                f.write(f"- **{asi}**: {', '.join(cves)}\n")
+                        f.write("\n---\n\n")
+
+                    f.write("## 📜 Detailed Threat Log\n\n")
+                    if not rows:
+                        f.write("No catalog entries yet.\n")
+                    else:
+                        for d in threats:
+                            f.write(f"### {d.get('cve_id', 'UNKNOWN')}\n")
+                            f.write(f"- **Description:** {d.get('description', 'No description.')}\n")
+                            f.write(f"- **Status:** {d.get('status', 'Identified')}\n")
+                            f.write(f"- **Mitigation Patch:** {d.get('mitigation_patch', 'None')}\n\n")
+                    
+                    f.flush()
+                    os.fsync(f.fileno())
+                
+                self.integrity.sign_document(catalog_file)
+            finally:
+                fcntl.flock(lock_f, fcntl.LOCK_UN)
 
     def emit_alert(self, alert_type: str, message: str):
         """Emits a high-priority alert to the top-level ALERT.md ledger. Prepend via LIFO."""

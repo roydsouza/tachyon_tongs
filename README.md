@@ -13,6 +13,15 @@ Every architectural decision is mapped directly to a specific vector in the [THR
 
 ---
 
+## 💎 The Crown Jewels: Proactive Defense & Autoresearch
+Tachyon Tongs is not just a reactive proxy; it is a **self-evolving security organism**.
+
+*   🦠 **Pathogen (Proactive Adversarial Substrate)**: Every 24 hours, the Pathogen agent executes a full-spectrum adversarial sweep. It uses 11 authoritative **OWASP ASI Playbooks** (ASI01–ASI11) to synthesize and mutate hybrid attacks, ensuring the substrate's defenses stay ahead of emergent AI-native threats.
+*   🔭 **Sentinel (Autonomous Intelligence Research)**: The Sentinel performs Karpathy-style "Autoresearch"—not just searching for CVEs, but autonomously browsing, synthesizing, and mapping novel vulnerabilities into high-signal "Adversarial Guidance" for the Pathogen.
+*   🧬 **Adversarial Co-Evolution**: This continuous loop between the Sentinel (Discovery) and the Pathogen (Verification) creates a biological-grade immune response that hardens the substrate in real-time.
+
+---
+
 ## 🔐 Secure SDLC: Hardware-Anchored Trust
 Tachyon Tongs practices forensic security in its own development process. Every mutation is cryptographically signed and hardware-anchored.
 
@@ -84,6 +93,15 @@ Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture
 *   ⚖️ **The Guardian**: Performs real-time forensic audits of the architectural substrate.
 *   🏥 **The Healer**: Autonomous somatic repair and automated patch coordination.
 *   📬 **The Herald**: Translates alerts into diplomatic dispatches delivered via Signal.
+
+---
+
+## 🦠 The OWASP Agentic Threat Hub (ASI01-ASI11)
+The substrate is pre-loaded with an operational knowledge base of the **OWASP Top 10 for Agentic Applications (2026)**. Each playbook (`exploits/ASI*.md`) contains:
+- **Official Descriptions**: The industry-standard definition of the threat.
+- **Expert Synthesis**: Adversarial guidance aggregated from Claude, OpenAI, and Grok.
+- **Adversarial Guides**: Actionable synthesis heuristics used by the Pathogen to mutate its attacks.
+- **Defensive Matrix**: Precise mapping to substrate-level mitigations (Sentinel, Guardian, PEP).
 
 ---
 

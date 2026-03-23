@@ -1,25 +1,27 @@
-# 👁️ Agent: Sentinel (The Immune System)
+# 👁️ Agent: Sentinel (The Autoresearch Node)
 
 ## Overview
-The Sentinel Agent is the proactive reconnaissance arm of the Tachyon Tongs substrate. Its primary mission is to autonomously aggregate, analyze, and catalog new AI exploits and vulnerabilities from global intelligence feeds (e.g., GitHub Advisories, NVD).
+The Sentinel Agent is the proactive reconnaissance arm of the Tachyon Tongs substrate. In Phase 39, it has evolved into an **Autonomous Intelligence Research** node, performing high-signal synthesis of global threat feeds (NVD, ArXiv, GitHub) into actionable adversarial guidance.
 
 ## Operational Mechanics
 
 ### 1. Triggers
-The Sentinel is typically triggered by:
 - **Scheduled Sweeps**: Periodic background tasks to ingest new CVE/GHSA data.
-- **Manual Discovery**: Triggered via the `/sentinel` or `/sentinel-threat-intel` workflows.
-- **Substrate Alerts**: Anomaly detections that prompt a targeted intelligence sweep.
+- **Autoresearch Action**: Triggered via `main.py --role sentinel --action hunt`.
+- **NVD Cursor**: Sentinel maintains a stateful cursor (`last_nvd_update`) in the StateManager to ensure incremental intelligence gathering.
 
-### 2. Configuration
-The Sentinel operates primarily in the `tachyon/agents/sentinel/` directory:
-- **Registry**: Interfaces with `EXPLOITATION_CATALOG.md` to avoid redundant analysis.
-- **Intelligence Feeds**: Configured to scrape specific security advisory URLs and JSON feeds.
+### 2. High-Signal Synthesis (The ResearchSynthesizer)
+The Sentinel utilizes the `ResearchSynthesizer` node to:
+- **Classify**: Map raw threats to the 11 OWASP ASI categories (ASI01–ASI11).
+- **Synthesize**: Generate executive summaries and top-priority impact analysis.
+- **Pathogen Guidance**: Export specific mutation hints into `exploits/CATALOG.md` to guide the advertising agent's next sweep.
 
 ### 3. Capabilities
-- `run_sweep(harvest_mode=True)`: Scours external feeds for new vulnerabilities. If `harvest_mode` is enabled, it localizes raw payloads for the `Canary` to process.
-- **Autonomous Analysis**: Uses internal LLM loops to determine if a vulnerability is applicable to the current substrate environment.
+- `hunt()`: Incremental research sweep across multiple plugins (NVD, GitHub, CISA, ArXiv).
+- **ASI Mapping**: Autonomous taxonomy tagging for all internet-born AI/LLM threats.
+- **Deduplication**: Idempotent processing using the Substrate's `processed_events` log.
 
 ## Integration
-- **Upstream**: Scrapes global vulnerability databases and threat feeds.
-- **Downstream**: Populates the `EXPLOITATION_CATALOG.md` and provides targets for the `Canary` (Scouting) and `Synthesizer` (Policy Generation).
+- **Upstream**: Scrapes global vulnerability databases and ArXiv security research.
+- **Downstream**: Populates the **High-Signal `CATALOG.md`**, providing "Adversarial Guidance" for Pathogen and targets for the Synthesizer.
+- **CROWN JEWEL**: Creates the intelligence foundation for the **Adversarial Co-Evolution** loop.

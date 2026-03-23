@@ -237,7 +237,16 @@ Tachyon Tongs is designed as an autonomic, self-healing organism rather than a s
 2.  **Code-Patching (The Engineer):** When the Sentinel discovers a new zero-day, it physically writes a Python/Rego patch into the Substrate's source code, tests it, and logs the mutation to `EVOLUTION.md`. The patch is staged in `PENDING_MERGE.md` as a strict human-in-the-loop validation gateway.
 3.  **Adversarial Synthesis (The Pathogen):** The Sentinel dynamically rewrites the Pathogen's `SKILL.md` to hyper-focus on the newly mitigated threat. The Pathogen reads the `EXPLOITATION_CATALOG.md` and generates hallucinated, metamorphic permutations of the payload.
 4.  **Assault:** Pathogen attempts to inject the mutated payload into the Substrate's Event Horizon to verify whether the Engineer's autonomous patch successfully drops the threat.
-5.  **Zero-Day Fuzzing (`zero_day_drill.py`):** A continuous architectural fitness function orchestrates Pathogen asynchronously, generating massive variations of un-cataloged prompt attacks to map the NPU performance and resilience ceiling of the Triad.
+5.  **Proactive Sweep (Phase 38):** The Pathogen executes a periodic (24h) sweep via a template-driven hybrid engine. It traverses the OWASP ASI playbooks, extracting guidance to mutate baseline templates into novel, substrate-aware attacks.
+6.  **Zero-Day Fuzzing (`zero_day_drill.py`):** A continuous architectural fitness function orchestrates Pathogen asynchronously, generating massive variations of un-cataloged prompt attacks to map the NPU performance and resilience ceiling of the Triad.
+
+## 5. Autonomous Intelligence Research (Sentinel Autoresearch) [PHASE 39]
+
+Sentinel represents the "Autoresearch" capability of the substrate. It moves beyond raw vulnerability scraping to high-signal intelligence synthesis.
+
+- **Synthesis Loop**: Sentinel uses its Analyst node to browse discovery endpoints (NVD, GitHub, Security Blogs) and "think" about their relevance to agentic security.
+- **ASI Mapping**: Discovered vulnerabilities are automatically mapped to an OWASP ASI category and synthesized into "Adversarial Guidance" for Pathogen.
+- **High-Signal Hub**: The master `CATALOG.md` is filtered for relevance, ensuring that the "Crown Jewels" (Pathogen's attack knowledge) are always of the highest quality.
 
 For a detailed breakdown of this self-modifying biological paradigm, see `docs/BEHAVIOR.md`.
 

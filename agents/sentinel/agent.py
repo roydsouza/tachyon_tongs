@@ -111,8 +111,7 @@ class SentinelPlugin(BaseAgentPlugin):
             # 4. Signaling & Deduplication
             discovered_ids = []
             for t in threats:
-                cve_id = t.get("id")
-                # Basic deduplication against local state check
+                cve_id = t.get('id')
                 if not self.state_manager.is_event_processed(f"SENTINEL_NVD_{cve_id}"):
                     self.bus.emit_event(
                         topic="SENTINEL_THREAT_FOUND",
@@ -122,11 +121,16 @@ class SentinelPlugin(BaseAgentPlugin):
                     discovered_ids.append(cve_id)
                     self.state_manager.mark_event_processed(f"SENTINEL_NVD_{cve_id}", self.agent_id)
 
-            # 5. Update Cursor
+            # 5. High-Signal Synthesis (CROWN JEWEL)
+            if discovered_ids:
+                # log_exploitation automatically triggers export_catalog which uses ResearchSynthesizer
+                self.state_manager.log_exploitation(threats)
+
+            # 6. Update Cursor
             new_cursor = datetime.now().isoformat()
             self.state_manager.set_agent_state(self.agent_id, "last_nvd_update", new_cursor)
 
-            # 6. Finalize
+            # 7. Finalize
             self.bus.emit_event(
                 topic="SENTINEL_SCAN_COMPLETED",
                 agent_id=self.agent_id,
@@ -136,7 +140,8 @@ class SentinelPlugin(BaseAgentPlugin):
             return {
                 "status": "SUCCESS",
                 "threats_discovered": discovered_ids,
-                "cursor_updated_to": new_cursor
+                "cursor_updated_to": new_cursor,
+                "synthesis": "OPERATIONAL"
             }
 
         except Exception as e:

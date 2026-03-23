@@ -6,8 +6,12 @@ import feedparser
 import json
 import logging
 from datetime import datetime
-from typing import List, Dict, Any, Optional
-from src.execution_logger import ExecutionLogger
+import sys
+import os
+# Ensure root directory is in sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from tachyon.monitoring.execution_logger import ExecutionLogger
 
 # --- Core Framework ---
 
@@ -147,7 +151,7 @@ class ArxivResearchSource(IntelSource):
 # --- Main Entry Point ---
 
 if __name__ == "__main__":
-    from src.execution_logger import ExecutionLogger
+    from tachyon.monitoring.execution_logger import ExecutionLogger
     
     # Initialize the audit logger
     audit_logger = ExecutionLogger(agent_id="SentinelIngestor")
@@ -175,7 +179,7 @@ if __name__ == "__main__":
     
     # Save threats to the StateManager (this populates EXPLOITATION_CATALOG.md)
     if threats:
-        from src.state_manager import StateManager
+        from tachyon.core.state_manager import StateManager
         StateManager().log_exploitation(threats)
     
     print(f"\n📑 Intelligence Manifest (Consolidated):\n{json.dumps(threats, indent=2)}")
