@@ -1,0 +1,5 @@
+agent_id: "sentinel-001"
+name: "Sentinel"
+description: "Autonomous threat hunting and CVE intelligence ingestion."
+type: "hybrid" # Uses both LLM scoring and deterministic code
+entry_point: "agents.sentinel.agent:SentinelPlugin"

@@ -1,0 +1,7 @@
+agent_id: engineer
+name: Engineer
+description: The surgical limb of the substrate. Applies patches and runs integration tests.
+type: specialist
+entry_point: agents.engineer.agent:EngineerPlugin
+capabilities:
+  - apply_and_test

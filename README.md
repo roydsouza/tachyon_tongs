@@ -24,13 +24,37 @@ Tachyon Tongs practices forensic security in its own development process. Every 
 
 ---
 
+## 🧩 Agent Plugin Architecture
+
+Tachyon Tongs uses a modular, role-based plugin system (ADR-0033). Agents are categorized into three tiers for optimal isolation and flexibility:
+
+- **💻 Code-Only Agents**: Pure Python implementations (e.g., `engineer`, `pathogen`, `guardian`).
+- **📜 Skill-Only Agents**: Declarative agents defined by their `SKILL.md` manifests (e.g., lightweight reconnaissance).
+- **🧬 Hybrid Agents**: Combine complex code logic with declarative skills (e.g., `sentinel`).
+
+### 📦 Default Agent Collective
+The substrate ships with a pre-configured sets of "Immune Cells":
+- **Sentinel**: The autonomous sensory heart.
+- **Engineer**: The surgical auto-patcher.
+- **Guardian**: The high-assurance integrity enforcer.
+- **Herald**: The secure C2 and notification gateway.
+- *...and more (see [AGENTS.md](docs/AGENTS.md))*
+
+### 🦞 The Claw Ecosystem Bridge
+Import 5,700+ skills from the [ClawHub](docs/CLAWS.md) ecosystem.
+- **Safe Import**: Automatic translation from Claw formats to Tachyon plugins.
+- **Quarantine Mode**: Imported agents are restricted by the Substrate Firewall until manually graduated.
+- **Airlock Vetting**: Every import undergoes a 5-stage safety check (Translate -> Scan -> Sandbox -> Airlock -> Quarantine).
+
+---
+
 ## 🗺️ Project Geography
 The Tachyon Tongs substrate and its operational artifacts are organized for scale and forensic integrity:
 
 | Directory | Purpose | Key Contents |
 |-----------|---------|--------------|
-| `tachyon/` | **The Core** | Agent logic, cryptographic provider, and state management. |
-| `docs/` | **Knowledge** | ADRs, Agent guides, and security threat models. |
+| `agents/` | **Plugins** | Categorized agents (`code-only/`, `skill-only/`, `hybrid/`) with colocated tests and docs. |
+| `docs/` | **Knowledge** | ADRs, system architecture, and security threat models. |
 | `intelligence/` | **Signals** | `EXPLOITATION_CATALOG.md` and related threat intelligence data. |
 | `logs/` | **History** | `ALERT.md`, `RUN_LOG.md`, and `EVOLUTION.md` (Forensic ledgers). |
 | `memory/` | **State** | `tachyon_state.db` (Operational DB) and `archive/` (Pruned logs). |

@@ -11,8 +11,8 @@ Follow these steps to safely synchronize the mission state:
 // turbo
 3. **Execute Push**: Push the committed changes to the remote repository.
 ```bash
-git add .
-git commit -m "Checkpoint: [Brief Summary of Work]"
-git push origin main
+PAGER=cat MANPAGER=cat git add .
+PAGER=cat MANPAGER=cat git commit -m "Checkpoint: [Brief Summary of Work]"
+PAGER=cat MANPAGER=cat git push origin main
 ```
 4. **Verify Sync**: Ensure the remote repository reflects the local state.

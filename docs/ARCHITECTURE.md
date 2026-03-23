@@ -6,10 +6,9 @@ This document details the technical architecture of the **Tachyon Tongs** securi
 
 The architecture of Tachyon Tongs is a direct physical manifestation of its [THREAT_MODEL.md](file:///Users/rds/antigravity/tachyon_tongs/THREAT_MODEL.md). To maintain high-assurance security, all significant mutations to this substrate are governed by **Architecture Decision Records (ADRs)**, which must always be justified against a specific threat vector.
 
-- **Intrusion Detection (IDS)**: ADRs are **cryptographically signed** assets serving as a forensic baseline. By comparing the signed state of the architecture against the current implementation, operators can detect "Structural Drifts" or unauthorized mutations—even those that follow valid syntax but violate the recorded security intent.
-- **The Threat Model as Source of Truth**: Implementation and administration are never ad-hoc. They are rigorous, peer-reviewed responses to identified vulnerabilities. Any enhancement to the substrate *must* start with a threat analysis, followed by an ADR, and finally the technical implementation.
-- **Forensic Debate Monitoring**: Administrators can monitor the live cognitive reasoning of the Triad via the `debates/` directory. Each record captures the adversarial discourse (Engineer vs. Skeptic vs. Meta-Critic) in a humorous, high-fidelity markdown format, ensuring that security audits are both informative and transparent.
-- **Tamper Detection (Guardian IDS)**: Every ADR is a hybrid signed asset (Embedded JSON + External `.sig`). The `GuardianIDS` agent verifies these signatures against a cumulative **Merkle Root** stored in `docs/adr/MANIFEST.json`.
+- **Intrusion Detection (IDS)**: ADRs are **cryptographically signed** assets serving as a forensic baseline. By comparing the signed state of the architecture against the current implementation, operators can detect "Structural Drifts" or unauthorized mutations. 
+- **Agent Plugin Architecture (ADR-0033)**: The substrate is decoupled from agent logic. Agents reside in `agents/` and are categorized as **Code-Only**, **Skill-Only**, or **Hybrid**. They are discovered at runtime via the `AgentRegistry`.
+- **Claw Compatibility (Phase 41)**: An interoperability layer that "wraps" external Claw agents in Tachyon's security boundaries, enforcing **Quarantine Mode** and strict capability gating.
 - **Forensic Integrity**: Any structural drift or unauthorized mutation in the ADR history is detected as a Merkle violation.
 - **Tiered Sovereignty (PQC Overlay)**: Critically, all high-assurance artifacts are signed by a **Hybrid Root**. This combines hardware-bound Ed25519 (Physical Sovereign) with ML-DSA-65 (Quantum Sovereign, NIST Level 3) to ensure future-proofed integrity. 
 - **Deterministic Anchoring**: The PQC layer utilizes the **Expanded Secret Key** (4032 bytes) for hardware anchoring, ensuring that the public key remains deterministic across reloads from the macOS Keychain.
@@ -116,7 +115,37 @@ Tachyon Tongs follows a **Logical Separation** pattern (ADR-0024) where each age
 
 Key organizational roles within the collective include:
 - **The Firewall Administrator (LLM Agent):** The "Thinker" that provides macro-level architectural reasoning, leveraging `mlx_lm` locally to continuously observe traffic logs and govern substrate capabilities.
-- **The Herald (Custom Agent):** The "Mouth/Ear" that acts as the communication aggregator and deterministic command router, formatting complex telemetry for NeoVIM/CLI/Signal.
+- **The Herald (Custom Agent):** The "Mouth/Ear" that acts as the communication aggregator and deterministic command router, formatting complex telemetry for NeoVIM/CLI/Slack. Note: Signal integration was rejected due to transport complexity.
+
+### 1.3 The Claw Ecosystem Bridge (Interoperability)
+Tachyon Tongs implements a **Secure Import Pipeline** for Claw agents. This allows the substrate to "ingest" open-source agent specifications while re-wrapping them in the Tachyon security layer.
+- **Format Mapping**: `SOUL.md` → `config.yaml` + `SKILL.md`, `HEARTBEAT.md` → `periodic_tasks`.
+- **Enforcement**: Imported agents are automatically placed in **Quarantine Mode** (ADR-0034), restricting their capabilities to a non-destructive subset until manually graduated.
+- **Vetting**: Every import triggers a 5-stage safety evaluation (Translation, Static Scan, Sandbox, Airlock, Quarantine).
+
+---
+
+## 3. Reliability & Resilience Patterns
+
+Tachyon Tongs employs several high-assurance patterns to ensure substrate stability and deterministic behavior.
+
+### 3.1 Event Sourcing & Heartbeat
+- **Event Sourcing**: Every agent action is recorded as an immutable `AgentEvent`. This enables time-travel debugging and verifiable causality chains between agents.
+- **Heartbeat Protocol**: Agents report liveness to a central `AgentHealthMonitor`. If a heartbeat is missed, the system initiates automated recovery handlers or escalates to a human operator.
+
+### 3.2 Graceful Degradation (Capability Tiers)
+The system operates across five capability tiers to ensure it never fails completely:
+1.  **FULL_AUTONOMOUS**: All agents operational; autonomous patching enabled.
+2.  **SUPERVISED**: Agents operational; HITL approval required for all mutations.
+3.  **DETECTION_ONLY**: Alerting active; automated response disabled.
+4.  **MANUAL_OVERRIDE**: All automation disabled; direct operator control only.
+5.  **EMERGENCY_LOCKDOWN**: Read-only defensive posture; strict filtering enabled.
+
+### 3.3 Circuit Breakers & WAL
+- **Circuit Breakers**: Prevent cascading failures in agent-to-agent communication by opening the circuit after a threshold of failures, allowing services to recover.
+- **Write-Ahead Log (WAL)**: Critical operations (e.g., patch application) are logged to a WAL before execution, guaranteeing atomicity and crash recovery.
+
+---
 
 For a complete alphabetical directory of all active agents and their forensic capabilities, see:
 👉 **[AGENTS.md](AGENTS.md)**
@@ -254,6 +283,10 @@ The integrity of the ledger is verified during every `scripts/verify_substrate.p
 
 ## 8. Visual Orchestration
 
+### Enforcement Layer
+- **Intent Gating**: Uses `safe_fetch.py` to intercept outbound requests.
+- **Open Policy Agent (OPA)**: A dedicated binary located in `scripts/opa` (sidecar pattern) that evaluates Rego policies for tool-call authorization and network boundary enforcement.
+- **Reverse Firewall**: Prevents data exfiltration of sensitive tokens.
 ### 8.1 Substrate Enforcement Flow (Tool Request Handling)
 Visualizes the interception, freezing, and multi-engine authorization of an agent's tool call.
 

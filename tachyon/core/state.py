@@ -19,24 +19,26 @@ class StateManager:
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super(StateManager, cls).__new__(cls)
-                default_db = os.environ.get("TACHYON_DB_PATH", "tachyon_state.db")
-                cls._instance._init_db(db_path or default_db)
-                from .signing import IntegrityManager
-                from .alert_limiter import AlertRateLimiter
-                cls._instance.integrity = IntegrityManager()
-                cls._instance.alert_limiter = AlertRateLimiter()
-                cls._instance.db = cls._instance # Alias for logic that expects manager.db.conn
-                
-                # ENFORCEMENT: Verify core catalog integrity on boot
-                root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-                catalog_path = os.path.join(root_dir, "EXPLOITATION_CATALOG.md")
-                
-                try:
-                    cls._instance.integrity.verify_integrity(catalog_path)
-                except RuntimeError as e:
-                    cls._instance.emit_alert("STATE_COMPROMISED", str(e))
-                    if os.environ.get("TACHYON_STRICT_MODE"):
-                        raise e
+            
+            # Allow forcing re-init for testing
+            default_db = os.environ.get("TACHYON_DB_PATH", "tachyon_state.db")
+            cls._instance._init_db(db_path or default_db)
+            from .signing import IntegrityManager
+            from .alert_limiter import AlertRateLimiter
+            cls._instance.integrity = IntegrityManager()
+            cls._instance.alert_limiter = AlertRateLimiter()
+            cls._instance.db = cls._instance # Alias for logic that expects manager.db.conn
+            
+            # ENFORCEMENT: Verify core catalog integrity on boot
+            root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+            catalog_path = os.path.join(root_dir, "EXPLOITATION_CATALOG.md")
+            
+            try:
+                cls._instance.integrity.verify_integrity(catalog_path)
+            except RuntimeError as e:
+                cls._instance.emit_alert("STATE_COMPROMISED", str(e))
+                if os.environ.get("TACHYON_STRICT_MODE"):
+                    raise e
             return cls._instance
 
     def _init_db(self, db_path):
@@ -117,6 +119,27 @@ class StateManager:
                     version TEXT,
                     checksum TEXT,
                     added_at TEXT
+                )
+            ''')
+
+            # 7. mutant_locks (Signal Purification)
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS mutant_locks (
+                    lock_id TEXT PRIMARY KEY,
+                    agent_id TEXT,
+                    reason TEXT,
+                    acquired_at TEXT,
+                    expires_at TEXT
+                )
+            ''')
+
+            # 8. relayed_events (Herald Tracking)
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS relayed_events (
+                    dispatcher_id TEXT,
+                    event_id TEXT,
+                    relayed_at TEXT,
+                    PRIMARY KEY (dispatcher_id, event_id)
                 )
             ''')
             conn.commit()
@@ -246,11 +269,12 @@ class StateManager:
                             f.write("No catalog entries yet.\n")
                         else:
                             for row in rows:
-                                f.write(f"### {row['cve_id']}\n")
-                                f.write(f"- **Description:** {row['description']}\n")
-                                f.write(f"- **CVSS:** {row['cvss'] if row['cvss'] else 'N/A'}\n")
-                                f.write(f"- **Status:** {row['status']}\n")
-                                f.write(f"- **Mitigation Patch:** {row['mitigation_patch'] if row['mitigation_patch'] else 'None'}\n\n")
+                                d = dict(row)
+                                f.write(f"### {d.get('cve_id', 'UNKNOWN')}\n")
+                                f.write(f"- **Description:** {d.get('description', 'No description.')}\n")
+                                f.write(f"- **CVSS:** {d.get('cvss', 'N/A')}\n")
+                                f.write(f"- **Status:** {d.get('status', 'Identified')}\n")
+                                f.write(f"- **Mitigation Patch:** {d.get('mitigation_patch', 'None')}\n\n")
                         f.flush()
                         os.fsync(f.fileno())
                     
@@ -392,11 +416,19 @@ class StateManager:
                     """, (pkg, details.get("version"), details.get("checksum"), datetime.now().isoformat()))
                 conn.commit()
 
-    def log_evolution(self, event_type, details, evolution_file="EVOLUTION.md"):
+    def log_evolution(self, event_type: str, details: str, evolution_file: str = "logs/EVOLUTION.md", remediation: str = None):
         """Logs architectural or structural evolution of the substrate. Prepend via LIFO."""
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        entry = f"## [{event_type}] {timestamp}\n{details}\n\n---\n\n"
+        entry = f"## [{event_type}] {timestamp}\n{details}\n"
+        if remediation:
+            entry += f"\n> [!TIP]\n> **REMEDIATION:** {remediation}\n"
+        entry += "\n---\n\n"
         
+        # Ensure root_dir context if relative path
+        if not os.path.isabs(evolution_file):
+            root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+            evolution_file = os.path.join(root_dir, evolution_file)
+
         header = "# 🧬 The Evolutionary Ledger\n\nThis file tracks the structural and cognitive growth of the Tachyon Tongs substrate.\n\n"
         
         content = ""
@@ -407,12 +439,11 @@ class StateManager:
         if not content.startswith("# 🧬"):
             new_content = header + entry + content
         else:
-            # Prepend after header
-            parts = content.split("\n\n", 2)
-            if len(parts) >= 2:
-                 new_content = parts[0] + "\n\n" + parts[1] + "\n\n" + entry + (parts[2] if len(parts) > 2 else "")
-            else:
-                 new_content = header + entry
+            # Prepend after exactly the first two lines (header + description)
+            lines = content.splitlines()
+            header_lines = lines[:4] # Title, empty, Description, empty
+            body_lines = lines[4:]
+            new_content = "\n".join(header_lines) + "\n\n" + entry + "\n".join(body_lines)
         
         with open(evolution_file, "w") as f:
             f.write(new_content)
@@ -444,3 +475,68 @@ class StateManager:
             f.writelines(new_lines)
             f.flush()
             os.fsync(f.fileno())
+
+    # --- Mutant Lock Implementation [ADR-0034] ---
+
+    def acquire_mutant_lock(self, agent_id: str, reason: str, ttl_minutes: int = 5) -> str:
+        """Acquire a time-bound, signed mutant lock to suppress Guardian alerts."""
+        import uuid
+        from datetime import timedelta
+        
+        lock_id = str(uuid.uuid4())
+        now = datetime.now()
+        expires_at = (now + timedelta(minutes=ttl_minutes)).isoformat()
+        
+        with self._lock:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute('''
+                    INSERT INTO mutant_locks (lock_id, agent_id, reason, acquired_at, expires_at)
+                    VALUES (?, ?, ?, ?, ?)
+                ''', (lock_id, agent_id, reason, now.isoformat(), expires_at))
+                conn.commit()
+        
+        self.log_evolution("MUTANT_LOCK_ACQUIRED", f"Agent {agent_id} acquired lock {lock_id} for: {reason}")
+        return lock_id
+
+    def release_mutant_lock(self, lock_id: str):
+        """Explicitly release a mutant lock."""
+        with self._lock:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute("DELETE FROM mutant_locks WHERE lock_id = ?", (lock_id,))
+                conn.commit()
+        self.log_evolution("MUTANT_LOCK_RELEASED", f"Lock {lock_id} released.")
+
+    def is_mutant_lock_active(self) -> bool:
+        """Check if there is an active, non-expired mutant lock in the substrate."""
+        now = datetime.now().isoformat()
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.execute("SELECT 1 FROM mutant_locks WHERE expires_at > ?", (now,))
+            return cursor.fetchone() is not None
+
+    # --- Herald Aggregator Support [ADR-0035] ---
+
+    def get_pending_patches(self) -> list:
+        """Retrieve all Airlock patches awaiting review."""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.execute("SELECT * FROM patches WHERE status = 'PENDING' OR status = 'PROPOSED'")
+            return [dict(row) for row in cursor.fetchall()]
+
+    def is_event_relayed(self, dispatcher_id: str, event_id: str) -> bool:
+        """Check if an event has already been relayed by a specific dispatcher."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.execute(
+                "SELECT 1 FROM relayed_events WHERE dispatcher_id = ? AND event_id = ?",
+                (dispatcher_id, event_id)
+            )
+            return cursor.fetchone() is not None
+
+    def mark_event_relayed(self, dispatcher_id: str, event_id: str):
+        """Record that an event has been successfully relayed."""
+        with self._lock:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute(
+                    "INSERT OR REPLACE INTO relayed_events (dispatcher_id, event_id, relayed_at) VALUES (?, ?, ?)",
+                    (dispatcher_id, event_id, datetime.now().isoformat())
+                )
+                conn.commit()

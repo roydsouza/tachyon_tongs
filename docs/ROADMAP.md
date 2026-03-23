@@ -197,6 +197,23 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
   - **Heartbeat Protocol**: Agents perform periodic checking against a Certificate Revocation List (CRL) to proactively isolate compromised keys.
   - **Cryptographic Modularity**: Hardened `signing.py` by extracting `KeychainProvider` and `HybridSigner`.
 
+### Phase 27: Reliability Hardening (Event Sourcing & WAL) [PLANNED]
+- **Objective**: Ensure 100% auditability and crash resilience for all agent actions.
+- **Implementation**:
+  - **EventStore**: Append-only ledger for all agent intents and tool executions.
+  - **WAL**: Write-Ahead Logging for high-concurrency substrate mutations.
+
+### Phase 28: SDLC Determinism (TDAD & Spec-First) [PLANNED]
+- **Objective**: Eliminate "AntiGravity Flakiness" through machine-verifiable requirements.
+- **Implementation**:
+  - **TechnicalSpecification**: Pydantic-based requirements modeling.
+  - **Test-Driven Agent Development**: Generation of verification tests *before* implementation code.
+
+### Phase 29: Resilience Layers (Capability Tiers) [PLANNED]
+- **Objective**: Establish graceful degradation protocols for autonomous security.
+- **Implementation**:
+  - **Tiered Response**: Automated fallbacks (Full -> Supervised -> Lockdown) based on substrate health metrics.
+
 ### Phase 26: CI/CD Hardening & Supply Chain Defense [PLANNED]
 - **Objective:** Extend the Secure SDLC into automated pipelines and third-party dependency governance.
 - **Implementation:**
@@ -216,6 +233,9 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
     - **Firewall Administrator**: The "Thinker" LLM Agent powered locally exclusively by `mlx_lm` for executive decisioning and traffic observation.
     - **The Herald**: The "Mouth/Ear" Custom Agent acting as the deterministic air-gapped proxy for UI, CLI, NeoVIM and secure C2 and alerts.
 - [ ] **High-Assurance Gateway Optimization**: Optimizing the substrate for dedicated, secure hardware gateway deployments.
-- [ ] **Retrospective Audit Engine**: Implement the 72-hour rollback window for autonomous patches.
-- [ ] **Formal Verification Integration**: Auto-generating formal proofs for substrate mutations.
-- [ ] **Self-Healing Substrate**: Zero-latency autonomous mitigation.
+### Phase 41: Claw Ecosystem Compatibility (The 5,700-Skill Bridge) [PLANNED]
+- **Objective:** Securely ingest and run 5,700+ open-source agents from the ClawHub repository while maintaining substrate-level intent gating.
+- **Implementation:**
+  - **ClawTranslator**: Auto-mapping from Claw `SOUL.md` → Tachyon `SKILL.md`.
+  - **5-Stage Vetting Pipeline**: Translation, Static Analysis, Sandbox, Airlock, and Quarantine.
+  - **Import Utility**: `scripts/import_claw_agent.py` with security profiling.

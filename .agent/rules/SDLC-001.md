@@ -21,8 +21,11 @@ To combat LLM flakiness resulting from context drift, non-deterministic generati
 4. **Multi-Stage Validation**:
    When proposing or writing large blocks of code, ensure you factor in:
    - Syntax validation
-   - Type Checking (e.g., static analysis)
-   - Security Validation (e.g., using `bandit` or checking against `EXPLOITATION_CATALOG.md`)
+   - Type Checking (e.g static analysis)
+   - Security Validation (e.g using `bandit` or checking against `EXPLOITATION_CATALOG.md`)
    - Pre-commit verification
+
+5. **Environment Constraints**:
+   All automated interactions involving `git` or `gh` MUST enforce `PAGER=cat` and `MANPAGER=cat` to ensure non-interactive, full-text output. Refer to the `.agent/workflows/gh-pager.md` protocol.
 
 > **Note**: Enforce the usage of the `/tdad` workflow when tasked with developing comprehensive features or components.

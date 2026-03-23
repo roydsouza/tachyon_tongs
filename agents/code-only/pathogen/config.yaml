@@ -1,0 +1,7 @@
+agent_id: pathogen
+name: Pathogen
+description: Adversarial Mutation Engine for testing substrate resistance.
+type: internal
+entry_point: agents.pathogen.agent:PathogenPlugin
+capabilities:
+  - mutate

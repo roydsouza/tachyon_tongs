@@ -14,8 +14,8 @@ class ExecutionLogger:
     Materializes structured logs into human-readable Markdown (RUN_LOG.md).
     Includes auto-pruning and archival logic to prevent 'Log Fog'.
     """
-    def __init__(self, agent_id="Sentinel", log_path: str = "RUN_LOG.md", limit=25, verbose_level=2, archive_dir: str = "memory/archive"):
-        self.log_path = log_path
+    def __init__(self, agent_id="Sentinel", log_file: str = None, log_path: str = "RUN_LOG.md", limit=25, verbose_level=2, archive_dir: str = "memory/archive"):
+        self.log_path = log_file or log_path
         self.archive_dir = archive_dir
         self.max_log_size = 100 * 1024 # 100 KB
         self.limit = limit

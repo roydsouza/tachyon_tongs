@@ -1,0 +1,8 @@
+agent_id: synthesizer
+name: Synthesizer
+description: Policy Synthesis Agent. Generates Cedar and Rego policies from high-level intent.
+type: internal
+entry_point: agents.synthesizer.agent:SynthesizerPlugin
+capabilities:
+  - synthesize_cedar
+  - synthesize_rego

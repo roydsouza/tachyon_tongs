@@ -11,6 +11,8 @@ Quick-reference CLI commands for managing the Tachyon Substrate.
 | **Integrity Check** | `tt status` |
 | **Airlock Queue** | `tt airlock` |
 | **Agent Management** | `tt agent list\|run\|stop` |
+| **Herald Summary** | `bin/tt_herald summary` |
+| **Herald Tail (-F)** | `bin/tt_herald tail` |
 
 ## 🧬 Legacy Controllers (Substrate v0.9)
 

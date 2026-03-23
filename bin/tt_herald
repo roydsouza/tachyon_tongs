@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+import sys
+import os
+import time
+import json
+
+# Add project root to PYTHONPATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import importlib
+herald_mod = importlib.import_module("agents.code-only.herald.agent")
+HeraldPlugin = herald_mod.HeraldPlugin
+
+def print_banner():
+    print("🎺 Tachyon Tongs: The Herald CLI")
+    print("===============================")
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: tt_herald [summary|tail]")
+        sys.exit(1)
+
+    command = sys.argv[1]
+    herald = HeraldPlugin("cli-herald", {})
+
+    if command == "summary":
+        print_banner()
+        res = herald.execute_action("aggregate_summary", {})
+        events = res.get("summary", [])
+        print(f"Total Events Found: {len(events)}\n")
+        for e in events:
+            e_type = e.get("type", "EVENT")
+            source = e.get("source", "Unknown")
+            print(f"[{e_type}] from {source}")
+            if "summary" in e: print(f"  > {e['summary']}")
+            elif "timestamp" in e: print(f"  > Occurred at: {e['timestamp']}")
+
+    elif command == "tail":
+        print_banner()
+        print("Streaming new alerts... (Ctrl+C to stop)")
+        try:
+            while True:
+                herald.execute_action("relay_new_events", {})
+                time.sleep(5)
+        except KeyboardInterrupt:
+            print("\nShutting down Herald stream.")
+
+    else:
+        print(f"Unknown command: {command}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

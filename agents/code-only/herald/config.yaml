@@ -1,0 +1,5 @@
+agent_id: "herald-001"
+name: "Herald"
+description: "Cross-substrate communication and alert relay."
+type: "code"
+entry_point: "agents.herald.agent:HeraldPlugin"

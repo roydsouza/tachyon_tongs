@@ -1,0 +1,5 @@
+agent_id: "guardian-001"
+name: "Guardian"
+description: "Substrate integrity verification via Merkle-trees and syscall monitoring."
+type: "code" # Indicates this is a Code-Only or Hybrid agent
+entry_point: "agents.guardian.agent:GuardianPlugin"

@@ -1,4 +1,4 @@
-from src.tachyon_client import TachyonClient
+from tachyon.protocol.client import TachyonClient
 import time
 import sys
 

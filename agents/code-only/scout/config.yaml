@@ -1,0 +1,5 @@
+agent_id: "scout-001"
+name: "Scout"
+description: "High-fidelity reconnaissance and vulnerability mapping."
+type: "code"
+entry_point: "agents.scout.agent:ScoutPlugin"

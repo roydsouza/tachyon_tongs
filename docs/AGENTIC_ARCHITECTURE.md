@@ -11,14 +11,15 @@ The ad hoc and organic growth of Tachyon Tongs into an Agentic Firewall mirrors 
 
 **Key Design Principles:**
 
-1. **Roles Over Agents:** Agents are explicit implementations of roles, not one-off scripts. Meta-agents (like the Firewall Administrator) compose and orchestrate other agents rather than doing raw work themselves.
+1. **Roles Over Agents:** Agents are explicit implementations of roles, not one-off scripts. The substrate uses an **Agent Plugin Architecture (ADR-0033)** where agents are decoupled from the core and discovered via the `AgentRegistry`.
 2. **Event-First Backplane:** Agents never call each other directly. All coordination flows through pub/sub on a unified, SQLite-backed Telemetry Bus.
 3. **Sign Everything:** Every output is signed; every input payload is verified. Trust is anchored in Post-Quantum Cryptography (PQC) using Ed25519 + ML-DSA-65 hybrid signatures.
-4. **Oversight Built-In:** Human-In-The-Loop (HITL), Human-On-The-Loop (HOTL), and Human-Out-Of-The-Loop (HOOTL) modes are integrated natively into all execution patterns.
-5. **Architectural Purity:** Single Responsibility holds true. Agents do one thing well, sign for it, and leave a complete forensic trail. Agents are never merged to "reduce count."
+4. **Oversight Built-In:** Human-In-The-Loop (HITL), Human-On-The-Loop (HOTL), and Human-Out-Of-The-Loop (HOOTL) modes are integrated natively into all execution patterns via the **Airlock** system.
+5. **Architectural Purity:** Single Responsibility holds true. Agents do one thing well, sign for it, and leave a complete forensic trail.
 6. **Forensic by Default:** Every action produces an immutable `ActionRecord`. Any past decision can be fully reconstructed and replayed.
-7. **Defense in Depth via Asymmetric Trust:** Communication with the outside world is strictly proxied through specialized agents (e.g., the Herald). High-value administrative agents are air-gapped from the network, ensuring that even a compromised "mouth" (communicator) cannot speak for the "brain" (orchestrator).
-8. **Secure Gateway Portability:** The entire substrate is designed to run locally on a standard workstation (Apple Silicon) or as a dedicated, high-assurance security gateway device on hardened hardware.
+7. **Defense in Depth via Asymmetry:** Communication with the outside world is strictly proxied through specialized agents (e.g., the Herald). High-value administrative agents are air-gapped from the network.
+8. **Secure Gateway Portability:** The entire substrate is designed to run locally on a standard workstation (Apple Silicon) or as a dedicated, high-assurance security gateway device.
+9. **Ecosystem Interoperability**: The **Claw Compatibility Bridge (Phase 41)** allows secure ingestion of external agent skills while re-wrapping them in Tachyon's **Quarantine Mode** gating.
 
 ---
 
@@ -100,6 +101,8 @@ The following agents participate in the **Debate Arena** pattern for multi-persp
 All agents conform to a universal, amortized interface built on top of a `BaseAgent` class to ensure consistent telemetry, capability gating, and forensics.
 
 ### 3.1 The Execution Lifecycle
+
+Agents are discovered and instantiated via the **`AgentRegistry`** (`agents/_core/registry.py`), ensuring that all plugins follow a standardized lifecycle and capability binding.
 
 Every agent follows a strict state machine:
 

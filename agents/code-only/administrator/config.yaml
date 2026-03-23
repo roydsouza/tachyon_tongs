@@ -1,0 +1,5 @@
+agent_id: "administrator-001"
+name: "Administrator"
+description: "High-privilege substrate policy management and emergency response."
+type: "code"
+entry_point: "agents.administrator.agent:AdministratorPlugin"

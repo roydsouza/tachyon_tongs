@@ -1,0 +1,99 @@
+import os
+import re
+from typing import List, Dict, Any
+
+class BaseCollector:
+    def collect(self) -> List[Dict[str, Any]]:
+        raise NotImplementedError
+
+class FileLogCollector(BaseCollector):
+    def __init__(self, filepath: str, pattern: str):
+        self.filepath = os.path.abspath(filepath)
+        self.pattern = re.compile(pattern)
+
+    def collect(self) -> List[Dict[str, Any]]:
+        events = []
+        if not os.path.exists(self.filepath):
+            return events
+            
+        with open(self.filepath, "r") as f:
+            content = f.read()
+            # Split by separator to handle blocks
+            blocks = content.split("---")
+            for block in blocks:
+                match = self.pattern.search(block)
+                if match:
+                    event_type = match.group(1)
+                    if event_type in ["MUTANT_LOCK_ACQUIRED", "MUTANT_LOCK_RELEASED"]:
+                        continue # Skip forensic-only lock noise
+                        
+                    timestamp = match.group(2)
+                    summary = block.replace(match.group(0), "").strip()
+                    
+                    # Enhanced Failure Analysis
+                    if "Failure" in event_type or "FAILURE" in event_type:
+                        summary = self._parse_failure(block, summary)
+
+                    import hashlib
+                    # Use stable content (Type + Summary) for the ID, ignoring fluctuating timestamps/formatting
+                    # This ensures that a repair for a specific failure is recognized as the same 'event'
+                    stable_id_str = f"{event_type}:{summary.split('**Implications**')[0].strip()}"
+                    event_id = hashlib.md5(stable_id_str.encode()).hexdigest()
+                    
+                    events.append({
+                        "id": event_id,
+                        "type": event_type,
+                        "timestamp": timestamp,
+                        "summary": summary,
+                        "source": os.path.basename(self.filepath)
+                    })
+        return events
+
+    def _parse_failure(self, block: str, raw_summary: str) -> str:
+        """Extract implications and remediation from failure blocks."""
+        analysis = raw_summary
+        if "REMEDIATION:" in block:
+            # Already structured
+            return raw_summary
+        
+        # Heuristic analysis for unstructured legacy failures
+        if "No such file or directory" in raw_summary:
+            analysis += "\n\n**Implications**: Critical components or logs are missing; agents cannot verify state."
+            analysis += "\n**Remediation**: Check substrate integrity via `tt status` and ensure all directories exist."
+        return analysis
+
+class AirlockCollector(BaseCollector):
+    def collect(self) -> List[Dict[str, Any]]:
+        from tachyon.core.state import StateManager
+        state = StateManager()
+        patches = state.get_pending_patches()
+        return [{
+            "id": f"patch:{p['id']}",
+            "type": "AIRLOCK_PENDING",
+            "summary": p['summary'],
+            "cve_id": p['cve_id'],
+            "source": "Airlock"
+        } for p in patches]
+
+class TaskCollector(BaseCollector):
+    def __init__(self, tasks_file: str):
+        self.tasks_file = os.path.abspath(tasks_file)
+
+    def collect(self) -> List[Dict[str, Any]]:
+        events = []
+        if not os.path.exists(self.tasks_file):
+            return events
+            
+        with open(self.tasks_file, "r") as f:
+            lines = f.readlines()
+            for line in lines:
+                if line.strip().startswith("- [ ]") and "HITL" in line:
+                    import hashlib
+                    event_id = hashlib.md5(line.strip().encode()).hexdigest()
+                    events.append({
+                        "id": event_id,
+                        "type": "HITL_TASK",
+                        "summary": line.strip()[6:],
+                        "source": "TASKS.md"
+                    })
+        return events

@@ -2,6 +2,32 @@
 
 This document provides protocols for monitoring the health and performance of the Tachyon Tongs security substrate.
 
+## 🎺 0. High-Assurance Monitoring (The Herald)
+
+**The Herald** is the primary interface for substrate oversight. Use it to consolidate alerts, evolution events, and Airlock tasks into a single view.
+
+### Real-time Monitoring
+To stream live security alerts and substrate mutations:
+```bash
+# Continuous real-time stream (Deduplicated)
+bin/tt_herald tail
+```
+
+### Substrate Health Summary
+To get an on-demand report of all critical events and pending HITL tasks:
+```bash
+# Unified report of Alerts + Evolution + Airlock
+bin/tt_herald summary
+```
+
+### What to check in the Summary:
+- **[SECURITY_ALERT]**: Immediate integrity violations or bypasses.
+- **[AIRLOCK_PENDING]**: Patches awaiting your review in the Airlock.
+- **[HITL_TASK]**: Manual actions required in `TASKS.md`.
+- **[Agent Action]**: Structural changes to the substrate.
+
+---
+
 ## 1. Monitoring the Immune System (Phase 22)
 
 The Autonomous Immune Response is the substrate's self-healing layer. Monitor its efficacy via the following indicators:
