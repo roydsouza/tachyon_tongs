@@ -33,7 +33,7 @@ To manage the expanding collective, the ecosystem is categorized into six functi
 | Agent | Role | Triggers | Outputs |
 |-------|------|----------|---------|
 | **Sentinel** | Full-spectrum CVE detection and cataloging | Scheduled (cron), Manual (`/sentinel`) | `EXPLOITATION_CATALOG` updates, new CVE entries |
-| **Canary** | Lightweight early warning probes / sacrificial sandboxes | System events, honeypot hits | Alert triggers, anomaly reports |
+| **Sentry** | Unified deception, early warning, and sacrificial sandboxing | System events, honeypot hits | Alert triggers, intrusion reports |
 | **Pathogen** | Adversarial red-team simulator (self-stress-testing) | New catalog entries, test requests | Exploit validation results, defense recommendations |
 | **Synthesizer** | Exploit pattern generation and mutation | Multiple threat detections | Attack pattern recognition, mutated payloads |
 | **Forge** | Synthetic zero-day adversary generator (Metal-accelerated) | Scheduled, on-demand | Complex multi-stage attack scenarios |
@@ -45,6 +45,7 @@ To manage the expanding collective, the ecosystem is categorized into six functi
 | Agent | Role | Triggers | Outputs |
 |-------|------|----------|---------|
 | **Engineer (Autopatcher)** | Synthesizes and applies surgical code/infrastructure patches | CVE assignments, approved fixes | Code patches, configuration updates |
+| **Healer (Somatic Agent)** | Coordinates autonomous remediation and substrate self-repair | Patch proposals, integrity violations | Somatic repair cycles, status telemetry |
 | **Quarantine Manager** | Isolation controller for suspicious state | Critical alerts, suspicious activity | Container isolation, process sandboxing |
 
 ### C. System Integrity & Trust (The Purity Layer)

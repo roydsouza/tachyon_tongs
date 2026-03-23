@@ -1,5 +1,15 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-23: Phase 31 Sentry & Healer Deployment
+- **Objective:** Deploy unified Sentry agent and autonomous Healer agent.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **Sentry Agent:** Refactored Canary into a unified Sentry agent combining Active Probing with Passive Deception (Honeypot).
+  - **Healer Agent:** Deployed the somatic repair agent to coordinate auto-remediation via the EventBus.
+  - **ADR-0036:** Signed the formal merger of Canary and Decoy into the Sentry role.
+  - **Regression Verification:** Verified "Silent Alarm" and somatic feedback loops with new integration tests.
+- **Verification:** 100% pass on `tests/test_sentry_honeypot.py` and `tests/test_healer_coordination.py`.
+
 ### 2026-03-22: Project Status Sync & Git Hygiene Hardening
 - **Objective:** Harmonize project logs, update execution backlog, and harden git hygiene.
 - **Status:** [OPERATIONAL]

@@ -27,8 +27,24 @@ class FileLogCollector(BaseCollector):
                     if event_type in ["MUTANT_LOCK_ACQUIRED", "MUTANT_LOCK_RELEASED"]:
                         continue # Skip forensic-only lock noise
                         
+                    # Phase 30: Filter out development/stress-test noise from the Herald
+                    if "STRESS_TEST" in event_type or "PATH_TEST" in event_type:
+                        continue
+                        
                     timestamp = match.group(2)
                     summary = block.replace(match.group(0), "").strip()
+                    
+                    # Phase 30: Aesthetic Cleanup - Strip top-level headers and admonition blocks
+                    summary_lines = []
+                    for line in summary.split("\n"):
+                        l = line.strip()
+                        if not l or l.startswith("#") or l.startswith("> [!"):
+                            continue
+                        # If it's a quote block starting a header we already saw, skip
+                        if l.startswith(">") and ("CRITICAL SECURITY ALERT" in l or "Tachyon Tongs" in l):
+                            continue
+                        summary_lines.append(line)
+                    summary = "\n".join(summary_lines).strip()
                     
                     # Enhanced Failure Analysis
                     if "Failure" in event_type or "FAILURE" in event_type:

@@ -69,7 +69,7 @@ Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture
 
 *   🏰 **Defense in Depth**: High-value administrative components (like the **Firewall Administrator**) are air-gapped from the network.
 *   📡 **The Herald Proxy**: All external communication (Signal) is proxied through the Herald agent.
-*   🏥 **Immune Response**: Specialized agents (Sentinel, Pathogen, Engineer) collaborate to detect and remediate threats.
+*   🏥 **Immune Response**: Specialized agents (Sentinel, Sentry, Healer, Engineer) collaborate to detect and remediate threats.
 
 👉 **[AGENTIC_ARCHITECTURE.md](docs/AGENTIC_ARCHITECTURE.md)** — *Deep dive into the 6-tier taxonomy.*
 
@@ -77,9 +77,10 @@ Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture
 
 ## 🤖 The Agent Collective
 *   🔭 **The Sentinel**: Discovers and signs novel AI exploits into the [EXPLOITATION_CATALOG.md](file:///Users/rds/antigravity/tachyon_tongs/EXPLOITATION_CATALOG.md).
-*   🧪 **The Pathogen**: Synthesizes mutated injection payloads to stress-test the substrate.
+*   🧪 **The Sentry**: Unified active probing and passive semantic honeypotting for early intrusion detection.
 *   🛠️ **The Engineer**: Self-synthesizes infrastructure patches and policy mutations.
 *   ⚖️ **The Guardian**: Performs real-time forensic audits of the architectural substrate.
+*   🏥 **The Healer**: Autonomous somatic repair and automated patch coordination.
 *   📬 **The Herald**: Translates alerts into diplomatic dispatches delivered via Signal.
 
 ---

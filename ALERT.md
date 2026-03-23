@@ -1,3 +1,6 @@
-## [DEDUP_TEST] 2026-03-22 20:00:00
-Content
+# 🚨 Tachyon Tongs: High-Priority Alert Hub
+
+This file tracks critical violations and integrity failures. The newest alerts appear at the top.
+
+---
 

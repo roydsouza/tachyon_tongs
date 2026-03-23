@@ -150,9 +150,9 @@ class DelegationCertificateAuthority:
             with open(path + ".sig", 'w') as sf:
                 sf.write(signature)
                 
-            is_sig_valid = self.im.verify_integrity(path)
+            self.im.verify_integrity(path)
             # Implies signature verification succeeded without raising RuntimeError
-            return is_sig_valid, "Certificate Valid"
+            return True, "Certificate Valid"
         except RuntimeError as e:
             return False, f"Signature Invalid: {e}"
         finally:

@@ -56,7 +56,8 @@ class TachyonEventBus:
         agent_id: str, 
         payload: Dict[str, Any], 
         signature: Optional[str] = None,
-        certificate: Optional[Dict[str, Any]] = None
+        certificate: Optional[Dict[str, Any]] = None,
+        timestamp: Optional[str] = None
     ) -> int:
         """
         Publish an event to the bus.
@@ -68,7 +69,7 @@ class TachyonEventBus:
             signature: Hybrid PQC signature of the event data
             certificate: The agent's delegation certificate (JSON)
         """
-        timestamp = datetime.now().isoformat()
+        timestamp = timestamp or datetime.now().isoformat()
         payload_json = json.dumps(payload, sort_keys=True)
         certificate_json = json.dumps(certificate) if certificate else None
         

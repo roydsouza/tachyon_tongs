@@ -13,6 +13,8 @@ Quick-reference CLI commands for managing the Tachyon Substrate.
 | **Agent Management** | `tt agent list\|run\|stop` |
 | **Herald Summary** | `bin/tt_herald summary` |
 | **Herald Tail (-F)** | `bin/tt_herald tail` |
+| **EventBus Sniffer** | `bin/tt_herald bus` |
+| **Herald Help** | `bin/tt_herald help` |
 
 ## 🧬 Legacy Controllers (Substrate v0.9)
 

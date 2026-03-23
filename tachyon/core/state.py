@@ -19,26 +19,45 @@ class StateManager:
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super(StateManager, cls).__new__(cls)
-            
-            # Allow forcing re-init for testing
-            default_db = os.environ.get("TACHYON_DB_PATH", "tachyon_state.db")
-            cls._instance._init_db(db_path or default_db)
-            from .signing import IntegrityManager
-            from .alert_limiter import AlertRateLimiter
-            cls._instance.integrity = IntegrityManager()
-            cls._instance.alert_limiter = AlertRateLimiter()
-            cls._instance.db = cls._instance # Alias for logic that expects manager.db.conn
-            
-            # ENFORCEMENT: Verify core catalog integrity on boot
-            root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-            catalog_path = os.path.join(root_dir, "EXPLOITATION_CATALOG.md")
-            
-            try:
-                cls._instance.integrity.verify_integrity(catalog_path)
-            except RuntimeError as e:
-                cls._instance.emit_alert("STATE_COMPROMISED", str(e))
-                if os.environ.get("TACHYON_STRICT_MODE"):
-                    raise e
+                
+                # Phase 30.3: Initialize EXACTLY ONCE
+                root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+                default_db = os.environ.get("TACHYON_DB_PATH", os.path.join(root_dir, "intelligence", "tachyon_state.db"))
+                
+                # Resolve relative paths relative to root for consistency across CWDs
+                if not os.path.isabs(default_db):
+                    default_db = os.path.join(root_dir, default_db)
+                
+                # Ensure the containing directory exists
+                db_dir = os.path.dirname(default_db)
+                if not os.path.exists(db_dir):
+                    os.makedirs(db_dir, exist_ok=True)
+                    
+                cls._instance._init_db(db_path or default_db)
+                from .signing import IntegrityManager
+                from .alert_limiter import AlertRateLimiter
+                cls._instance.integrity = IntegrityManager()
+                cls._instance.alert_limiter = AlertRateLimiter()
+                cls._instance.db = cls._instance
+                
+                # ENFORCEMENT: Verify core catalog integrity on boot
+                root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+                catalog_path = os.path.join(root_dir, "EXPLOITATION_CATALOG.md")
+                try:
+                    cls._instance.integrity.verify_integrity(catalog_path)
+                except RuntimeError as e:
+                    cls._instance.emit_alert("STATE_COMPROMISED", str(e))
+                
+                # LOCK DOWN: Phase 30.3 Singleton Immutability Guard
+                def _frozen_setattr(instance, name, value):
+                    # We allow setting private internal state if needed, but not public config
+                    if name.startswith("_"):
+                        object.__setattr__(instance, name, value)
+                    else:
+                        raise AttributeError(f"StateManager is FROZEN for security. Cannot set '{name}'.")
+                
+                cls._instance.__class__.__setattr__ = _frozen_setattr
+                
             return cls._instance
 
     def _init_db(self, db_path):

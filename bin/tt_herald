@@ -15,35 +15,105 @@ def print_banner():
     print("🎺 Tachyon Tongs: The Herald CLI")
     print("===============================")
 
+def print_help():
+    print("Commands:")
+    print("  summary       Display actionable summary of alerts, logs, and tasks.")
+    print("  tail          Stream new high-priority alerts in real-time.")
+    print("  bus           Monitor the TachyonEventBus (Real-time PQC communication).")
+    print("  help          Show this help message.")
+
 def main():
     if len(sys.argv) < 2:
-        print("Usage: tt_herald [summary|tail]")
+        print_help()
         sys.exit(1)
 
     command = sys.argv[1]
     herald = HeraldPlugin("cli-herald", {})
 
     if command == "summary":
+        from datetime import datetime, timedelta
         print_banner()
         res = herald.execute_action("aggregate_summary", {})
         events = res.get("summary", [])
         print(f"Total Events Found: {len(events)}\n")
+        
+        def format_pst(ts_str):
+            try:
+                # The substrate logs are already writing in Local (PDT) time.
+                # We just normalize the string format for display.
+                # Expected format: 2026-03-23 11:05:26
+                if " " in ts_str:
+                    return ts_str
+                # If it happens to be ISO, just take the date/time part
+                return ts_str.replace("T", " ")[:19]
+            except:
+                return ts_str[:19]
+
+        def get_analysis(e_type, summary):
+            e_type = e_type.upper()
+            if "FAILURE" in e_type or "ALERT" in e_type or "CRITICAL" in e_type:
+                return "[CRITICAL]"
+            if "HITL" in e_type or "WAITING" in e_type:
+                return "[HITL_REQ]"
+            if "PATCH" in e_type or "MUTATION" in e_type:
+                return "[ACTION]"
+            return "[FYI]"
+
         for e in events:
             e_type = e.get("type", "EVENT")
             source = e.get("source", "Unknown")
-            print(f"[{e_type}] from {source}")
-            if "summary" in e: print(f"  > {e['summary']}")
-            elif "timestamp" in e: print(f"  > Occurred at: {e['timestamp']}")
+            ts = format_pst(e.get("timestamp", "Unknown"))
+            analysis = get_analysis(e_type, e.get("summary", ""))
+            
+            print(f"[{ts} PDT] [{source}] [{e_type}] {analysis}")
+            if "summary" in e and e['summary'].strip():
+                # Truncate multi-line summaries for the summary view
+                summary = e['summary'].strip()
+                if "\n" in summary:
+                    summary = summary.split("\n")[0] + "..."
+                print(f"  > {summary}")
+            elif e_type == "STATE_COMPROMISED":
+                print(f"  > [ACTION REQUIRED] Substrate Integrity Violation Detected")
+            print("-" * 40)
 
     elif command == "tail":
         print_banner()
-        print("Streaming new alerts... (Ctrl+C to stop)")
+        print("Streaming new alerts from persistence layer... (Ctrl+C to stop)")
         try:
             while True:
                 herald.execute_action("relay_new_events", {})
                 time.sleep(5)
         except KeyboardInterrupt:
             print("\nShutting down Herald stream.")
+
+    elif command == "bus":
+        print_banner()
+        print("📡 Sniffing TachyonEventBus... (Ctrl+C to stop)")
+        from tachyon.core.bus import TachyonEventBus
+        bus = TachyonEventBus()
+        
+        def bus_callback(topic, agent_id, payload, timestamp, certificate):
+            ts = timestamp if timestamp else "[UNSTAMPED]"
+            cert_status = "✅ SIGNED" if certificate else "⚠️ UNSIGNED"
+            print(f"[{ts}] [{agent_id}] -> [{topic}] ({cert_status})")
+            if payload:
+                print(f"  > {json.dumps(payload)}")
+            print("-" * 20)
+
+        # Standard topics
+        topics = ["SECURITY_ALERT", "TELEMETRY", "THREAT_IDENTIFIED", "PATCH_PROPOSED", "INTEGRITY_VIOLATION"]
+        for t in topics:
+            bus.subscribe(t, bus_callback)
+            
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("\nDisconnected from bus.")
+
+    elif command == "help":
+        print_banner()
+        print_help()
 
     else:
         print(f"Unknown command: {command}")

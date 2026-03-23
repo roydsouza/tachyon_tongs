@@ -20,6 +20,13 @@ To get an on-demand report of all critical events and pending HITL tasks:
 bin/tt_herald summary
 ```
 
+### Real-time EventBus Sniffing
+To monitor real-time, PQC-signed agent-to-agent communication:
+```bash
+# Monitor the TachyonEventBus (Real-time handshakes)
+bin/tt_herald bus
+```
+
 ### What to check in the Summary:
 - **[SECURITY_ALERT]**: Immediate integrity violations or bypasses.
 - **[AIRLOCK_PENDING]**: Patches awaiting your review in the Airlock.
@@ -33,7 +40,7 @@ bin/tt_herald summary
 The Autonomous Immune Response is the substrate's self-healing layer. Monitor its efficacy via the following indicators:
 
 ### Evolution Ledger
-- **Location**: `memory/strategic/EVOLUTION.md`
+- **Location**: `logs/EVOLUTION.md`
 - **What to look for**: Check for "MUTATION_SYNTHESIZED" and "PATCH_STAGED" events. Frequent "REJECTED" events in the Airlock indicate the Immune System is over-fitting or hallucinating fixes.
 
 ### Fitness Scoring

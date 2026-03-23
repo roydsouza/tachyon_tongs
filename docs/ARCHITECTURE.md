@@ -115,6 +115,8 @@ Tachyon Tongs follows a **Logical Separation** pattern (ADR-0024) where each age
 
 Key organizational roles within the collective include:
 - **The Firewall Administrator (LLM Agent):** The "Thinker" that provides macro-level architectural reasoning, leveraging `mlx_lm` locally to continuously observe traffic logs and govern substrate capabilities.
+- **The Sentry (Unified Agent):** Handles both active vulnerability probing and passive semantic honeypotting for early intrusion detection.
+- **The Healer (Somatic Agent):** The "Muscle" that coordinates autonomous remediation and substrate self-repair by listening for patch and violation signals.
 - **The Herald (Custom Agent):** The "Mouth/Ear" that acts as the communication aggregator and deterministic command router, formatting complex telemetry for NeoVIM/CLI/Slack. Note: Signal integration was rejected due to transport complexity.
 
 ### 1.3 The Claw Ecosystem Bridge (Interoperability)
@@ -358,10 +360,10 @@ graph TD
     Substrate -->|Execute| Sentinel[Sentinel Role]
     Substrate -->|Mutate| Engineer[Engineer Role]
     Substrate -->|Audit| Guardian[Guardian Role]
-    Substrate -->|Scout| Canary[Canary Role]
+    Substrate -->|Scout| Sentry[Sentry Role]
     
-    Canary -->|Intelligence| CANARY_LOG[CANARY_LOG.md]
-    CANARY_LOG -->|Fitness Data| Sentinel
+    Sentry -->|Intelligence| SENTRY_LOG[SENTRY_LOG.md]
+    SENTRY_LOG -->|Fitness Data| Sentinel
     
     Substrate --> State[(StateManager)]
 ```
@@ -592,7 +594,7 @@ sequenceDiagram
 The substrate implements a self-evolving security posture via the **Autonomic Immune Response Protocol (AIRP)**. This system bridges the gap between passive detection and active remediation without requiring immediate human intervention for mitigation staging.
 
 ### 10.1 The Feedback Loop
-1.  **Sensation**: The **Canary** agent identifies a bypass in existing filters and logs it to `CANARY_LOG.md`.
+1.  **Sensation**: The **Sentry** agent identifies a bypass in existing filters and logs it to `SENTRY_LOG.md`.
 2.  **Transmission**: The **ImmuneManager** polls the logs, deduplicates events via a SQLite `processed_events` table, and signals the **Engineer**.
 3.  **Synthesis**: The **Engineer** role generates a narrow-scope Rego policy (in `tachyon/enforcement/policies/auto_immune_*.rego`) to block the specific bypass vector.
 4.  **Verification**: The synthesized policy is tested against a regression suite. If successful, it is pushed to a dedicated branch.
