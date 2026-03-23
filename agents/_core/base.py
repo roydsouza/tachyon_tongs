@@ -22,7 +22,13 @@ class BaseAgentPlugin(ABC):
         # Phase 33: Core Infrastructure Integration
         self.im = IntegrityManager()
         self.bus = TachyonEventBus(integrity_manager=self.im)
-        self.certificate: Optional[Dict[str, Any]] = None
+        
+        # Phase 25.2: Recruitment of Delegated Identity
+        self.certificate = self.im.load_agent_identity(self.plugin_name.lower())
+        if self.certificate:
+             print(f"[{self.agent_id}] Operating with Delegated Identity (Role: {self.plugin_name})")
+        else:
+             print(f"[{self.agent_id}] Falling back to Root Identity (Unauthorized/Direct)")
         
         # Subscriptions & Backplane Loop
         self._subscriptions: Dict[str, List[Callable]] = {}
@@ -38,7 +44,8 @@ class BaseAgentPlugin(ABC):
                 "plugin_name": self.plugin_name,
                 "status": "INITIALIZING",
                 "graduated": self.graduated
-            }
+            },
+            certificate=self.certificate
         )
 
     def run_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:

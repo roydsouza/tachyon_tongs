@@ -5,7 +5,7 @@ import os
 # Ensure tachyon is in path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from agents._core.roles import SentinelRole, EngineerRole, GuardianRole, SentryRole, HealerRole
+# Roles are now dynamically discovered via AgentRegistry
 
 def main():
     parser = argparse.ArgumentParser(description="Tachyon Tongs Unified Substrate Controller")
@@ -20,11 +20,23 @@ def main():
     params = json.loads(args.params) if args.params else {}
 
     # Key Management (Phase 25.1)
+    # Key Management (Phase 25.1 / 25.2)
     if args.role == "keys":
-        from scripts.generate_keys import genesis_ceremony, recovery_drill
-        if args.action == "genesis":
+        from scripts.agent_keys import cmd_status, cmd_delegate
+        from tachyon.core.signing import IntegrityManager
+        im = IntegrityManager()
+        
+        if args.action == "status":
+            cmd_status(im)
+        elif args.action == "delegate":
+            # Extract role from params if available
+            role_to_delegate = params.get("role", "unknown")
+            cmd_delegate(im, role_to_delegate, 30)
+        elif args.action == "genesis":
+            from scripts.generate_keys import genesis_ceremony
             genesis_ceremony()
         elif args.action == "recover":
+            from scripts.generate_keys import recovery_drill
             recovery_drill()
         else:
             print(f"Error: Unknown keys action {args.action}")
@@ -32,21 +44,23 @@ def main():
         return
 
     # Role Factory
-    if args.role == "sentinel":
-        agent = SentinelRole(args.agent_id)
-    elif args.role == "engineer":
-        agent = EngineerRole(args.agent_id)
-    elif args.role == "guardian":
-        agent = GuardianRole(args.agent_id)
-    elif args.role == "sentry":
-        agent = SentryRole(args.agent_id)
-    elif args.role == "healer":
-        agent = HealerRole(args.agent_id)
-    else:
-        print(f"Error: Unknown role {args.role}")
+    from agents._core.registry import AgentRegistry
+    from agents._core.roles import BaseTachyonRole
+    
+    # Auto-discover plugins from the flat agents/ directory
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    agents_dir = os.path.join(root_dir, "agents")
+    AgentRegistry.discover_plugins(agents_dir)
+    
+    available_roles = AgentRegistry.list_plugins()
+    if args.role not in available_roles:
+        print(f"Error: Unknown role '{args.role}'. Available: {', '.join(available_roles)}")
         sys.exit(1)
 
-    print(f"[*] Substrate: Assumed role '{args.role}' as {args.agent_id}")
+    print(f"[*] Substrate: Assumed role '{args.role}' for {args.agent_id}")
+    
+    # We now use the generic BaseTachyonRole which delegates to the registry
+    agent = BaseTachyonRole(args.agent_id, args.role)
     result = agent.handle_action(args.action, params)
     print(json.dumps(result, indent=2))
 

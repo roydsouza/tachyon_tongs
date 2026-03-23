@@ -27,23 +27,3 @@ class BaseTachyonRole:
         # Instantiate and run (Phase 33 pattern)
         plugin = plugin_class(self.agent_id, {})
         return plugin.run_action(action, parameters)
-
-class GuardianRole(BaseTachyonRole):
-    def __init__(self, agent_id: str):
-        super().__init__(agent_id, "Guardian")
-
-class EngineerRole(BaseTachyonRole):
-    def __init__(self, agent_id: str):
-        super().__init__(agent_id, "Engineer")
-
-class SentinelRole(BaseTachyonRole):
-    def __init__(self, agent_id: str):
-        super().__init__(agent_id, "Sentinel")
-
-class SentryRole(BaseTachyonRole):
-    def __init__(self, agent_id: str):
-        super().__init__(agent_id, "Sentry")
-
-class HealerRole(BaseTachyonRole):
-    def __init__(self, agent_id: str):
-        super().__init__(agent_id, "Healer")

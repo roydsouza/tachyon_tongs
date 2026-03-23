@@ -50,9 +50,9 @@ class IntegrityManager:
         if not self._private_key and os.environ.get("TACHYON_STRICT_MODE"):
             raise RuntimeError("Cryptographic failure in STRICT_MODE: No keys found. Halt.")
 
-    def derive_agent_key(self, role: str) -> tuple:
+    def derive_agent_key(self, role: str, save_to_disk: bool = False) -> tuple:
         """
-        Derive a per-agent Ed25519 key from the Root Key and issue a 
+        Derives a per-agent Ed25519 key from the Root Key and issue a 
         Hybrid-Signed Delegation Certificate binding it to the role.
         
         Returns: Tuple of (ed25519.Ed25519PrivateKey, dict[Certificate])
@@ -62,7 +62,45 @@ class IntegrityManager:
             
         from tachyon.core.keys.certificates import DelegationCertificateAuthority
         ca = DelegationCertificateAuthority(self)
-        return ca.derive_and_issue(role=role, expiry_days=30)
+        return ca.derive_and_issue(role=role, expiry_days=30, save_to_disk=save_to_disk)
+
+    def load_agent_identity(self, role: str) -> Optional[Dict[str, Any]]:
+        """
+        Attempts to load a delegated identity (Key + Cert) from disk.
+        If successful, re-initializes the signer to use the agent's sub-key.
+        """
+        import json
+        import base64
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        keys_dir = os.path.join(root_dir, "memory", "keys")
+        path = os.path.join(keys_dir, f"agent_{role.lower()}.json")
+        
+        if not os.path.exists(path):
+             return None
+             
+        try:
+            with open(path, "r") as f:
+                identity = json.load(f)
+            
+            # Load Sub-Key
+            sk_bytes = base64.b64decode(identity["private_key_b64"])
+            self.agent_private_key = ed25519.Ed25519PrivateKey.from_private_bytes(sk_bytes)
+            self.agent_public_key = self.agent_private_key.public_key()
+            
+            # Re-initialize hybrid signer with agent sub-key for signing
+            from tachyon.core.keys.hybrid import HybridSigner
+            self.signer = HybridSigner(
+                ed25519_sk=self.agent_private_key,
+                ed25519_pk=self.agent_public_key,
+                mldsa65_sk=self._pqc_private_key_bytes, 
+                mldsa65_pk=self._pqc_public_key,
+                hmac_key=self.hmac_key
+            )
+            print(f"[IntegrityManager] Identity recruited: Role={role}")
+            return identity.get("certificate")
+        except Exception as e:
+            print(f"[IntegrityManager] Failed to load identity for {role}: {e}")
+            return None
 
     def sign_document(self, filepath: str, identity: str = "tachyon-substrate-v1") -> str:
         """

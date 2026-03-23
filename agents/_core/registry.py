@@ -25,7 +25,7 @@ class AgentRegistry:
             if "config.yaml" in files:
                 agent_name = os.path.basename(root)
                 # Determine the module path relative to agents/ root
-                # e.g., if root is agents/code-only/canary, module should be agents.code_only.canary.agent
+                # e.g., agents/sentinel/agent.py -> agents.sentinel.agent
                 rel_path = os.path.relpath(root, os.path.dirname(agents_dir))
                 module_parts = rel_path.replace(os.sep, ".").split(".")
                 plugin_module_name = ".".join(module_parts) + ".agent"
@@ -33,11 +33,12 @@ class AgentRegistry:
                 try:
                     # Use importlib.util to support hyphenated paths
                     module_path = os.path.join(root, "agent.py")
-                    spec = importlib.util.spec_from_file_location(plugin_module_name, module_path)
-                    module = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(module)
+                    if os.path.exists(module_path):
+                        spec = importlib.util.spec_from_file_location(plugin_module_name, module_path)
+                        module = importlib.util.module_from_spec(spec)
+                        spec.loader.exec_module(module)
                 except Exception as e:
-                    print(f"[AgentRegistry] Failed to load plugin {agent_name} from {module_path}: {e}")
+                    print(f"[AgentRegistry] Failed to load plugin {agent_name} from {root}: {e}")
 
     @classmethod
     def get_plugin(cls, name: str) -> Optional[Type[BaseAgentPlugin]]:

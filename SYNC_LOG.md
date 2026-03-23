@@ -1,5 +1,51 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-23: Phase 25.4 PQC Overlay Establishment (ML-DSA-65)
+- **Objective:** Establish NIST Level 3 quantum-resistant signing tier for high-assurance integrity.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **PQC Genesis:** Deployed headless ML-DSA-65 Root of Trust generation.
+  - **Hybrid Orchestration:** Enabled dual-segment signatures (Ed25519 + ML-DSA-65) for all events and certificates.
+  - **Strip Mitigation:** Implemented automated rejection of downgraded/stripped signatures.
+- **Verification:** Hierarchy status confirms "ML-DSA-65 Active". Sentinel events verified in Hybrid mode.
+
+### 2026-03-23: Phase 25.2 Per-Agent Key Delegation
+- **Objective:** Establish granular, role-based identity model via sub-key derivation.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **Sub-key Hierarchy:** Implemented HKDF-based Ed25519 sub-key derivation anchored by the PQC Root Key.
+  - **Certified Signaling:** Integrated delegation certificates into `BaseAgentPlugin` and `TachyonEventBus`.
+  - **CLI Orchestration:** Added `tt keys status` and `tt keys delegate` for identity management.
+- **Verification:** Sentinel agent successfully verified operating with delegated sub-keys & certificates.
+
+### 2026-03-23: Phase 35 Agent Plugin Architecture (ADR-0033)
+- **Objective:** Flatten agent directory structure and standardize dynamic role discovery.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **Codebase Flattening:** Migrated all 10 agents to a unified top-level `agents/` directory, purging `code-only/` and `hybrid/` fragmentation.
+  - **Dynamic Recruitment:** Refactored `tachyon/main.py` and `AgentRegistry` to support autonomous plugin discovery. The CLI now reflects the filesystem state rather than hardcoded role chains.
+  - **Cleanup:** Eliminated redundant role subclasses in `roles.py`.
+- **Verification:** 100% pass on CLI role discovery and instantiation tests.
+
+### 2026-03-23: Phase 34 NIST NVD MCP Integration & Observability Hardening
+- **Objective:** Augment Sentinel with authoritative vulnerability intelligence, stateful cursors, and resilient EventBus signaling.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **NVD Cursor:** Implemented `agent_state` table in `StateManager` to track `last_nvd_update` for incremental hunting.
+  - **Sentinel Refactor:** Upgraded `SentinelPlugin` to utilize the NIST NVD MCP server for AI-specific threat research.
+  - **Resilience:** Added exponential backoff retry logic and `SENTINEL_COMM_FAILURE` alerts to detect network blocking.
+  - **Observability:** Integrated `TachyonEventBus` triggers for `SENTINEL_SCAN_STARTED`, `THREAT_FOUND`, and `SCAN_COMPLETED`.
+- **Verification:** Diagnostic test `tmp/test_sentinel_nvd.py` verified 100% pass on state persistence and signaling loop.
+
+### 2026-03-23: Phase 33 Hyperlink Relativity & Portability Scan
+- **Objective:** Eliminate absolute pathing from all markdown documentation and archives to ensure universal portability.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **Relativity Scan:** Conducted a substrate-wide audit of `.md` files, identifying and fixing hundreds of hardcoded `/Users/rds/` links.
+  - **Portability Hardening:** Converted all primary and archival links (including `feedback/` and `memory/`) to relative paths.
+  - **Reconciliation:** Standardized naming conventions for core administrative documentation (e.g., `ADMIN.md`).
+- **Verification:** 100% pass on final `grep -r` scan across all markdown assets (no absolute local paths remaining).
+
 ### 2026-03-23: Phase 32 Legacy Cleanup & Role Modernization
 - **Objective:** Finalize agentic refactor by modernizing the CLI role factory and LaunchAgent plists.
 - **Status:** [OPERATIONAL]

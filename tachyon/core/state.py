@@ -161,6 +161,17 @@ class StateManager:
                     PRIMARY KEY (dispatcher_id, event_id)
                 )
             ''')
+
+            # 9. agent_state (Persistent Cursors / K-V store)
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS agent_state (
+                    agent_id TEXT,
+                    key TEXT,
+                    value TEXT,
+                    updated_at TEXT,
+                    PRIMARY KEY (agent_id, key)
+                )
+            ''')
             conn.commit()
 
     def is_event_processed(self, event_id: str) -> bool:
@@ -559,3 +570,28 @@ class StateManager:
                     (dispatcher_id, event_id, datetime.now().isoformat())
                 )
                 conn.commit()
+
+    # --- Agent State Persistence (Phase 34) ---
+
+    def set_agent_state(self, agent_id: str, key: str, value: Any):
+        """Persist a key-value state for a specific agent (e.g., a cursor)."""
+        val_str = json.dumps(value)
+        with self._lock:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute('''
+                    INSERT OR REPLACE INTO agent_state (agent_id, key, value, updated_at)
+                    VALUES (?, ?, ?, ?)
+                ''', (agent_id, key, val_str, datetime.now().isoformat()))
+                conn.commit()
+
+    def get_agent_state(self, agent_id: str, key: str, default: Any = None) -> Any:
+        """Retrieve a persisted state value for an agent."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.execute(
+                "SELECT value FROM agent_state WHERE agent_id = ? AND key = ?",
+                (agent_id, key)
+            )
+            row = cursor.fetchone()
+            if row:
+                return json.loads(row[0])
+            return default

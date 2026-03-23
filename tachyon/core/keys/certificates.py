@@ -55,7 +55,7 @@ class DelegationCertificateAuthority:
         with open(self.crl_path, "w") as f:
             json.dump({"revoked_fingerprints": revoked}, f, indent=2)
 
-    def derive_and_issue(self, role: str, expiry_days: int = 30) -> Tuple[ed25519.Ed25519PrivateKey, Dict[str, Any]]:
+    def derive_and_issue(self, role: str, expiry_days: int = 30, save_to_disk: bool = False) -> Tuple[ed25519.Ed25519PrivateKey, Dict[str, Any]]:
         """
         Derives an agent-specific Ed25519 sub-key using HKDF and issues a 
         Hybrid-Signed JSON certificate proving its legitimacy.
@@ -112,6 +112,21 @@ class DelegationCertificateAuthority:
             "signature": "|".join(signatures)
         }
         
+        # 5. Optional persistence (Phase 25.2)
+        if save_to_disk:
+            keys_dir = os.path.join(self.mem_dir, "..", "keys")
+            os.makedirs(keys_dir, exist_ok=True)
+            cert_path = os.path.join(keys_dir, f"agent_{role.lower()}.json")
+            
+            # Export everything: Private Key, Fingerprint, and Certificate
+            identity = {
+                "private_key_b64": base64.b64encode(agent_key.private_bytes_raw()).decode('ascii'),
+                "certificate": cert
+            }
+            with open(cert_path, "w") as f:
+                json.dump(identity, f, indent=2)
+            print(f"[CertAuthority] Persisted delegated identity for {role} to {cert_path}")
+        
         return agent_key, cert
 
     def validate_certificate(self, cert: Dict[str, Any]) -> Tuple[bool, str]:
@@ -142,6 +157,8 @@ class DelegationCertificateAuthority:
         # Write to temp file to use standard IntegrityManager verify logic
         payload_bytes = json.dumps(payload, sort_keys=True).encode('utf-8')
         import tempfile
+        # Phase 25.2: Lazy load to break circularity
+        from tachyon.core.signing import IntegrityManager
         try:
             with tempfile.NamedTemporaryFile(mode='wb', delete=False) as f:
                 f.write(payload_bytes)
@@ -150,7 +167,9 @@ class DelegationCertificateAuthority:
             with open(path + ".sig", 'w') as sf:
                 sf.write(signature)
                 
-            self.im.verify_integrity(path)
+            # Use local verify without hardware loading (self-contained verification)
+            im = IntegrityManager(use_hardware=True)
+            im.verify_integrity(path, enforce=True)
             # Implies signature verification succeeded without raising RuntimeError
             return True, "Certificate Valid"
         except RuntimeError as e:

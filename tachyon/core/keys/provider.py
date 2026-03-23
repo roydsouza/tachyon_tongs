@@ -65,9 +65,18 @@ class KeychainProvider:
             else:
                 warnings.warn("[KeychainProvider] No Ed25519 root key found in Keychain.")
                 return None, None
-        except ImportError:
-            return None, None
         except Exception as e:
+            # Phase 25.2: Headless Fallback
+            root_key_path = os.environ.get("TACHYON_ROOT_KEY_PATH")
+            if root_key_path and os.path.exists(root_key_path):
+                try:
+                    with open(root_key_path, 'rb') as f:
+                        seed = f.read()
+                    priv_key = ed25519.Ed25519PrivateKey.from_private_bytes(seed)
+                    return priv_key, priv_key.public_key()
+                except Exception:
+                    pass
+            
             warnings.warn(f"[KeychainProvider] Ed25519 Key loading failed: {e}")
             return None, None
 
@@ -113,8 +122,20 @@ class KeychainProvider:
                 
             return sk_bytes, pk_bytes
             
-        except ImportError:
-            return None, None
         except Exception as e:
+            # Phase 25.4: Headless PQC Fallback
+            sk_path = os.environ.get("TACHYON_PQC_SK_PATH")
+            pk_path = os.environ.get("TACHYON_PQC_PK_PATH")
+            
+            if sk_path and os.path.exists(sk_path) and pk_path and os.path.exists(pk_path):
+                try:
+                    with open(sk_path, 'rb') as f:
+                        sk_bytes = f.read()
+                    with open(pk_path, 'rb') as f:
+                        pk_bytes = f.read()
+                    return sk_bytes, pk_bytes
+                except Exception:
+                    pass
+            
             warnings.warn(f"[KeychainProvider] PQC key loading failed: {e}")
             return None, None

@@ -164,8 +164,7 @@ def pin_root_key(pub_hex: str):
     print(f"[*] Signing {manifest_path} with Root Key...")
     from tachyon.core.signing import IntegrityManager
     signer = IntegrityManager(use_hardware=True)
-    # Force reload to get the key we just saved
-    signer._load_keys()
+    # IntegrityManager already loads keys in __init__
     signer.sign_document(manifest_path)
     
     print(f"[✓] Root Key pinned and attested in {manifest_path}.")
