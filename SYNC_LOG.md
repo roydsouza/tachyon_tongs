@@ -1,5 +1,14 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-23: Phase 36 Unified Intelligence Hub (exploits/)
+- **Objective:** Consolidate fragmented vulnerability data and elevate intelligence to a top-level substrate component.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **Hub Creation:** Established `exploits/` with `payloads/` and `mitigations/` structure.
+  - **Catalog Consolidation:** Migrated root `EXPLOITATION_CATALOG.md` to `exploits/CATALOG.md`.
+  - **Systemic Re-anchoring:** Updated `StateManager`, `README.md`, and core utilities (`intel_ingest.py`, `airlock_cli.py`, `run_pathogen.py`) for the new hub.
+- **Verification:** `ls -R exploits` confirms correct topology. All signatures verified.
+
 ### 2026-03-23: Phase 25.4 PQC Overlay Establishment (ML-DSA-65)
 - **Objective:** Establish NIST Level 3 quantum-resistant signing tier for high-assurance integrity.
 - **Status:** [OPERATIONAL]
