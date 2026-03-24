@@ -12,6 +12,13 @@ def re_sign_all():
         "docs/THREAT_MODEL.md"
     ]
     
+    # Phase 43: Dynamically include all ADRs
+    adr_dir = os.path.join(root_dir, "docs", "adr")
+    if os.path.exists(adr_dir):
+        for f in os.listdir(adr_dir):
+            if f.endswith(".md"):
+                docs.append(os.path.join("docs", "adr", f))
+    
     state = StateManager()
     for doc in docs:
         path = os.path.join(root_dir, doc)
