@@ -106,6 +106,9 @@ class HybridSigner:
                 has_hmac = True
 
         # Threat Mitigation: Strip Detection
+        # Phase 43: PQC Mandate (Fail-Closed)
+        strict_pqc = os.environ.get("TACHYON_PQC_STRICT") == "1"
+        
         # If we have a PQC SK and liboqs is available, we MUST have a PQC signature
         oqs_available = False
         try:
@@ -113,6 +116,10 @@ class HybridSigner:
             oqs_available = True
         except ImportError:
             pass
+
+        # FAIL-CLOSED: If STRICT is set, we MUST have a PQC layer, regardless of liboqs
+        if strict_pqc and not has_pqc:
+            raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected in STRICT MODE).")
 
         if oqs_available and self._pqc_private_key_bytes and not has_pqc:
             if has_ed or has_hmac:
@@ -126,6 +133,4 @@ class HybridSigner:
         if not has_ed and not has_pqc and not has_hmac:
             raise RuntimeError("No recognized signature algorithms found in manifest.")
             
-        # If HMAC was the only check, and it passed, we are "conditionally" verified.
-        # If we had loaded keys but didn't find signatures for them, we already raised.
         return True

@@ -178,8 +178,13 @@ class IntegrityManager:
             return is_valid
         except Exception as e:
             if strict:
+                error_msg = str(e)
+                alert_type = "CRYPTO_ERROR"
+                if "Strip Attack" in error_msg:
+                    alert_type = "INTEGRITY_VIOLATION"
+                
                 err = f"INTEGRITY FAILURE: Cryptographic error during verification of {filepath}: {e}"
-                from tachyon.core.state_manager import StateManager
-                StateManager().emit_alert("CRYPTO_ERROR", err)
+                from tachyon.core.state import StateManager
+                StateManager().emit_alert(alert_type, err)
                 raise RuntimeError(err)
             return False

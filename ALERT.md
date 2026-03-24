@@ -2,6 +2,20 @@
 
 This file tracks critical violations and integrity failures. The newest alerts appear at the top.
 
+## [MODEL_POISONED] 2026-03-23 20:29:57
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Weight mismatch detected: adapter_model.bin
+
+---
+
+## [INTEGRITY_VIOLATION] 2026-03-23 20:29:56
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> INTEGRITY FAILURE: Cryptographic error during verification of scripts/verification/strip_test.txt: INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected in STRICT MODE).
+
+---
+
 ## [PATHOGEN_BREACH] 2026-03-23 14:21:23
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
