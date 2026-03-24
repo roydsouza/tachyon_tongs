@@ -50,6 +50,12 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 - [x] **Forensic Linkage**: Every threat update now contains a PQC-signed URI to the source breach event.
 - [x] **Sync Mandate**: Formalized `.agent/rules/synchronization.md` to protect substrate roadmap integrity.
 
+### ✅ Phase 35: Agent Plugin Architecture (ADR-0033) (2026-03)
+- [x] **Modular Substrate**: Unified all agents into the top-level `agents/` directory.
+- [x] **AgentRegistry**: Implemented autonomous plugin discovery with hyphenated path recovery.
+- [x] **BaseAgentPlugin**: Standardized the Event-First Backplane for PQC-signed inter-agent signaling.
+- [x] **Dynamic Controller**: Refactored `main.py` to eliminate hardcoded agent roles.
+
 ### ✅ Phase 43: PQC Mandate & Model Integrity (2026-03)
 - [x] **Fail-Closed PQC Policy**: Implemented `PQC_STRICT` mode to prevent classical fallback / strip-attacks.
 - [x] **Model Integrity Warden**: Designed PQC-signed weight manifest system for model protection.
