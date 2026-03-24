@@ -7,6 +7,12 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 ## 🔳 Active & Priority (Sprint 2026-03)
 
 
+### 🔑 Phase 43: PQC Mandate & Model Integrity [IN-PROGRESS]
+> **Source**: Grok & Gemini Audit — "Quantum-Safe Assurance"
+- [x] **[P1] [SECURITY] Fail-Closed PQC Policy**: Modify `hybrid.py` to reject any ActionRecord that lacks a valid `ML-DSA-65` signature (strip-attack protection).
+- [x] **[P1] [SECURITY] Model Integrity Warden**: Nightly cryptographic hashing of `mlx_lm` weights signed by the Root PQC identity.
+- [ ] **[P2] [LEARNING] LoRA Fine-Tuning Loop**: Implement `lora_finetune_loop.py` to derive local model updates from human-approved Airlock outcomes.
+- [ ] **[VERIFY]** Substrate halts on model weight drift or signature strip simulation.
 
 
 ### 🔳 Phase 35: Agent Plugin Architecture (ADR-0033) [IN-PROGRESS]
@@ -47,10 +53,6 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 ## ✅ Historical Roadmap (Completed Phases)
 *Historical records are candidates for migration to [ROADMAP.md](docs/ROADMAP.md).*
 
-### ✅ Phase 43: PQC Mandate & Model Integrity (2026-03)
-- [x] **Fail-Closed PQC Policy**: Implemented `PQC_STRICT` mode to prevent classical fallback / strip-attacks.
-- [x] **Model Integrity Warden**: Designed PQC-signed weight manifest system for model protection.
-- [x] **Forensic Alerting**: Categorized cryptographic bypass metadata for real-time Herald visibility.
 
 ### ✅ Phase 42: Forensic Persistence - Unified Ledger & Mutant-Lock (2026-03)
 - [x] **Unified Forensic Ledger**: Consolidated Markdown logs into a PQC-signed SQLite table.
