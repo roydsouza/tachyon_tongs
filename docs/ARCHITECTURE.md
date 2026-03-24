@@ -69,7 +69,7 @@ graph TD
     %% Triggers
     subgraph Triggers ["⚡ Invocation"]
         A1[Launchd / Cron] -- Periodic --> B
-        A2[Manual CLI] -- --manual --> B
+        A2[Manual CLI] -- "--manual" --> B
     end
 
     %% Entry & Infrastructure
@@ -78,9 +78,9 @@ graph TD
     
     %% Security Enforcement
     subgraph IntegrityGate ["🛡️ Integrity Manager"]
-        D -- verify_integrity --> E[EXPLOITATION_CATALOG.md]
-        E -- Failure! --> F(ALERT.md + HALT)
-        E -- Success --> G(Load State)
+        D -- "verify_integrity" --> E[EXPLOITATION_CATALOG.md]
+        E -- "Failure!" --> F(ALERT.md + HALT)
+        E -- "Success" --> G(Load State)
     end
 
     %% The Guardian Triad Pipeline
@@ -96,7 +96,7 @@ graph TD
     subgraph Persistence ["💾 Persistence"]
         L --> M[SQLite Ledger]
         L --> N[EXPLOITATION_CATALOG.md]
-        L -- airlock_mode=True --> O[/tmp/tachyon_airlock/]
+        L -- "airlock_mode=True" --> O[/tmp/tachyon_airlock/]
     end
 
     %% Metadata & Logging
