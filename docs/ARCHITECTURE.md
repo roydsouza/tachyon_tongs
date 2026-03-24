@@ -220,7 +220,12 @@ The Substrate Daemon acts as a **Policy Enforcement Point (PEP)**.
 *   **Outbound PEP (The Reverse Firewall) [OPERATIONAL]**: Protects the User/Enterprise from the Agent/LLM. It introspects outgoing calls to sanitize or block sensitive information (API keys, PII) based on Rego/Cedar policies and the `PIIScanner`.
 
 ### D. Pluggable PDP Engine (Singularity) [OPERATIONAL]
-The decision logic is decoupled from the daemon. The **SingularityPDP** federates policy across multiple engines (Rego, Cedar, local heuristics) and resolves conflicts via a consensus protocol. All decisions are logged to the `authorization_ledger` in SQLite for 100% auditability. Implemented as a FastAPI server with `RemoteSingularityPDP` client and fail-closed fallback logic.
+The decision logic is decoupled from the daemon. The **SingularityPDP** federates policy across multiple pluggable engines and resolves conflicts via a consensus protocol (`ANY_DENY`).
+*   **REGO (OPA)**: Rule-based authorization for user/agent/tool hierarchies.
+*   **CEDAR (AWS)**: Amazon-native policy evaluation for infrastructure-level gates.
+*   **ALIGNMENT (Adversarial Reasoner)**: **Phase 41** implementation. Uses cognitive reasoning (Analyst/Reflector) to detect "Semantic Drift" and "Adversarial Reframing."
+
+All decisions are logged to the `authorization_ledger` in SQLite for 100% auditability. Implemented as a FastAPI server with `RemoteSingularityPDP` client and fail-closed fallback logic.
 
 ## 3. Durable Transaction Management
 

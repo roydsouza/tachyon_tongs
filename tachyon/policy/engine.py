@@ -22,7 +22,7 @@ class PolicyEngine(ABC):
     """
     
     @abstractmethod
-    def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
+    async def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
         """
         Evaluate an action against the engine's policy set.
         """

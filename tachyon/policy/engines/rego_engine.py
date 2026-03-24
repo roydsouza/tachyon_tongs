@@ -18,7 +18,7 @@ class RegoPolicyEngine(PolicyEngine):
         self.integrity_manager = IntegrityManager()
         self.cache_size = cache_size
 
-    def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
+    async def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
         """
         Verifies policy integrity and then evaluates the action against the Rego rule set.
         Uses internal hashing for LRU caching support.
@@ -40,7 +40,7 @@ class RegoPolicyEngine(PolicyEngine):
                 return verdict
             
             # Pass 2: Secondary content (outbound_dlp) check
-            return self.evaluate(agent_id, "outbound_dlp", params)
+            return await self.evaluate(agent_id, "outbound_dlp", params)
 
         # 2. Use cached evaluation for standard tool calls
         # We JSON-serialize params to make them hashable for lru_cache

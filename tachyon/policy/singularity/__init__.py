@@ -4,6 +4,7 @@ from typing import Dict, Any, List, Type
 from tachyon.policy.engine import PolicyEngine, PolicyVerdict, Verdict
 from tachyon.policy.engines.rego_engine import RegoPolicyEngine
 from tachyon.policy.engines.cedar_engine import CedarPolicyEngine
+from tachyon.policy.checkers.alignment_pdp import AlignmentPDP
 
 class SingularityPDP(PolicyEngine):
     """
@@ -14,7 +15,8 @@ class SingularityPDP(PolicyEngine):
 
     _registry: Dict[str, Type[PolicyEngine]] = {
         "REGO": RegoPolicyEngine,
-        "CEDAR": CedarPolicyEngine
+        "CEDAR": CedarPolicyEngine,
+        "ALIGNMENT": AlignmentPDP
     }
 
     def __init__(self, config_path: str = "configs/singularity_config.json"):
@@ -50,7 +52,7 @@ class SingularityPDP(PolicyEngine):
                 except Exception as e:
                     print(f"ERROR: Failed to initialize engine {engine_name}: {e}")
 
-    def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
+    async def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
         """
         Runs the action through all active engines and applies consensus logic.
         """
@@ -60,7 +62,7 @@ class SingularityPDP(PolicyEngine):
         verdicts = []
         for engine in self.engines:
             try:
-                verdict = engine.evaluate(agent_id, action, params)
+                verdict = await engine.evaluate(agent_id, action, params)
                 verdicts.append(verdict)
                 
                 # ANY_DENY Short-circuit (includes ERROR for maximum security)
@@ -76,20 +78,20 @@ class SingularityPDP(PolicyEngine):
         # Final check for ANY_DENY: if we are here, no DENY/ERROR occurred.
         return PolicyVerdict(Verdict.ALLOW, "Consensus reached (All active engines permitted)", "SINGULARITY_CORE")
 
-    def is_action_allowed(self, agent_id: str, action: str, params: Dict[str, Any]) -> bool:
+    async def is_action_allowed(self, agent_id: str, action: str, params: Dict[str, Any]) -> bool:
         """
         Wrapper to check if an action is deterministicially allowed.
         """
-        verdict = self.evaluate(agent_id, action, params)
+        verdict = await self.evaluate(agent_id, action, params)
         return verdict.verdict == Verdict.ALLOW
 
-    def evaluate_intent(self, intent: str, action: str, params: Dict[str, Any]) -> bool:
+    async def evaluate_intent(self, intent: str, action: str, params: Dict[str, Any]) -> bool:
         """
         Shim for legacy intent-based evaluation.
         """
         params_with_intent = params.copy()
         params_with_intent["intent"] = intent
-        verdict = self.evaluate("legacy_intent_agent", action, params_with_intent)
+        verdict = await self.evaluate("legacy_intent_agent", action, params_with_intent)
         return verdict.verdict == Verdict.ALLOW
 
     @property

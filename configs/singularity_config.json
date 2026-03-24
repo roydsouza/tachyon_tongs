@@ -1,6 +1,6 @@
 {
     "consensus": "ANY_DENY",
-    "active_engines": ["REGO", "CEDAR"],
+    "active_engines": ["REGO", "CEDAR", "ALIGNMENT"],
     "engine_configs": {
         "REGO": {
             "policy_dir": "policies/rego",
@@ -9,6 +9,9 @@
         "CEDAR": {
             "policy_dir": "policies/cedar",
             "enforce_signatures": true
+        },
+        "ALIGNMENT": {
+            "threshold": 0.5
         }
     }
 }

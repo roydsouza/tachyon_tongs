@@ -6,12 +6,12 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ## 🔳 Active & Priority (Sprint 2026-03)
 
-### 🚨 Phase 41: Adaptive Intelligence - Semantic-Drift Bypass (ADR-0041)
+### ✅ Phase 41: Adaptive Intelligence - Semantic-Drift Bypass [COMPLETED]
 > **Source**: Grok & Gemini Audit — "P0 High-Severity Bypass"
-- [ ] **[P0] [SECURITY] Alignment PDP**: Replace probabilistic cosine-similarity gating with a standalone **Alignment PDP** plugin.
-- [ ] **[P0] [SECURITY] Adversarial Refinement**: Implement "Multi-Turn Adversarial Refinement" before high-stakes tool execution.
-- [ ] **[P1] [INFRA] Metal-Accelerated Embeddings**: Shift binary intent-gating to NPU-backed embedding models for performance.
-- [ ] **[VERIFY]** Pathogen "Telemetry Heartbeat" masquerade attack is successfully blocked by the new PDP.
+- [x] **[P0] [SECURITY] Alignment PDP**: Replace probabilistic cosine-similarity gating with a standalone **Alignment PDP** plugin.
+- [x] **[P0] [SECURITY] Adversarial Refinement**: Implement "Multi-Turn Adversarial Refinement" before high-stakes tool execution.
+- [x] **[P1] [INFRA] Metal-Accelerated Embeddings**: Shift binary intent-gating to NPU-backed embedding models for performance.
+- [x] **[VERIFY]** Pathogen "Telemetry Heartbeat" masquerade attack is successfully blocked by the new PDP.
 
 ### 🛡️ Phase 42: Forensic Persistence - Unified Ledger & Mutant-Lock
 > **Source**: Grok & Gemini Audit — "TOCTOU and Logic Fragility"

@@ -11,7 +11,7 @@ class CedarPolicyEngine(PolicyEngine):
         self.policy_dir = policy_dir
         self.enforce_signatures = enforce_signatures
 
-    def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
+    async def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
         """
         Placeholder evaluation logic.
         """

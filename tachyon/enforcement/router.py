@@ -2,7 +2,7 @@ import asyncio
 from typing import Dict, Any, Optional, FrozenSet
 from dataclasses import dataclass, field
 from tachyon.enforcement.rate_limiter import AdaptiveRateLimiter
-from tachyon.enforcement.alignment_checker import AlignmentChecker
+from tachyon.policy.engine import Verdict
 
 from types import MappingProxyType
 
@@ -56,7 +56,6 @@ class ToolRouter:
         self.cot_monitor = cot_monitor
         self.syscall_monitor = syscall_monitor
         self.rate_limiter = rate_limiter or AdaptiveRateLimiter()
-        self.alignment_checker = alignment_checker or AlignmentChecker(threshold=0.2)
         
         from tachyon.core.telemetry import TelemetryBus
         self.telemetry = TelemetryBus()
@@ -100,25 +99,17 @@ class ToolRouter:
                     "error": f"RATE_LIMIT_EXCEEDED: {reason}"
                 }
 
-        # 2. Semantic Alignment Check (Phase 16)
-        if "intent" in request.params:
-            alignment = self.alignment_checker.check_alignment(request.params["intent"], request.params)
-            if not alignment["is_aligned"]:
-                self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "BLOCKED", {"reason": f"ALIGNMENT: {alignment['reason']}"})
-                return {
-                    "status": "BLOCKED",
-                    "error": f"Alignment Violation: {alignment['reason']}"
-                }
-
-        # 3. Statistical Behavioral Check
+        # 2. Statistical Behavioral Check
+        self.syscall_monitor.log_and_evaluate(request.agent_id, request.action)
         self.syscall_monitor.log_and_evaluate(request.agent_id, request.action)
         
         # 4. Policy Enforcement Check (Pass the immutable request)
-        if not self.policy_engine.is_action_allowed(request.agent_id, request.action, request.params):
-            self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "BLOCKED", {"reason": "PDP_DENY"})
+        verdict = await self.policy_engine.evaluate(request.agent_id, request.action, request.params)
+        if verdict.verdict != Verdict.ALLOW:
+            self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "BLOCKED", {"reason": f"PDP_DENY: {verdict.reason}"})
             return {
                 "status": "BLOCKED",
-                "error": f"Policy violation: Action '{request.action}' denied for agent '{request.agent_id}'."
+                "error": f"Policy violation: {verdict.reason}"
             }
             
         # 5. Final Execution using the Registry and FROZEN parameters
