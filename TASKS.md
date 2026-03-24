@@ -55,8 +55,10 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ### ✅ Phase 42: Forensic Persistence - Unified Ledger & Mutant-Lock (2026-03)
 - [x] **Unified Forensic Ledger**: Consolidated Markdown logs into a PQC-signed SQLite table.
-- [x] **Mutant-Lock Service**: Hardened lock management with auto-expiry.
-- [x] **Herald Bridge**: SQL-native visibility for actionable status reports.
+- [x] **Mutant-Lock Service**: Hardened lock management with auto-expiry and token-based protection.
+- [x] **Herald Bridge**: SQL-native visibility for actionable status reports and alerts.
+- [x] **Forensic Verification**: Validated PQC integrity and SQL query logic in `scripts/verification/`.
+- [x] **Unified State**: Integrated `TelemetryBus` and `StateManager` with the new ledger.
 
 ### ✅ Phase 41: Adaptive Intelligence - Semantic-Drift Bypass (2026-03)
 - [x] **Alignment PDP**: Replaced probabilistic gating with a reasoning-driven Singularity engine.
