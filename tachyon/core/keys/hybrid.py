@@ -106,8 +106,15 @@ class HybridSigner:
                 has_hmac = True
 
         # Threat Mitigation: Strip Detection
-        # If we have a PQC SK, we MUST have a PQC signature
-        if self._pqc_private_key_bytes and not has_pqc:
+        # If we have a PQC SK and liboqs is available, we MUST have a PQC signature
+        oqs_available = False
+        try:
+            import oqs
+            oqs_available = True
+        except ImportError:
+            pass
+
+        if oqs_available and self._pqc_private_key_bytes and not has_pqc:
             if has_ed or has_hmac:
                 raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected).")
                 
