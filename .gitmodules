@@ -4,3 +4,6 @@
 [submodule "deep_sky_observer"]
 	path = agents/deep_sky_observer
 	url = https://github.com/roydsouza/deep_sky_observer.git
+[submodule "experiments/darwin_godel_machine"]
+	path = experiments/darwin_godel_machine
+	url = https://github.com/roydsouza/Darwin-Godel-Machine.git
