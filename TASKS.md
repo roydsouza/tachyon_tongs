@@ -6,12 +6,6 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ## 🔳 Active & Priority (Sprint 2026-03)
 
-### ✅ Phase 41: Adaptive Intelligence - Semantic-Drift Bypass [COMPLETED]
-> **Source**: Grok & Gemini Audit — "P0 High-Severity Bypass"
-- [x] **[P0] [SECURITY] Alignment PDP**: Replace probabilistic cosine-similarity gating with a standalone **Alignment PDP** plugin.
-- [x] **[P0] [SECURITY] Adversarial Refinement**: Implement "Multi-Turn Adversarial Refinement" before high-stakes tool execution.
-- [x] **[P1] [INFRA] Metal-Accelerated Embeddings**: Shift binary intent-gating to NPU-backed embedding models for performance.
-- [x] **[VERIFY]** Pathogen "Telemetry Heartbeat" masquerade attack is successfully blocked by the new PDP.
 
 ### 🛡️ Phase 42: Forensic Persistence - Unified Ledger & Mutant-Lock
 > **Source**: Grok & Gemini Audit — "TOCTOU and Logic Fragility"
@@ -64,6 +58,11 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ## ✅ Historical Roadmap (Completed Phases)
 *Historical records are candidates for migration to [ROADMAP.md](docs/ROADMAP.md).*
+
+### ✅ Phase 41: Adaptive Intelligence - Semantic-Drift Bypass (2026-03)
+- [x] **Alignment PDP**: Replaced probabilistic gating with a reasoning-driven Singularity engine.
+- [x] **Adversarial Refinement**: Implemented multi-turn intent verification (Analyst/Reflector).
+- [x] **Fail-Closed Intent**: Mandatory intent-gating for high-risk tools.
 
 ### ✅ Phase 40: Metamorphic Adversarial Reasoning (2026-03)
 - [x] **AdversarialReflector**: Implemented "Think-Criticize-Attack" loop in Pathogen.
