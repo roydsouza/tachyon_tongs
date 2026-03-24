@@ -113,3 +113,19 @@ class TaskCollector(BaseCollector):
                         "source": "TASKS.md"
                     })
         return events
+class ForensicCollector(BaseCollector):
+    def collect(self) -> List[Dict[str, Any]]:
+        from tachyon.core.forensics import ForensicStore
+        store = ForensicStore()
+        # Fetch latest 20 high-signal forensic events
+        rows = store.query_latest(limit=20)
+        events = []
+        for row in rows:
+            events.append({
+                "id": f"forensic:{row['id']}",
+                "type": row['event_type'],
+                "timestamp": row['timestamp'],
+                "summary": f"{row['action']} -> {row['status']}\n{row['details']}",
+                "source": f"ForensicLedger:{row['agent_id']}"
+            })
+        return events

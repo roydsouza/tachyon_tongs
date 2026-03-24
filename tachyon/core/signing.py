@@ -138,6 +138,13 @@ class IntegrityManager:
             }
         )
         return final_digest
+    def sign_text(self, text: str) -> str:
+        """Sign a raw string and return the signature."""
+        return self.signer.sign(text.encode('utf-8'))
+
+    def verify_text_signature(self, text: str, signature: str) -> bool:
+        """Verify a signature against a raw string."""
+        return self.signer.verify(text.encode('utf-8'), signature)
 
     def verify_integrity(self, filepath: str, enforce: bool = False) -> bool:
         """

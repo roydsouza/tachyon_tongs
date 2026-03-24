@@ -19,7 +19,9 @@ class TelemetryBus:
             root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
             mem_dir = os.path.join(root_dir, "memory", "operational")
             os.makedirs(mem_dir, exist_ok=True)
+            from tachyon.core.forensics import ForensicStore
             cls._instance.log_path = log_path or os.path.join(mem_dir, "telemetry.jsonl")
+            cls._instance.forensic_store = ForensicStore()
         return cls._instance
 
     def emit_event(
@@ -49,9 +51,15 @@ class TelemetryBus:
             "details": details or {}
         }
         
+        # 1. Forensic SQL Ledger (PQC-Signed)
+        try:
+            self.forensic_store.log_event(agent_id, event_type, action, status, details)
+        except Exception as e:
+            import sys
+            print(f"[TelemetryBus] SQL LOG FAILURE: {e}", file=sys.stderr)
+
+        # 2. Legacy JSONL (Atomic Append)
         event_str = json.dumps(event) + "\n"
-        
-        # Atomic append using flock
         try:
             with open(self.log_path, "a") as f:
                 fcntl.flock(f, fcntl.LOCK_EX)

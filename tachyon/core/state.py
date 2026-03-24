@@ -36,8 +36,10 @@ class StateManager:
                 cls._instance._init_db(db_path or default_db)
                 from .signing import IntegrityManager
                 from .alert_limiter import AlertRateLimiter
+                from .lock_manager import MutantLockManager
                 cls._instance.integrity = IntegrityManager()
                 cls._instance.alert_limiter = AlertRateLimiter()
+                cls._instance.lock_manager = MutantLockManager()
                 cls._instance.db = cls._instance
                 
                 # ENFORCEMENT: Verify core catalog integrity on boot
@@ -541,39 +543,33 @@ class StateManager:
     # --- Mutant Lock Implementation [ADR-0034] ---
 
     def acquire_mutant_lock(self, agent_id: str, reason: str, ttl_minutes: int = 5) -> str:
-        """Acquire a time-bound, signed mutant lock to suppress Guardian alerts."""
-        import uuid
-        from datetime import timedelta
-        
-        lock_id = str(uuid.uuid4())
-        now = datetime.now()
-        expires_at = (now + timedelta(minutes=ttl_minutes)).isoformat()
-        
-        with self._lock:
-            with sqlite3.connect(self.db_path) as conn:
-                conn.execute('''
-                    INSERT INTO mutant_locks (lock_id, agent_id, reason, acquired_at, expires_at)
-                    VALUES (?, ?, ?, ?, ?)
-                ''', (lock_id, agent_id, reason, now.isoformat(), expires_at))
-                conn.commit()
-        
-        self.log_evolution("MUTANT_LOCK_ACQUIRED", f"Agent {agent_id} acquired lock {lock_id} for: {reason}")
-        return lock_id
+        """Acquire a time-bound, signed mutant lock via LockManager."""
+        token = self.lock_manager.acquire_lock("mutant_lock", agent_id, ttl=ttl_minutes*60)
+        if token:
+            self.log_evolution("MUTANT_LOCK_ACQUIRED", f"Agent {agent_id} acquired lock via token {token[:8]} for: {reason}")
+            # We still log to the DB for historical audit, but the source of truth is the LockManager
+            with self._lock:
+                with sqlite3.connect(self.db_path) as conn:
+                    conn.execute('''
+                        INSERT INTO mutant_locks (lock_id, agent_id, reason, acquired_at, expires_at)
+                        VALUES (?, ?, ?, ?, ?)
+                    ''', (token, agent_id, reason, datetime.now().isoformat(), (datetime.now().isoformat())))
+                    conn.commit()
+            return token
+        return ""
 
     def release_mutant_lock(self, lock_id: str):
-        """Explicitly release a mutant lock."""
-        with self._lock:
-            with sqlite3.connect(self.db_path) as conn:
-                conn.execute("DELETE FROM mutant_locks WHERE lock_id = ?", (lock_id,))
-                conn.commit()
-        self.log_evolution("MUTANT_LOCK_RELEASED", f"Lock {lock_id} released.")
+        """Explicitly release a mutant lock via LockManager."""
+        if self.lock_manager.release_lock("mutant_lock", lock_id):
+            with self._lock:
+                with sqlite3.connect(self.db_path) as conn:
+                    conn.execute("DELETE FROM mutant_locks WHERE lock_id = ?", (lock_id,))
+                    conn.commit()
+            self.log_evolution("MUTANT_LOCK_RELEASED", f"Lock {lock_id[:8]} released.")
 
     def is_mutant_lock_active(self) -> bool:
-        """Check if there is an active, non-expired mutant lock in the substrate."""
-        now = datetime.now().isoformat()
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.execute("SELECT 1 FROM mutant_locks WHERE expires_at > ?", (now,))
-            return cursor.fetchone() is not None
+        """Check if there is an active, non-expired mutant lock in the LockManager."""
+        return self.lock_manager.is_locked("mutant_lock")
 
     # --- Herald Aggregator Support [ADR-0035] ---
 

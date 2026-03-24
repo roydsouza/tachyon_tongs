@@ -8,7 +8,7 @@ import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import importlib
-herald_mod = importlib.import_module("agents.code-only.herald.agent")
+herald_mod = importlib.import_module("agents.herald.agent")
 HeraldPlugin = herald_mod.HeraldPlugin
 
 def print_banner():

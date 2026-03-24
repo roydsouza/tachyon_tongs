@@ -13,7 +13,9 @@ class HeraldPlugin(BaseAgentPlugin):
     def __init__(self, agent_id: str, config: Dict[str, Any]):
         super().__init__(agent_id, "Herald", config)
         self.healer = Healer()
+        from .collectors.engine import FileLogCollector, AirlockCollector, TaskCollector, ForensicCollector
         self.collectors = [
+            ForensicCollector(), # High-Assurance SQL Ledger
             FileLogCollector("ALERT.md", r"## \[(.*?)\] (.*?)\n"),
             FileLogCollector("logs/EVOLUTION.md", r"## \[(.*?)\] (.*?)\n"),
             AirlockCollector(),
