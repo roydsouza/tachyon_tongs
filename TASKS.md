@@ -7,12 +7,6 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 ## 🔳 Active & Priority (Sprint 2026-03)
 
 
-### 🛡️ Phase 42: Forensic Persistence - Unified Ledger & Mutant-Lock
-> **Source**: Grok & Gemini Audit — "TOCTOU and Logic Fragility"
-- [ ] **[P1] [SECURITY] Unified Mutant-Lock Service**: Move lock logic to a dedicated service with Secure Enclave-backed tokens and 60s auto-expiry.
-- [ ] **[P1] [FORENSICS] SQLite Forensic Table**: Consolidate `ALERT.md`, `RUN_LOG.md`, and `EVOLUTION.md` into a single, append-only PQC-signed SQLite ledger.
-- [ ] **[P2] [CORE] Policy Synthesis Pipeline**: Merge Engineer + Synthesizer using a LangGraph-style DAG for autonomous patching.
-- [ ] **[VERIFY]** Verify lock auto-expiry via `tt device status` and ledger integrity via `tt bus explore`.
 
 ### 🔑 Phase 43: PQC Mandate & Model Integrity
 > **Source**: Grok & Gemini Audit — "Quantum-Safe Assurance"
@@ -58,6 +52,11 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 ## ✅ Historical Roadmap (Completed Phases)
 *Historical records are candidates for migration to [ROADMAP.md](docs/ROADMAP.md).*
+
+### ✅ Phase 42: Forensic Persistence - Unified Ledger & Mutant-Lock (2026-03)
+- [x] **Unified Forensic Ledger**: Consolidated Markdown logs into a PQC-signed SQLite table.
+- [x] **Mutant-Lock Service**: Hardened lock management with auto-expiry.
+- [x] **Herald Bridge**: SQL-native visibility for actionable status reports.
 
 ### ✅ Phase 41: Adaptive Intelligence - Semantic-Drift Bypass (2026-03)
 - [x] **Alignment PDP**: Replaced probabilistic gating with a reasoning-driven Singularity engine.
