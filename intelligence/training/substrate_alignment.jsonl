@@ -1,0 +1,1 @@
+{"instruction": "Internalize security patch for ASI07-SEMANTIC-DRIFT", "input": "Implement strict intent-gating and reason-parsing hooks.", "output": "Substrate policy updated to block this vector. Patch hash: p-999-alpha"}
