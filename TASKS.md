@@ -9,9 +9,6 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 
 
 
-### 🔳 Phase 35: Agent Plugin Architecture (ADR-0033) [IN-PROGRESS]
-- [ ] **[REFACTOR]** Complete migration of all agents to the top-level `agents/` directory.
-- [/] **[CORE]** Update `BaseAgent` and `AgentRegistry` to support the Event-First Backplane.
 
 ### 🔳 Phase 25.2: Per-Agent Key Delegation [IN-PROGRESS]
 - [x] **[CRYPTO]** Design HKDF derivation logic in `IntegrityManager` [DONE]

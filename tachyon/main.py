@@ -8,8 +8,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # Roles are now dynamically discovered via AgentRegistry
 
 def main():
+    # Auto-discover plugins from the flat agents/ directory
+    from agents._core.registry import AgentRegistry
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    agents_dir = os.path.join(root_dir, "agents")
+    AgentRegistry.discover_plugins(agents_dir)
+    available_roles = AgentRegistry.list_plugins() + ["keys"]
+
     parser = argparse.ArgumentParser(description="Tachyon Tongs Unified Substrate Controller")
-    parser.add_argument("--role", required=True, choices=["sentinel", "engineer", "guardian", "sentry", "healer", "keys"], help="Agent role to assume")
+    parser.add_argument("--role", required=True, choices=available_roles, help="Agent role to assume")
     parser.add_argument("--action", required=True, help="Action to execute")
     parser.add_argument("--params", type=str, help="JSON parameters for the action")
     parser.add_argument("--agent-id", default="tachyon-master", help="Identity of the agent")
@@ -44,16 +51,10 @@ def main():
         return
 
     # Role Factory
-    from agents._core.registry import AgentRegistry
     from agents._core.roles import BaseTachyonRole
     
-    # Auto-discover plugins from the flat agents/ directory
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    agents_dir = os.path.join(root_dir, "agents")
-    AgentRegistry.discover_plugins(agents_dir)
-    
     available_roles = AgentRegistry.list_plugins()
-    if args.role not in available_roles:
+    if args.role not in available_roles and args.role != "keys":
         print(f"Error: Unknown role '{args.role}'. Available: {', '.join(available_roles)}")
         sys.exit(1)
 
