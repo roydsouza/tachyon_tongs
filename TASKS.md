@@ -7,6 +7,12 @@ This document tracks the active execution backlog for the Tachyon Tongs security
 ## 🔳 Active & Priority (Sprint 2026-03)
 
 
+### 🔳 Phase 44: Autonomous Threat Model Propagation [NEW]
+> **Source**: Phase 43 Forensics — "Closed-Loop Risk Assessment"
+- [ ] **[P1] [REPORTER] ThreatModelUpdater**: Implement agentic plugin to propagate `CATALOG.md` discoveries into `THREAT_MODEL.md`.
+- [ ] **[P1] [SECURITY] ASI Mapping Logic**: Automate OWASP-ASI categorization for all Pathogen-borne alerts in the forensic ledger.
+- [ ] **[P2] [AUDIT] Forensic Linkage**: Ensure every threat model update includes a cryptographically-bound link to the specific `forensics.db` entry that triggered it.
+- [ ] **[VERIFY]** Automated verification of `CATALOG.md` ↔ `THREAT_MODEL.md` consistency.
 
 
 ### 🔳 Phase 35: Agent Plugin Architecture (ADR-0033) [IN-PROGRESS]
