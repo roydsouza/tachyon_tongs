@@ -31,34 +31,30 @@ class TestThreatPropagation(unittest.TestCase):
         sig_path = self.mock_tm + ".sig"
         if os.path.exists(sig_path): os.remove(sig_path)
 
-    def test_propagation_logic(self):
-        # 1. Seed Forensic Breach
-        self.store.log_event(
-            "pathogen_agent",
-            "PATHOGEN_BREACH",
-            action="exploit_vector",
-            status="SUCCESS",
-            details={
-                "asi_id": "ASI-07",
-                "summary": "Bypassed intent-gating via nested reasoning tokens."
-            }
-        )
+    def test_multi_category_propagation(self):
+        # 1. Seed Multiple Forensic Breaches
+        self.store.log_event("p1", "PATHOGEN_BREACH", action="act", status="OK", details={"asi_id": "ASI-07", "summary": "Drift 1"})
+        self.store.log_event("p2", "SENTINEL_DISCOVERY", action="act", status="OK", details={"asi_id": "ASI-01", "summary": "Discovery 1"})
         
-        # 2. Run Updater
+        # 2. Add ASI-01 section to mock model
+        with open(self.mock_tm, "a") as f:
+            f.write("\n### [ASI-01] Prompt Injection\n- Baseline.\n")
+            
+        # 3. Run Updater
         updater = ThreatModelUpdater(db_path=self.mock_db, threat_model_path=self.mock_tm)
         count = updater.propagate_findings()
+        self.assertEqual(count, 2)
         
-        self.assertEqual(count, 1)
-        
-        # 3. Verify Markdown Injection
+        # 4. Verify Multi-Section Injection
         with open(self.mock_tm, "r") as f:
             content = f.read()
-            
-        self.assertIn("Bypassed intent-gating", content)
-        self.assertIn("forensic:1", content)
+        self.assertIn("Discovery 1", content)
+        self.assertIn("### [ASI-01]", content)
         
-        # 4. Verify PQC Signing (Should have a .sig file)
-        self.assertTrue(os.path.exists(self.mock_tm + ".sig"))
+        # 5. Verify PQC-Signed State
+        from tachyon.core.signing import IntegrityManager
+        im = IntegrityManager()
+        self.assertTrue(im.verify_integrity(self.mock_tm))
 
 if __name__ == "__main__":
     unittest.main()

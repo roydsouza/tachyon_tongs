@@ -742,3 +742,20 @@ To rapidly address identity spoofing or misalignment, the system utilizes active
 - Every instantiation of `BaseTachyonAgent` binds an `async heartbeat()` event loop.
 - The heartbeat manually reads the agent's JSON Certificate and mathematically validates the Root signature against it.
 - Finally, it asserts the certificate's fingerprint against a live SQLite/JSON **Certificate Revocation List (CRL)** (`memory/operational/revocation_list.json`). If the heartbeat detects revocation, the node halts execution and self-isolates.
+## 15. Intelligence & Learning Loop (Phases 43 & 44)
+
+The substrate incorporates a closed-loop intelligence system that bridges adversarial discoveries with architectural hardening and model alignment.
+
+### 15.1 Model Integrity Warden (Phase 43)
+- **Weight Protection**: The `ModelIntegrityWarden` (`tachyon/core/warden.py`) maintains a PQC-signed manifest of SHA-256 hashes for all local `mlx_lm` weights and LoRA adapters.
+- **Drift Detection**: On every boot, the Warden verifies the weights against the manifest. Any unauthorized mutation or poisoning attempt triggers a critical `MODEL_POISONED` alert and halts the substrate.
+
+### 15.2 LoRA Fine-Tuning Loop (Phase 43.1)
+- **Policy Internalization**: The `lora_finetune_loop.py` script extracts **Airlock-approved** security patches from the forensic ledger.
+- **Dataset Synthesis**: Approved patches are formatted into JSONL instruction-tuning sets to align the local model's reasoning with operator-approved security policies.
+- **Anchoring**: New weight volumes are automatically re-signed by the Warden upon completion of the training cycle.
+
+### 15.3 Autonomous Threat Model Propagation (Phase 44)
+- **Data-Driven Risk**: The `ThreatModelUpdater` (`tachyon/core/threat_updater.py`) monitors the `ForensicStore` for high-signal discoveries.
+- **Automated Injection**: Findings from Pathogen breaches are autonomously injected into the corresponding `ASI01-ASI11` sections of `THREAT_MODEL.md`.
+- **Forensic Linkage**: Each update includes a PQC-signed URI (`forensic:<id>`) providing an immutable link back to the source forensic record, ensuring the threat model remains a living, verifiable document.
