@@ -1,5 +1,32 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-24: Phase 44 Autonomous Threat Model Propagation
+- **Objective:** Bridge forensic findings to the formal threat model with PQC-signed provenance.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **ThreatModelUpdater:** Implemented autonomous injection of `forensics.db` events into `THREAT_MODEL.md`.
+  - **Forensic Linkage:** Every threat update now contains a PQC-signed URI back to the specific ledger record.
+  - **Sync Mandate:** Codified roadmap protection rules in `.agent/rules/` to prevent accidental roadmap deletion.
+- **Verification:** Verified via `test_propagation.py` multi-category mapping suite.
+
+### 2026-03-24: Phase 43 PQC Mandate & Model Integrity
+- **Objective:** Enforce fail-closed quantum resistance and protect model weights.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **PQC_STRICT Mode:** Implemented fail-closed logic to detect and block classical signature strip-attacks.
+  - **Model Integrity Warden:** Designed a signature manifest system to anchor model weight integrity to the Root PQC identity.
+  - **LoRA Support:** Integrated MLX-based fine-tuning loop with Airlock-staged approval logic.
+- **Verification:** 100% pass on `test_pqc_mandate.py` (Strip Attack detection) and `test_model_integrity.py`.
+
+### 2026-03-24: Phase 42 Forensic Persistence - Unified Ledger
+- **Objective:** Consolidate disparate markdown logs into a high-assurance SQL forensic ledger.
+- **Status:** [OPERATIONAL]
+- **Key Accomplishments:**
+  - **Unified Ledger:** Migrated forensic tracking to a PQC-signed SQLite table with WAL support.
+  - **Mutant-Lock Service:** Hardened the signal-purification lock with automated expiry and tokenization.
+  - **Herald Bridge:** Enabled real-time visibility for the Herald into the forensic SQL data.
+- **Verification:** Verified via substrate-wide forensic re-signing and manual SQL query audits.
+
 ### 2026-03-23: Phase 40 Metamorphic Adversarial Reasoning (Deep Mutation)
 - **Objective:** Evolve Pathogen from template-driven attacks to polymorphic, reasoning-driven red-teaming.
 - **Status:** [OPERATIONAL]

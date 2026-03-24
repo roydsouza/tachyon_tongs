@@ -184,7 +184,7 @@ class IntegrityManager:
                     alert_type = "INTEGRITY_VIOLATION"
                 
                 err = f"INTEGRITY FAILURE: Cryptographic error during verification of {filepath}: {e}"
-                from tachyon.core.state import StateManager
+                from tachyon.core.state_manager import StateManager
                 StateManager().emit_alert(alert_type, err)
                 raise RuntimeError(err)
             return False
