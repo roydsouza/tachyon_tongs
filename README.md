@@ -1,10 +1,28 @@
-# 🌌 Tachyon Tongs: Multi-Agent Security Substrate
+# Securing the Agentic Inversion: An Evolutionary, Post-Quantum Agentic Firewall for Cognitive Threats
 
-Tachyon Tongs is a high-performance, Apple Silicon-native security substrate. It protects autonomous agents by enforcing strict isolation, semantic intent gating, and active threat intelligence aggregation.
+The internet is undergoing the **Agentic Inversion**: autonomous AI agents are projected 
+to outnumber human users by orders of magnitude, acting as proxies for scheduling, 
+DeFi execution, contract negotiation, and sensitive data operations. 
+This shift expands the attack surface into a behavioral and cognitive domain that 
+traditional static firewalls cannot address. 
+Agents are vulnerable to prompt injection, context manipulation, and high-velocity 
+polymorphic attacks capable of leaking private keys or draining accounts—threats 
+that evolve faster than signature-based or rule-driven defenses.
+
+
+**Tachyon Tongs** (see [White Paper](docs/WHITEPAPER.md)) is a local, adaptive agentic firewall that treats security as an evolutionary process. 
+It combines an air-gapped LLM (llama.cpp) for real-time reasoning, hybrid post-quantum signatures (Ed25519 + ML-DSA-65) 
+for cryptographic identity on every internal message, and an internal Pathogen-vs-Sentinel adversarial loop 
+for proactive vulnerability discovery and patching. Flexible governance modes—HITL (Human In The Loop), 
+HOTL (Human On The Loop), and HOOTL (Human Out Of The Loop) — these ensure 
+human oversight remains the ultimate authority via the Herald notification interface.
+
+Designed for zero-trust agentic environments, Tachyon Tongs provides the adaptive immune system 
+required to secure digital proxies before widespread compromise occurs.
 
 ---
 
-## 🛡️ Live Threat Model
+## 🛡️ A Live Threat Model
 Every architectural decision is mapped directly to a specific vector in the [THREAT_MODEL.md](docs/THREAT_MODEL.md).
 
 *   🧠 **Semantic Intent Gating**: All tool requests are routed through a Policy Enforcement Point and evaluated by the **Singularity Meta-PDP**.
@@ -77,7 +95,7 @@ The Tachyon Tongs filesystem is designed for high-assurance modularity:
 ---
 
 ## ⚡ Quick Start: The Herald Setup
-re: The Immune Collective
+
 Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture modeled after the autonomic immune system.
 
 *   🏰 **Defense in Depth**: High-value administrative components (like the **Firewall Administrator**) are air-gapped from the network.
