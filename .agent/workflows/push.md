@@ -13,6 +13,6 @@ Follow these steps to safely synchronize the mission state:
 ```bash
 PAGER=cat MANPAGER=cat git add .
 PAGER=cat MANPAGER=cat git commit -m "Checkpoint: [Brief Summary of Work]"
-PAGER=cat MANPAGER=cat git push origin main
+PAGER=cat MANPAGER=cat git push origin main --recurse-submodules=on-demand
 ```
 4. **Verify Sync**: Ensure the remote repository reflects the local state.

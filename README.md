@@ -157,3 +157,12 @@ The **Event-Horizon Command Bridge** provides a NeoVIM-first interface for subst
 *   📻 **[SYNC_LOG.md](SYNC_LOG.md)**: Inverse-chronological record of all agentic breakthroughs.
 *   📋 **[TASKS.md](TASKS.md)**: Active engineering sprint backlog.
 *   📜 **[ADRs](docs/adr/)**: Complete history of signed Architectural Decision Records.
+
+---
+
+## 🧪 Experiments: Autonomous Auto-Research
+
+Tachyon Tongs serves as a laboratory for evaluating promising avenues in published AI security research (e.g., *Automated Design of Agentic Systems*, *The HyperAgent Principle*). We conduct autonomous ("auto research") experiments to find the next generation of substrate-level defenses.
+
+*   🔭 **[Experiments Master Index](experiments/README.md)**: The central registry of all active and archived autonomous research strains.
+    *   🧬 **[Darwin-Gödel Machine (DGM)](experiments/darwin_godel_machine/README.md)**: A self-referential evolutionary loop that uses a local MLX-native LLM to rewrite its own detection logic in response to synthesized adversarial pressure.
