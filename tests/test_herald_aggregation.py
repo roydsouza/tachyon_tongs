@@ -3,7 +3,7 @@ import os
 import importlib
 from tachyon.core.state import StateManager
 
-herald_mod = importlib.import_module("agents.code-only.herald.agent")
+herald_mod = importlib.import_module("agents.herald.agent")
 HeraldPlugin = herald_mod.HeraldPlugin
 
 @pytest.fixture

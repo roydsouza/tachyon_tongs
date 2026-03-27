@@ -1,6 +1,6 @@
 import unittest
 import os
-from tachyon.execution_logger import ExecutionLogger
+from tachyon.monitoring.execution_logger import ExecutionLogger
 
 class TestLoggingIntegration(unittest.TestCase):
 

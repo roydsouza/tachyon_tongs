@@ -1,6 +1,6 @@
 import unittest
-from tachyon.safe_fetch import SafeFetch, SecurityViolationError
-from tachyon.tri_stage_pipeline import FetcherNode, SanitizerNode, AnalyzerNode, run_pipeline, UNTRUSTED_CONTENT_START
+from tachyon.enforcement.safe_fetch import SafeFetch, SecurityViolationError
+from tachyon.pipeline.tri_stage_pipeline import FetcherNode, SanitizerNode, AnalyzerNode, run_pipeline, UNTRUSTED_CONTENT_START
 
 class TestTriStagePipeline(unittest.TestCase):
 

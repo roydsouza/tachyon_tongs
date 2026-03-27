@@ -16,6 +16,7 @@ class NVDClient:
     def __init__(self, agent_id: str, bus: Any):
         self.agent_id = agent_id
         self.bus = bus
+        self.certificate = None # Set by owning agent
         self.keywords = [
             "LLM", "Prompt Injection", "Large Language Model", 
             "AI Agent", "Model Bypass", "RAG security", "Vector Injection"
@@ -49,7 +50,7 @@ class NVDClient:
                         topic="SENTINEL_COMM_FAILURE",
                         agent_id=self.agent_id,
                         payload={"type": "NVD_UNREACHABLE", "error": str(e), "attempts": i+1},
-                        certificate=getattr(self.bus, 'certificate', None) # Fallback if client doesn't have it
+                        certificate=self.certificate
                     )
                     raise e
                 time.sleep(delay)
@@ -89,6 +90,7 @@ class SentinelPlugin(BaseAgentPlugin):
         super().__init__(agent_id, "Sentinel", config)
         self.state_manager = StateManager()
         self.nvd = NVDClient(agent_id, self.bus)
+        self.nvd.certificate = self.certificate
 
     def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
         if action == "hunt":

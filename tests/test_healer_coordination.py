@@ -15,7 +15,8 @@ def import_agent_class(module_path, class_name):
     spec.loader.exec_module(module)
     return getattr(module, class_name)
 
-HealerPlugin = import_agent_class("agents/code-only/healer/agent.py", "HealerPlugin")
+healer_path = os.path.join(os.getcwd(), "agents", "healer", "agent.py")
+HealerPlugin = import_agent_class(healer_path, "HealerPlugin")
 from tachyon.core.bus import TachyonEventBus
 
 def test_healer_somatic_coordination():

@@ -1,0 +1,8 @@
+agent_id: auditor-001
+name: Auditor
+description: Supply-chain and quarantine forensic scanner.
+type: internal
+entry_point: agents.auditor.agent:AuditorPlugin
+capabilities:
+  - audit_supply_chain
+  - audit_quarantine

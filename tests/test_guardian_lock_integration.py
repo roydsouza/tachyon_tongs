@@ -1,7 +1,7 @@
 import pytest
 import os
 import importlib
-guardian_mod = importlib.import_module("agents.code-only.guardian.agent")
+guardian_mod = importlib.import_module("agents.guardian.agent")
 GuardianPlugin = guardian_mod.GuardianPlugin
 from tachyon.core.state import StateManager
 

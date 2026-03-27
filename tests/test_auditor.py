@@ -12,8 +12,7 @@ def auditor():
     state = StateManager(db_path="tests/tmp/test_auditor.db")
     return AuditorPlugin(agent_id="test-auditor", plugin_name="Auditor", config={})
 
-@pytest.mark.asyncio
-async def test_audit_supply_chain_integrity(auditor):
+def test_audit_supply_chain_integrity(auditor):
     # 1. Add a valid attestation
     package_name = "test-pkg"
     provenance = {"auth": "root"}
@@ -23,12 +22,11 @@ async def test_audit_supply_chain_integrity(auditor):
     auditor.oracle.attest_package(package_name, provenance, signature)
     
     # 2. Run audit
-    res = await auditor.audit_supply_chain()
+    res = auditor.audit_supply_chain()
     assert res["status"] == "SUCCESS"
     assert any(r["package"] == package_name and r["status"] == "VERIFIED" for r in res["results"])
 
-@pytest.mark.asyncio
-async def test_audit_quarantine_violations(auditor):
+def test_audit_quarantine_violations(auditor):
     # 1. Setup quarantine dir
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     quarantine_dir = os.path.join(root_dir, "quarantine")
@@ -48,7 +46,7 @@ async def test_audit_quarantine_violations(auditor):
     auditor.state.integrity.sign_document(good_file)
     
     # 4. Run audit
-    res = await auditor.audit_quarantine()
+    res = auditor.audit_quarantine()
     assert res["status"] == "SUCCESS"
     violations = [v["file"] for v in res["violations"]]
     assert "malicious.py" in violations

@@ -5,6 +5,7 @@ from typing import Dict, Any, List
 from agents._core.base import BaseAgentPlugin
 from tachyon.core.supply_chain import SupplyChainOracle
 from tachyon.core.state import StateManager
+from tachyon.core.signing import IntegrityManager
 
 class AuditorPlugin(BaseAgentPlugin):
     """
@@ -18,16 +19,16 @@ class AuditorPlugin(BaseAgentPlugin):
 
     def execute_action(self, action: str, parameters: Dict[str, Any] = None) -> Dict[str, Any]:
         if action == "audit_supply_chain":
-            return asyncio.run(self.audit_supply_chain())
+            return self.audit_supply_chain()
         elif action == "audit_quarantine":
-            return asyncio.run(self.audit_quarantine())
+            return self.audit_quarantine()
         else:
             return {"status": "ERROR", "message": f"Action '{action}' not recognized by Auditor."}
 
     def get_capabilities(self) -> List[str]:
         return ["audit_supply_chain", "audit_quarantine"]
 
-    async def audit_supply_chain(self) -> Dict[str, Any]:
+    def audit_supply_chain(self) -> Dict[str, Any]:
         """Scans the database for all attestations and verifies their integrity."""
         self.bus.emit_event("AUDIT_STARTED", self.agent_id, {"scope": "supply_chain"}, certificate=self.certificate)
         
@@ -49,7 +50,7 @@ class AuditorPlugin(BaseAgentPlugin):
         self.bus.emit_event("AUDIT_COMPLETED", self.agent_id, {"total": len(results)}, certificate=self.certificate)
         return {"status": "SUCCESS", "results": results}
 
-    async def audit_quarantine(self) -> Dict[str, Any]:
+    def audit_quarantine(self) -> Dict[str, Any]:
         """Scans the 'quarantine/' directory for un-attested or tampered artifacts."""
         self.bus.emit_event("AUDIT_STARTED", self.agent_id, {"scope": "quarantine"}, certificate=self.certificate)
         
@@ -71,7 +72,7 @@ class AuditorPlugin(BaseAgentPlugin):
                 
                 # Verify signature
                 try:
-                    self.state.integrity.verify_integrity(fpath)
+                    IntegrityManager().verify_integrity(fpath)
                 except Exception as e:
                     violations.append({"file": f, "reason": "INTEGRITY_FAILURE", "detail": str(e)})
 

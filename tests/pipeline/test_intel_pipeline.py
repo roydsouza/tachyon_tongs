@@ -3,8 +3,9 @@ import asyncio
 import os
 import json
 import shutil
-from scripts.intel_ingest import IntelIngestor, IntelSource
-from tachyon.execution_logger import ExecutionLogger
+from tachyon.enforcement.safe_fetch import SafeFetch, SecurityViolationError
+from tachyon.pipeline.tri_stage_pipeline import FetcherNode, SanitizerNode, AnalyzerNode, run_pipeline, UNTRUSTED_CONTENT_START
+from tachyon.monitoring.execution_logger import ExecutionLogger
 
 class TestIntelPipeline(unittest.TestCase):
     def setUp(self):

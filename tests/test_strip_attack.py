@@ -8,15 +8,15 @@ import importlib.util
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(root_dir)
 
-# Import Guardian via importlib since 'code-only' has a hyphen
-guardian_path = os.path.join(root_dir, "agents", "code-only", "guardian", "agent.py")
+# Import Guardian via importlib
+guardian_path = os.path.join(root_dir, "agents", "guardian", "agent.py")
 spec = importlib.util.spec_from_file_location("guardian_agent", guardian_path)
 guardian_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(guardian_module)
 GuardianPlugin = guardian_module.GuardianPlugin
 
 from tachyon.core.signing import IntegrityManager
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 
 def test_strip_attack():
     print("--- [Security] Starting Strip Attack Canary Test ---")

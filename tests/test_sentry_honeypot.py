@@ -8,6 +8,8 @@ import sys
 # Ensure project root is in path for relative imports
 sys.path.insert(0, os.getcwd())
 
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 # Dynamic import for hyphenated module path
 def import_agent_class(module_path, class_name):
     spec = importlib.util.spec_from_file_location(class_name, module_path)
@@ -15,8 +17,19 @@ def import_agent_class(module_path, class_name):
     spec.loader.exec_module(module)
     return getattr(module, class_name)
 
-SentryPlugin = import_agent_class("agents/code-only/sentry/agent.py", "SentryPlugin")
+# Import Guardian via importlib since 'code-only' is gone
+guardian_path = os.path.join(root_dir, "agents", "guardian", "agent.py")
+GuardianPlugin = import_agent_class(guardian_path, "GuardianPlugin")
+
+sentry_path = os.path.join(root_dir, "agents", "sentry", "agent.py")
+SentryPlugin = import_agent_class(sentry_path, "SentryPlugin")
+
+healer_path = os.path.join(os.getcwd(), "agents", "healer", "agent.py")
+HealerPlugin = import_agent_class(healer_path, "HealerPlugin")
+
 from tachyon.core.bus import TachyonEventBus
+from tachyon.core.signing import IntegrityManager
+from tachyon.core.state import StateManager
 
 def test_sentry_honeypot_trigger():
     """Verify that accessing the bait file triggers a security alert."""

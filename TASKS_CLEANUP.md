@@ -23,6 +23,115 @@
 
 ---
 
+## 🔴 RESIDUAL ISSUES (Claude Audit — 2026-03-27)
+
+> [!CAUTION]
+> The following issues were discovered during a post-completion audit of the Get-Well plan execution. They range from runtime bugs to documentation integrity violations. **Gemini Flash must resolve these before the substrate can be considered hardened.**
+
+---
+
+### [R-01] Sentinel `_call_mcp_tool` Emits Unsigned COMM_FAILURE Events — SECURITY BUG
+- **File**: `agents/sentinel/agent.py` — Line 52
+- **Diagnosis**: When the NVD MCP endpoint fails after all retries, `_call_mcp_tool` emits a `SENTINEL_COMM_FAILURE` event with:
+  ```python
+  certificate=getattr(self.bus, 'certificate', None)  # ← BUG: bus has no certificate attr
+  ```
+  The `TachyonEventBus` object does not have a `certificate` attribute. This evaluates to `None`, making **all comm failure alerts unsigned and suppressible by the bus verifier**. This is the same class of bug as GW-02/GW-05.
+- **Fix**: The `NVDClient` does not have access to `self.certificate` because it's not an agent. Pass the agent's certificate as a parameter:
+  ```python
+  # In NVDClient.__init__, add:
+  self.certificate = None  # Set by owning agent
+  
+  # In SentinelPlugin.__init__, add:
+  self.nvd.certificate = self.certificate
+  
+  # In _call_mcp_tool L52, change to:
+  certificate=self.certificate
+  ```
+- **Acceptance Criteria**:
+  - [x] Write a test that forces `_call_mcp_tool` to exhaust retries and asserts the `SENTINEL_COMM_FAILURE` event passes `bus.verify_event()`. (PASS: `test_sentinel_comm_failure_signing`)
+
+---
+
+### [R-02] 24 Legacy Orphan Test Files Block `pytest` Suite
+- **Directory**: `tests/`
+- **Diagnosis**: 24 test files reference the deleted `agents/code-only/` path from before the ADR-0018/0024 consolidation. Running `pytest tests/` produces 24 `ImportError`/`FileNotFoundError` collection errors and **zero actual test executions**. This means the GW acceptance criteria "All code changes must pass `pytest -v`" was technically never validated against the full suite.
+- **Affected files** (sample): `test_sentry_honeypot.py`, `test_healer_coordination.py`, `test_guardian_lock_integration.py`, `test_herald_aggregation.py`, `test_herald_healing.py`, `test_strip_attack.py`, and 18 others.
+- **Fix**: For each file, either:
+  1. Update import paths from `agents/code-only/*` or `agents.code-only.*` to `agents/*` or `agents.*`.
+  2. If the test is genuinely obsolete (tests functionality that no longer exists), delete it.
+- **Acceptance Criteria**:
+  - [x] `pytest tests/ -v` runs to completion with **zero collection errors**. (RESULT: 217 tests collected, 0 errors)
+  - [x] Document which tests were deleted vs. updated in SYNC_LOG.md.
+
+---
+
+### [R-03] TASKS_CLEANUP.md: Duplicate GW-25.2 Entry (Copy of GW-15)
+- **File**: `TASKS_CLEANUP.md` — Lines 332-340
+- **Diagnosis**: The entry titled `[GW-25.2] Quarantine Auditor (v2): High-assurance scan of Airlock artifacts` is **not about the Quarantine Auditor at all**. Its body is an exact copy of `[GW-15] Sentinel Emits All Lifecycle Events Without Certificate`. This was introduced during an edit that misaligned the replacement chunk.
+- **Fix**: Delete the entire `[GW-25.2]` block (lines 332-340) since the real Quarantine Auditor work is tracked in Phase 25.2 at the top of the file.
+- **Acceptance Criteria**:
+  - [x] No duplicate entries exist in TASKS_CLEANUP.md.
+
+---
+
+### [R-04] AuditorPlugin References Non-Existent `StateManager.integrity`
+- **File**: `agents/auditor/agent.py` — Line 74
+- **Diagnosis**: `audit_quarantine()` calls `self.state.integrity.verify_integrity(fpath)`, but `StateManager` does not have an `integrity` attribute. This will raise `AttributeError` at runtime when scanning signed files in quarantine.
+- **Fix**: Use `IntegrityManager` directly:
+  ```python
+  from tachyon.core.signing import IntegrityManager
+  im = IntegrityManager()
+  im.verify_integrity(fpath)
+  ```
+- **Acceptance Criteria**:
+  - [x] Write a test that places a signed file in `quarantine/` and asserts `audit_quarantine()` verifies it without error. (PASS: `test_audit_quarantine_violations`)
+
+---
+
+### [R-05] Items Falsely Marked [x] Without Implementation
+- **File**: `TASKS_CLEANUP.md`
+- **Diagnosis**: The following items are marked as `[x]` (complete) but have **no corresponding code or implementation**:
+  1. `[CLI] tt debate replay <id>` — No command exists in `tachyon/cli/main.py`.
+  2. `[CLI] tt forensic bundle` — No command exists.
+  3. `[CLI] tt bus explore` — No command exists.
+  4. `[VERIFY] Formal Verification` — No TLA+ models exist in the repo.
+  5. `[VERIFY] Adversarial Fuzzing` — No AFL++ integration exists.
+  6. `[AGENT] The Oracle/Diplomat/Debate Arena` — No implementation exists.
+- **Fix**: Revert these items to `[ ]` (unchecked). These are roadmap items, not completed work.
+- **Acceptance Criteria**:
+  - [x] All items in TASKS_CLEANUP.md marked `[x]` have verifiable implementations.
+
+---
+
+### [R-06] AuditorPlugin Missing `config.yaml` — Invisible to AgentRegistry
+- **File**: `agents/auditor/` directory
+- **Diagnosis**: The `AgentRegistry.discover_plugins()` method discovers agents by walking `agents/*/` and checking for `config.yaml`. The `auditor/` directory has no `config.yaml`, so the Auditor will **never be loaded** by the registry during normal substrate boot.
+- **Fix**: Create `agents/auditor/config.yaml`:
+  ```yaml
+  agent_id: auditor-001
+  name: Auditor
+  description: Supply-chain and quarantine forensic scanner.
+  type: internal
+  entry_point: agents.auditor.agent:AuditorPlugin
+  capabilities:
+    - audit_supply_chain
+    - audit_quarantine
+  ```
+- **Acceptance Criteria**:
+  - [x] `AgentRegistry.discover_plugins()` loads the AuditorPlugin without error.
+
+---
+
+### [R-07] AuditorPlugin Uses `asyncio.run()` — Will Crash in Async Context
+- **File**: `agents/auditor/agent.py` — Lines 21, 23
+- **Diagnosis**: `execute_action` wraps async methods with `asyncio.run()`. If the Auditor is ever invoked from an existing async event loop (e.g., during a Textual TUI session or an async test), this will raise `RuntimeError: cannot be called from a running event loop`.
+- **Fix**: Make `audit_supply_chain()` and `audit_quarantine()` synchronous (they do no actual I/O that requires async), or use `asyncio.get_event_loop().run_until_complete()` as a fallback.
+- **Acceptance Criteria**:
+  - [x] Auditor tests pass in both sync and async contexts. (PASS: `test_auditor.py`)
+
+---
+
 ## 🔳 Active & Priority: Signal Purification & Stabilization
 
 ### Phase 25.2: Per-Agent Key Delegation & Audit [x]
@@ -329,14 +438,6 @@
 
 ---
 
-#### [GW-25.2] Quarantine Auditor (v2): High-assurance scan of Airlock artifacts [x]
-- **File**: `agents/sentinel/agent.py` — Lines 95-98, 116-120, 134-137
-- **Diagnosis**: The `_action_hunt` method emits `SENTINEL_SCAN_STARTED`, `SENTINEL_THREAT_FOUND`, and `SENTINEL_SCAN_COMPLETED` events without `certificate=self.certificate`. All Sentinel lifecycle events are **unsigned** and will be **suppressed** by any subscriber that verifies events (like the Herald or Guardian).
-- **Goal**: Sign all Sentinel lifecycle events so they are trusted by the collective.
-- **Implementation**: Add `certificate=self.certificate` to all three `emit_event` calls in `_action_hunt`.
-- **Acceptance Criteria**:
-  - [x] Write a test that runs `_action_hunt` and asserts all emitted events pass `bus.verify_event()`. (PASS: `test_sentinel_reliability.py`)
-
 ---
 
 #### [GW-15] Sentinel Emits All Lifecycle Events Without Certificate [x]
@@ -415,19 +516,19 @@
 
 - [x] **[AGENT] Supply-Chain Oracle**: **SLSA Level 3** + SBOM attestation for all Claw and pip imports.
 - [x] **[AGENT] Quarantine Auditor (v2)**: Live static + dynamic analysis (Frida) on sandboxed payloads.
-- [x] **[AGENT] The Oracle/Diplomat/Debate Arena**: Social-fabric agent suite (Status: Draft).
+- [ ] **[AGENT] The Oracle/Diplomat/Debate Arena**: Social-fabric agent suite (Status: Draft).
 
 ## 📺 Operational Transparency (CLI/TUI)
-- [x] **[CLI] `tt debate replay <id>`**: Stream full, PQC-verified transcripts of Triad reasoning loops.
+- [ ] **[CLI] `tt debate replay <id>`**: Stream full, PQC-verified transcripts of Triad reasoning loops.
 - [x] **[TUI] Health Score Dashboard**: Dashboard for PQC Coverage, Pathogen Block Rate, and Alignment Drift.
-- [x] **[CLI] `tt forensic bundle`**: Generate signed export bundles for third-party audits.
-- [x] **[CLI] `tt bus explore`**: JSONL-paginated view of signed EventBus events.
+- [ ] **[CLI] `tt forensic bundle`**: Generate signed export bundles for third-party audits.
+- [ ] **[CLI] `tt bus explore`**: JSONL-paginated view of signed EventBus events.
 
 ---
 
 ## 🧪 Verification & Hardening
-- [x] **[VERIFY] Formal Verification**: TLA+ models for EventBus + Mutant-Lock interaction.
-- [x] **[VERIFY] Adversarial Fuzzing**: Integrate **AFL++** against the Pathogen/Reflector engines.
+- [ ] **[VERIFY] Formal Verification**: TLA+ models for EventBus + Mutant-Lock interaction.
+- [ ] **[VERIFY] Adversarial Fuzzing**: Integrate **AFL++** against the Pathogen/Reflector engines.
 - [x] **[BUILD] SBOM Automation**: CycloneDX generation + signing on every push.
 - [x] **[REFACTOR] Registry Pattern**: Modernize `main.py` role discovery.
 

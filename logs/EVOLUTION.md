@@ -3,123 +3,492 @@
 This file tracks the structural and cognitive growth of the Tachyon Tongs substrate.
 
 
-## [MUTANT_LOCK_RELEASED] 2026-03-26 20:09:55
-Lock 1d463259 released.
+## [SOMATIC_REPAIR] 2026-03-26 21:49:27
+Herald resolved failure: Successfully recreated missing path: logs/TEST_CANARY.md
 
 ---
 
 
-## [MUTANT_LOCK_ACQUIRED] 2026-03-26 20:09:55
-Agent guardian-test acquired lock via token 1d463259 for: Testing Sweep Suppression
+## [Agent Failure] 2026-03-26 21:49:27
+Agent failed: [Errno 2] No such file or directory: 'logs/TEST_CANARY.md'
 
 ---
 
 
-## [MUTANT_LOCK_RELEASED] 2026-03-26 20:09:55
-Lock e72d5ca5 released.
+## [MUTANT_LOCK_ACQUIRED] 2026-03-26 21:49:27
+Agent test-agent acquired lock via token 7dc5627a for: Security patch
 
 ---
 
 
-## [MUTANT_LOCK_ACQUIRED] 2026-03-26 20:09:55
-Agent guardian-test acquired lock via token e72d5ca5 for: Testing Mutant Lock Suppression
+## [PATH_TEST] 2026-03-26 21:49:27
+Secondary write after CWD change
 
 ---
 
 
-## [MUTANT_LOCK_RELEASED] 2026-03-26 20:09:23
-Lock 67ba06c7 released.
+## [PATH_TEST] 2026-03-26 21:49:27
+Initial write before CWD change
 
 ---
 
 
-## [MUTANT_LOCK_ACQUIRED] 2026-03-26 20:09:23
-Agent guardian-test acquired lock via token 67ba06c7 for: Testing Sweep Suppression
+## [STRESS_TEST_9] 2026-03-26 21:49:13
+Operation 19 by concurrent worker 9
 
 ---
 
 
-## [MUTANT_LOCK_RELEASED] 2026-03-26 20:09:23
-Lock 5e1c36e9 released.
+## [STRESS_TEST_3] 2026-03-26 21:49:13
+Operation 19 by concurrent worker 3
 
 ---
 
 
-## [MUTANT_LOCK_ACQUIRED] 2026-03-26 20:09:23
-Agent guardian-test acquired lock via token 5e1c36e9 for: Testing Mutant Lock Suppression
+## [STRESS_TEST_9] 2026-03-26 21:49:13
+Operation 18 by concurrent worker 9
 
 ---
 
 
-## [MUTANT_LOCK_RELEASED] 2026-03-26 20:08:53
-Lock 994803bf released.
+## [STRESS_TEST_9] 2026-03-26 21:49:13
+Operation 17 by concurrent worker 9
 
 ---
 
 
-## [MUTANT_LOCK_ACQUIRED] 2026-03-26 20:08:53
-Agent guardian-test acquired lock via token 994803bf for: Testing Sweep Suppression
+## [STRESS_TEST_4] 2026-03-26 21:49:13
+Operation 19 by concurrent worker 4
 
 ---
 
 
-## [MUTANT_LOCK_RELEASED] 2026-03-26 20:08:53
-Lock ce192750 released.
+## [STRESS_TEST_3] 2026-03-26 21:49:13
+Operation 18 by concurrent worker 3
 
 ---
 
 
-## [MUTANT_LOCK_ACQUIRED] 2026-03-26 20:08:53
-Agent guardian-test acquired lock via token ce192750 for: Testing Mutant Lock Suppression
+## [STRESS_TEST_9] 2026-03-26 21:49:13
+Operation 16 by concurrent worker 9
 
 ---
 
 
-## [MUTANT_LOCK_RELEASED] 2026-03-26 17:57:47
-Lock aad46e07 released.
+## [STRESS_TEST_3] 2026-03-26 21:49:13
+Operation 17 by concurrent worker 3
 
 ---
 
 
-## [MUTANT_LOCK_ACQUIRED] 2026-03-26 17:57:47
-Agent engineer-test acquired lock via token aad46e07 for: Applying patch for CVE-TEST-002
+## [STRESS_TEST_4] 2026-03-26 21:49:13
+Operation 18 by concurrent worker 4
 
 ---
 
 
-## [MUTANT_LOCK_RELEASED] 2026-03-26 17:57:46
-Lock dea2c008 released.
+## [STRESS_TEST_9] 2026-03-26 21:49:13
+Operation 15 by concurrent worker 9
 
 ---
 
 
-## [MUTANT_LOCK_ACQUIRED] 2026-03-26 17:57:46
-Agent engineer-test acquired lock via token dea2c008 for: Applying patch for CVE-TEST-001
+## [STRESS_TEST_8] 2026-03-26 21:49:13
+Operation 19 by concurrent worker 8
 
 ---
 
 
-## [MUTANT_LOCK_RELEASED] 2026-03-26 17:57:27
-Lock 6843243d released.
+## [STRESS_TEST_2] 2026-03-26 21:49:13
+Operation 19 by concurrent worker 2
 
 ---
 
 
-## [MUTANT_LOCK_ACQUIRED] 2026-03-26 17:57:27
-Agent engineer-test acquired lock via token 6843243d for: Applying patch for CVE-TEST-002
+## [STRESS_TEST_3] 2026-03-26 21:49:13
+Operation 16 by concurrent worker 3
 
 ---
 
 
-## [MUTANT_LOCK_RELEASED] 2026-03-26 17:57:27
-Lock 94bb8bbc released.
+## [STRESS_TEST_4] 2026-03-26 21:49:13
+Operation 17 by concurrent worker 4
 
 ---
 
 
-## [MUTANT_LOCK_ACQUIRED] 2026-03-26 17:57:27
-Agent engineer-test acquired lock via token 94bb8bbc for: Applying patch for CVE-TEST-001
+## [STRESS_TEST_1] 2026-03-26 21:49:13
+Operation 19 by concurrent worker 1
 
 ---
+
+
+## [STRESS_TEST_6] 2026-03-26 21:49:13
+Operation 19 by concurrent worker 6
+
+---
+
+
+## [STRESS_TEST_2] 2026-03-26 21:49:13
+Operation 18 by concurrent worker 2
+
+---
+
+
+## [STRESS_TEST_8] 2026-03-26 21:49:13
+Operation 18 by concurrent worker 8
+
+---
+
+
+## [STRESS_TEST_9] 2026-03-26 21:49:13
+Operation 14 by concurrent worker 9
+
+---
+
+
+## [STRESS_TEST_6] 2026-03-26 21:49:13
+Operation 18 by concurrent worker 6
+
+---
+
+
+## [STRESS_TEST_5] 2026-03-26 21:49:13
+Operation 19 by concurrent worker 5
+
+---
+
+
+## [STRESS_TEST_2] 2026-03-26 21:49:13
+Operation 17 by concurrent worker 2
+
+---
+
+
+## [STRESS_TEST_3] 2026-03-26 21:49:13
+Operation 15 by concurrent worker 3
+
+---
+
+
+## [STRESS_TEST_4] 2026-03-26 21:49:13
+Operation 16 by concurrent worker 4
+
+---
+
+
+## [STRESS_TEST_1] 2026-03-26 21:49:13
+Operation 18 by concurrent worker 1
+
+---
+
+
+## [STRESS_TEST_8] 2026-03-26 21:49:13
+Operation 17 by concurrent worker 8
+
+---
+
+
+## [STRESS_TEST_9] 2026-03-26 21:49:13
+Operation 13 by concurrent worker 9
+
+---
+
+## [STRESS_TEST_2] 2026-03-26 21:49:13
+Operation 16 by concurrent worker 2
+
+---
+
+
+
+## [STRESS_TEST_6] 2026-03-26 21:49:13
+Operation 17 by concurrent worker 6
+
+---
+
+
+## [STRESS_TEST_7] 2026-03-26 21:49:13
+Operation 19 by concurrent worker 7
+
+---
+
+
+## [STRESS_TEST_3] 2026-03-26 21:49:13
+Operation 14 by concurrent worker 3
+
+---
+
+
+## [STRESS_TEST_2] 2026-03-26 21:49:13
+Operation 15 by concurrent worker 2
+
+---
+
+
+## [STRESS_TEST_6] 2026-03-26 21:49:13
+Operation 16 by concurrent worker 6
+
+---
+
+
+## [STRESS_TEST_4] 2026-03-26 21:49:13
+Operation 14 by concurrent worker 4
+
+---
+
+## [STRESS_TEST_1] 2026-03-26 21:49:13
+Operation 17 by concurrent worker 1
+
+---
+
+
+
+## [STRESS_TEST_0] 2026-03-26 21:49:13
+Operation 18 by concurrent worker 0
+
+---
+
+
+## [STRESS_TEST_3] 2026-03-26 21:49:13
+Operation 13 by concurrent worker 3
+
+---
+
+
+## [STRESS_TEST_5] 2026-03-26 21:49:13
+Operation 17 by concurrent worker 5
+
+---
+
+
+## [STRESS_TEST_6] 2026-03-26 21:49:13
+Operation 15 by concurrent worker 6
+
+---
+
+
+## [STRESS_TEST_0] 2026-03-26 21:49:13
+Operation 17 by concurrent worker 0
+
+---
+
+
+## [STRESS_TEST_4] 2026-03-26 21:49:13
+Operation 13 by concurrent worker 4
+
+---
+
+
+## [STRESS_TEST_2] 2026-03-26 21:49:13
+Operation 13 by concurrent worker 2
+
+---
+
+
+## [STRESS_TEST_8] 2026-03-26 21:49:13
+Operation 15 by concurrent worker 8
+
+---
+
+
+## [STRESS_TEST_9] 2026-03-26 21:49:13
+Operation 11 by concurrent worker 9
+
+---
+
+
+## [STRESS_TEST_1] 2026-03-26 21:49:13
+Operation 16 by concurrent worker 1
+
+---
+
+
+## [STRESS_TEST_3] 2026-03-26 21:49:13
+Operation 12 by concurrent worker 3
+
+---
+
+
+## [STRESS_TEST_7] 2026-03-26 21:49:13
+Operation 16 by concurrent worker 7
+
+---
+
+
+## [STRESS_TEST_2] 2026-03-26 21:49:13
+Operation 12 by concurrent worker 2
+
+---
+
+
+## [STRESS_TEST_5] 2026-03-26 21:49:13
+Operation 15 by concurrent worker 5
+
+---
+
+
+## [STRESS_TEST_6] 2026-03-26 21:49:13
+Operation 14 by concurrent worker 6
+
+---
+
+
+## [STRESS_TEST_8] 2026-03-26 21:49:13
+Operation 14 by concurrent worker 8
+
+---
+
+
+## [STRESS_TEST_0] 2026-03-26 21:49:13
+Operation 16 by concurrent worker 0
+
+---
+
+
+## [STRESS_TEST_7] 2026-03-26 21:49:13
+Operation 15 by concurrent worker 7
+
+---
+
+
+## [STRESS_TEST_4] 2026-03-26 21:49:13
+Operation 12 by concurrent worker 4
+
+---
+
+
+## [STRESS_TEST_2] 2026-03-26 21:49:13
+Operation 11 by concurrent worker 2
+
+---
+
+
+## [STRESS_TEST_8] 2026-03-26 21:49:13
+Operation 13 by concurrent worker 8
+
+---
+
+
+## [STRESS_TEST_5] 2026-03-26 21:49:13
+Operation 14 by concurrent worker 5
+
+---
+
+
+## [STRESS_TEST_7] 2026-03-26 21:49:12
+Operation 14 by concurrent worker 7
+
+---
+
+
+## [STRESS_TEST_1] 2026-03-26 21:49:12
+Operation 14 by concurrent worker 1
+
+---
+
+
+## [STRESS_TEST_7] 2026-03-26 21:49:12
+Operation 13 by concurrent worker 7
+
+---
+
+
+## [STRESS_TEST_6] 2026-03-26 21:49:12
+Operation 13 by concurrent worker 6
+
+---
+
+## [STRESS_TEST_0] 2026-03-26 21:49:12
+Operation 15 by concurrent worker 0
+
+---
+
+
+
+## [STRESS_TEST_3] 2026-03-26 21:49:12
+Operation 10 by concurrent worker 3
+
+---
+
+
+## [STRESS_TEST_9] 2026-03-26 21:49:12
+Operation 9 by concurrent worker 9
+
+---
+
+
+## [STRESS_TEST_7] 2026-03-26 21:49:12
+Operation 12 by concurrent worker 7
+
+---
+
+
+## [STRESS_TEST_0] 2026-03-26 21:49:12
+Operation 14 by concurrent worker 0
+
+---
+
+
+## [STRESS_TEST_1] 2026-03-26 21:49:12
+Operation 13 by concurrent worker 1
+
+---
+
+
+## [STRESS_TEST_2] 2026-03-26 21:49:12
+Operation 10 by concurrent worker 2
+
+---
+
+
+## [STRESS_TEST_5] 2026-03-26 21:49:12
+Operation 13 by concurrent worker 5
+
+---
+
+
+## [STRESS_TEST_0] 2026-03-26 21:49:12
+Operation 13 by concurrent worker 0
+
+---
+
+
+## [STRESS_TEST_1] 2026-03-26 21:49:12
+Operation 12 by concurrent worker 1
+
+---
+
+
+## [STRESS_TEST_7] 2026-03-26 21:49:12
+Operation 11 by concurrent worker 7
+
+---
+
+
+## [STRESS_TEST_3] 2026-03-26 21:49:12
+Operation 9 by concurrent worker 3
+
+---
+
+
+## [STRESS_TEST_1] 2026-03-26 21:49:12
+Operation 11 by concurrent worker 1
+
+---
+
+
+## [STRESS_TEST_4] 2026-03-26 21:49:12
+Operation 10 by concurrent worker 4
+
+---
+
+
+## [STRESS_TEST_9] 2026-03-26 21:49:12
+Operation 8 by concurrent worker 9
+
+---
+
+## [STRESS_TEST_3] 2026-03-26 21:49:12
+Operation 8 by concurrent worker 3
 
 ---
