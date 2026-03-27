@@ -7,7 +7,7 @@ class TestCanaryAgent(unittest.TestCase):
     def setUp(self):
         self.registry = AgentRegistry()
         self.registry.discover_plugins()
-        self.plugin = self.registry.get_plugin("canary")
+        self.plugin = self.registry.get_plugin("sentry")
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         self.test_log = os.path.join(root_dir, "logs", "CANARY_LOG.md")
         # Reset log for testing

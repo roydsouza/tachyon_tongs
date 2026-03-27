@@ -63,3 +63,20 @@ class LogEntry(BaseModel):
     level: str   # "INFO", "WARNING", "ERROR", "CRITICAL"
     agent: Optional[str] = None
     message: str
+
+class ForensicAlert(BaseModel):
+    id: int
+    agent_id: str
+    topic: str
+    details: str
+    timestamp: datetime
+
+class ToolRequest(BaseModel):
+    agent_id: str
+    tool: str
+    parameters: Dict[str, Any]
+
+class ToolResponse(BaseModel):
+    status: str
+    output: Optional[str] = None
+    error: Optional[str] = None

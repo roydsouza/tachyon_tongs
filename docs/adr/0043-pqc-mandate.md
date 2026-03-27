@@ -16,3 +16,15 @@ As Tachyon Tongs moves toward autonomous agentic operation, the integrity of bot
 - **Security**: Eliminates the "classical fallback" bypass vector.
 - **Reliability**: Prevents execution with compromised model weights.
 - **Operational**: Setting `STRICT` mode in an environment without `liboqs` but with existing PQC keys will result in immediate halts (desired fail-closed behavior).
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0043",
+  "hash": "sha256:c5f6118aa5a85c11aee0ff12834d8ab57c6c5682184692430807dd55339912af",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

@@ -17,7 +17,7 @@ from rich.columns import Columns
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TASKS_FILE = os.path.join(BASE_DIR, "TASKS.md")
+TASKS_FILE = os.path.join(BASE_DIR, "TASKS_CLEANUP.md")
 DRILLS_FILE = os.path.join(BASE_DIR, "docs/zero_day_drills.md")
 LOG_FILE = os.path.join(BASE_DIR, "RUN_LOG.md")
 

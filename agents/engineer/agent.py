@@ -31,6 +31,21 @@ class EngineerPlugin(BaseAgentPlugin):
                     test_content=parameters.get("test_code", ""),
                     cve_id=parameters.get("cve_id", "manual-patch")
                 )
+                
+                if result.get("status") == "SUCCESS":
+                    self.bus.emit_event(
+                        topic="ENGINEER_PATCH_COMPLETED",
+                        agent_id=self.agent_id,
+                        payload={"cve_id": parameters.get("cve_id", "manual-patch"), "details": result.get("details")},
+                        certificate=self.certificate
+                    )
+                else:
+                    self.bus.emit_event(
+                        topic="ENGINEER_TEST_FAILURE",
+                        agent_id=self.agent_id,
+                        payload={"cve_id": parameters.get("cve_id", "manual-patch"), "error": result.get("error")},
+                        certificate=self.certificate
+                    )
                 return result
             finally:
                 # Always release the lock to prevent blocking legitimate Guardian oversight

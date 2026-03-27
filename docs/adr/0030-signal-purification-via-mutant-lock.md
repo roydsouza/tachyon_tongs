@@ -21,3 +21,15 @@ We implement a **Mutant Lock** protocol:
 ---
 *Signed by: Hybrid Root Authority*
 *Merkle Inclusion: Phase 27 Hardening*
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0030",
+  "hash": "sha256:d9fe9db29b9670fa27f081392709be80d555582e6d8e33fc2433ae1434c865dd",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

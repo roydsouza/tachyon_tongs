@@ -28,9 +28,10 @@ class HealerPlugin(BaseAgentPlugin):
         self.subscribe("PATCH_PROPOSED", self._on_patch_proposed)
         self.subscribe("INTEGRITY_VIOLATION", self._on_integrity_violation)
 
-    def _on_patch_proposed(self, topic, sender, payload, timestamp, certificate):
+    def _on_patch_proposed(self, payload: Dict[str, Any]):
         """React to a new patch proposed by the Engineer Agent."""
         cve_id = payload.get("cve_id", "UNKNOWN")
+        sender = payload.get("sender", "UNKNOWN")
         print(f"[{self.agent_id}] HEALER_AWARENESS: Detected patch proposal for {cve_id} (Sender: {sender}).")
         
         # In Phase 31, we simulate somatic coordination
@@ -38,11 +39,12 @@ class HealerPlugin(BaseAgentPlugin):
             topic="TELEMETRY", 
             agent_id=self.agent_id, 
             payload={"cve_id": cve_id, "status": "READY_FOR_OVERSIGHT", "type": "SOMATIC_ACK"},
-            signature="INFO"
+            certificate=self.certificate
         )
 
-    def _on_integrity_violation(self, topic, sender, payload, timestamp, certificate):
+    def _on_integrity_violation(self, payload: Dict[str, Any]):
         """React to a violation detected by the Guardian Agent."""
+        sender = payload.get("sender", "UNKNOWN")
         print(f"[{self.agent_id}] HEALER_TRIAGE: Triage started for violation reported by {sender}.")
         # Logic to trigger auto-reversion or deep-clean would go here
 

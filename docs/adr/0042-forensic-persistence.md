@@ -35,3 +35,15 @@ A new `LockManager` will replace the file-based logic in `StateManager`:
 - **Visibility**: Faster, richer status reporting for the operator via Herald.
 - **Complexity**: Introducing SQLite as a hard dependency (already used by `TachyonEventBus`, so this is a consolidation).
 - **Forensics**: Guaranteed append-only behavior for signed audits.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0042",
+  "hash": "sha256:c4a20760f2338b740ca950cadee5eb420d070699177b6593ef016cb0fa74c1bf",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

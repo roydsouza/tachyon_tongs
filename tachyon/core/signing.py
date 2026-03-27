@@ -149,42 +149,85 @@ class IntegrityManager:
     def verify_integrity(self, filepath: str, enforce: bool = False) -> bool:
         """
         Verifies the file against its .sig sidecar.
-        If enforce=True or TACHYON_STRICT_MODE is set, raises RuntimeError on mission/mismatch. 
-        Otherwise returns True/False.
+        Implements a 3-stage retry loop to resolve PQC/Guardian race conditions.
         """
+        import time
         sig_path = f"{filepath}.sig"
         strict = enforce or os.environ.get("TACHYON_STRICT_MODE") == "1"
         
-        if not os.path.exists(sig_path):
-            if strict:
-                err = f"INTEGRITY FAILURE: No detached signature found for mission-critical file: {filepath}. This change is UNTRUSTED."
-                from tachyon.core.state_manager import StateManager
-                StateManager().emit_alert("INTEGRITY_VIOLATION", err)
-                raise RuntimeError(err)
-            return False
+        # 3-Stage Retry Loop (Total ~150ms buffer)
+        for attempt in range(3):
+            if os.path.exists(sig_path):
+                break
+            if attempt < 2:
+                time.sleep(0.05 * (attempt + 1)) # 50ms, then 100ms
+            else:
+                # Final fail
+                if strict:
+                    err = f"INTEGRITY FAILURE: No detached signature found for mission-critical file: {filepath}. This change is UNTRUSTED."
+                    from tachyon.core.state import StateManager
+                    state = StateManager()
+                    if not state.is_mutant_lock_active():
+                        state.emit_alert("INTEGRITY_VIOLATION", err)
+                        raise RuntimeError(err)
+                    else:
+                        return False # Suppressed due to lock
+                return False
 
-        with open(filepath, 'rb') as f:
-            content = f.read()
-        with open(sig_path, 'r') as sf:
-            detached_sig = sf.read().strip()
+        # Attempt verification with retry for content-flush race
+        for attempt in range(2):
+            try:
+                with open(filepath, 'rb') as f:
+                    content = f.read()
+                with open(sig_path, 'r') as sf:
+                    detached_sig = sf.read().strip()
 
-        try:
-            is_valid = self.signer.verify(content, detached_sig)
-            if not is_valid and strict:
-                err = f"INTEGRITY FAILURE: Signature mismatch for {filepath}. File has been tampered with or ritual was incomplete."
-                from tachyon.core.state_manager import StateManager
-                StateManager().emit_alert("SIGNATURE_MISMATCH", err)
-                raise RuntimeError(err)
-            return is_valid
-        except Exception as e:
-            if strict:
-                error_msg = str(e)
-                alert_type = "CRYPTO_ERROR"
-                if "Strip Attack" in error_msg:
-                    alert_type = "INTEGRITY_VIOLATION"
+                is_valid = self.signer.verify(content, detached_sig)
+                if is_valid:
+                    return True
                 
-                err = f"INTEGRITY FAILURE: Cryptographic error during verification of {filepath}: {e}"
-                from tachyon.core.state_manager import StateManager
-                StateManager().emit_alert(alert_type, err)
-                raise RuntimeError(err)
+                if attempt == 0:
+                    time.sleep(0.05) # Brief pause and retry once
+                    continue
+                    
+                # Final invalid verdit
+                if strict:
+                    err = f"INTEGRITY FAILURE: Signature mismatch for {filepath}. File has been tampered with or ritual was incomplete."
+                    from tachyon.core.state import StateManager
+                    state = StateManager()
+                    if not state.is_mutant_lock_active():
+                        state.emit_alert("SIGNATURE_MISMATCH", err)
+                        raise RuntimeError(err)
+                return False
+
+            except Exception as e:
+                if attempt == 0:
+                    time.sleep(0.05)
+                    continue
+                if strict:
+                    error_msg = str(e)
+                    alert_type = "CRYPTO_ERROR"
+                    if "Strip Attack" in error_msg:
+                        alert_type = "INTEGRITY_VIOLATION"
+                    
+                    err = f"INTEGRITY FAILURE: Cryptographic error during verification of {filepath}: {e}"
+                    from tachyon.core.state import StateManager
+                    state = StateManager()
+                    if not state.is_mutant_lock_active():
+                        state.emit_alert(alert_type, err)
+                        raise RuntimeError(err)
+                return False
+        return False
+
+    def verify_text_signature(self, text: str, signature: str) -> bool:
+        """Verifies a raw text string against an Ed25519/Hybrid signature."""
+        try:
+            content = text.encode()
+            return self.signer.verify(content, signature)
+        except Exception:
             return False
+
+    def sign_text(self, text: str) -> str:
+        """Signs a raw text string and returns the signature string."""
+        content = text.encode()
+        return self.signer.sign(content)

@@ -147,6 +147,17 @@ class StateManager:
                     added_at TEXT
                 )
             ''')
+            
+            # 6b. package_attestations (SLSA Level 3 Provenance)
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS package_attestations (
+                    package_name TEXT PRIMARY KEY,
+                    attestation_type TEXT,
+                    provenance_json TEXT,
+                    signature TEXT,
+                    verified_at TEXT
+                )
+            ''')
 
             # 7. mutant_locks (Signal Purification)
             conn.execute('''
@@ -177,6 +188,17 @@ class StateManager:
                     value TEXT,
                     updated_at TEXT,
                     PRIMARY KEY (agent_id, key)
+                )
+            ''')
+            
+            # 10. forensic_events (Chronicle Backbone)
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS forensic_events (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    agent_id TEXT,
+                    topic TEXT,
+                    details TEXT,
+                    timestamp TEXT
                 )
             ''')
             conn.commit()
@@ -514,8 +536,8 @@ class StateManager:
             f.flush()
             os.fsync(f.fileno())
 
-    def inject_tasks(self, threats: list, tasks_file="TASKS.md"):
-        """Injects autonomous discoveries into the TASKS.md backlog."""
+    def inject_tasks(self, threats: list, tasks_file="TASKS_CLEANUP.md"):
+        """Injects autonomous discoveries into the TASKS_CLEANUP.md backlog."""
         if not threats: return
         
         with open(tasks_file, "r") as f:
@@ -622,4 +644,35 @@ class StateManager:
             row = cursor.fetchone()
             if row:
                 return json.loads(row[0])
-            return default
+    # --- Chronicle Support (ADR-0063) ---
+
+    def log_forensic_event(self, agent_id: str, topic: str, details: str):
+        """Log a high-signal event for temporal analysis by Chronicle."""
+        with self._lock:
+            with sqlite3.connect(self.db_path) as conn:
+                # Use UTC isoformat for temporal consistency
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                conn.execute('''
+                    INSERT INTO forensic_events (agent_id, topic, details, timestamp)
+                    VALUES (?, ?, ?, ?)
+                ''', (agent_id, topic, details, timestamp))
+                conn.commit()
+
+    def get_agent_trajectories(self, agent_id: str, limit: int = 50) -> list:
+        """Retrieve the recent trajectory of an agent for anomaly detection."""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.execute(
+                "SELECT * FROM forensic_events WHERE agent_id = ? ORDER BY id DESC LIMIT ?",
+                (agent_id, limit)
+            )
+            return [dict(row) for row in cursor.fetchall()]
+
+    def get_velocity(self, agent_id: str, window_minutes: int = 5) -> int:
+        """Calculate the event velocity of an agent in the recent window."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.execute('''
+                SELECT COUNT(*) FROM forensic_events 
+                WHERE agent_id = ? AND timestamp > datetime('now', 'localtime', ?)
+            ''', (agent_id, f"-{window_minutes} minutes"))
+            return cursor.fetchone()[0]

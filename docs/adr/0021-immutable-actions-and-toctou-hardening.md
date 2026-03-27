@@ -15,3 +15,15 @@ We will enforce deep immutability for the `params` field.
 - **Security**: Parameters are now guaranteed to be identical between the policy check and the actual tool execution.
 - **Performance**: Negligible overhead for small parameter sets; prevents accidental state corruption.
 - **Developer Experience**: Developers must treat `request.params` as read-only.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0021",
+  "hash": "sha256:6ce9eef08f0956d86a9be5dde08c52597f433527ade943ca0def20480c44696b",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

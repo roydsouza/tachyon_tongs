@@ -109,7 +109,7 @@ Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture
 ## 🤖 The Agent Collective
 *   🔭 **The Sentinel**: Discovers and signs novel AI exploits into the [EXPLOITATION_CATALOG.md](EXPLOITATION_CATALOG.md).
 *   🧪 **The Sentry**: Unified active probing and passive semantic honeypotting for early intrusion detection.
-*   🧬 **The Forge**: Adversarial architect generating synthetic zero-day scenarios and stress-testing substrate logic.
+*   🧬 **The Forge (Synthesizer/Mutator)**: Adversarial architect generating synthetic zero-day scenarios and stress-testing substrate logic via the **Pathogen** engine.
 *   🦠 **The Pathogen**: Red-team mutation engine for autonomously evolving exploit variants to find bypasses.
 *   🛠️ **The Engineer**: Self-synthesizes infrastructure patches and policy mutations.
 *   ⚖️ **The Guardian**: Performs real-time forensic audits of the architectural substrate.
@@ -155,7 +155,9 @@ The **Event-Horizon Command Bridge** provides a NeoVIM-first interface for subst
 *   🗺️ **[ROADMAP.md](docs/ROADMAP.md)**: Phased evolution roadmap.
 *   🔑 **[KEYS.md](docs/KEYS.md)**: Hybrid PQC key taxonomy.
 *   📻 **[SYNC_LOG.md](SYNC_LOG.md)**: Inverse-chronological record of all agentic breakthroughs.
-*   📋 **[TASKS.md](TASKS.md)**: Active engineering sprint backlog.
+*   🚀 **[TASKS_BOOTSTRAP.md](TASKS_BOOTSTRAP.md)**: Completed foundation tasks.
+*   🧹 **[TASKS_CLEANUP.md](TASKS_CLEANUP.md)**: Active engineering sprint backlog.
+*   💡 **[TASKS_ENHANCEMENTS.md](TASKS_ENHANCEMENTS.md)**: Future strategic additions.
 *   📜 **[ADRs](docs/adr/)**: Complete history of signed Architectural Decision Records.
 
 ---
@@ -166,3 +168,12 @@ Tachyon Tongs serves as a laboratory for evaluating promising avenues in publish
 
 *   🔭 **[Experiments Master Index](experiments/README.md)**: The central registry of all active and archived autonomous research strains.
     *   🧬 **[Darwin-Gödel Machine (DGM)](experiments/darwin_godel_machine/README.md)**: A self-referential evolutionary loop that uses a local MLX-native LLM to rewrite its own detection logic in response to synthesized adversarial pressure.
+
+---
+
+## 📈 Roadmap & Task Tracking
+
+Tachyon Tongs follows a phased evolution model to ensure substrate stability and forensic integrity. We track our progress across three distinct horizons:
+- **Bootstrap**: The "getting off the ground" phase, covering core framework establishment. (See [TASKS_BOOTSTRAP.md](TASKS_BOOTSTRAP.md))
+- **Cleanup**: The "putting things in order" phase, focusing on refinement and hardening. (See [TASKS_CLEANUP.md](TASKS_CLEANUP.md))
+- **Enhancements**: The "future-proofing" phase, outlining long-term strategic additions. (See [TASKS_ENHANCEMENTS.md](TASKS_ENHANCEMENTS.md))

@@ -10,10 +10,10 @@ sys.path.insert(0, root_dir)
 
 def headless_genesis():
     print("--- 🎭 Tachyon Headless Genesis ---")
-    mem_dir = os.path.join(root_dir, "memory", "operational")
+    mem_dir = os.path.join(root_dir, "memory", "keys")
     os.makedirs(mem_dir, exist_ok=True)
     
-    root_key_path = os.path.join(mem_dir, "root.key")
+    root_key_path = os.path.join(mem_dir, "root_sk.bin")
     if os.path.exists(root_key_path):
         print("[!] Root Key already exists. Skipping.")
         return

@@ -63,6 +63,11 @@ class FileLogCollector(BaseCollector):
                         "summary": summary,
                         "source": os.path.basename(self.filepath)
                     })
+        
+        if not events and os.path.exists(self.filepath) and os.path.getsize(self.filepath) > 100:
+            # High-signal warning: potential regex drift or formatting change
+            print(f"[FileLogCollector] WARNING: {os.path.basename(self.filepath)} is non-empty ({os.path.getsize(self.filepath)} bytes) but regex matched nothing. Pattern potential drift: {self.pattern.pattern}")
+            
         return events
 
     def _parse_failure(self, block: str, raw_summary: str) -> str:
@@ -110,7 +115,7 @@ class TaskCollector(BaseCollector):
                         "id": event_id,
                         "type": "HITL_TASK",
                         "summary": line.strip()[6:],
-                        "source": "TASKS.md"
+                        "source": "TASKS_CLEANUP.md"
                     })
         return events
 class ForensicCollector(BaseCollector):

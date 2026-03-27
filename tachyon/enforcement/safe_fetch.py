@@ -12,7 +12,7 @@ class SecurityViolationError(Exception):
     pass
 
 class SafeFetch:
-    def __init__(self, agent_id: str = "default", rego_mock=True, allowed_domains=None, denylist=None):
+    def __init__(self, agent_id: str = "default", rego_mock=False, allowed_domains=None, denylist=None):
         """
         Initializes the SafeFetch capability firewall.
         Queries the local OPA server to enforce `tool_access.rego`.
@@ -44,7 +44,10 @@ class SafeFetch:
             if not self.rego_mock:
                 from tachyon.core.state import StateManager
                 if not StateManager().is_package_whitelisted(domain):
-                    return False
+                     # Phase 47: Fail-Loud Supply Chain Violation (ADR-0062)
+                     msg = f"Unauthorized fetch attempted to domain '{domain}' by agent '{self.agent_id}'. Blocked by Supply Chain Whitelist."
+                     StateManager().emit_alert("SUPPLY_CHAIN_VIOLATION", msg)
+                     return False
 
             # 1. Reputation Check (Overrides OPA if score is critical)
             if domain in self.reputation_data:

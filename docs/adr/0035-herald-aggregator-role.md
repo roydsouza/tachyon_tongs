@@ -27,3 +27,15 @@ We will designate **The Herald** as the central high-assurance aggregator with a
 - **Positive**: Single point of failure notification.
 - **Positive**: Zero LLM cost/latency for monitoring.
 - **Requirement**: Any changes to log formats or locations must be synchronized with the Herald's parser.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0035",
+  "hash": "sha256:354987ac4dd72e660795771908488cfe659a72ef8fbebae619c85521802c80bd",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

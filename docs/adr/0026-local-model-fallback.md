@@ -38,3 +38,15 @@ We will implement the **Local Reasoning Substrate (LRS)** using `mlx_lm` optimiz
 ---
 *Signed by: Sentinel Agent*
 *Date: 2026-03-20*
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0026",
+  "hash": "sha256:4254b854dc3ea5ade72cb57b9b70f01bb851e8855b5e5e22a01cd47462841bf8",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

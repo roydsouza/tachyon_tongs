@@ -8,7 +8,7 @@ This document serves as the central directory for all specialized agents operati
 - [**Auditor**](../agents/guardian/docs/AGENT_AUDITOR.md): The Compliance Sentinel. Maps telemetry to security frameworks and generates signed attestations.
 - **[Sentry (Deception & Probing)](../agents/sentry/docs/AGENT_SENTRY.md)**: Unified agent for active vulnerability probing and passive semantic honeypotting.
 - **[Engineer (The Automated Remediator)](../agents/engineer/docs/AGENT_ENGINEER.md)**: Autonomous patch synthesis and recursive policy evolution.
-- [**Forge**](../agents/engineer/docs/AGENT_FORGE.md): The Adversarial Architect. Generates synthetic zero-day mutations for proactive stress-testing.
+- [**Forge (Synthesizer)**](../agents/synthesizer/docs/AGENT_SYNTHESIZER.md): The Adversarial Architect & Policy Mutator. Generates synthetic zero-day mutations and OPA/Cedar policies.
 - **[Guardian (The Substrate Sentry)](../agents/guardian/docs/AGENT_GUARDIAN.md)**: Substrate integrity verification via Merkle-trees and syscall monitoring.
 - **[Healer (The Somatic Repair)](../agents/healer/docs/AGENT_HEALER.md)**: Autonomous self-repair agent that coordinates patch application and integrity remediation.
 - **[Herald (The Command Conduit)](../agents/herald/docs/AGENT_HERALD.md)**: The Mouth & Ear. Custom agent that aggregates notifications and manages NeoVIM/CLI state.

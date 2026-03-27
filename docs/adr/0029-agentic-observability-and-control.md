@@ -24,3 +24,15 @@ We will implement an integrated Agentic Observability and Control layer:
 
 ## Implementation Notes
 The Telemetry Bus uses an atomic append strategy to `telemetry.jsonl` to ensure high-frequency multi-agent concurrency without SQLite locking overhead. Delegation certificates leverage the newly hardened Hybrid PQC (Ed25519 + ML-DSA-65) pipeline established in Phase 25.5.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0029",
+  "hash": "sha256:ebd09d3ca55439683de31a0f97e3577948b3cb4540c8311653a36eab470cfb9c",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

@@ -39,3 +39,15 @@ agents/
 **Signatures** (Signed via `scripts/sign_artifact.py`)
 > [!NOTE]
 > Signature pending execution of Phase 1.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0033",
+  "hash": "sha256:33bdfe98e3053490c22b4f20e8aec43e99825c86ab4f50d3e534a34dceb1d5c7",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

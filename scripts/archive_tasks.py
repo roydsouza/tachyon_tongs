@@ -3,8 +3,8 @@ import os
 import re
 
 def archive_tasks():
-    tasks_file = "TASKS.md"
-    accomplishments_file = "ACCOMPLISHMENTS.md"
+    tasks_file = "TASKS_CLEANUP.md"
+    accomplishments_file = "TASKS_BOOTSTRAP.md"
     
     if not os.path.exists(tasks_file):
         print(f"Error: {tasks_file} not found.")

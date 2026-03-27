@@ -28,3 +28,15 @@ Each agent will reside in its own sub-directory within `tachyon/agents/`, follow
 - **Positive**: Simplified `PYTHONPATH` and module imports.
 - **Neutral**: Requires updating all local imports and `git` paths.
 - **Critical**: The "Logical Separation" is maintained by the file naming/types, not by physical directory distance.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0024",
+  "hash": "sha256:aa0f40cd0f9a9a268d89c45c11ade95da96fec8c7aa84d65e3e84fa62e8beb70",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

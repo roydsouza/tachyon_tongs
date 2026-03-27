@@ -1,8 +1,8 @@
-agent_id: canary
-name: Canary
-description: The Sacrificial Scout for processing high-risk payloads.
+agent_id: sentry-001
+name: Sentry
+description: Honeypot warden and deception tripwire.
 type: internal
-entry_point: agents.canary.agent:CanaryPlugin
+entry_point: agents.sentry.agent:SentryPlugin
 capabilities:
   - scout
-  - harvest
+  - check_signals

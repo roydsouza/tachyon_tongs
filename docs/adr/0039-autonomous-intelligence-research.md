@@ -16,3 +16,15 @@ We are implementing **Autonomous Intelligence Research** (Karpathy-style) within
 
 ## Status
 OPERATIONAL (2026-03-23)
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0039",
+  "hash": "sha256:6454b4ab0ac67f1e77daa42e20e657a93dd26a9df8865a0e022ae56afcd8cbe2",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

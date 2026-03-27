@@ -169,6 +169,29 @@ def pin_root_key(pub_hex: str):
     
     print(f"[✓] Root Key pinned and attested in {manifest_path}.")
 
+def anchor_agent_keys():
+    """Derives and anchors all core agent sub-keys (Sentinel, Engineer, Airlock)."""
+    from tachyon.core.signing import IntegrityManager
+    signer = IntegrityManager()
+    
+    if not signer._private_key:
+        print("[✗] Error: Root Key not loaded. Please anchor the root key first.")
+        return
+        
+    core_roles = ["sentinel", "engineer", "airlock"]
+    print(f"[*] Anchoring {len(core_roles)} core agent sub-keys...")
+    
+    for role in core_roles:
+        try:
+            # derive_agent_key already handles DelegationCertificateAuthority and saving to disk
+            _, cert = signer.derive_agent_key(role, save_to_disk=True)
+            fingerprint = cert["payload"]["subject"]["fingerprint"]
+            print(f"  [✓] {role.upper()}: Anchored ({fingerprint})")
+        except Exception as e:
+            print(f"  [✗] {role.upper()}: FAILED ({e})")
+    
+    print("[+] Agent anchoring complete.")
+
 def pqc_genesis_ceremony():
     """Execute the Second-Tier Quantum Genesis Ceremony (ML-DSA-65)."""
     import secrets
@@ -177,7 +200,7 @@ def pqc_genesis_ceremony():
     from tachyon.core.signing import PQC_KEY_LABEL, PQC_KEY_APPLICATION_TAG, PQC_ALGORITHM
     
     # Force LIBOQS to find our manual dylib
-    os.environ["OQS_LIB_DIR"] = "/Users/rds/antigravity/tachyon_tongs"
+    os.environ["OQS_LIB_DIR"] = os.path.join(root_dir, "lib")
     
     print("="*60)
     print("TACHYON TONGS: PQC GENESIS CEREMONY (ML-DSA-65)")
@@ -353,9 +376,9 @@ def security_status():
     print("="*60)
     
     # 1. Root Key (The Sovereign)
-    if signer.root_public_key:
+    if signer._public_key:
         print(f"ROOT KEY (Sovereign):")
-        print(f"  [✓] Fingerprint: {signer.root_public_key}")
+        print(f"  [✓] Fingerprint: {signer._public_key.public_bytes_raw().hex()}")
         if signer._private_key:
             print(f"  [✓] Hardware Link: ACTIVE (macOS Keychain)")
             print(f"  [✓] Binding: Hardware-Bound Ed25519")
@@ -377,22 +400,60 @@ def security_status():
     print("-" * 30)
     
     # 3. Derived Agent Keys (The Vassals)
-    print("AGENT DELEGATIONS:")
-    roles = ["sentinel", "engineer", "developer"]
-    for role in roles:
-        try:
-            # Check if we can derive the key (meaning Root is loaded)
-            if signer._private_key:
-                agent_key = signer.derive_agent_key(role)
-                agent_pub = agent_key.public_key().public_bytes_raw().hex()
-                print(f"  [✓] {role.upper()}: Derived ({agent_pub[:16]}...)")
-            else:
-                print(f"  [!] {role.upper()}: PENDING (Root Key not loaded)")
-        except Exception:
-            print(f"  [!] {role.upper()}: ERROR during derivation")
+    print("AGENT DELEGATIONS (memory/keys/):")
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+    keys_dir = os.path.join(root_dir, "memory", "keys")
+    
+    # We always expect these core roles
+    core_roles = ["sentinel", "engineer", "airlock"]
+    
+    # Discovery loop
+    found_any = False
+    for role in core_roles:
+        path = os.path.join(keys_dir, f"agent_{role}.json")
+        if os.path.exists(path):
+            try:
+                import json
+                with open(path, "r") as f:
+                    data = json.load(f)
+                cert = data.get("certificate", {})
+                fingerprint = cert.get("payload", {}).get("subject", {}).get("fingerprint", "unknown")
+                expiry = cert.get("payload", {}).get("expires_at", "unknown")
+                print(f"  [✓] {role.upper()}: {fingerprint} (Expires: {expiry[:10]})")
+                found_any = True
+            except Exception:
+                print(f"  [!] {role.upper()}: CORRUPT")
+        else:
+            print(f"  [ ] {role.upper()}: NOT DELEGATED")
+
+    if not found_any:
+        print("  (No delegated identities found on disk)")
 
     print("=" * 60)
-    print("[*] All signatures verified against Root Manifest.")
+    print(f"[*] Substrate Root: {os.path.abspath(root_dir)}")
+
+def get_delegation_summary() -> dict:
+    """Returns a summary of delegated agent keys for CLI/TUI display."""
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+    keys_dir = os.path.join(root_dir, "memory", "keys")
+    core_roles = ["sentinel", "engineer", "airlock"]
+    
+    summary = {}
+    for role in core_roles:
+        path = os.path.join(keys_dir, f"agent_{role}.json")
+        if os.path.exists(path):
+            try:
+                import json
+                with open(path, "r") as f:
+                    data = json.load(f)
+                cert = data.get("certificate", {})
+                fingerprint = cert.get("payload", {}).get("subject", {}).get("fingerprint", "unknown")
+                summary[role] = {"status": "Anchored", "fingerprint": fingerprint}
+            except Exception:
+                summary[role] = {"status": "Corrupt"}
+        else:
+            summary[role] = {"status": "Pending"}
+    return summary
 
 def recovery_drill():
     """Perform a recovery drill without persisting anything."""

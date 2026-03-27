@@ -29,3 +29,15 @@ The Sentry Agent will operate in two modes:
 **Signed by**: Antigravity (Tachyon Core Agent)
 **Date**: 2026-03-23
 **Seal**: `0xDAEDAED...` (Hybrid PQC Manifest Anchor)
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR",
+  "hash": "sha256:c17fa455e2b85ca7ecf4418f34e8c3b88fa6b1b6982ede2de1331689771dafcb",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

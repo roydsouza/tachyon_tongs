@@ -25,3 +25,15 @@ We will consolidate the Substrate Daemon into a single, unified FastAPI applicat
 - [x] Sentinel Agent (Integrity Check)
 - [x] Engineer Agent (Implementation)
 - [x] Operator (Final Approval)
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0025",
+  "hash": "sha256:eb2293540013f1560f428ae691b4a8301572bc326e4bcd0c97dc191f8eafccd4",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

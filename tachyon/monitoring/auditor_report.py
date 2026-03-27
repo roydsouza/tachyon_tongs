@@ -1,6 +1,6 @@
 """
 Tachyon Tongs: Sentinel Auditor Report
-Parses the RUN_LOG.md and TASKS.md to generate a human-readable 
+Parses the RUN_LOG.md and TASKS_CLEANUP.md to generate a human-readable 
 summary of the Sentinel's latest autonomic activity.
 """
 import os
@@ -15,7 +15,7 @@ class AuditorReport:
     Synthesizes autonomic telemetry into human-readable executive summaries.
     """
     
-    def __init__(self, log_path: str = "RUN_LOG.md", task_path: str = "TASKS.md"):
+    def __init__(self, log_path: str = "RUN_LOG.md", task_path: str = "TASKS_CLEANUP.md"):
         self.log_path = log_path
         self.task_path = task_path
 
@@ -37,7 +37,7 @@ class AuditorReport:
         return f"**Latest Sentinel Run:**\nDate/Time: {latest_block}"
 
     def get_pending_tasks(self, task_content: str) -> list:
-        """Extracts all incomplete [ ] tasks from TASKS.md."""
+        """Extracts all incomplete [ ] tasks from TASKS_CLEANUP.md."""
         tasks = []
         for line in task_content.split('\n'):
             if line.strip().startswith("- [ ]"):
@@ -52,7 +52,7 @@ class AuditorReport:
         report_lines.append(self.get_latest_run(log_content))
         report_lines.append("\n---\n")
         
-        # 2. Parse TASKS.md
+        # 2. Parse TASKS_CLEANUP.md
         task_content = self.read_file_safe(self.task_path)
         pending_tasks = self.get_pending_tasks(task_content)
         

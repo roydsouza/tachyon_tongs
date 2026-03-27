@@ -9,7 +9,10 @@ import json
 from datetime import datetime
 from typing import List
 from tachyon.core.state_manager import StateManager
-from tachyon.api.schema import SubstrateHealth, SubstrateStatus, AgentDetail, AgentStatus, PatchProposal, PatchStatus
+from tachyon.api.schema import (
+    SubstrateHealth, SubstrateStatus, AgentDetail, AgentStatus, 
+    PatchProposal, PatchStatus, ForensicAlert
+)
 
 class StateBridge:
     def __init__(self):
@@ -70,6 +73,32 @@ class StateBridge:
                     summary=row['summary'] or "No summary provided."
                 ))
         return patches
+
+    def get_forensic_alerts(self, limit: int = 10) -> List[ForensicAlert]:
+        """Retrieves recent forensic events for the dashboard."""
+        alerts = []
+        with sqlite3.connect(self.state.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.execute("SELECT * FROM forensic_events ORDER BY id DESC LIMIT ?", (limit,))
+            for row in cursor:
+                ts_str = row['timestamp']
+                try:
+                    # Handle both ISO and space-separated formats
+                    if "T" in ts_str:
+                        ts = datetime.fromisoformat(ts_str)
+                    else:
+                        ts = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S")
+                except Exception:
+                    ts = datetime.now()
+                    
+                alerts.append(ForensicAlert(
+                    id=row['id'],
+                    agent_id=row['agent_id'],
+                    topic=row['topic'],
+                    details=row['details'],
+                    timestamp=ts
+                ))
+        return alerts
 
     def register_patch(self, patch_id: str, summary: str, status: str = "pending_review"):
         """Registers a new patch proposal in the state layer."""

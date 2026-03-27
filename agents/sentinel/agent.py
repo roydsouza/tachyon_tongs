@@ -48,14 +48,15 @@ class NVDClient:
                     self.bus.emit_event(
                         topic="SENTINEL_COMM_FAILURE",
                         agent_id=self.agent_id,
-                        payload={"type": "NVD_UNREACHABLE", "error": str(e), "attempts": i+1}
+                        payload={"type": "NVD_UNREACHABLE", "error": str(e), "attempts": i+1},
+                        certificate=getattr(self.bus, 'certificate', None) # Fallback if client doesn't have it
                     )
                     raise e
                 time.sleep(delay)
                 delay *= 2
         return {"status": "ERROR", "cves": []}
 
-    def hunt_new_threats(self, last_update: Optional[str] = None) -> List[Dict[str, Any]]:
+    def hunt_new_threats(self, last_update: Optional[str] = None, certificate: Any = None) -> List[Dict[str, Any]]:
         """Searches NVD for AI-specific threats since the last update."""
         all_threats = []
         for kw in self.keywords:
@@ -67,8 +68,15 @@ class NVDClient:
                 })
                 if result.get("status") == "SUCCESS":
                     all_threats.extend(result.get("cves", []))
-            except Exception:
-                continue # Already alerted in _call_mcp_tool
+            except Exception as e:
+                # [GW-05] Emit per-keyword failure instead of silent jump
+                self.bus.emit_event(
+                    topic="SENTINEL_KEYWORD_FAILURE",
+                    agent_id=self.agent_id,
+                    payload={"keyword": kw, "error": str(e)},
+                    certificate=certificate
+                )
+                continue 
         return all_threats
 
 @AgentRegistry.register("sentinel")
@@ -95,7 +103,8 @@ class SentinelPlugin(BaseAgentPlugin):
         self.bus.emit_event(
             topic="SENTINEL_SCAN_STARTED",
             agent_id=self.agent_id,
-            payload={"mode": parameters.get("mode", "incremental")}
+            payload={"mode": parameters.get("mode", "incremental")},
+            certificate=self.certificate
         )
 
         # 2. Retrieve Cursor (Phase 34 State Management)
@@ -106,7 +115,7 @@ class SentinelPlugin(BaseAgentPlugin):
 
         try:
             # 3. Execution: NVD Research
-            threats = self.nvd.hunt_new_threats(last_update)
+            threats = self.nvd.hunt_new_threats(last_update, certificate=self.certificate)
             
             # 4. Signaling & Deduplication
             discovered_ids = []
@@ -116,7 +125,8 @@ class SentinelPlugin(BaseAgentPlugin):
                     self.bus.emit_event(
                         topic="SENTINEL_THREAT_FOUND",
                         agent_id=self.agent_id,
-                        payload=t
+                        payload=t,
+                        certificate=self.certificate
                     )
                     discovered_ids.append(cve_id)
                     self.state_manager.mark_event_processed(f"SENTINEL_NVD_{cve_id}", self.agent_id)
@@ -134,7 +144,8 @@ class SentinelPlugin(BaseAgentPlugin):
             self.bus.emit_event(
                 topic="SENTINEL_SCAN_COMPLETED",
                 agent_id=self.agent_id,
-                payload={"threats_found": len(discovered_ids), "new_cursor": new_cursor}
+                payload={"threats_found": len(discovered_ids), "new_cursor": new_cursor},
+                certificate=self.certificate
             )
 
             return {

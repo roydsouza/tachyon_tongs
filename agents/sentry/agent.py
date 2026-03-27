@@ -63,7 +63,7 @@ class SentryPlugin(BaseAgentPlugin):
                 topic="SECURITY_ALERT", 
                 agent_id=self.agent_id, 
                 payload={"reason": "Honeypot Triggered", "path": self.engine.bait_path, "type": "INTRUSION"},
-                signature="CRITICAL"
+                certificate=self.certificate
             )
 
     def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:

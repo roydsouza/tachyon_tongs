@@ -104,7 +104,7 @@ This roadmap outlines the systematic progression of the **Tachyon Tongs** archit
 ### Phase 13: Sentinel Hybrid Migration [COMPLETED]
 - **Objective:** Transition the Sentinel from a monolithic script to a declarative, substrate-managed agent.
 - **Implementation:** `SKILL.md` manifest parsing, `runner.py` for hybrid execution, and ADR-0006.
-- **Cross-ref:** See [TASKS.md Phase 13](../TASKS.md).
+- **Cross-ref:** See [TASKS_BOOTSTRAP.md](../TASKS_BOOTSTRAP.md).
 
 ### Phase 14: Bi-Directional Capability Firewall (Scale-Out PDP/PEP) [COMPLETED]
 - **Objective:** Establish a centralized Meta-PDP (Singularity) that federates policy across multiple engines (Rego/Cedar).

@@ -19,3 +19,15 @@ Phase 26.2 relied on "stub" logic for some critical security gates (e.g., `is_pa
 ---
 *Signed by: Hybrid Root Authority*
 *Merkle Inclusion: Phase 27 Hardening*
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0031",
+  "hash": "sha256:06ff5617a5e0ccd78b15308ca569edce0e0b1b8606d9392d2e1ad1665d35c982",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

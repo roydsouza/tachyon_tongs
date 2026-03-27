@@ -105,25 +105,27 @@ class HybridSigner:
                     raise RuntimeError("INTEGRITY COMPROMISED: HMAC mismatch!")
                 has_hmac = True
 
-        # Threat Mitigation: Strip Detection
-        # Phase 43: PQC Mandate (Fail-Closed)
+        # Threat Mitigation: Strip Detection & PQC Mandate
+        # Phase 45: High-Assurance Strip Detection (Fail-Closed)
         strict_pqc = os.environ.get("TACHYON_PQC_STRICT") == "1"
         
-        # If we have a PQC SK and liboqs is available, we MUST have a PQC signature
-        oqs_available = False
-        try:
-            import oqs
-            oqs_available = True
-        except ImportError:
-            pass
+        # If the file verification FAILED on all recognizing layers but signatures exist, 
+        # it might be a malicious strip of a layer we EXPECT.
+        
+        # If the CALLER (Signer) has PQC capabilities, it MUST verify the PQC layer if present in the packet.
+        if self._pqc_public_key and not has_pqc:
+            if any(p.startswith("mldsa65:") for p in parts):
+                 # This means the packet HAS a PQC sig but we couldn't verify it (mismatch or logic error)
+                 raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature component found but verification FAILED or BYPASSED.")
 
-        # FAIL-CLOSED: If STRICT is set, we MUST have a PQC layer, regardless of liboqs
+        # STRICT MODE: PQC component is MANDATORY regardless of signer state
         if strict_pqc and not has_pqc:
-            raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected in STRICT MODE).")
+            raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature component MISSING (Strip Attack Detected in STRICT MODE).")
 
-        if oqs_available and self._pqc_private_key_bytes and not has_pqc:
+        # DUAL-SIGNATURE ENFORCEMENT: If PQC SK is loaded, we MUST have PQC component
+        if self._pqc_private_key_bytes and not has_pqc:
             if has_ed or has_hmac:
-                raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected).")
+                raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected - SK present).")
                 
         # If we have an Ed25519 SK, we MUST have an Ed25519 signature
         if self._private_key and not has_ed:
@@ -131,6 +133,9 @@ class HybridSigner:
                 raise RuntimeError("INTEGRITY COMPROMISED: Ed25519 Signature MISSING.")
 
         if not has_ed and not has_pqc and not has_hmac:
+            # Check if any unknown signatures exist (e.g. from future versions)
+            if parts and any(":" in p for p in parts):
+                raise RuntimeError("INTEGRITY FAIL: Packet contains signatures but none could be verified with current keys.")
             raise RuntimeError("No recognized signature algorithms found in manifest.")
             
         return True

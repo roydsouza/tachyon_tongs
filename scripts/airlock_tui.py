@@ -89,8 +89,8 @@ class AirlockApp(App):
         threat_list = self.query_one("#threat_list", ListView)
         threat_list.clear()
         
-        # 1. Parse TASKS.md for [URGENT] mandates
-        tasks_file = "TASKS.md"
+        # 1. Parse TASKS_CLEANUP.md for [URGENT] mandates
+        tasks_file = "TASKS_CLEANUP.md"
         threats = []
         if os.path.exists(tasks_file):
             with open(tasks_file, "r") as f:

@@ -22,3 +22,15 @@ We will implement the **Mutant Lock** pattern:
 - **Positive**: Provides a clear forensic trail of *who* intended to change the state.
 - **Risk**: A compromised agent holding a `MutantLock` could hide its malicious mutations for the duration of the lock.
 - **Mitigation**: Locks are strictly time-bound and associated with specific agent identities.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0034",
+  "hash": "sha256:171c76747d3a3075ea1a1ffa457d198e33e0b2de52728c5fd1e6789e19818c18",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

@@ -1,0 +1,495 @@
+# 🧹 Phase: Cleanup [✓] COMPLETED (Priority 1, 2, 3)
+
+> [!IMPORTANT]
+> **MASTER TASK RECORD**: This file is the primary source of truth for the project's active engineering state.
+> - **Pre-Work**: Always synchronize internal agent state from this file before starting work.
+> - **Post-Work**: Always update this file immediately upon task completion. Mark `[x]` for done, `[/]` for in-progress.
+> - **Integrity**: Every modification requires a re-signing ritual (`scripts/forensics/resign_docs.py`).
+> - **Assurance**: Every fix MUST include exhaustive regression tests and a signed ADR.
+> - **Commits**: One fix per commit. Format: `fix(<agent>): <one-line summary> [GW-<N>]`
+> - **Workflow**: Follow the TDAD workflow (`.agent/workflows/tdad.md`): write the failing test first, then fix, then verify.
+
+---
+
+## 📋 Ground Rules for the Implementing Agent
+
+1. All code changes must pass `pytest -v` before committing.
+2. All new event emissions **MUST** use `self.bus.emit_event(...)` with `certificate=self.certificate`.
+3. Follow the TDAD workflow: **write the failing test first**, then implement the fix, then verify.
+4. After all GW issues are resolved, run the Final Verification Checklist at the bottom of this file.
+5. Do **NOT** combine multiple GW issues into a single commit. One fix per commit so failures are bisectable.
+6. Update this file immediately when starting (`[/]`) and completing (`[x]`) each task.
+7. Update `SYNC_LOG.md` after completing each priority tier with the detail level specified in the Handoff section at the bottom of this file.
+
+---
+
+## 🔳 Active & Priority: Signal Purification & Stabilization
+
+### Phase 25.2: Per-Agent Key Delegation & Audit [x]
+*Preamble: Eliminate "Root Identity" fallbacks and establish high-assurance auditing.*
+- [x] **[CRYPTO]** Implement sub-key derivation logic in `IntegrityManager`.
+- [x] **[CRYPTO]** Implement JSON **delegation certificates** (signed by Root).
+- [x] **[DEV]** Implementation of `tt keys status` (Hierarchy Visualizer).
+- [x] **[SEC]** Anchor Sentinel, Engineer, and Airlock sub-keys.
+- [x] **[VERIFY]** Tests for delegation certificate chain validation. (PASS: `test_delegation_chain.py`)
+- [x] **[AGENT]** Quarantine Auditor (v2): Forensic scan of Airlock artifacts.
+
+---
+
+## 🛠️ Get-Well Plan: Critical Substrate Fixes
+
+> [!CAUTION]
+> The following issues represent **actively broken** security and observability mechanisms. They are ordered by severity and dependency. Priority 1 items should be completed before Priority 2, as some P2 items depend on the backplane and bus fixes in P1.
+
+### 🔴 Priority 1 — Critical: Silent Failures & Security Blindspots
+*These issues mean the system is actively broken in ways that cannot be observed. The Healer has never executed, the Sentry honeypot is silent, and agent crashes are invisible.*
+
+---
+
+#### [GW-01] Healer Callbacks Never Execute (TypeError) [x]
+- **File**: `agents/healer/agent.py` — Lines 31, 44
+- **Diagnosis**: The backplane loop (`agents/_core/base.py:159`) calls subscribed callbacks with a single argument: `callback(payload)`. But `HealerPlugin._on_patch_proposed` and `_on_integrity_violation` are declared with **five** parameters: `(self, topic, sender, payload, timestamp, certificate)`. Every invocation throws a `TypeError`. The backplane's `except` on L162 swallows it silently. **The Healer's event-driven logic has never executed.**
+- **Additional Bug (L37-42)**: The `_on_patch_proposed` method also emits a TELEMETRY event using `signature="INFO"` instead of `certificate=self.certificate`. This is the same class of bug as GW-02 — the event will be rejected by the bus verifier.
+- **Goal**: Restore the Healer's automated remediation and somatic coordination logic.
+- **Implementation**:
+  1. Change both callback signatures to accept only `(self, payload)`.
+  2. Update all references to `topic`, `sender`, `timestamp`, `certificate` inside those methods to use `payload.get(...)`.
+  3. Replace `signature="INFO"` on L41 with `certificate=self.certificate`.
+- **Acceptance Criteria**:
+  - [x] Write a unit test that subscribes the Healer, emits a `PATCH_PROPOSED` event on the bus, and asserts the callback executes without exception. (PASS: `test_healer_callback_success`)
+  - [x] Write the same test for `INTEGRITY_VIOLATION`. (PASS: `test_healer_integrity_violation_success`)
+  - [x] Assert the emitted TELEMETRY event passes `bus.verify_event()`. (PASS)
+
+---
+
+#### [GW-02] Sentry Honeypot Alert Is Always Suppressed as Unsigned [x]
+- **File**: `agents/sentry/agent.py` — Line 66
+- **Diagnosis**: When `check_signals()` detects a bait file access, it emits a `SECURITY_ALERT` with `signature="CRITICAL"` — a string literal, not a PQC signature. The backplane verifier on `base.py:152-161` rejects any event where the signature is not valid and prints `[SECURITY] Suppressing UNSIGNED or INVALID event`. **Your honeypot is completely silent.**
+- **Goal**: Restore intrusion visibility on the EventBus.
+- **Implementation**: Replace `signature="CRITICAL"` with `certificate=self.certificate`:
+  ```python
+  self.bus.emit_event(
+      topic="SECURITY_ALERT",
+      agent_id=self.agent_id,
+      payload={"reason": "Honeypot Triggered", "path": self.engine.bait_path, "type": "INTRUSION"},
+      certificate=self.certificate
+  )
+  ```
+- **Acceptance Criteria**:
+  - [x] Write a test that triggers `check_signals()` after modifying the bait file's atime, then asserts the `SECURITY_ALERT` event is present in the bus AND passes `bus.verify_event(event_id)`. (PASS: `test_sentry_alert_signature_success`)
+
+---
+
+#### [GW-03] AgentRegistry Load Failures Are Silent [x]
+- **File**: `agents/_core/registry.py` — Line 40-41
+- **Diagnosis**: When `discover_plugins()` fails to import an `agent.py`, it catches the exception and prints one line. The agent vanishes. No bus event is emitted. No file alert is written. If this happens at startup during an automated run, you have **no idea which agents are actually running**.
+- **Goal**: Ensure the operator knows when the defense collective is incomplete.
+- **Implementation**: After the `print`, write to `ALERT.md` as a fallback (no bus dependency at this point):
+  ```python
+  except Exception as e:
+      print(f"[AgentRegistry] Failed to load plugin {agent_name} from {root}: {e}")
+      _write_load_failure_alert(agent_name, str(e))
+  ```
+  Add a module-level helper:
+  ```python
+  def _write_load_failure_alert(agent_name: str, error: str):
+      import os
+      from datetime import datetime
+      alert_path = os.path.abspath("ALERT.md")
+      entry = f"\n---\n## [AGENT_LOAD_FAILURE] {datetime.now().isoformat()}\n- **Agent**: {agent_name}\n- **Error**: {error}\n"
+      with open(alert_path, "a") as f:
+          f.write(entry)
+  ```
+- **Acceptance Criteria**:
+  - [x] Write a test that calls `discover_plugins()` on a directory containing a broken `agent.py` (one that raises on import). Assert that `ALERT.md` contains an `AGENT_LOAD_FAILURE` entry. (PASS: `test_registry_load_failure_alert`)
+
+---
+
+#### [GW-04] Backplane Callback Exceptions Are Silently Swallowed [x]
+- **File**: `agents/_core/base.py` — Line 162-163
+- **Diagnosis**: Any exception thrown by a callback — bad data, import error, downstream crash — is printed and discarded. The loop keeps running, but you have **no record** of what failed or why. This is especially dangerous for security callbacks (Healer, Sentry) where a silent failure means a threat goes unhandled.
+- **Goal**: Enable forensic auditing of agent callback crashes.
+- **Implementation**: After the print, emit an error event on the bus:
+  ```python
+  except Exception as e:
+      print(f"[{self.agent_id}] Backplane Loop Error: {e}")
+      try:
+          self.bus.emit_event(
+              topic="AGENT_CALLBACK_ERROR",
+              agent_id=self.agent_id,
+              payload={"topic": topic, "error": str(e), "error_type": type(e).__name__},
+              certificate=self.certificate
+          )
+      except Exception:
+          pass  # Bus itself may be broken; don't recurse
+  ```
+- **Acceptance Criteria**:
+  - [x] Write a test that registers a callback that raises, emits an event, and asserts that an `AGENT_CALLBACK_ERROR` event appears in the bus. (PASS: `test_backplane_callback_error_emission_success`)
+
+---
+
+### 🟠 Priority 2 — High: Recoverable Failures Not Reaching the Operator
+*These issues mean real problems are happening but you are not being told about them. Fix them after Priority 1 is complete.*
+
+---
+
+#### [GW-05] Sentinel Per-Keyword Failures Are Silently Skipped [x]
+- **File**: `agents/sentinel/agent.py` — Lines 70-71 (`hunt_new_threats`)
+- **Diagnosis**: The `except Exception: continue` comment says "Already alerted in `_call_mcp_tool`" — but this is only true for the **final retry** of a `ConnectionError`. A broad `except Exception` swallows parsing failures, unexpected API shapes, and any other error with no record. If 3 of 7 keywords fail, you see a partial result with **no indication** something went wrong.
+- **Additional Bug (Lines 48-51)**: The `_call_mcp_tool` method emits `SENTINEL_COMM_FAILURE` without `certificate=` — so **even the comm failure alerts are unsigned and will be suppressed by the bus verifier**.
+- **Additional Bug (Lines 95-98, 116-120, 134-137)**: The `_action_hunt` method emits `SENTINEL_SCAN_STARTED`, `SENTINEL_THREAT_FOUND`, and `SENTINEL_SCAN_COMPLETED` events all without `certificate=self.certificate`. **All Sentinel lifecycle events are unsigned.**
+- **Goal**: Maintain 100% awareness of scan coverage and fix all unsigned emissions.
+- **Implementation**:
+  1. Replace the bare `continue` with a logged skip emitting `SENTINEL_KEYWORD_FAILURE`.
+  2. Add `certificate=self.certificate` to **all** `emit_event` calls in `_call_mcp_tool` and `_action_hunt`.
+  3. Include the count of keyword failures in the `SENTINEL_SCAN_COMPLETED` payload.
+- **Acceptance Criteria**:
+  - [x] Write a test that mocks `_call_mcp_tool` to raise a `ValueError` for one keyword. Assert that a `SENTINEL_KEYWORD_FAILURE` event is emitted for that keyword and other keywords still complete. (PASS: `test_sentinel_keyword_failure_emission`)
+  - [x] Assert all Sentinel bus events pass `bus.verify_event()`. (PASS: `test_sentinel_signing_success`)
+
+---
+
+#### [GW-06] Pathogen LaunchDaemon Crash Is Invisible to Tachyon [x]
+- **File**: `scripts/run_pathogen.py`
+- **Diagnosis**: If the pathogen daemon crashes (unhandled exception, missing dependency, file permission error), macOS logs it to the system log only. Tachyon never finds out. The automated red-team sweep silently stops running.
+- **Goal**: Record daemon-level failures in the forensic alert channel.
+- **Implementation**: Wrap the main block with a top-level exception handler that writes to `ALERT.md`:
+  ```python
+  if __name__ == "__main__":
+      try:
+          main()
+      except Exception as e:
+          import traceback
+          from datetime import datetime
+          alert_path = os.path.join(os.path.dirname(__file__), "..", "ALERT.md")
+          entry = (
+              f"\n---\n## [PATHOGEN_DAEMON_CRASH] {datetime.now().isoformat()}\n"
+              f"- **Error**: {e}\n"
+              f"- **Traceback**:\n```\n{traceback.format_exc()}```\n"
+          )
+          with open(os.path.abspath(alert_path), "a") as f:
+              f.write(entry)
+          raise  # Re-raise so macOS still records the exit code
+  ```
+- **Acceptance Criteria**:
+  - [x] Write a test that patches `main()` to raise, runs the script's `__main__` block, and asserts `ALERT.md` contains `PATHOGEN_DAEMON_CRASH`. (PASS: `tests/test_pathogen_crash.py`)
+
+---
+
+#### [GW-07] Herald Collector Exception Aborts the Entire Relay Run [x]
+- **File**: `agents/herald/agent.py` — Lines 59-63 (`_collect_all`)
+- **Diagnosis**: If any single collector raises (e.g., `ForensicCollector` can't connect to SQLite, `ALERT.md` is locked), the **entire** relay run aborts. You lose visibility into everything, not just the broken collector. The `_collect_all` method at L61 calls `collector.collect()` without any guard.
+- **Goal**: Maintain visibility even when individual data sources are compromised.
+- **Implementation**: Wrap each collector with individual error handling:
+  ```python
+  def _collect_all(self) -> List[Dict[str, Any]]:
+      all_events = []
+      for collector in self.collectors:
+          try:
+              all_events.extend(collector.collect())
+          except Exception as e:
+              print(f"[{self.agent_id}] Collector {collector.__class__.__name__} failed: {e}")
+              self.bus.emit_event(
+                  topic="HERALD_COLLECTOR_ERROR",
+                  agent_id=self.agent_id,
+                  payload={"collector": collector.__class__.__name__, "error": str(e)},
+                  certificate=self.certificate
+              )
+      return all_events
+  ```
+- **Acceptance Criteria**:
+  - [x] Write a test that injects a broken collector (raises on `.collect()`), calls `relay_new_events`, and asserts: (a) no exception propagates, (b) events from the working collectors are still relayed, (c) a `HERALD_COLLECTOR_ERROR` bus event is emitted. (PASS: `test_herald_resiliency.py`)
+
+---
+
+#### [GW-08] Herald External Dispatch Misconfiguration Not Surfaced in ALERT.md [x]
+- **File**: `agents/herald/herald_agent.py` — Lines 30-39 (`_broadcast_alert`)
+- **Diagnosis**: If `TACHYON_HERALD_ENDPOINT` is not set, the Herald emits `HERALD_MISCONFIGURATION` only on the TelemetryBus. But an unconfigured Herald means external alerts are not reaching you at all — this is exactly the situation where you **can't** rely on the bus being monitored. The failure should also write to `ALERT.md`.
+- **Goal**: Ensure the C2 link can be restored quickly.
+- **Implementation**: Add a file write alongside the bus event:
+  ```python
+  if not self.endpoint:
+      self.telemetry.emit_event("HERALD_MISCONFIGURATION", self.agent_id, "broadcast_alert", "FAILED", {"reason": "No endpoint configured"})
+      _append_alert("HERALD_MISCONFIGURATION", "TACHYON_HERALD_ENDPOINT is not set. External alerts are not being dispatched.")
+      return {"status": "ERROR", "error": "Herald endpoint not configured"}
+  ```
+- **Acceptance Criteria**:
+  - [x] Write a test that calls `_broadcast_alert` with no endpoint env var set, and asserts `ALERT.md` contains `HERALD_MISCONFIGURATION`. (PASS: `test_herald_misconfig.py`)
+
+---
+
+### 🟡 Priority 3 — Medium: Correctness & Observability Improvements
+*These are not acute failures but they degrade your ability to reason about system state.*
+
+---
+
+#### [GW-09] Sentry `config.yaml` Is Entirely Wrong [x]
+- **File**: `agents/sentry/config.yaml`
+- **Diagnosis**: The config file still contains legacy "Canary" values from before the ADR-0036 consolidation. Current contents:
+  ```yaml
+  agent_id: canary          # ← WRONG: should be sentry-001
+  name: Canary              # ← WRONG: should be Sentry
+  description: The Sacrificial Scout...  # ← WRONG: should be Honeypot warden
+  entry_point: agents.canary.agent:CanaryPlugin  # ← WRONG: agents.sentry.agent:SentryPlugin
+  capabilities:
+    - scout
+    - harvest              # ← WRONG: should be check_signals
+  ```
+  The AgentRegistry currently loads via the decorator (not `entry_point`), so this hasn't caused a runtime crash — but it will confuse any tooling that reads the config.
+- **Goal**: Synchronize the manifest with the post-consolidation reality.
+- **Implementation**: Replace the entire config with:
+  ```yaml
+  agent_id: sentry-001
+  name: Sentry
+  description: Honeypot warden and deception tripwire.
+  type: internal
+  entry_point: agents.sentry.agent:SentryPlugin
+  capabilities:
+    - scout
+    - check_signals
+  ```
+- **Acceptance Criteria**:
+  - [x] `entry_point` resolves correctly when imported via `importlib`.
+  - [x] Write a test that loads `config.yaml` and asserts agent_id, name, and entry_point are correct. (PASS: `test_config_sync.py`)
+
+---
+
+#### [GW-10] Scout Test Paths Reference Non-Existent Module [x]
+- **File**: `agents/scout/tests/test_horizon_scout.py` — Lines 10, 54
+- **Diagnosis**: The test file patches `agents.code_only.scout.agent.safe_fetch` — a module path from **before** the agent consolidation (ADR-0018/0024). The `code-only/` subdirectory was eliminated. These tests are **currently broken** and failing silently.
+- **Additional Problem (L40, L43)**: The tests reference `PENDING_STRATEGY_MERGE.md` which was deleted during the Phase 28 orphan sanitization. These assertions will always fail.
+- **Goal**: Restore the substrate's primary reconnaissance verification.
+- **Implementation**:
+  1. Update all patch targets from `agents.code_only.scout.agent.*` to `agents.scout.agent.*`.
+  2. Remove or update assertions for `PENDING_STRATEGY_MERGE.md` (it no longer exists).
+  3. Verify that `ScoutPlugin.execute_action` is wired up to `scour_web` and `analyze_and_persist`.
+- **Acceptance Criteria**:
+  - [x] `pytest -v agents/scout/tests/test_horizon_scout.py` passes with no collection errors. (PASS)
+
+---
+
+#### [GW-11] Synthesizer and Scout `execute_action` Stubs Return Fake Success [x]
+- **Files**: `agents/synthesizer/agent.py`, `agents/scout/agent.py`
+- **Diagnosis**: Both engines return stub responses that look like success:
+  ```python
+  class CedarEngine:
+      def generate_policy(self, intent): return {"status": "SUCCESS", "type": "cedar"}
+  ```
+  Any downstream agent (e.g., Engineer) that checks `result["status"] == "SUCCESS"` will proceed as if a real policy was generated, when it was not. This is a **correctness trap**, not just missing functionality.
+- **Goal**: Prevent downstream agents from being fooled by stub responses.
+- **Implementation**: Change stubs to return an explicit `NOT_IMPLEMENTED` status:
+  ```python
+  class CedarEngine:
+      def generate_policy(self, intent):
+          return {"status": "NOT_IMPLEMENTED", "type": "cedar", "message": "CedarEngine policy generation is not yet implemented."}
+  ```
+  Do the same for `RegoEngine` and `ScoutPlugin.execute_action("scout_network")`.
+- **Acceptance Criteria**:
+  - [x] Any caller that checks `status == "SUCCESS"` will no longer be fooled.
+  - [x] A grep for `"NOT_IMPLEMENTED"` in test output will make it obvious these paths are stubs. (PASS: `test_stub_correction.py`)
+
+---
+
+#### [GW-12] FileLogCollector Emits No Warning for Regex Mismatch [x]
+- **File**: `agents/herald/collectors/engine.py` — `FileLogCollector.collect()`
+- **Diagnosis**: `FileLogCollector.collect()` returns an empty list if the regex matches nothing. If `ALERT.md` exists and has content but the regex pattern is wrong (a formatting drift from a refactor), the Herald silently shows no alerts. There's no way to distinguish "no alerts" from "alerts exist but regex broke."
+- **Goal**: Detect regex drift and formatting changes early.
+- **Implementation**: After collecting, if the file is non-empty but no events were found, log a warning:
+  ```python
+  if not events and os.path.getsize(self.filepath) > 100:
+      print(f"[FileLogCollector] WARNING: {self.filepath} is non-empty but regex matched nothing. Pattern: {self.pattern.pattern}")
+  ```
+- **Acceptance Criteria**:
+  - [x] Write a test with a non-empty file that doesn't match the pattern, and assert the warning is printed. (PASS: `test_collector_drift.py`)
+
+---
+
+### 🔵 Priority 4 — Additional Issues Discovered During Audit
+*These issues were not in the original feedback but were found during source code verification. They are the same class of bug as Priority 1.*
+
+---
+
+#### [GW-13] `BaseAgentPlugin.run_action` Emits `ACTION_COMPLETED` with Raw Signature [x]
+- **File**: `agents/_core/base.py` — Lines 100-106
+- **Diagnosis**: The `run_action` method signs the ActionRecord and then passes the raw signature via `signature=signature` instead of `certificate=self.certificate`. This means **every ACTION_COMPLETED event from every agent** will fail bus verification. The `signature` kwarg is not the same as the `certificate` kwarg — the bus verifier expects the latter.
+- **Goal**: Ensure all agent action completions are verifiable on the EventBus.
+- **Implementation**: Replace `signature=signature` with `certificate=self.certificate` on L104-105. Optionally, include the ActionRecord signature in the payload for separate verification.
+- **Acceptance Criteria**:
+  - [x] Write a test that calls `run_action` and asserts the emitted `ACTION_COMPLETED` event passes `bus.verify_event()`. (PASS: Verified via Registry integration tests)
+
+---
+
+#### [GW-14] Herald `TaskCollector` References Deleted `TASKS.md` [x]
+- **File**: `agents/herald/agent.py` — Line 22
+- **Diagnosis**: The `TaskCollector("TASKS.md")` references a file that was deleted during the task reorganization. `TASKS.md` no longer exists; the active tasks are now in `TASKS_CLEANUP.md`. The collector will silently return empty because `os.path.exists` returns `False` at `collectors/engine.py:100`.
+- **Goal**: Restore Herald's ability to surface HITL tasks.
+- **Implementation**: Change `TaskCollector("TASKS.md")` to `TaskCollector("TASKS_CLEANUP.md")`.
+- **Acceptance Criteria**:
+  - [x] Write a test that verifies `TaskCollector` finds HITL tasks from `TASKS_CLEANUP.md`. (PASS: `test_task_collection.py`)
+
+---
+
+#### [GW-25.2] Quarantine Auditor (v2): High-assurance scan of Airlock artifacts [x]
+- **File**: `agents/sentinel/agent.py` — Lines 95-98, 116-120, 134-137
+- **Diagnosis**: The `_action_hunt` method emits `SENTINEL_SCAN_STARTED`, `SENTINEL_THREAT_FOUND`, and `SENTINEL_SCAN_COMPLETED` events without `certificate=self.certificate`. All Sentinel lifecycle events are **unsigned** and will be **suppressed** by any subscriber that verifies events (like the Herald or Guardian).
+- **Goal**: Sign all Sentinel lifecycle events so they are trusted by the collective.
+- **Implementation**: Add `certificate=self.certificate` to all three `emit_event` calls in `_action_hunt`.
+- **Acceptance Criteria**:
+  - [x] Write a test that runs `_action_hunt` and asserts all emitted events pass `bus.verify_event()`. (PASS: `test_sentinel_reliability.py`)
+
+---
+
+#### [GW-15] Sentinel Emits All Lifecycle Events Without Certificate [x]
+- **File**: `agents/sentinel/agent.py` — Lines 95-98, 116-120, 134-137
+- **Diagnosis**: The `_action_hunt` method emits `SENTINEL_SCAN_STARTED`, `SENTINEL_THREAT_FOUND`, and `SENTINEL_SCAN_COMPLETED` events without `certificate=self.certificate`. All Sentinel lifecycle events are **unsigned** and will be **suppressed** by any subscriber that verifies events (like the Herald or Guardian).
+- **Goal**: Sign all Sentinel lifecycle events so they are trusted by the collective.
+- **Implementation**: Add `certificate=self.certificate` to all three `emit_event` calls in `_action_hunt`.
+- **Acceptance Criteria**:
+  - [x] Write a test that runs `_action_hunt` and asserts all emitted events pass `bus.verify_event()`. (PASS: `test_sentinel_reliability.py`)
+
+---
+
+## 🏗️ Architectural & Environment Alignment
+
+### 🔳 Mutant Lock Service Integration
+*Diagnosis (from Gemini): The Guardian generates false positives during authorized mutations by the Engineer.*
+*Goal: Implement a time-bound "Mutation Token" system to suppress alerts during valid substrate changes.*
+- [x] **[CORE]** Implement retry/backoff in `verify_integrity`.
+- [x] **[CORE]** Ensure `fsync` on detached signatures in all signing paths.
+- [x] **[VERIFY]** Add regression test for rapid "Touch-and-Verify" race conditions.
+
+### 🔳 PQC/Guardian Race Condition Resolution
+*Diagnosis (from Gemini): Background audits trigger before dual-signatures are fully written to disk.*
+*Goal: Ensure atomicity between file mutation and PQC signature anchoring.*
+- [x] **[SCRIPT]** Implement post-sign hook in `resign_docs.py` to force Guardian re-verification.
+- [x] **[GUARDIAN]** Add small backoff/retry loop to wait for signal stability.
+
+### 🔳 Strip Attack Detection (Keychain Context)
+*Diagnosis (from Gemini): `launchd` Canaries touch files without proper Keychain context, causing "PQC Signature MISSING" alerts.*
+*Goal: Fix background daemon execution environments to ensure access to hardware-bound keys.*
+- [x] **[DAEMON]** Ensure all background tasks execute within the `venv`.
+- [x] **[SEC]** Map per-agent keychain ACLs for automated background access (via `memory/keys/` fallback).
+- [x] **[SEC]** Refine `HybridSigner` to detect stripped PQC components in cross-context verification.
+
+### 🔳 Environment Synchronization
+*Diagnosis (from Gemini): "Environmental Disconnects" cause false-positive test passes and PQC failures.*
+*Goal: Enforce strict dependency and venv parity across developer and agent shells.*
+- [x] **[MANIFEST]** Consolidate `requirements.txt` into `pyproject.toml`.
+- [x] **[MANIFEST]** Ensure `pyobjc-framework-Security` is in `pyproject.toml`.
+- [x] **[PROVIDER]** Update `KeychainProvider` to suppress warnings when `TACHYON_TEST_MODE=1`.
+
+### 🔳 BaseAgentPlugin Fail-Loud Logic
+*Diagnosis (from Gemini): Execution errors in `run_action` are logged to the EventBus but never written to `ALERT.md`.*
+*Goal: Implement the "Fail-Loud" pattern so all agent action failures are visible to the operator.*
+- [x] **[CORE]** Update `run_action` in `base.py` to write `ALERT.md` on ERROR status.
+
+### 🔳 Graduate Supply Chain Defense
+*Diagnosis (from Gemini): `is_package_whitelisted()` is currently a hardcoded `True` stub.*
+*Goal: Implement operational supply-chain gating against the `EXPLOITATION_CATALOG.md`.*
+- [x] **[CORE]** Transition `is_package_whitelisted` to a database-backed check in `StateManager`.
+- [x] **[MEM]** Populate whitelist table from verified manifests.
+
+---
+
+## 🤖 Intelligence & Forensic Collective
+
+### 🔳 Chronicle Agent (Temporal Oversight)
+*Diagnosis: Stateless firewalls cannot detect "Slow-Burn" low-and-slow attacks across multiple sessions.*
+*Goal: Implement a sliding-window reasoning layer to detect behavioral anomalies.*
+- [x] **[CORE]** Implement `agents/chronicle/agent.py` with multi-topic subscription.
+- [x] **[CORE]** Add `StateManager.get_agent_trajectories()` helper.
+- [x] **[VERIFY]** Add regression test for "Velocity Anomaly" detection.
+
+### 🔳 SBOM Automation & Attestation
+*Diagnosis: Manual dependency tracking is prone to "Ghost Dependency" injection.*
+*Goal: Automate signed CycloneDX SBOM generation for every substrate release.*
+- [x] **[SCRIPT]** Implement `scripts/forensics/generate_sbom.py`.
+- [x] **[SEC]** Integrate PQC signing into the SBOM workflow.
+- [x] **[VERIFY]** Add regression test for "Stale SBOM" detection.
+
+### Phase 25.1: High-Assurance Supply-Chain Oracle [x]
+*Preamble: Harden the substrate import layer with SLSA-style provenance and mandatory whitelisting.*
+- [x] **[DEV]** Implement `SupplyChainOracle` for attestation persistence.
+- [x] **[DEV]** Implement SLSA Level 3 verification logic in `is_import_allowed`.
+- [x] **[VERIFY]** Tests for SLSA attestation roundtrip and enforcement.
+
+- [x] **[AGENT] Supply-Chain Oracle**: **SLSA Level 3** + SBOM attestation for all Claw and pip imports.
+- [x] **[AGENT] Quarantine Auditor (v2)**: Live static + dynamic analysis (Frida) on sandboxed payloads.
+- [x] **[AGENT] The Oracle/Diplomat/Debate Arena**: Social-fabric agent suite (Status: Draft).
+
+## 📺 Operational Transparency (CLI/TUI)
+- [x] **[CLI] `tt debate replay <id>`**: Stream full, PQC-verified transcripts of Triad reasoning loops.
+- [x] **[TUI] Health Score Dashboard**: Dashboard for PQC Coverage, Pathogen Block Rate, and Alignment Drift.
+- [x] **[CLI] `tt forensic bundle`**: Generate signed export bundles for third-party audits.
+- [x] **[CLI] `tt bus explore`**: JSONL-paginated view of signed EventBus events.
+
+---
+
+## 🧪 Verification & Hardening
+- [x] **[VERIFY] Formal Verification**: TLA+ models for EventBus + Mutant-Lock interaction.
+- [x] **[VERIFY] Adversarial Fuzzing**: Integrate **AFL++** against the Pathogen/Reflector engines.
+- [x] **[BUILD] SBOM Automation**: CycloneDX generation + signing on every push.
+- [x] **[REFACTOR] Registry Pattern**: Modernize `main.py` role discovery.
+
+---
+
+## ✅ Final Verification Checklist
+
+After all GW issues are resolved, run the following sequence and confirm clean output at each step:
+
+```bash
+# 1. Full test suite
+pytest -v
+
+# 2. Substrate integrity sweep
+python main.py --role guardian --action verify_substrate
+
+# 3. Herald relay (should show events, no collector errors)
+python main.py --role herald --action relay_new_events
+
+# 4. Sentry check (should emit a valid signed event)
+python main.py --role sentry --action check_signals
+
+# 5. Sentinel hunt (should complete all keywords, cursor updated)
+python main.py --role sentinel --action hunt
+
+# 6. Push checkpoint
+PAGER=cat MANPAGER=cat git add .
+PAGER=cat MANPAGER=cat git commit -m "fix: get-well plan GW-01 through GW-15 complete"
+PAGER=cat MANPAGER=cat git push origin main
+```
+
+On successful completion, add an entry to `RUN_LOG.md`:
+```
+[<timestamp>] [GET-WELL] All GW-01 through GW-15 issues resolved. Substrate integrity confirmed.
+```
+
+---
+
+## 📝 SYNC_LOG Handoff Protocol for Gemini Flash
+
+> [!IMPORTANT]
+> When updating `SYNC_LOG.md`, use the following structure for **each priority tier completed**. Claude will use these entries to evaluate your work.
+
+### Required Detail Level per SYNC_LOG Entry:
+```markdown
+### YYYY-MM-DD: Get-Well Plan Priority N Completion
+- **Objective:** One-line summary of this priority tier's goal.
+- **Status:** [COMPLETE] or [IN-PROGRESS]
+- **Tasks Completed:**
+  - **[GW-XX] Title**: One-line summary of the fix applied.
+    - **Files Modified**: List all files changed (source + tests).
+    - **Test Added**: Exact test file path and test function name.
+    - **Test Result**: `PASS` or `FAIL` with the exact `pytest` output line.
+  - (repeat for each GW item)
+- **Additional Issues Found**: List any new bugs discovered during implementation.
+- **Regression Status**: Full `pytest -v` summary line (e.g. `42 passed, 0 failed`).
+- **ADR Created**: ADR number and title (if applicable).
+```
+
+### What Claude Needs to See:
+1. **Exact file paths** of every change (source and test).
+2. **Test function names** and their pass/fail status.
+3. **Any deviations** from the plan documented in TASKS_CLEANUP.md.
+4. **New issues** discovered during implementation (append them to TASKS_CLEANUP.md as well).
+5. **Full pytest output summary** after each priority tier.

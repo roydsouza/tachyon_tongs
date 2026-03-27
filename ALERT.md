@@ -2,103 +2,174 @@
 
 This file tracks critical violations and integrity failures. The newest alerts appear at the top.
 
-## [MODEL_POISONED] 2026-03-23 20:57:58
+## [CRYPTO_ERROR] 2026-03-26 21:24:45
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> Weight mismatch detected: adapter_model.bin
+> INTEGRITY FAILURE: Cryptographic error during verification of /var/folders/47/k683td4d4v50_7f9j1dcntyr0000gn/T/tmpsfjc6eqb: INTEGRITY COMPROMISED: Ed25519 Signature mismatch!
 
 ---
 
-## [INTEGRITY_VIOLATION] 2026-03-23 20:57:57
+## [QUARANTINE_VIOLATION] 2026-03-26 21:21:54
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> INTEGRITY FAILURE: Cryptographic error during verification of tests/core/strip_test.txt: INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected in STRICT MODE).
+> Found 1 insecure artifacts in quarantine.
 
 ---
 
-## [MODEL_POISONED] 2026-03-23 20:57:14
+## [TEMPORAL_ANOMALY] 2026-03-26 20:49:29
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> Weight mismatch detected: adapter_model.bin
+> Temporal Anomaly detected for Agent 'scout': ROLE_DRIFT: Non-engineer agent attempting patch proposals.
 
 ---
 
-## [CRYPTO_ERROR] 2026-03-23 20:57:14
+## [TEMPORAL_ANOMALY] 2026-03-26 20:40:15
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> INTEGRITY FAILURE: Cryptographic error during verification of tests/core/strip_test.txt: INTEGRITY COMPROMISED: HMAC mismatch!
+> Temporal Anomaly detected for Agent 'scout': ROLE_DRIFT: Non-engineer agent attempting patch proposals.
 
 ---
 
-## [MODEL_POISONED] 2026-03-23 20:34:00
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:36:11
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> Weight mismatch detected: adapter_model.bin
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
 
 ---
 
-## [INTEGRITY_VIOLATION] 2026-03-23 20:34:00
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:36:11
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> INTEGRITY FAILURE: Cryptographic error during verification of tests/core/strip_test.txt: INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected in STRICT MODE).
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
 
 ---
 
-## [MODEL_POISONED] 2026-03-23 20:29:57
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:36:11
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> Weight mismatch detected: adapter_model.bin
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
 
 ---
 
-## [INTEGRITY_VIOLATION] 2026-03-23 20:29:56
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:36:11
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> INTEGRITY FAILURE: Cryptographic error during verification of scripts/verification/strip_test.txt: INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected in STRICT MODE).
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
 
 ---
 
-## [PATHOGEN_BREACH] 2026-03-23 14:21:23
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:36:11
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> Breach via ASI05 (Strategy: Semantic Drift: Masquerade as a 'Telemetry Heartbeat' to bypass intent filters.)
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
 
 ---
 
-## [PATHOGEN_GOAL_MUTATED] 2026-03-23 14:21:23
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:24:44
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> Strategy: Semantic Drift: Masquerade as a 'Telemetry Heartbeat' to bypass intent filters.
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
 
 ---
 
-## [PATHOGEN_REFLECTION_STARTED] 2026-03-23 14:21:23
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:24:44
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> Reflecting on ASI05 defenses...
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
 
 ---
 
-## [PATHOGEN_REFLECTION_STARTED] 2026-03-23 14:21:11
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:24:44
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> Reflecting on ASI05 defenses...
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
 
 ---
 
-## [PATHOGEN_BREACH] 2026-03-23 14:07:20
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:24:44
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> Proactive sweep detected breach via ASI05_CODE_EXECUTION.
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
 
 ---
 
-## [CRYPTO_ERROR] 2026-03-23 12:57:46
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:24:28
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
-> INTEGRITY FAILURE: Cryptographic error during verification of /var/folders/47/k683td4d4v50_7f9j1dcntyr0000gn/T/tmpu6gagnv2: INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected).
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
 
 ---
 
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:24:28
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
+
 ---
 
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:24:28
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
+
+---
+
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:24:28
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
+
+---
+
+## [AGENT_BACKPLANE_CRASH] 2026-03-26 20:24:28
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Agent test-backplane-agent (BackplanePlugin) backplane loop CRASHED: 'NoneType' object has no attribute 'keys'
+
+---
+
+## [GUARDIAN_ERROR] 2026-03-26 20:09:32
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Failed full substrate sweep: [Errno 2] No such file or directory: '/Users/rds/antigravity/tachyon_tongs/TASKS.md'
+
+---
+
+## [GUARDIAN_ERROR] 2026-03-26 20:09:23
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Failed full substrate sweep: [Errno 2] No such file or directory: '/Users/rds/antigravity/tachyon_tongs/TASKS.md'
+
+---
+
+## [GUARDIAN_ERROR] 2026-03-26 20:08:53
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Failed full substrate sweep: Command '['git', 'ls-files']' returned non-zero exit status 128.
+
+---
+
+
+---
+## [HERALD_MISCONFIGURATION] 2026-03-26T20:05:24.541173
+- **Agent**: herald-test
+- **Error**: TACHYON_HERALD_ENDPOINT is not set. External alerts are not being dispatched.
+
+---
+## [HERALD_MISCONFIGURATION] 2026-03-26T20:05:24.542438
+- **Agent**: herald-test
+- **Error**: TACHYON_HERALD_ENDPOINT is not set. External alerts are not being dispatched.
+
+---
+## [PATHOGEN_DAEMON_CRASH] 2026-03-26T20:05:25.076352
+- **Error**: TDAD: Automated Regression Crash for GW-06
+- **Traceback**:
+```
+Traceback (most recent call last):
+  File "/Users/rds/antigravity/tachyon_tongs/scripts/run_pathogen.py", line 108, in <module>
+    runner.execute_sweep()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/rds/antigravity/tachyon_tongs/scripts/run_pathogen.py", line 70, in execute_sweep
+    raise RuntimeError('TDAD: Automated Regression Crash for GW-06')
+RuntimeError: TDAD: Automated Regression Crash for GW-06
+```

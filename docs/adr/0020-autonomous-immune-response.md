@@ -40,3 +40,15 @@ We will implement the **Autonomous Immune Response Protocol (AIRP)**. This proto
 ---
 *Signed by: Sentinel Agent*
 *Date: 2026-03-20*
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0020",
+  "hash": "sha256:af9a2dadf95bda63ff425c486be17b59a524dd6150ce87e3525e1571f39827dd",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

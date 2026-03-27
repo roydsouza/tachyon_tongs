@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from typing import List
-from tachyon.api.schema import SubstrateHealth, AgentDetail, PatchProposal
+from tachyon.api.schema import SubstrateHealth, AgentDetail, PatchProposal, ForensicAlert
 from tachyon.api.pep import PEPLayer, ToolRequest, ToolResponse
 from tachyon.core.state_bridge import StateBridge
 
@@ -22,6 +22,11 @@ async def list_agents():
 async def list_patches():
     """Pending Airlock Patches for Review"""
     return bridge.get_patches()
+
+@router.get("/forensics", response_model=List[ForensicAlert])
+async def list_forensics():
+    """Recent Forensic High-Signal Events"""
+    return bridge.get_forensic_alerts()
 
 @router.post("/action", response_model=ToolResponse)
 async def execute_action(request: ToolRequest):

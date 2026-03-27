@@ -19,3 +19,15 @@ We are implementing **Metamorphic Adversarial Reasoning** via a dedicated **Refl
 
 ## Status
 IMPLEMENTING (2026-03-23)
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0040",
+  "hash": "sha256:1642893657feb759600902cbf09a5e2c01f2e95d03a78a5addc544f0a2d7e9f5",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

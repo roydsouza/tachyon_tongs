@@ -16,3 +16,15 @@ Currently, the `THREAT_MODEL.md` is a semi-static document updated by human or a
 - **Security**: Ensures the threat model is always current and data-driven.
 - **Traceability**: Provides a direct "Audit to Action" path from the forensic ledger to the architecture.
 - **Risk**: Automated documentation updates must be fail-closed to prevent an adversary from "overwriting" the threat model (mitigated by mandatory PQC re-signing).
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0044",
+  "hash": "sha256:86e1a404f0680eb0327c7559dd670ecc831d2a75f0839928b49f7a9aea7885f2",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

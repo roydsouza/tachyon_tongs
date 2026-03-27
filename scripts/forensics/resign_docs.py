@@ -6,7 +6,7 @@ def re_sign_all():
     root_dir = os.getcwd()
     docs = [
         "README.md",
-        "TASKS.md",
+        "TASKS_CLEANUP.md",
         "docs/ARCHITECTURE.md",
         "docs/WHITEPAPER.md",
         "docs/THREAT_MODEL.md"

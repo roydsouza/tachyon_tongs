@@ -18,3 +18,15 @@ Proposed.
 ## Consequences
 - **Positive**: Proactive discovery of novel bypass techniques before they hit the main substrate.
 - **Negative**: Increased complexity in sandbox management and the risk of "Canary Escape" if not properly implemented.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0019",
+  "hash": "sha256:69b23b4c5fc446f2b542d8f3bf6fd974170dd66f8e22d90301762e017dbd5a06",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

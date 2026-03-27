@@ -14,14 +14,14 @@ Welcome to the **Tachyon Tongs** Intelligence Layer. This index serves as the ma
 - [SUPPLY_CHAIN_SECURITY.md](SUPPLY_CHAIN_SECURITY.md): Protecting the evolution loop.
 
 ## 🧠 Memory & Evolution
-- [MEMORY.md](MEMORY.md): Episodic logs and architectural history.
+- [MEMORY.md](AGENTIC_ARCHITECTURE.md#8-forensic-reconstruction): Episodic logs and architectural history (Reconstruction protocol).
 - [ROADMAP.md](ROADMAP.md): Evolutionary milestones (HITL → HOOTL).
 - [KEYS.md](KEYS.md): Cryptographic root of trust and forensic signing.
 
 ## 🛠️ Specialized Integrations
 - [CLIENT_INTEGRATION.md](CLIENT_INTEGRATION.md): Connecting external tools to the PEP.
-- [TAILSCALE.md](TAILSCALE.md): Secure mesh networking for distributed enforcement.
 - [SKILLS_ARCHITECTURE.md](SKILLS_ARCHITECTURE.md): Modular skill development for Tachyon Agents.
+- [TASKS_CLEANUP.md](../TASKS_CLEANUP.md): Active engineering backlog and "Get-Well" sprint.
 
 ---
 *This index is autonomously maintained by the Sentinel Agent.*

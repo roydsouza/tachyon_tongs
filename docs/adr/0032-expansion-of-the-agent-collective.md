@@ -19,3 +19,15 @@ We formally add two new roles to the collective:
 ---
 *Signed by: Hybrid Root Authority*
 *Merkle Inclusion: Phase 27 Hardening*
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0032",
+  "hash": "sha256:c19877cb959058c6617dda48115b60078c2785aa719312184090d4ace4b57e26",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

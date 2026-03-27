@@ -16,3 +16,15 @@ We will implement an active whitelist lookup mechanism.
 - **Security**: Preemptively blocks installation of non-vetted or malicious packages.
 - **Control**: Operators can manually "approve" packages by adding them to the exploitation catalog with the `APPROVED` tag.
 - **Friction**: New dependencies require an entry in the catalog before the agent can install them.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0022",
+  "hash": "sha256:6e8cbff5f8cb90fecf33265b66919dc1ddbdb26d51b137434e9b350cfcbe9665",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

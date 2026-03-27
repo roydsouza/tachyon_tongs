@@ -30,3 +30,15 @@ We will implement a **Tiered Hardware Isolation Protocol** optimized for the App
 ---
 *Signed by: Sentinel Agent*
 *Date: 2026-03-20*
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0027",
+  "hash": "sha256:d1d1a2006c1be220232cd94591458d52dc0a9bb2c4f9cb486ee54ded37c6099a",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

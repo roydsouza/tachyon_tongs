@@ -1,0 +1,25 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-03-26T20:41:27.503703Z",
+    "component": {
+      "name": "Tachyon Tongs Substrate",
+      "version": "1.0.0",
+      "type": "application"
+    }
+  },
+  "components": [
+    {
+      "name": "requests",
+      "version": "2.31.0",
+      "externalReferences": [
+        {
+          "url": "https://pypi.org/project/requests/",
+          "type": "distribution"
+        }
+      ]
+    }
+  ]
+}

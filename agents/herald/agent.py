@@ -19,7 +19,7 @@ class HeraldPlugin(BaseAgentPlugin):
             FileLogCollector("ALERT.md", r"## \[(.*?)\] (.*?)\n"),
             FileLogCollector("logs/EVOLUTION.md", r"## \[(.*?)\] (.*?)\n"),
             AirlockCollector(),
-            TaskCollector("TASKS.md")
+            TaskCollector("TASKS_CLEANUP.md")
         ]
         self.dispatchers = [ConsoleDispatcher()]
         # Future: Add Slack/Signal dispatchers from config
@@ -59,7 +59,16 @@ class HeraldPlugin(BaseAgentPlugin):
     def _collect_all(self) -> List[Dict[str, Any]]:
         all_events = []
         for collector in self.collectors:
-            all_events.extend(collector.collect())
+            try:
+                all_events.extend(collector.collect())
+            except Exception as e:
+                print(f"[{self.agent_id}] Collector {collector.__class__.__name__} failed: {e}")
+                self.bus.emit_event(
+                    topic="HERALD_COLLECTOR_ERROR",
+                    agent_id=self.agent_id,
+                    payload={"collector": collector.__class__.__name__, "error": str(e)},
+                    certificate=self.certificate
+                )
         return all_events
 
     def _get_new_events(self) -> List[Dict[str, Any]]:

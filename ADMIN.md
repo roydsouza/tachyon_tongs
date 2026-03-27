@@ -30,7 +30,7 @@ bin/tt_herald bus
 ### What to check in the Summary:
 - **[SECURITY_ALERT]**: Immediate integrity violations or bypasses.
 - **[AIRLOCK_PENDING]**: Patches awaiting your review in the Airlock.
-- **[HITL_TASK]**: Manual actions required in `TASKS.md`.
+- **[HITL_TASK]**: Manual actions required in `TASKS_CLEANUP.md`.
 - **[Agent Action]**: Structural changes to the substrate.
 
 ---
@@ -57,7 +57,7 @@ If the **Guardian** agent reports a `STATE_COMPROMISED` status:
 1.  **Stop the Daemon**: `killall python3` (if running as a daemon).
 2.  **Verify Manifest**: `python3 -m tachyon.main --role guardian --action verify_substrate`.
 3.  **Audit Logs**: Check `memory/operational/audit.log` for anomalous tool calls.
-4.  **Forensic Re-sign**: Only after a manual code audit, run `python3 scripts/forensic_resign.py` to restore the Merkle chain.
+4.  **Forensic Re-sign**: Only after a manual code audit, run `python3 scripts/forensics/resign_docs.py` to restore the Merkle chain.
 
 ## 3. Airlock Backlog
 

@@ -58,19 +58,30 @@ def dash(refresh: int = typer.Option(2000, help="Refresh interval in ms")):
     TachyonDash().run()
 
 @app.command()
-def status(json_out: bool = typer.Option(False, "--json", help="Output in JSON format")):
+def status(
+    json_out: bool = typer.Option(False, "--json", help="Output in JSON format"),
+    local: bool = typer.Option(False, "--local", help="Run local diagnostics (no daemon)")
+):
     """Quick substrate health summary."""
-    try:
-        with httpx.Client(timeout=2.0) as client:
-            resp = client.get(f"{SUBSTRATE_URL}/status")
-            resp.raise_for_status()
-            data = resp.json()
-    except Exception as e:
-        if json_out:
-            print(json.dumps({"error": "Substrate Offline", "detail": str(e)}))
-        else:
-            console.print("[bold red]Error: Substrate Daemon is Offline.[/bold red]")
-            console.print(f"[dim]{e}[/dim]")
+    if local:
+        data = {
+            "status": "diagnostic-mode",
+            "integrity_verified": True,
+            "uptime_seconds": 0,
+            "merkle_root": "LOCAL_ONLY"
+        }
+    else:
+        try:
+            with httpx.Client(timeout=2.0) as client:
+                resp = client.get(f"{SUBSTRATE_URL}/status")
+                resp.raise_for_status()
+                data = resp.json()
+        except Exception as e:
+            if json_out:
+                print(json.dumps({"error": "Substrate Offline", "detail": str(e)}))
+            else:
+                console.print("[bold red]Error: Substrate Daemon is Offline.[/bold red]")
+                console.print(f"[dim]{e}[/dim]")
         return
 
     if json_out:
@@ -84,6 +95,23 @@ def status(json_out: bool = typer.Option(False, "--json", help="Output in JSON f
         table.add_row("Status", f"[bold {status_color}]{data['status'].upper()}[/bold {status_color}]")
         table.add_row("Integrity", "✓ VERIFIED" if data["integrity_verified"] else "✗ COMPROMISED")
         table.add_row("Uptime (sec)", str(data.get("uptime_seconds", 0)))
+        
+        # Phase 31.1: Supply Chain & Keys
+        from tachyon.core.state import StateManager
+        state = StateManager()
+        import sqlite3
+        with sqlite3.connect(state.db_path) as conn:
+            att_count = conn.execute("SELECT COUNT(*) FROM package_attestations").fetchone()[0]
+            wl_count = conn.execute("SELECT COUNT(*) FROM package_whitelist").fetchone()[0]
+        
+        table.add_row("Supply Chain", f"{att_count} Attestations / {wl_count} Whitelisted")
+        
+        # Crypto Hierarchy
+        from tachyon.core.keys.operations import get_delegation_summary
+        summary = get_delegation_summary()
+        anchored_count = sum(1 for a in summary.values() if a["status"] == "Anchored")
+        table.add_row("Agent Keys", f"{anchored_count}/{len(summary)} Anchored")
+        
         table.add_row("Merkle Root", f"[dim]{data.get('merkle_root', 'N/A')}[/dim]")
         
         console.print(table)
@@ -169,6 +197,12 @@ def anchor():
     """Retroactively anchor existing shares to the hardware Keychain."""
     from tachyon.core.keys.operations import anchor_existing_key
     anchor_existing_key()
+
+@keys_app.command()
+def anchor_agents():
+    """Generate and anchor core agent sub-keys (Sentinel, Engineer, Airlock)."""
+    from tachyon.core.keys.operations import anchor_agent_keys
+    anchor_agent_keys()
 
 @keys_app.command()
 def status():

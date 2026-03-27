@@ -19,6 +19,9 @@ dependencies = [
     "typer",
     "rich",
     "httpx",
+    "pyyaml",
+    "pytest",
+    "pyobjc-framework-Security; sys_platform == 'darwin'",
 ]
 
 [project.scripts]

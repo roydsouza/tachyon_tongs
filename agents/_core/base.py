@@ -6,6 +6,7 @@ import threading
 from datetime import datetime
 from tachyon.core.bus import TachyonEventBus
 from tachyon.core.signing import IntegrityManager
+from tachyon.core.state import StateManager
 
 class BaseAgentPlugin(ABC):
     """
@@ -76,6 +77,11 @@ class BaseAgentPlugin(ABC):
             result = {"status": "ERROR", "message": str(e)}
             status = "ERROR"
             
+        # Phase 46: Fail-Loud Escalation (ADR-0061)
+        if status in ["ERROR", "FATAL"]:
+            msg = f"Agent {self.agent_id} ({self.plugin_name}) failed action '{action}': {result.get('message', result)}"
+            StateManager().emit_alert("AGENT_ACTION_ERROR", msg)
+            
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
         
@@ -101,7 +107,6 @@ class BaseAgentPlugin(ABC):
             topic="ACTION_COMPLETED",
             agent_id=self.agent_id,
             payload=record,
-            signature=signature,
             certificate=self.certificate
         )
         
@@ -160,7 +165,19 @@ class BaseAgentPlugin(ABC):
                         else:
                             print(f"[SECURITY] Suppressing UNSIGNED or INVALID event {event['id']} on topic {topic}")
             except Exception as e:
-                print(f"[{self.agent_id}] Backplane Loop Error: {e}")
+                # Phase 46: Fail-Loud Escalation (ADR-0061)
+                msg = f"Agent {self.agent_id} ({self.plugin_name}) backplane loop CRASHED: {e}"
+                StateManager().emit_alert("AGENT_BACKPLANE_CRASH", msg)
+                
+                try:
+                    self.bus.emit_event(
+                        topic="AGENT_CALLBACK_ERROR",
+                        agent_id=self.agent_id,
+                        payload={"error": str(e), "error_type": type(e).__name__},
+                        certificate=self.certificate
+                    )
+                except Exception:
+                    pass # Bus itself may be broken; don't recurse
                 
             self._stop_event.wait(interval_sec)
 

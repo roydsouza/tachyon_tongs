@@ -17,8 +17,8 @@ def test_registry_discovery():
     guardian_cls = AgentRegistry.get_plugin("guardian")
     guardian = guardian_cls(agent_id="test-guardian", config={})
     
-    print("🔍 [Test] Testing Guardian 'verify_file' action on TASKS.md...")
-    result = guardian.execute_action("verify_file", {"filepath": "TASKS.md"})
+    print("🔍 [Test] Testing Guardian 'verify_file' action on TASKS_CLEANUP.md...")
+    result = guardian.execute_action("verify_file", {"filepath": "TASKS_CLEANUP.md"})
     print(f"✅ [Test] Result: {result}")
     
     assert result["status"] == "SUCCESS"

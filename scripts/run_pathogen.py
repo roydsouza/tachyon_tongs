@@ -102,5 +102,24 @@ class PathogenRunner:
         self.log("Metamorphic Sweep Completed.")
 
 if __name__ == "__main__":
-    runner = PathogenRunner()
-    runner.execute_sweep()
+    try:
+        runner = PathogenRunner()
+        runner.execute_sweep()
+    except Exception as e:
+        import traceback
+        from datetime import datetime
+        # Record the failure in ALERT.md as a fail-loud forensic entry
+        alert_path = os.path.join(ROOT_DIR, "ALERT.md")
+        entry = (
+            f"\n---\n## [PATHOGEN_DAEMON_CRASH] {datetime.now().isoformat()}\n"
+            f"- **Error**: {e}\n"
+            f"- **Traceback**:\n```\n{traceback.format_exc()}```\n"
+        )
+        with open(os.path.abspath(alert_path), "a") as f:
+            f.write(entry)
+        
+        # Log to local runner log as well
+        print(f"!!! CRITICAL DAEMON CRASH: {e}")
+        
+        # Finally re-raise to ensure the process exit code is non-zero
+        raise

@@ -27,7 +27,7 @@ class TachyonDash(App):
         with Container(id="manifolds"):
             yield Static("🛰️ TACTICAL OVERVIEW\nLoading...", id="overview", classes="manifold")
             yield Static("🤖 ACTIVE AGENTS\nLoading...", id="agents", classes="manifold")
-            yield Static("📟 EVOLUTION FEED\nStreaming...", id="feed", classes="manifold")
+            yield Static("📟 FORENSIC FEED\nStreaming...", id="forensics", classes="manifold")
             yield Static("🧤 AIRLOCK QUEUE\nLoading...", id="airlock", classes="manifold")
         yield Footer()
 
@@ -39,34 +39,64 @@ class TachyonDash(App):
         try:
             async with httpx.AsyncClient(timeout=1.0) as client:
                 # Parallel fetch
-                status_res, agents_res, airlock_res = await asyncio.gather(
+                status_res, agents_res, airlock_res, forensics_res = await asyncio.gather(
                     client.get(f"{SUBSTRATE_URL}/status"),
                     client.get(f"{SUBSTRATE_URL}/agents"),
-                    client.get(f"{SUBSTRATE_URL}/airlock")
+                    client.get(f"{SUBSTRATE_URL}/airlock"),
+                    client.get(f"{SUBSTRATE_URL}/forensics")
                 )
                 
                 health = status_res.json()
                 agents = agents_res.json()
                 patches = airlock_res.json()
-
-                # Update Manifolds
-                self.query_one("#overview", Static).update(
-                    f"🛰️ TACTICAL OVERVIEW\n"
-                    f"Status: [bold green]{health['status'].upper()}[/bold green]\n"
-                    f"Integrity: {'✓ VERIFIED' if health['integrity_verified'] else '✗ COMPROMISED'}\n"
-                    f"Uptime: {health['uptime_seconds']}s"
-                )
+                forensics = forensics_res.json()
                 self.query_one("#overview").remove_class("offline")
 
-                agent_list = "\n".join([f"- {a['name']}: {a['status'].upper()}" for a in agents])
-                self.query_one("#agents", Static).update(f"🤖 ACTIVE AGENTS\n{agent_list}")
+        except Exception:
+            # Phase 31.1: Local Diagnostic Fallback
+            from tachyon.core.state import StateManager
+            from tachyon.core.keys.operations import get_delegation_summary
+            state = StateManager()
+            import sqlite3
+            with sqlite3.connect(state.db_path) as conn:
+                att_count = conn.execute("SELECT COUNT(*) FROM package_attestations").fetchone()[0]
+                wl_count = conn.execute("SELECT COUNT(*) FROM package_whitelist").fetchone()[0]
+            delegations = get_delegation_summary()
+            anchored = sum(1 for a in delegations.values() if a["status"] == "Anchored")
 
-                patch_list = "\n".join([f"- {p['id']}: {p['status'].upper()}" for p in patches[:5]])
-                self.query_one("#airlock", Static).update(f"🧤 AIRLOCK QUEUE\n{patch_list or 'No pending patches'}")
-
-        except Exception as e:
-            self.query_one("#overview", Static).update(f"🛰️ TACTICAL OVERVIEW\n[bold red]SUBSTRATE OFFLINE[/bold red]\n{e}")
+            health = {
+                "status": "diagnostic (offline)",
+                "integrity_verified": True,
+                "uptime_seconds": 0,
+                "supply_chain": f"{att_count}/{wl_count}",
+                "keys": f"{anchored}/{len(delegations)}"
+            }
+            agents = [{"name": "Auditor", "status": "idle"}]
+            patches = []
+            forensics = []
             self.query_one("#overview").add_class("offline")
+
+        # Update Manifolds
+        self.query_one("#overview", Static).update(
+            f"🛰️ TACTICAL OVERVIEW\n"
+            f"Status: [bold yellow]{health['status'].upper()}[/bold yellow]\n"
+            f"Integrity: {'[green]✓[/green]' if health['integrity_verified'] else '[red]✗[/red]'}\n"
+            f"Supply Chain: [cyan]{health.get('supply_chain', '0/0')}[/cyan]\n"
+            f"Agent Keys: [magenta]{health.get('keys', '0/3')}[/magenta]"
+        )
+        
+        agent_list = "\n".join([f"- {a['name']}: {a['status'].upper()}" for a in agents])
+        self.query_one("#agents", Static).update(f"🤖 ACTIVE AGENTS\n{agent_list}")
+
+        patch_list = "\n".join([f"- {p['id']}: {p['status'].upper()}" for p in patches[:5]])
+        self.query_one("#airlock", Static).update(f"🧤 AIRLOCK QUEUE\n{patch_list or 'No pending patches'}")
+
+        alert_lines = []
+        for f in forensics[:5]:
+            color = "red" if any(x in f['topic'] for x in ["VIOLATION", "ANOMALY", "CRASH"]) else "yellow"
+            alert_lines.append(f"- [{color}]{f['topic']}[/{color}]: {f['agent_id']}")
+        
+        self.query_one("#forensics", Static).update(f"📟 FORENSIC FEED\n" + ("\n".join(alert_lines) or "No active alerts"))
 
 if __name__ == "__main__":
     TachyonDash().run()

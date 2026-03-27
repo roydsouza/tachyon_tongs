@@ -31,3 +31,15 @@ Transition from TF-IDF frequency vectors to dense vector embeddings using a loca
 *   **Performance**: Semantic embedding and LLM refinement add latency (mitigated by Metal NRT acceleration).
 *   **Reliability**: Significant reduction in "Semantic Drift" bypasses.
 *   **Auditability**: Reasoning traces for alignment decisions will be stored in the `ActionRecord` for forensic review.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0041",
+  "hash": "sha256:0f4e14bfe4f66f41a7eddfc7c7400b727f3d11c24e96ef09b0aea5c0b403eb3a",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

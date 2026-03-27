@@ -16,3 +16,15 @@ We will formalize the Canary agent into a standalone, first-class component.
 - **Visibility**: The agent's code and its operational log (`CANARY_LOG.md`) are now clearly associated.
 - **Modularity**: The Canary can now be updated and tested without risk to the main `Sentinel` or `Engineer` roles.
 - **Consistency**: Legacy wrappers in `roles.py` maintain backward compatibility while delegating to the new module.
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0023",
+  "hash": "sha256:43716209243e7c3147f1e9d94da29323155ce4a93b52f9acb717320a39ea6ae6",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```

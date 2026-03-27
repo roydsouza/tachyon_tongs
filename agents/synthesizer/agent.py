@@ -3,9 +3,11 @@ from agents._core.base import BaseAgentPlugin
 from agents._core.registry import AgentRegistry
 
 class CedarEngine:
-    def generate_policy(self, intent): return {"status": "SUCCESS", "type": "cedar"}
+    def generate_policy(self, intent):
+        return {"status": "NOT_IMPLEMENTED", "type": "cedar", "message": "CedarEngine policy generation is not yet implemented."}
 class RegoEngine:
-    def generate_policy(self, intent): return {"status": "SUCCESS", "type": "rego"}
+    def generate_policy(self, intent):
+        return {"status": "NOT_IMPLEMENTED", "type": "rego", "message": "RegoEngine policy generation is not yet implemented."}
 
 @AgentRegistry.register("synthesizer")
 class SynthesizerPlugin(BaseAgentPlugin):

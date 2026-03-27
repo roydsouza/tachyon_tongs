@@ -67,8 +67,15 @@ class KeychainProvider:
                 return None, None
         except Exception as e:
             # Phase 25.2: Headless Fallback
+            # Phase 44: Headless Fallback (OS Environment or memory/keys/)
             root_key_path = os.environ.get("TACHYON_ROOT_KEY_PATH")
-            if root_key_path and os.path.exists(root_key_path):
+            if not root_key_path:
+                # Resolve relative to project root
+                this_dir = os.path.dirname(os.path.abspath(__file__))
+                project_root = os.path.dirname(os.path.dirname(os.path.dirname(this_dir)))
+                root_key_path = os.path.join(project_root, "memory", "keys", "root_sk.bin")
+
+            if os.path.exists(root_key_path):
                 try:
                     with open(root_key_path, 'rb') as f:
                         seed = f.read()
@@ -76,7 +83,13 @@ class KeychainProvider:
                     return priv_key, priv_key.public_key()
                 except Exception:
                     pass
+
+            headless = os.environ.get("TACHYON_HEADLESS") == "1" or os.environ.get("TACHYON_TEST_MODE") == "1"
+            is_strict = os.environ.get("TACHYON_STRICT_MODE") == "1"
             
+            if not is_strict and headless:
+                 return None, None
+                 
             warnings.warn(f"[KeychainProvider] Ed25519 Key loading failed: {e}")
             return None, None
 
@@ -123,10 +136,17 @@ class KeychainProvider:
             return sk_bytes, pk_bytes
             
         except Exception as e:
-            # Phase 25.4: Headless PQC Fallback
+            # Phase 44: Headless PQC Fallback (OS Environment or memory/keys/)
             sk_path = os.environ.get("TACHYON_PQC_SK_PATH")
             pk_path = os.environ.get("TACHYON_PQC_PK_PATH")
             
+            # Auto-resolve relative to project root if not set
+            if not sk_path:
+                this_dir = os.path.dirname(os.path.abspath(__file__))
+                project_root = os.path.dirname(os.path.dirname(os.path.dirname(this_dir)))
+                sk_path = os.path.join(project_root, "memory", "keys", "pqc_sk.bin")
+                pk_path = os.path.join(project_root, "memory", "keys", "pqc_pk.bin")
+
             if sk_path and os.path.exists(sk_path) and pk_path and os.path.exists(pk_path):
                 try:
                     with open(sk_path, 'rb') as f:
@@ -137,5 +157,11 @@ class KeychainProvider:
                 except Exception:
                     pass
             
+            headless = os.environ.get("TACHYON_HEADLESS") == "1" or os.environ.get("TACHYON_TEST_MODE") == "1"
+            is_strict = os.environ.get("TACHYON_STRICT_MODE") == "1"
+            
+            if not is_strict and headless:
+                 return None, None
+
             warnings.warn(f"[KeychainProvider] PQC key loading failed: {e}")
             return None, None

@@ -49,7 +49,7 @@ class GuardianPlugin(BaseAgentPlugin):
             # Phase 30: Full substrate sweep using git ls-files
             import subprocess
             # Correct path traversal from agents/code-only/guardian/agent.py to root
-            root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+            root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
             try:
                 # Get list of all tracked files
                 result = subprocess.run(
@@ -69,6 +69,9 @@ class GuardianPlugin(BaseAgentPlugin):
                         continue
                         
                     full_path = os.path.join(root_dir, relative_path)
+                    if not os.path.exists(full_path):
+                        continue
+                        
                     if not self.im.verify_integrity(full_path):
                         print(f"[Guardian Debug] Integrity Violation Found: {relative_path}")
                         violations.append(relative_path)
@@ -76,12 +79,23 @@ class GuardianPlugin(BaseAgentPlugin):
                 if violations:
                     msg = f"INTEGRITY FAILURE: Unsigned or tampered files detected: {', '.join(violations[:5])}"
                     print(f"[Guardian Debug] Emitting Alert: {msg}")
+                    
+                    from tachyon.core.state import StateManager
+                    state = StateManager()
+                    
+                    if state.is_mutant_lock_active():
+                        print("[Guardian Debug] Authorized mutation in progress. Suppressing alert.")
+                        return {
+                            "status": "WARNING",
+                            "violations": violations,
+                            "authorized_mutation": True,
+                            "message": "Integrity violations detected, but authorized Mutant Lock is active. Suppression engaged."
+                        }
+                    
                     if len(violations) > 5:
                         msg += f" (and {len(violations) - 5} more)"
-                    # Note: StateManager is already imported in verify_file logic above if needed, 
-                    # but I'll use direct import here for clarity.
-                    from tachyon.core.state import StateManager
-                    StateManager().emit_alert("STATE_COMPROMISED", msg)
+                        
+                    state.emit_alert("STATE_COMPROMISED", msg)
                     return {"status": "FAILURE", "violations": violations}
                 
                 return {"status": "SUCCESS", "checked_count": len(tracked_files)}

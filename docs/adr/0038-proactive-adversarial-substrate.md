@@ -16,3 +16,15 @@ We are evolving the Pathogen agent into a **Proactive Adversarial Substrate**.
 
 ## Status
 OPERATIONAL (2026-03-23)
+
+
+## Integrity Attestation
+
+```json
+{
+  "adr_id": "ADR-0038",
+  "hash": "sha256:674cf778d6d5766322ce75bf62a81f56c8ca787a7586a836c6551fb80d61a371",
+  "status": "SIGNED",
+  "signer": "tachyon-substrate-v1"
+}
+```
