@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:e84ae1c9ee2a7c5cbb853e658340c6d93e74df1feceef913f5f7a4fbd1e1f6d9",
+  "signature": "hmac:7d89031627a6205576d79862e99e3287f3386f9479805c585e8dfb809e083a83",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/INTERFACES.md.sig"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:7f2efe1294d018d23d6aa6667617ad756b277d245b19f867eb1ed6bc6e27a085",
+  "signature": "hmac:babe941eb78b3dca1cb9a3ee3528def9d3b08f811bacf30feaf746ad8c7d73ca",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0039-autonomous-intelligence-research.md.sig"
+  }
+}

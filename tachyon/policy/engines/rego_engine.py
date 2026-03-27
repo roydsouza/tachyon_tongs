@@ -42,10 +42,23 @@ class RegoPolicyEngine(PolicyEngine):
             # Pass 2: Secondary content (outbound_dlp) check
             return await self.evaluate(agent_id, "outbound_dlp", params)
 
-        # 2. Use cached evaluation for standard tool calls
-        # We JSON-serialize params to make them hashable for lru_cache
-        param_str = json.dumps(params, sort_keys=True)
+        # 3. Use cached evaluation for standard tool calls
+        # C-03: Prune attacker-controlled noise parameters before caching
+        normalized_params = self._normalize_cache_params(params)
+        param_str = json.dumps(normalized_params, sort_keys=True)
         return self._evaluate_cached(agent_id, action, param_str)
+
+    def _normalize_cache_params(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Prunes non-security-relevant keys to prevent cache poisoning DoS."""
+        # Security-critical parameters that impact policy verdicts
+        SECURITY_KEYS = {
+            "url", "domain", "Domain", "URL",
+            "recipient", "Recipient",
+            "package", "package_name",
+            "command", "args",
+            "access_type", "resource_id"
+        }
+        return {k: v for k, v in params.items() if k in SECURITY_KEYS}
 
     @functools.lru_cache(maxsize=1024)
     def _evaluate_cached(self, agent_id: str, action: str, param_str: str) -> PolicyVerdict:

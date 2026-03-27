@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:03a15c272741a998ade4b845c50fb0b4b72cf4c9a83781c1a93ce512a3fe133c",
+  "signature": "hmac:1221c2d878bb2bdb9e3c93fa18bf9b710c8eb18ff2187adb737ee0167b94d9c5",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/TASKS_INTERFACES.md.sig"
+  }
+}

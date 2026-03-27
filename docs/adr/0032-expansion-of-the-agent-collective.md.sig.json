@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:19410ea3df9090a6272b896297bce8374204da7458c9cc8294f3d8bbc42b9e83",
+  "signature": "hmac:249fe67b905a284549342f7f01da369a5e0629f6568df89758f9f398fed67661",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0032-expansion-of-the-agent-collective.md.sig"
+  }
+}

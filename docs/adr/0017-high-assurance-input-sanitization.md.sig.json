@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:8fde25788882c06fa9a8ff03573fce118a64b7db8223c8641cb7dfced8634248",
+  "signature": "hmac:90c5d6ca720acc48d95bb8fdff7621572d66220f50329a5d63643d45adca66ac",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0017-high-assurance-input-sanitization.md.sig"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:a4e5b5c622483d8f9071761f4b92cb5e4a45a98ecbf34787f667a9f568e3e46f",
+  "signature": "hmac:2a98873d27e870d8d8cc66cfab26ede8a7e47fe7be3225568b1d4c6833fb3d18",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0024-agent-consolidation.md.sig"
+  }
+}

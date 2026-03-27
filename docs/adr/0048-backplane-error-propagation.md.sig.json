@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:b18f52c2b9532ec123658b00c04b1b2e2a747a4a9f4e1c90fc24ebb1a32c3087",
+  "signature": "hmac:380ee5807c09f9ed71f2e9e8d8f04e0aeac1620f0d22867418c6537dfb4dce2d",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0048-backplane-error-propagation.md.sig"
+  }
+}

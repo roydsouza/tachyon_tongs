@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:b5d7f7e367d2ba5d5c16cdc91bb675c3979cae2051682267695290f3603a524e",
+  "signature": "hmac:590ee5d2a8f30574e006af38d2a7a031fe4a162142b4343566599d95a5e56779",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0038-proactive-adversarial-substrate.md.sig"
+  }
+}

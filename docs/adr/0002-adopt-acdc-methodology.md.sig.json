@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:1926043baa467a368ef85056102f77e560f92cffef657de6827a32fa843ac0e5",
+  "signature": "hmac:783021e88def587412cda9a0327ec3622a4646683046f5b6bba1421bfba1ab65",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0002-adopt-acdc-methodology.md.sig"
+  }
+}

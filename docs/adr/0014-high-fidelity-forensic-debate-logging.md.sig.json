@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:435b1e42eda026e9bdd41e8af070be127500373ca578980dc9cc61ff611e948b",
+  "signature": "hmac:b1ebdb993b27ee73d23523e9a7be94929f8c7061af6e4597aa34a887f7ec4f80",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0014-high-fidelity-forensic-debate-logging.md.sig"
+  }
+}

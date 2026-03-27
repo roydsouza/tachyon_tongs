@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:fdb0f520bc1dfe41ccc57f223170dafdfa998ac18bc605cc6e2f6d4a562b3e56",
+  "signature": "hmac:f77531c75eb10e07166319dbe0461ee162502053de03c423dbc72bfad6ec88a8",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0052-herald-collector-resiliency.md.sig"
+  }
+}

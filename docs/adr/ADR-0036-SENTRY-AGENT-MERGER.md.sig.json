@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:e0e903e6abec39404c79821bdebd11150a957243e1439c9f992be7f85d2453b5",
+  "signature": "hmac:8495867898118b453bb1c2d66d319f0881ef8973e5c4351f0896e99368e7b8e2",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/ADR-0036-SENTRY-AGENT-MERGER.md.sig"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:4b21584fa1bff02a7cae1b2686d5464563d58aea0fcbe76df1057d66f2d89e50",
+  "signature": "hmac:c2adae0510b87514d3b6bb8d1e44df9736286fe46eca5864a9c88359708cbbb1",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0050-engineer-forensic-reporting.md.sig"
+  }
+}

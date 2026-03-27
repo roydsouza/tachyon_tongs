@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:eb8191bfa572bfb236a850e12224b4db1257b167ef266ea59488171772dedc44",
+  "signature": "hmac:b1907a4696e036fffa06ff5a3a386a6b62c2cb77765c321efa1afcdd2a72c07f",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0067-signed-remote-access.md.sig"
+  }
+}

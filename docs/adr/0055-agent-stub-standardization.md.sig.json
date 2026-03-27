@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:3c10ef98dae610830f3f5d08600d9f032d7ed1efb6906a357dfb9f0e5c1a9698",
+  "signature": "hmac:a1b1b7d2edcdb67bed8f722bdaf57d90ebdcdde7aaf81b62b0354719c965f137",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0055-agent-stub-standardization.md.sig"
+  }
+}

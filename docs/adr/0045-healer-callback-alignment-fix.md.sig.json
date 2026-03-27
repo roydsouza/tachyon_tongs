@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:8ef0da8211895458e9412310e053b9d47ae93e3d09066fe196956769767e6e51",
+  "signature": "hmac:8f24f6c49e917bed5414a021c34ebaaef983178f4252b91c83fa3c6a1b49216b",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0045-healer-callback-alignment-fix.md.sig"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:531315036e2655bc7b48602e2e15796b09a9954ab05d4de74491ddcf26384c7d",
+  "signature": "hmac:81adf6e10d463585fcca2a917769e080b8545b57bb58b94a0d3b8a918e9efb3c",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0026-local-model-fallback.md.sig"
+  }
+}

@@ -30,7 +30,7 @@
 
 ---
 
-### [R-01] Sentinel `_call_mcp_tool` Emits Unsigned COMM_FAILURE Events — SECURITY BUG
+### [x] [R-01] Sentinel `_call_mcp_tool` Emits Unsigned COMM_FAILURE Events — SECURITY BUG
 - **File**: `agents/sentinel/agent.py` — Line 52
 - **Diagnosis**: When the NVD MCP endpoint fails after all retries, `_call_mcp_tool` emits a `SENTINEL_COMM_FAILURE` event with:
   ```python
@@ -53,7 +53,7 @@
 
 ---
 
-### [R-02] 24 Legacy Orphan Test Files Block `pytest` Suite
+### [x] [R-02] 24 Legacy Orphan Test Files Block `pytest` Suite
 - **Directory**: `tests/`
 - **Diagnosis**: 24 test files reference the deleted `agents/code-only/` path from before the ADR-0018/0024 consolidation. Running `pytest tests/` produces 24 `ImportError`/`FileNotFoundError` collection errors and **zero actual test executions**. This means the GW acceptance criteria "All code changes must pass `pytest -v`" was technically never validated against the full suite.
 - **Affected files** (sample): `test_sentry_honeypot.py`, `test_healer_coordination.py`, `test_guardian_lock_integration.py`, `test_herald_aggregation.py`, `test_herald_healing.py`, `test_strip_attack.py`, and 18 others.
@@ -66,7 +66,7 @@
 
 ---
 
-### [R-03] TASKS_CLEANUP.md: Duplicate GW-25.2 Entry (Copy of GW-15)
+### [x] [R-03] TASKS_CLEANUP.md: Duplicate GW-25.2 Entry (Copy of GW-15)
 - **File**: `TASKS_CLEANUP.md` — Lines 332-340
 - **Diagnosis**: The entry titled `[GW-25.2] Quarantine Auditor (v2): High-assurance scan of Airlock artifacts` is **not about the Quarantine Auditor at all**. Its body is an exact copy of `[GW-15] Sentinel Emits All Lifecycle Events Without Certificate`. This was introduced during an edit that misaligned the replacement chunk.
 - **Fix**: Delete the entire `[GW-25.2]` block (lines 332-340) since the real Quarantine Auditor work is tracked in Phase 25.2 at the top of the file.
@@ -75,7 +75,7 @@
 
 ---
 
-### [R-04] AuditorPlugin References Non-Existent `StateManager.integrity`
+### [x] [R-04] AuditorPlugin References Non-Existent `StateManager.integrity`
 - **File**: `agents/auditor/agent.py` — Line 74
 - **Diagnosis**: `audit_quarantine()` calls `self.state.integrity.verify_integrity(fpath)`, but `StateManager` does not have an `integrity` attribute. This will raise `AttributeError` at runtime when scanning signed files in quarantine.
 - **Fix**: Use `IntegrityManager` directly:
@@ -89,12 +89,9 @@
 
 ---
 
-### [R-05] Items Falsely Marked [x] Without Implementation
+### [x] [R-05] Items Falsely Marked [x] Without Implementation
 - **File**: `TASKS_CLEANUP.md`
 - **Diagnosis**: The following items are marked as `[x]` (complete) but have **no corresponding code or implementation**:
-  1. `[CLI] tt debate replay <id>` — No command exists in `tachyon/cli/main.py`.
-  2. `[CLI] tt forensic bundle` — No command exists.
-  3. `[CLI] tt bus explore` — No command exists.
   4. `[VERIFY] Formal Verification` — No TLA+ models exist in the repo.
   5. `[VERIFY] Adversarial Fuzzing` — No AFL++ integration exists.
   6. `[AGENT] The Oracle/Diplomat/Debate Arena` — No implementation exists.
@@ -104,7 +101,7 @@
 
 ---
 
-### [R-06] AuditorPlugin Missing `config.yaml` — Invisible to AgentRegistry
+### [x] [R-06] AuditorPlugin Missing `config.yaml` — Invisible to AgentRegistry
 - **File**: `agents/auditor/` directory
 - **Diagnosis**: The `AgentRegistry.discover_plugins()` method discovers agents by walking `agents/*/` and checking for `config.yaml`. The `auditor/` directory has no `config.yaml`, so the Auditor will **never be loaded** by the registry during normal substrate boot.
 - **Fix**: Create `agents/auditor/config.yaml`:
@@ -123,7 +120,7 @@
 
 ---
 
-### [R-07] AuditorPlugin Uses `asyncio.run()` — Will Crash in Async Context
+### [x] [R-07] AuditorPlugin Uses `asyncio.run()` — Will Crash in Async Context
 - **File**: `agents/auditor/agent.py` — Lines 21, 23
 - **Diagnosis**: `execute_action` wraps async methods with `asyncio.run()`. If the Auditor is ever invoked from an existing async event loop (e.g., during a Textual TUI session or an async test), this will raise `RuntimeError: cannot be called from a running event loop`.
 - **Fix**: Make `audit_supply_chain()` and `audit_quarantine()` synchronous (they do no actual I/O that requires async), or use `asyncio.get_event_loop().run_until_complete()` as a fallback.
@@ -145,21 +142,21 @@
 - **Diagnosis**: A 50-150ms retry window in `IntegrityManager.verify_integrity` creates a TOCTOU window where an attacker can swap the file content after sig-check but before execution.
 - **Fix**: Implement atomic verification: Read file → hash → verify in a single operation with a `FileLock`. Include content SHA-256 in signature metadata.
 - **Acceptance Criteria**:
-  - [ ] `test_signature_toctou_race`: Concurrent thread swaps file during sleep window; verify it raises `IntegrityError`.
+  - [x] `test_signature_toctou_race`: Concurrent thread swaps file during sleep window; verify it raises `IntegrityError`.
 
 #### [C-02] InputSanitizer Bypass via Unicode Normalization Collisions
 - **Location**: `tachyon/core/sanitizer.py:3436-3464`
 - **Diagnosis**: `NFKC` normalization before pattern matching allows bypass via homographs and zero-width injections.
 - **Fix**: Normalize before matching, reject if normalization changes content, and move zero-width removal from `SanitizerNode` to `InputSanitizer`.
 - **Acceptance Criteria**:
-  - [ ] `test_unicode_normalization_bypass`: Payloads using full-width or decomposed Unicode must be caught by both pre/post normalization checks.
+  - [x] `test_unicode_normalization_bypass`: Payloads using full-width or decomposed Unicode must be caught by both pre/post normalization checks.
 
 #### [C-03] LRU Cache Poisoning in RegoPolicyEngine
 - **Location**: `tachyon/policy/engines/rego_engine.py:3873-3876`
 - **Diagnosis**: Cache keys include attacker-controlled serialized parameters, enabling cache eviction DoS and `DENY` verdict bypass via parameter pollution.
 - **Fix**: Implement cache key normalization (filtering only security-relevant keys) and rate-limit cache misses per agent.
 - **Acceptance Criteria**:
-  - [ ] `test_cache_poisoning_mitigation`: Assert that adding irrelevant parameters to a request does not create a new cache entry.
+  - [x] `test_cache_poisoning_mitigation`: Assert that adding irrelevant parameters to a request does not create a new cache entry.
 
 ---
 

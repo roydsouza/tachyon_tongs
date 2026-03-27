@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:f915d7abce6ea0380f827573707f0625186f9c0a9bb9ec69c70bf71067a7939a",
+  "signature": "hmac:5858e929a3b6581e010bf9b419dd224af7815700a815eadde1b39dd492a1be62",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0034-mutant-lock-pattern.md.sig"
+  }
+}

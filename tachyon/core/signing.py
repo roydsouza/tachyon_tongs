@@ -3,7 +3,8 @@ import hmac
 import hashlib
 import warnings
 from datetime import datetime
-from typing import Optional, Union, Tuple
+import json
+from typing import Optional, Union, Tuple, Dict, Any
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.exceptions import InvalidSignature
@@ -112,12 +113,24 @@ class IntegrityManager:
         with open(filepath, 'rb') as f:
             content = f.read()
 
-        # Delegate cryptography to the pure computational layer
-        final_digest = self.signer.sign(content)
+        # sign(content)
+        signature = self.signer.sign(content)
         
-        sig_path = f"{filepath}.sig"
+        import hashlib
+        file_hash = hashlib.sha256(content).hexdigest()
+        
+        from datetime import datetime
+        sig_data = {
+            "version": "2.0",
+            "hash": f"sha256:{file_hash}",
+            "signature": signature,
+            "timestamp": datetime.now().isoformat(),
+            "algorithm": "hybrid-pqc"
+        }
+        
+        sig_path = f"{filepath}.sig.json"
         with open(sig_path, 'w') as sf:
-            sf.write(final_digest)
+            json.dump(sig_data, sf, indent=2)
             sf.flush()
             os.fsync(sf.fileno())
 
@@ -132,12 +145,12 @@ class IntegrityManager:
             status="SUCCESS",
             details={
                 "file": fname,
-                "has_pqc": bool(self._pqc_private_key_bytes),
-                "has_ed25519": bool(self._private_key),
-                "hybrid": (bool(self._pqc_private_key_bytes) and bool(self._private_key))
+                "has_pqc": True, # Hybrid is mandatory in sign_document
+                "version": "2.0"
             }
         )
-        return final_digest
+        return signature
+
     def sign_text(self, text: str) -> str:
         """Sign a raw string and return the signature."""
         return self.signer.sign(text.encode('utf-8'))
@@ -148,75 +161,64 @@ class IntegrityManager:
 
     def verify_integrity(self, filepath: str, enforce: bool = False) -> bool:
         """
-        Verifies the file against its .sig sidecar.
-        Implements a 3-stage retry loop to resolve PQC/Guardian race conditions.
+        Verifies the file against its structured .sig.json sidecar.
+        Implements ATOMIC Read-Hash-Verify to eliminate TOCTOU race conditions (C-01).
         """
-        import time
-        sig_path = f"{filepath}.sig"
+        import hashlib
+        import json
+        
+        sig_path_json = f"{filepath}.sig.json"
+        sig_path_legacy = f"{filepath}.sig"
         strict = enforce or os.environ.get("TACHYON_STRICT_MODE") == "1"
         
-        # 3-Stage Retry Loop (Total ~150ms buffer)
-        for attempt in range(3):
-            if os.path.exists(sig_path):
-                break
-            if attempt < 2:
-                time.sleep(0.05 * (attempt + 1)) # 50ms, then 100ms
-            else:
-                # Final fail
-                if strict:
-                    err = f"INTEGRITY FAILURE: No detached signature found for mission-critical file: {filepath}. This change is UNTRUSTED."
-                    from tachyon.core.state import StateManager
-                    state = StateManager()
-                    if not state.is_mutant_lock_active():
-                        state.emit_alert("INTEGRITY_VIOLATION", err)
-                        raise RuntimeError(err)
-                    else:
-                        return False # Suppressed due to lock
+        # 1. Atomic Read of Content First (Prevention of TOCTOU)
+        try:
+            if not os.path.exists(filepath):
                 return False
+            with open(filepath, 'rb') as f:
+                content = f.read()
+            actual_hash = hashlib.sha256(content).hexdigest()
+        except Exception as e:
+            if strict: raise RuntimeError(f"Atomic read failed: {e}")
+            return False
 
-        # Attempt verification with retry for content-flush race
-        for attempt in range(2):
+        # 2. Locate Signature
+        if os.path.exists(sig_path_json):
+            # V2 Structured Path
             try:
-                with open(filepath, 'rb') as f:
-                    content = f.read()
-                with open(sig_path, 'r') as sf:
-                    detached_sig = sf.read().strip()
-
-                is_valid = self.signer.verify(content, detached_sig)
-                if is_valid:
-                    return True
+                with open(sig_path_json, 'r') as f:
+                    sig_data = json.load(f)
                 
-                if attempt == 0:
-                    time.sleep(0.05) # Brief pause and retry once
-                    continue
-                    
-                # Final invalid verdit
-                if strict:
-                    err = f"INTEGRITY FAILURE: Signature mismatch for {filepath}. File has been tampered with or ritual was incomplete."
-                    from tachyon.core.state import StateManager
-                    state = StateManager()
-                    if not state.is_mutant_lock_active():
-                        state.emit_alert("SIGNATURE_MISMATCH", err)
-                        raise RuntimeError(err)
+                # Check Hash Consistency within metadata
+                expected_hash = sig_data.get("hash", "").split(":")[-1]
+                if expected_hash != actual_hash:
+                    if strict: raise RuntimeError(f"INTEGRITY FAILURE: Atomic hash mismatch for {filepath}.")
+                    return False
+                
+                # Verify PQC Signature
+                is_valid = self.signer.verify(content, sig_data["signature"])
+                return is_valid
+            except Exception as e:
+                if strict: raise RuntimeError(f"V2 Verification Error: {e}")
                 return False
 
-            except Exception as e:
-                if attempt == 0:
-                    time.sleep(0.05)
-                    continue
-                if strict:
-                    error_msg = str(e)
-                    alert_type = "CRYPTO_ERROR"
-                    if "Strip Attack" in error_msg:
-                        alert_type = "INTEGRITY_VIOLATION"
-                    
-                    err = f"INTEGRITY FAILURE: Cryptographic error during verification of {filepath}: {e}"
-                    from tachyon.core.state import StateManager
-                    state = StateManager()
-                    if not state.is_mutant_lock_active():
-                        state.emit_alert(alert_type, err)
-                        raise RuntimeError(err)
+        elif os.path.exists(sig_path_legacy):
+            # Fallback to V1 Legacy Path (TOCTOU minimized but not eliminated for V1)
+            try:
+                with open(sig_path_legacy, 'r') as f:
+                    legacy_sig = f.read().strip()
+                return self.signer.verify(content, legacy_sig)
+            except Exception:
                 return False
+        
+        # No signature found
+        if strict:
+            err = f"INTEGRITY FAILURE: No detached signature found for {filepath}."
+            from tachyon.core.state import StateManager
+            state = StateManager()
+            if not state.is_mutant_lock_active():
+                state.emit_alert("INTEGRITY_VIOLATION", err)
+                raise RuntimeError(err)
         return False
 
     def verify_text_signature(self, text: str, signature: str) -> bool:

@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:f60b831597f09dbdf4163b5513ae054d082ca89ddf82d12f55a67873a6500125",
+  "signature": "hmac:ecfa89b2dda3593eae872ae71957cf7281807ae30ceb5ebb28b2fec7f8ed6f21",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0054-sentry-manifest-sync.md.sig"
+  }
+}

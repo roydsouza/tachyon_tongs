@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:4845d5b7df35afa8ddfad914cd4089a3f2605af3340da6ec18f9d4d91119cc58",
+  "signature": "hmac:73c4e5af2013f61b896533b6fdbad5c7c2bfd9fd6a0a6c9a52e6210bd223bfc5",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0006-sentinel-hybrid-migration.md.sig"
+  }
+}

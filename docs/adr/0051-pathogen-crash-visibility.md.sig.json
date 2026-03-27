@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:9b04ac66b4c75dd403ab1a1c761e79bf57135f6248fd112e3b21b70f1c77ce4c",
+  "signature": "hmac:f89fd187bf4fc38795f18acceff7b5925a423ad0efe72ec860b7d7b3597a95a4",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0051-pathogen-crash-visibility.md.sig"
+  }
+}

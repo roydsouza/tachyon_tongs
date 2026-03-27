@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:7962db508c42310fd1165393ab2ac752444ec8f2da6626bbb2b4c352dd94108a",
+  "signature": "hmac:45ffa20c199661f881d06f4efa8ea946f97fc178096c4de36a75680bced0e891",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0029-agentic-observability-and-control.md.sig"
+  }
+}

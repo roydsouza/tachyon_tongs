@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:708630d1b423897397eec9ebd629d9e3ee597e2a156122dbc2cb7281fb54dba6",
+  "signature": "hmac:db01086912c61b2d61cf96aeefc1ebd53160e945cc6a24e25266547ee77d090a",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0031-graduated-supply-chain-and-toctou-hardening.md.sig"
+  }
+}

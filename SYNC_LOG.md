@@ -1,5 +1,29 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-27: Critical Audit Mitigation (C-01 to C-03) — COMPLETE
+- **Objective**: Remediate critical-severity security vulnerabilities in signature verification, input sanitization, and policy caching.
+- **Status**: [COMPLETE]
+- **Tasks Completed**:
+  - **[C-01] Atomic Verification (TOCTOU)**: 
+    - Transitioned from raw hex `.sig` to structured JSON `.sig.json` metadata (v2.0).
+    - Implemented atomic **Read-Hash-Verify** in `IntegrityManager.verify_integrity`, eliminating the 150ms sleep-retry race window.
+    - Successfully migrated 79 substrate and agent files via `scripts/migrate_signatures.py`.
+  - **[C-02] Unicode Drift Detection**: 
+    - Updated `InputSanitizer.sanitize` with semantic-drift checks (homograph prevention).
+    - Enforced pre-normalization stripping of zero-width control characters.
+    - Verified with `ℌgnore` (U+210B) -> `Ignore` bypass detection.
+  - **[C-03] Rego Cache Normalization**: 
+    - Implemented `_normalize_cache_params` in `RegoPolicyEngine` to filter attacker-controlled parameters.
+    - Prevented cache eviction DoS/poisoning by normalizing LRU cache keys to security-relevant fields only.
+- **Regression Status**: `3 passed, 6 warnings in 0.73s` (`tests/test_audit_critical.py`).
+  - `test_signature_atomic_verification` [PASS]
+  - `test_unicode_normalization_bypass` [PASS]
+  - `test_cache_poisoning_mitigation` [PASS]
+- **ADRs Created**:
+  - **ADR-0072**: Structured Atomic Signatures (v2.0).
+- **Forensic Ritual**: All core signatures migrated to V2; implementation plan updated and re-signed.
+
+
 ### 2026-03-27: Substrate Governance Hardening & Roadmap Synchronization
 - **Objective**: Standardize granular task closure and ensure 100% documentation alignment across the substrate.
 - **Status**: [COMPLETE]

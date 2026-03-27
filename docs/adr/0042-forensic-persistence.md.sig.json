@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:01ff3c08eac7ceaf8f6971caf9a73184cfa9b9b344db67d9c232812db837e0b3",
+  "signature": "hmac:f1f2263e8cc89841d9bf98ae91b6d24e53f51c7f34ef3da8e88fa59cbeb53385",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0042-forensic-persistence.md.sig"
+  }
+}

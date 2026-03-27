@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:862153c5352da60e92825354e37b4e0038353eefffa0cb8dee68a10b6d31554d",
+  "signature": "hmac:1cf984a13f765f7021acab60180b4dae26b139a83eb1943a924ce4e12480546e",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0021-immutable-actions-and-toctou-hardening.md.sig"
+  }
+}

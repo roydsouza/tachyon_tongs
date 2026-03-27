@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:2443d8f75b2eeca96ffc8442f85739a14818d07877ffb7d21a159ab1e7e74043",
+  "signature": "hmac:9caefcbe8be401cb2ac94c797b5f0e4dbe6c04c77d4525dc8ce49a1240e4f3b7",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0070-signed-relay-protocol.md.sig"
+  }
+}

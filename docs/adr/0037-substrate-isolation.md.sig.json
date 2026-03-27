@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:0426e384c28a421d600a2e519c81b44e10b0d87209ce1b4459b93a676d3c788a",
+  "signature": "hmac:0d27fcb57b2ee7dfefbcb7587d218af787aa90360f7507b263856e8ed4cc1b47",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0037-substrate-isolation.md.sig"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:22a891d8e459cbeee668610fb4fbcc6b8b6db26a67caf2410145d17eff0981d5",
+  "signature": "hmac:49fa812f39647ce33c1d1f889eaeb5a505c57e0849827e49f5a7e779f5c2bff6",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0041-alignment-pdp.md.sig"
+  }
+}

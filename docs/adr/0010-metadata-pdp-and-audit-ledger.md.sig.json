@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:b0c548801d37a5b24011c97a9d44bae664d6c19b85c7d5f6f571bd96d52f520e",
+  "signature": "hmac:893ccde0f0d863464301ce29f7b8c59aea8f18f56102b91c6d627d0a4c8b4581",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0010-metadata-pdp-and-audit-ledger.md.sig"
+  }
+}

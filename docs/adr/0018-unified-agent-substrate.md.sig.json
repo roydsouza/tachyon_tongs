@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:283099048b65d0fe1aa9f2bdc0defd580f0e83e949c9fd670c4dc819a571d050",
+  "signature": "hmac:93cb6c1faa902d27a5fea0c66aecd5736968fdce8d16f44476ca372bd3bf21f1",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0018-unified-agent-substrate.md.sig"
+  }
+}

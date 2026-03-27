@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:c75fea2e81f638676274f5e07c8024f9ef078fc09f1e4b929d1163e52964d15e",
+  "signature": "hmac:abc9fb5e4970d6f865cd07a39cd43356ddc7ca22ba3ef4fc2958acea494f3d41",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0027-hardware-isolation-protocol.md.sig"
+  }
+}

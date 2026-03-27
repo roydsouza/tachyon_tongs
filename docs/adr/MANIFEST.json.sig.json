@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:2ef77b4fda80fe2655dfaef8f3bd872c449cca80bcfad0b6978688bcfcff79e7",
+  "signature": "hmac:4aef1b5bced72983f0cf154e5438e7efef756db1fd62c22107660ea35fff708a",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/MANIFEST.json.sig"
+  }
+}

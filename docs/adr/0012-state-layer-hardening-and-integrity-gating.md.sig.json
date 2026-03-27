@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:fa18e50dcadce826b18b7fdf76a4d85ac6d6db04ac2fe2a8cea84234a68ece74",
+  "signature": "hmac:821a0ff62ea4c38c5ce2fb291fec77052bd3caca96d4630e3b80f824ec9cdf69",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0012-state-layer-hardening-and-integrity-gating.md.sig"
+  }
+}

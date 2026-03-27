@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:78d478b0f384b36e2b2bef1af2b168fb063200e389e03c084492fd96fad7eb18",
+  "signature": "hmac:f19c88cbcf64161e9348bcae848c8570014b6cd34ab19bfdb0cb1c529b9faa36",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0008-reputation-and-static-analysis.md.sig"
+  }
+}

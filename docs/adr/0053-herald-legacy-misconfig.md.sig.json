@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:89698cef600840f826309d9970bac70665c664a2880068812a4429dd4a66b9c5",
+  "signature": "hmac:345a7365d9fb99fa0b72090dc2f58ad8334dfc0aa278514909b0fbe37ec2a4e2",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0053-herald-legacy-misconfig.md.sig"
+  }
+}

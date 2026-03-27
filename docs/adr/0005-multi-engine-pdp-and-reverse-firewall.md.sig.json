@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:3156933abe7b2ea988bab33eb1fb4c1f974e7900f0ae199f7220468490022623",
+  "signature": "hmac:539f8511414f8e225c2b88a57ac595cb83b46a237b059902e7ea61fd2844612d",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0005-multi-engine-pdp-and-reverse-firewall.md.sig"
+  }
+}

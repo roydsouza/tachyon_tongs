@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:00a9eabb6ccee2b0b16c2667680b3f9fef943838b84868325808486ef9f6fdbd",
+  "signature": "hmac:cf2bf6357bb6addd471a2558851652dea64425edb9a9f90d90a56371fe130f0e",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0056-herald-drift-detection.md.sig"
+  }
+}

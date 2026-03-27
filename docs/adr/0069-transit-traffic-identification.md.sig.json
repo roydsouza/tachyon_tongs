@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:c5c09f117c74c2f2f234f0aa13ff0e0e3fb103365428aea672d39d9d798aff06",
+  "signature": "hmac:fb09d74c3a0d0e2db2609b4ed5b9ab045cade73bac5c61c4d4c97fa45b3516c8",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0069-transit-traffic-identification.md.sig"
+  }
+}

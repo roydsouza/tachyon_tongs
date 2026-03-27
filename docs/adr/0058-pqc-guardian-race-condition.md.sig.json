@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:00045c2d0e3fa45370c9fba54e02c6f0d579f0f8050f9ed683eb7f8bdfdb0ef5",
+  "signature": "hmac:b1808ba4a6d7fcbe4529f49317ba5a6ec915cb367ab82ead4192fce231012fa2",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0058-pqc-guardian-race-condition.md.sig"
+  }
+}

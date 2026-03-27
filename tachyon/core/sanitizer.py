@@ -23,25 +23,48 @@ class InputSanitizer:
         self.patterns = [re.compile(p) for p in self.INJECTION_PATTERNS]
 
     def sanitize(self, text: str) -> str:
-        """Normalizes and scrubs input text."""
+        """Normalizes and scrubs input text with drift detection (C-02)."""
         if not text:
             return ""
 
-        # 1. Unicode Normalization (NFKC)
-        # Prevents homograph attacks and bypasses using unusual characters
-        text = unicodedata.normalize('NFKC', text)
+        # 1. Strip Zero-Width and Suspicious Control Characters (Pre-Normalization)
+        original_text = text
+        # Remove zero-width space, joiner, non-joiner, etc.
+        text = re.sub(r"[\u200b-\u200d\ufeff]", "", text)
+        
+        if len(text) != len(original_text):
+            if self.strict:
+                raise ValueError("CRITICAL: Suspicious control characters detected.")
 
-        # 2. Whitespace Normalization
+        # 2. Unicode Normalization (NFKC)
+        normalized_text = unicodedata.normalize('NFKC', text)
+        
+        # 3. Normalization Drift Detection (Homograph Attack Prevention)
+        if normalized_text != text:
+            if self.strict:
+                # Catch semantic drift (homograph attacks)
+                # Note: İ -> I is a name change: "LATIN CAPITAL LETTER I WITH DOT ABOVE" -> "LATIN CAPITAL LETTER I"
+                if any(unicodedata.name(c1, "UNK") != unicodedata.name(c2, "UNK") 
+                       for c1, c2 in zip(text, normalized_text) if c1 != c2):
+                    raise ValueError("CRITICAL: Normalization drift detected (Potential Homograph Attack).")
+                
+                # Catch structural drift
+                if len(text) != len(normalized_text):
+                     raise ValueError("CRITICAL: Normalization structural drift detected.")
+        
+        text = normalized_text
+
+        # 4. Whitespace Normalization
         text = " ".join(text.split())
 
-        # 3. PII Scrubbing
+        # 5. PII Scrubbing
         text = self.scrub_pii(text)
 
-        # 4. Simple XSS / Script Scrubbing
+        # 6. Simple XSS / Script Scrubbing
         text = re.sub(r"<script.*?>.*?</script>", "[REDACTED_SCRIPT]", text, flags=re.IGNORECASE | re.DOTALL)
         text = re.sub(r"<.*?>", "", text) # Strip all other tags
 
-        # 5. Injection Detection
+        # 7. Injection Detection
         for pattern in self.patterns:
             if pattern.search(text):
                 if self.strict:

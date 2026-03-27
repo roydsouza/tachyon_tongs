@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:ad7ebc80afc0d119274cab8b18fad9a4b689252bde89f24360ddc425ce2cfd1e",
+  "signature": "hmac:7c0c47d886bff7642db46eb0ea8d50dcc51a86301ac3fb505c5156dc06fdd687",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0023-canary-agent-formalization.md.sig"
+  }
+}

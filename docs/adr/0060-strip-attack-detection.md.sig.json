@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:759f71d28a91cf61226a15a253f146a7ed86a4771a4fd5d9b60e9feff32914ee",
+  "signature": "hmac:f94e6294dfa20daf30d203493eeff8acef3ac41af3398849c09a8056bfde9f77",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0060-strip-attack-detection.md.sig"
+  }
+}

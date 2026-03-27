@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:ab74c266eea81aa2e41502edb9a4dd90d6f556de44d312b0493ac0ec00dd7b74",
+  "signature": "hmac:8bb56bb7da51cdef0fcdbda9af34eb8fd404bd6542a6c9cf1eb4ad549234583b",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0049-sentinel-reliability-signing.md.sig"
+  }
+}

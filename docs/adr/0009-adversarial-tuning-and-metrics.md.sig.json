@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:ae6711155145808e1efa6c0cd77b9048eef55ef118bbe39704335dd4cb6c4e5b",
+  "signature": "hmac:b0823a495bb3d97354fdac209c2d61cee70a20929ca6f81f53f87bbed4188046",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0009-adversarial-tuning-and-metrics.md.sig"
+  }
+}

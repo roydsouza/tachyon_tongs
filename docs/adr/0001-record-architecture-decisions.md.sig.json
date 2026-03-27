@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:13f67ade1ddb28c59dbb84bedde65985ee0198be2883af7b813565c487db3161",
+  "signature": "hmac:cb2670263c350861a6b2413911d17429f88d0d025be7d064d4ace32979dcb62b",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0001-record-architecture-decisions.md.sig"
+  }
+}

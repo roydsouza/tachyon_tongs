@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:37fde757f18939435c04c099811afb616a2e14c56e93d3dd34b2341b390f254c",
+  "signature": "hmac:591822decd20064cf2c82da49aebde235f31a68e65a2d77b3942dab209b1d113",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/README.md.sig"
+  }
+}

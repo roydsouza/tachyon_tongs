@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:3e581cd5aff32dc182f745c599fd2c5e654536b31ea0605da16886d4694b9ed4",
+  "signature": "hmac:6a8c4f8a2652cdda0d66e13a9e0add6a3b5d02f1224ea8505e31d64ce3190078",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0022-whitelisted-supply-chain-defense.md.sig"
+  }
+}

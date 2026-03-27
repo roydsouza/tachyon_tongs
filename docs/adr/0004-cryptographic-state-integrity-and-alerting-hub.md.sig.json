@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:13ed89c63b34621c8279ebca5e51707b38091bbf0cea2892af5d6cc9301e6036",
+  "signature": "hmac:e976ff08ba4a508630d307f61611f223a228977df7869d86b79ad0e602c11688",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0004-cryptographic-state-integrity-and-alerting-hub.md.sig"
+  }
+}

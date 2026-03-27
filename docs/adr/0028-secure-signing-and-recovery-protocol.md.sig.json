@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "hash": "sha256:4b311233350b8f290e72e42cb21ed756b960933ce51d5024264c45c6fd6c693d",
+  "signature": "hmac:abae14cd77cba8afe8859443ec5dc13bc6b19ff9b6399ff580a8fd590d574886",
+  "timestamp": "2026-03-27T16:00:00Z",
+  "algorithm": "hybrid-pqc",
+  "metadata": {
+    "migration": "v1_to_v2",
+    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0028-secure-signing-and-recovery-protocol.md.sig"
+  }
+}
