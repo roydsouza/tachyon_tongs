@@ -4,6 +4,7 @@ Tachyon Tongs: State Bridge
 High-assurance mapping between the SQLite StateManager and Pydantic API schemas.
 """
 
+import os
 import sqlite3
 import json
 from datetime import datetime
@@ -11,7 +12,7 @@ from typing import List
 from tachyon.core.state_manager import StateManager
 from tachyon.api.schema import (
     SubstrateHealth, SubstrateStatus, AgentDetail, AgentStatus, 
-    PatchProposal, PatchStatus, ForensicAlert
+    PatchProposal, PatchStatus, ForensicAlert, AgentHealth, TrafficSummary
 )
 
 class StateBridge:
@@ -41,9 +42,15 @@ class StateBridge:
 
     def get_agents(self) -> List[AgentDetail]:
         """Maps active agents from the registry and run logs."""
+        from agents._core.registry import AgentRegistry
+        
+        # Discover plugins
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        agents_dir = os.path.join(root_dir, "agents")
+        AgentRegistry.discover_plugins(agents_dir)
+        
+        roles = AgentRegistry.list_plugins()
         agents = []
-        # Hardcoded list of core roles for now
-        roles = ["sentinel", "engineer", "guardian", "canary"]
         
         for role in roles:
             agents.append(AgentDetail(
@@ -51,9 +58,88 @@ class StateBridge:
                 role=role.capitalize(),
                 status=AgentStatus.RUNNING, # Ideally check PIDs or heartbeats
                 last_action="Idle",
-                skill_path=f"tachyon/agents/{role}/SKILL.md"
+                skill_path=f"agents/{role}/SKILL.md"
             ))
         return agents
+
+    def get_agent_health(self, name: str) -> AgentHealth:
+        """Calculates granular health metrics for a specific agent from the ForensicStore."""
+        # 1. Total events count for this agent
+        # We need to use the forensics DB path, which might be different from state.db_path
+        from tachyon.core.forensics import ForensicStore
+        store = ForensicStore()
+        db_path = store.db_path
+        
+        try:
+            with sqlite3.connect(db_path) as conn:
+                cursor = conn.execute("SELECT COUNT(*) FROM forensic_log WHERE agent_id = ?", (name,))
+                total_events = cursor.fetchone()[0]
+        except Exception:
+            total_events = 0
+            
+        # 2. Latest activity
+        latest = store.query_latest(limit=1, agent_id=name)
+        
+        last_heartbeat = None
+        last_action = "None"
+        if latest:
+            ts_str = latest[0]['timestamp']
+            try:
+                last_heartbeat = datetime.fromisoformat(ts_str)
+            except Exception:
+                pass
+            last_action = latest[0]['action']
+            
+        return AgentHealth(
+            name=name,
+            status=AgentStatus.RUNNING if total_events > 0 else AgentStatus.IDLE,
+            last_heartbeat=last_heartbeat,
+            last_action=last_action,
+            cpu_percent=0.0,
+            memory_mb=0.0,
+            total_events=total_events
+        )
+
+    def get_traffic_summary(self) -> TrafficSummary:
+        """Aggregates traffic distribution metrics (ALLOW/DENY/ERROR and Internal/Transit)."""
+        from tachyon.core.forensics import ForensicStore
+        store = ForensicStore()
+        
+        summary = {
+            "total": 0, "allow": 0, "deny": 0, "error": 0,
+            "internal": 0, "transit": 0
+        }
+        
+        try:
+            with sqlite3.connect(store.db_path) as conn:
+                conn.row_factory = sqlite3.Row
+                # Simplified total query for now; can be expanded with time filtering
+                cursor = conn.execute("""
+                    SELECT status, source, COUNT(*) as count 
+                    FROM forensic_log 
+                    GROUP BY status, source
+                """)
+                for row in cursor:
+                    count = row['count']
+                    status = row['status'].upper()
+                    source = row['source'].lower()
+                    
+                    summary["total"] += count
+                    if "ALLOW" in status or "SUCCESS" in status:
+                        summary["allow"] += count
+                    elif "DENY" in status or "BLOCKED" in status:
+                        summary["deny"] += count
+                    elif "ERROR" in status or "FAIL" in status:
+                        summary["error"] += count
+                    
+                    if source == "transit":
+                        summary["transit"] += count
+                    else:
+                        summary["internal"] += count
+        except Exception:
+            pass
+            
+        return TrafficSummary(**summary)
 
     def get_patches(self) -> List[PatchProposal]:
         """Retrieves pending patches from the Airlock."""

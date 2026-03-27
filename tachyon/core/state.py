@@ -201,6 +201,16 @@ class StateManager:
                     timestamp TEXT
                 )
             ''')
+            
+            # 11. sensor_trust (Remote Sensor Keys & Anti-Replay)
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS sensor_trust (
+                    sensor_id TEXT PRIMARY KEY,
+                    public_key_b64 TEXT,
+                    last_nonce INTEGER DEFAULT 0,
+                    added_at TEXT
+                )
+            ''')
             conn.commit()
 
     def is_event_processed(self, event_id: str) -> bool:
@@ -208,6 +218,37 @@ class StateManager:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute("SELECT 1 FROM processed_events WHERE event_id = ?", (event_id,))
             return cursor.fetchone() is not None
+
+    def check_nonce(self, sensor_id: str, nonce: int) -> bool:
+        """Verifies and updates the monotonic counter for a given sensor (Anti-Replay)."""
+        with self._lock:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.execute("SELECT last_nonce FROM sensor_trust WHERE sensor_id = ?", (sensor_id,))
+                row = cursor.fetchone()
+                if row:
+                    last_nonce = row[0]
+                    if nonce > last_nonce:
+                        conn.execute("UPDATE sensor_trust SET last_nonce = ? WHERE sensor_id = ?", (nonce, sensor_id))
+                        conn.commit()
+                        return True
+                return False
+
+    def register_sensor(self, sensor_id: str, public_key_b64: str):
+        """Registers a new remote sensor for signed relay commands."""
+        with self._lock:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute('''
+                    INSERT OR REPLACE INTO sensor_trust (sensor_id, public_key_b64, last_nonce, added_at)
+                    VALUES (?, ?, 0, ?)
+                ''', (sensor_id, public_key_b64, datetime.now().isoformat()))
+                conn.commit()
+
+    def get_sensor_key(self, sensor_id: str) -> Optional[str]:
+        """Retrieves the public key for a registered sensor."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.execute("SELECT public_key_b64 FROM sensor_trust WHERE sensor_id = ?", (sensor_id,))
+            row = cursor.fetchone()
+            return row[0] if row else None
 
     def mark_event_processed(self, event_id: str, source: str, outcome: str = "SUCCESS"):
         """Record an autonomic event as processed to prevent redundant evolutions."""

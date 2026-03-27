@@ -7,28 +7,13 @@ routing them through the Singularity PDP and the Apple Sandbox.
 
 import uuid
 from typing import Dict, Any, Optional
-from pydantic import BaseModel
-from tachyon.api.schema import LogEntry
+from tachyon.api.schema import LogEntry, ToolRequest, ToolResponse, SignedCommand
 from tachyon.enforcement import AppleSandbox
 from tachyon.policy.singularity import SingularityPDP
 from tachyon.core.routing import ModelRouter
 from tachyon.pipeline.orchestrator import run_supervisor
 from tachyon.sandbox.wasm_runner import WasmRunner
 from tachyon.sandbox.vm_runner import VmRunner
-
-class ToolRequest(BaseModel):
-    agent_id: str
-    action: str
-    parameters: Dict[str, Any]
-    tenant_id: Optional[str] = "default"
-    prompt_context: Optional[str] = None
-
-class ToolResponse(BaseModel):
-    request_id: str
-    status: str
-    selected_model: str
-    result: Optional[Any] = None
-    error: Optional[str] = None
 
 class PEPLayer:
     def __init__(self):
@@ -38,8 +23,54 @@ class PEPLayer:
         self.wasm_runner = WasmRunner()
         self.vm_runner = VmRunner()
 
+    async def execute_signed(self, command: SignedCommand) -> ToolResponse:
+        """Securely executes command via signed relay with hybrid verification."""
+        import json
+        import base64
+        from tachyon.core.state_manager import StateManager
+        from tachyon.core.keys.hybrid import HybridSigner
+        from cryptography.hazmat.primitives.asymmetric import ed25519
+        state = StateManager()
+        
+        # 1. Authority Verification
+        pubkey_blob = state.get_sensor_key(command.signer_id)
+        if not pubkey_blob:
+            return ToolResponse(request_id="NA", status="DENIED", selected_model="None", error=f"Untrusted Sensor: {command.signer_id}")
+
+        # 2. Replay Protection
+        if not state.check_nonce(command.signer_id, command.nonce):
+            return ToolResponse(request_id="NA", status="DENIED", selected_model="None", error="Replay Attack: Nonce must be strictly monotonic.")
+
+        # 3. Cryptographic Verification
+        try:
+            ed_pk = None
+            pqc_pk = None
+            for part in pubkey_blob.split("|"):
+                if part.startswith("ed25519:"):
+                    ed_pk_bytes = base64.b64decode(part.split(":", 1)[1])
+                    ed_pk = ed25519.Ed25519PublicKey.from_public_bytes(ed_pk_bytes)
+                elif part.startswith("mldsa65:"):
+                    pqc_pk = base64.b64decode(part.split(":", 1)[1])
+            
+            verifier = HybridSigner(ed25519_pk=ed_pk, mldsa65_pk=pqc_pk)
+            verifier.verify(command.command_body.encode(), command.signature)
+        except Exception as e:
+            return ToolResponse(request_id="NA", status="DENIED", selected_model="None", error=f"Signature Mismatch: {e}")
+
+        # 4. Execution
+        try:
+            request_data = json.loads(command.command_body)
+            request_data["tenant_id"] = command.signer_id
+            request = ToolRequest(**request_data)
+            return await self.execute(request)
+        except Exception as e:
+             return ToolResponse(request_id="NA", status="ERROR", selected_model="None", error=f"Relay Execution Failure: {e}")
+
     async def execute(self, request: ToolRequest) -> ToolResponse:
+        from tachyon.core.telemetry import TelemetryBus
         request_id = str(uuid.uuid4())
+        source = "transit" if request.tenant_id != "default" else "internal"
+        
         prompt = request.prompt_context or f"{request.action} with parameters {request.parameters}"
         complexity = self.model_router.detect_complexity(prompt)
         selected_model = self.model_router.select_model(prompt, complexity, current_quota=1.0)
@@ -88,6 +119,16 @@ class PEPLayer:
                 
         except Exception as e:
             result = {"status": "FALLBACK_SUCCESS", "result": "Recovered via Flash", "error": str(e)}
+
+        # Log the action result to the telemetry bus
+        TelemetryBus().emit_event(
+            event_type="TOOL_CALL",
+            agent_id=request.agent_id,
+            action=request.action,
+            status=result.get("status", "ERROR"),
+            details={"request_id": request_id, "parameters": request.parameters},
+            source=source
+        )
 
         return ToolResponse(
             request_id=request_id,

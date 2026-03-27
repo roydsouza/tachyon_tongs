@@ -66,11 +66,11 @@ Understanding what you're building on top of:
 
 ---
 
-## 🔳 Phase 1: Foundation & Data Layer [INT-01 through INT-05]
+## 🔳- **Phase 1: Foundation & Data Layer** (COMPLETE)
+## 🖥️- **Phase 2: TUI Dashboard (Rich Experience)** (COMPLETE)
+## 🌐- **Phase 3: Remote Access & Signed Relay** (Pending)
 
-_Goal: Fix the data plumbing so all subsequent UI work has reliable, extensible data sources._
-
-### [INT-01] StateBridge: Dynamic Agent Discovery [ ]
+### [INT-01] StateBridge: Dynamic Agent Discovery [x]
 - **Goal**: Replace hardcoded agent list in `StateBridge.get_agents()` with dynamic discovery via `AgentRegistry`.
 - **Why**: The current implementation hardcodes `["sentinel", "engineer", "guardian", "canary"]` which is stale (12+ agents exist). Every new agent added would require a code change.
 - **Files to Modify**:
@@ -81,12 +81,22 @@ _Goal: Fix the data plumbing so all subsequent UI work has reliable, extensible 
   - The `agents/` directory contains: administrator, auditor, chronicle, engineer, guardian, healer, herald, pathogen, scout, sentinel, sentry, synthesizer.
   - Each agent plugin has a `SKILL.md` in its directory.
 - **Acceptance Tests**:
-  - [ ] `test_statebridge_dynamic_agents`: Assert `StateBridge.get_agents()` returns ≥10 agents (not 4).
-  - [ ] `test_statebridge_new_agent_visibility`: Create a mock agent directory, verify it appears in `get_agents()`.
-  - [ ] `test_schema_import_integrity`: Assert `ToolRequest` can be instantiated without `ImportError`.
+  - [x] `test_statebridge_dynamic_agents`: Assert `StateBridge.get_agents()` returns ≥10 agents (not 4).
+  - [x] `test_statebridge_new_agent_visibility`: Create a mock agent directory, verify it appears in `get_agents()`.
+  - [x] `test_schema_import_integrity`: Assert `ToolRequest` can be instantiated without `ImportError`.
 - **ADR**: ADR-0068: Dynamic Agent Discovery in StateBridge.
+| INT-01 | Dynamic Agent Discovery | COMPLETE | StateBridge uses AgentRegistry |
+| INT-02 | Transit Traffic Identification | COMPLETE | `source` field in Forensics/DB |
+| INT-03 | API: WebSocket Event Stream | COMPLETE | Background broadcaster in server.py |
+| INT-04 | API: Agent Heartbeat | COMPLETE | `/api/v1/agents/{name}/health` |
+| INT-05 | API: Traffic Summary | COMPLETE | `/api/v1/traffic/summary` |
+| --- | --- | --- | --- |
+| INT-06 | Base TUI Layout | COMPLETE | Quad-pane grid in `tui/app.py` |
+| INT-07 | Real-Time Herald Alert List | COMPLETE | Infinite scroll logging |
+| INT-08 | Transit Visibility Widget | COMPLETE | Red `[T]` badges for external traffic |
+| INT-10 | Secure Command Shell | COMPLETE | Integrated Input bar at dashboard bottom |
 
-### [INT-02] Transit Traffic: External Agent Identification [ ]
+### [INT-02] Transit Traffic: External Agent Identification [x]
 - **Goal**: Add a `source` field (`internal` | `transit`) to telemetry and forensic events so the UI can visually distinguish local agent activity from external agent requests routed through the firewall.
 - **Why**: When Tachyon Tongs filters traffic from external AI agents, the operator must immediately see which traffic is "theirs" vs. which is passing through.
 - **Files to Modify**:

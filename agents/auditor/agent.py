@@ -3,10 +3,12 @@ import json
 import asyncio
 from typing import Dict, Any, List
 from agents._core.base import BaseAgentPlugin
+from agents._core.registry import AgentRegistry
 from tachyon.core.supply_chain import SupplyChainOracle
 from tachyon.core.state import StateManager
 from tachyon.core.signing import IntegrityManager
 
+@AgentRegistry.register("auditor")
 class AuditorPlugin(BaseAgentPlugin):
     """
     Quarantine Auditor (v2):

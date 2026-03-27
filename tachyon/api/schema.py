@@ -6,7 +6,7 @@ between the Substrate Daemon and the Command Bridge (CLI/TUI/NeoVIM).
 """
 
 from enum import Enum
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 from datetime import datetime
 
@@ -40,6 +40,15 @@ class AgentDetail(BaseModel):
     last_action: Optional[str] = None
     skill_path: str
 
+class AgentHealth(BaseModel):
+    name: str
+    status: AgentStatus
+    last_heartbeat: Optional[datetime] = None
+    last_action: Optional[str] = None
+    cpu_percent: float = 0.0
+    memory_mb: float = 0.0
+    total_events: int = 0
+
 class PatchStatus(str, Enum):
     PENDING = "pending"
     TESTING = "testing"
@@ -59,7 +68,7 @@ class PatchProposal(BaseModel):
 
 class LogEntry(BaseModel):
     timestamp: datetime
-    source: str  # "evolution", "alert", "canary", "run"
+    source: str = "internal"
     level: str   # "INFO", "WARNING", "ERROR", "CRITICAL"
     agent: Optional[str] = None
     message: str
@@ -68,15 +77,43 @@ class ForensicAlert(BaseModel):
     id: int
     agent_id: str
     topic: str
-    details: str
+    details: Dict[str, Any]
+    source: str = "internal"
     timestamp: datetime
+
+
 
 class ToolRequest(BaseModel):
     agent_id: str
-    tool: str
+    action: str
     parameters: Dict[str, Any]
+    tenant_id: Optional[str] = "default"
+    prompt_context: Optional[str] = None
 
 class ToolResponse(BaseModel):
+    request_id: str
     status: str
-    output: Optional[str] = None
+    selected_model: str
+    result: Optional[Any] = None
     error: Optional[str] = None
+
+class AuthExchangeRequest(BaseModel):
+    sensor_id: str
+    public_key_b64: str
+    attestation: Optional[str] = None
+
+class TrafficSummary(BaseModel):
+    total: int
+    allow: int
+    deny: int
+    error: int
+    internal: int
+    transit: int
+
+class SignedCommand(BaseModel):
+    command_body: str  # JSON string of ToolRequest
+    signature: str     # Hybrid signature (Ed25519 + ML-DSA)
+    signer_id: str     # Agent ID of the remote sender
+    nonce: int         # Monotonic counter for replay protection
+    timestamp: datetime
+

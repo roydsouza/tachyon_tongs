@@ -30,10 +30,17 @@ class ForensicStore:
                     event_type TEXT NOT NULL,
                     action TEXT NOT NULL,
                     status TEXT NOT NULL,
+                    source TEXT DEFAULT 'internal',
                     details TEXT,
                     signature TEXT NOT NULL
                 )
             """)
+            # Migration: Add 'source' column if it doesn't exist
+            try:
+                conn.execute("ALTER TABLE forensic_log ADD COLUMN source TEXT DEFAULT 'internal'")
+            except sqlite3.OperationalError:
+                pass # Column already exists
+            
             conn.execute("CREATE INDEX IF NOT EXISTS idx_event_type ON forensic_log(event_type)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON forensic_log(timestamp)")
 
@@ -43,7 +50,8 @@ class ForensicStore:
         event_type: str, 
         action: str, 
         status: str, 
-        details: Dict[str, Any]
+        details: Dict[str, Any],
+        source: str = "internal"
     ) -> int:
         """
         Signs and appends an event to the ledger.
@@ -53,7 +61,7 @@ class ForensicStore:
         
         # Prepare content for signing
         # We sign a canonical string representation of the core fields
-        content_to_sign = f"{timestamp}|{agent_id}|{event_type}|{action}|{status}|{details_json}"
+        content_to_sign = f"{timestamp}|{agent_id}|{event_type}|{action}|{status}|{source}|{details_json}"
         
         # In a real environment, we'd sign the hash of this content
         # For our substrate, we leverage the IntegrityManager's hybrid signing capability
@@ -63,8 +71,8 @@ class ForensicStore:
         
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
-                "INSERT INTO forensic_log (timestamp, agent_id, event_type, action, status, details, signature) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (timestamp, agent_id, event_type, action, status, details_json, signature)
+                "INSERT INTO forensic_log (timestamp, agent_id, event_type, action, status, source, details, signature) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (timestamp, agent_id, event_type, action, status, source, details_json, signature)
             )
             return cursor.lastrowid
 
@@ -75,25 +83,59 @@ class ForensicStore:
         """
         invalid_ids = []
         with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.execute("SELECT id, timestamp, agent_id, event_type, action, status, details, signature FROM forensic_log")
+            cursor = conn.execute("SELECT id, timestamp, agent_id, event_type, action, status, source, details, signature FROM forensic_log")
             for row in cursor:
-                id, ts, agent, e_type, act, stat, det, sig = row
-                content = f"{ts}|{agent}|{e_type}|{act}|{stat}|{det}"
+                id, ts, agent, e_type, act, stat, src, det, sig = row
+                content = f"{ts}|{agent}|{e_type}|{act}|{stat}|{src}|{det}"
                 if not self.integrity_manager.verify_text_signature(content, sig):
                     invalid_ids.append(id)
         return invalid_ids
 
-    def query_latest(self, limit: int = 10, event_type: Optional[str] = None) -> List[Dict[str, Any]]:
-        """Query recent events for the Herald display."""
+    def query_latest(self, limit: int = 10, event_type: Optional[str] = None, agent_id: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Query recent events with optional filtering."""
         query = "SELECT * FROM forensic_log"
+        conditions = []
         params = []
         if event_type:
-            query += " WHERE event_type = ?"
+            conditions.append("event_type = ?")
             params.append(event_type)
+        if agent_id:
+            conditions.append("agent_id = ?")
+            params.append(agent_id)
+        
+        if conditions:
+            query += " WHERE " + " AND ".join(conditions)
+        
         query += " ORDER BY id DESC LIMIT ?"
         params.append(limit)
         
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.execute(query, params)
-            return [dict(row) for row in cursor]
+            results = []
+            for row in cursor:
+                d = dict(row)
+                if d.get("details"):
+                    try:
+                        d["details"] = json.loads(d["details"])
+                    except Exception:
+                        pass
+                results.append(d)
+            return results
+
+    def query_after(self, last_id: int, limit: int = 100) -> List[Dict[str, Any]]:
+        """Query events with ID > last_id."""
+        query = "SELECT * FROM forensic_log WHERE id > ? ORDER BY id ASC LIMIT ?"
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.execute(query, (last_id, limit))
+            results = []
+            for row in cursor:
+                d = dict(row)
+                if d.get("details"):
+                    try:
+                        d["details"] = json.loads(d["details"])
+                    except Exception:
+                        pass
+                results.append(d)
+            return results

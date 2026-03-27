@@ -30,7 +30,8 @@ class TelemetryBus:
         agent_id: str, 
         action: str = "UNKNOWN",
         status: str = "INFO", 
-        details: Optional[Dict[str, Any]] = None
+        details: Optional[Dict[str, Any]] = None,
+        source: str = "internal"
     ):
         """
         Atomically append a structured telemetry event.
@@ -41,6 +42,7 @@ class TelemetryBus:
             action: Specific action being taken (e.g., safe_execute, signature_generated)
             status: Status of the action (SUCCESS, BLOCKED, FAILED, INFO)
             details: Additional context (e.g., policy violation reason, tool params)
+            source: Source of the event (internal or transit)
         """
         event = {
             "timestamp": datetime.now().isoformat(),
@@ -48,12 +50,14 @@ class TelemetryBus:
             "agent_id": agent_id,
             "action": action,
             "status": status,
+            "source": source,
             "details": details or {}
         }
         
         # 1. Forensic SQL Ledger (PQC-Signed)
+        event_id = 0
         try:
-            self.forensic_store.log_event(agent_id, event_type, action, status, details)
+            event_id = self.forensic_store.log_event(agent_id, event_type, action, status, details, source=source)
         except Exception as e:
             import sys
             print(f"[TelemetryBus] SQL LOG FAILURE: {e}", file=sys.stderr)
@@ -72,6 +76,12 @@ class TelemetryBus:
             # Fallback to stderr if file IO fails to ensure blindspots are reported
             import sys
             print(f"[TelemetryBus] FAILED TO WRITE EVENT: {e} -> {event_str.strip()}", file=sys.stderr)
+        
+        return event_id
+
+    def get_events_after(self, last_id: int, limit: int = 100) -> list:
+        """Read events after the specified ID from the ForensicStore."""
+        return self.forensic_store.query_after(last_id, limit)
 
     def get_events(self, limit: int = 100) -> list:
         """Read the last N events from the telemetry bus."""
