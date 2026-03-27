@@ -1,4 +1,4 @@
-# 🖥️ Phase: Interfaces & Remote Access [ ] IN-PROGRESS
+# 🖥️ Phase: Interfaces & Remote Access [x] COMPLETE
 
 > [!IMPORTANT]
 > **MASTER TASK RECORD**: This file is the primary source of truth for the project's interface engineering state.
@@ -109,12 +109,12 @@ Understanding what you're building on top of:
   - The `ForensicStore.log_event()` and `TelemetryBus.emit_event()` both need the new `source` parameter.
   - Database migration: Use `ALTER TABLE forensic_log ADD COLUMN source TEXT DEFAULT 'internal'` with a try/except for idempotency.
 - **Acceptance Tests**:
-  - [ ] `test_transit_tagging`: Submit a `ToolRequest` with `tenant_id="external-agent-001"` and verify the forensic event has `source="transit"`.
-  - [ ] `test_internal_default`: Submit a `ToolRequest` with default `tenant_id` and verify `source="internal"`.
-  - [ ] `test_forensic_store_source_column`: Query `forensic_log` table and verify `source` column exists.
+  - [x] `test_transit_tagging`: Submit a `ToolRequest` with `tenant_id="external-agent-001"` and verify the forensic event has `source="transit"`.
+  - [x] `test_internal_default`: Submit a `ToolRequest` with default `tenant_id` and verify `source="internal"`.
+  - [x] `test_forensic_store_source_column`: Query `forensic_log` table and verify `source` column exists.
 - **ADR**: ADR-0069: Transit Traffic Identification Protocol.
 
-### [INT-03] API: WebSocket Real-Time Event Stream [ ]
+### [INT-03] API: WebSocket Real-Time Event Stream [x]
 - **Goal**: Replace the empty WebSocket heartbeat loop in `server.py` with a real event stream that pushes `TelemetryBus` events to connected clients.
 - **Why**: The current `/api/v1/logs/stream` WebSocket does nothing (just `asyncio.sleep(1)`). The TUI and web dashboard both need real-time push.
 - **Files to Modify**:
@@ -125,11 +125,11 @@ Understanding what you're building on top of:
   - Each broadcast message should include the event's `source` field (from INT-02).
   - The `ConnectionManager` class already handles multiple WebSocket connections and broadcasting.
 - **Acceptance Tests**:
-  - [ ] `test_websocket_event_delivery`: Connect a test WebSocket client, emit a telemetry event, verify it arrives within 2 seconds.
-  - [ ] `test_websocket_cursor_tracking`: Emit 3 events, connect late, verify only new events are received.
+  - [x] `test_websocket_event_delivery`: Connect a test WebSocket client, emit a telemetry event, verify it arrives within 2 seconds.
+  - [x] `test_websocket_cursor_tracking`: Emit 3 events, connect late, verify only new events are received.
 - **ADR**: Not required (incremental improvement to existing endpoint).
 
-### [INT-04] API: Agent Heartbeat & Health Endpoint [ ]
+### [INT-04] API: Agent Heartbeat & Health Endpoint [x]
 - **Goal**: Add a `/api/v1/agents/{name}/health` endpoint that returns per-agent health metrics (last heartbeat, CPU/memory if available, last action timestamp).
 - **Why**: The TUI's "Agent Heartbeat" pane needs per-agent drill-down data beyond the flat list.
 - **Files to Modify**:
@@ -140,8 +140,8 @@ Understanding what you're building on top of:
   - Query `forensic_log` for the agent's last event timestamp. Use `TelemetryBus.get_events()` filtered by `agent_id`.
   - CPU/Memory can return 0.0 for now (real monitoring is a future task).
 - **Acceptance Tests**:
-  - [ ] `test_agent_health_endpoint`: GET `/api/v1/agents/sentinel/health` returns valid `AgentHealth` JSON.
-  - [ ] `test_agent_health_unknown`: GET `/api/v1/agents/nonexistent/health` returns 404.
+  - [x] `test_agent_health_endpoint`: GET `/api/v1/agents/sentinel/health` returns valid `AgentHealth` JSON.
+  - [x] `test_agent_health_unknown`: GET `/api/v1/agents/nonexistent/health` returns 404.
 - **ADR**: Not required.
 
 ### [INT-05] API: Transit Traffic Summary Endpoint [x]
@@ -155,8 +155,8 @@ Understanding what you're building on top of:
   - Query `forensic_log` with `GROUP BY status, source` for the last 60 seconds.
   - Return structure: `{ "total": N, "allow": N, "deny": N, "error": N, "internal": N, "transit": N }`.
 - **Acceptance Tests**:
-  - [ ] `test_traffic_summary_endpoint`: Seed 10 events (mix of internal/transit, allow/deny), verify summary counts.
-  - [ ] `test_traffic_summary_empty`: Verify endpoint returns zeros when no events exist.
+  - [x] `test_traffic_summary_endpoint`: Seed 10 events (mix of internal/transit, allow/deny), verify summary counts.
+  - [x] `test_traffic_summary_empty`: Verify endpoint returns zeros when no events exist.
 - **ADR**: Not required.
 
 ---
@@ -182,9 +182,9 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - The main app CSS should use Textual's grid layout: `grid-size: 2 2;` with proper `height: 1fr` for responsive sizing.
   - Use the SPOG design's color scheme: background `#0a0e14`, borders `#82aaff`, alerts `#f07178`.
 - **Acceptance Tests**:
-  - [ ] `test_tui_has_four_panes`: Assert `TachyonDash` has exactly 4 widget panes (overview, agents, alerts, metrics).
-  - [ ] `test_tui_widget_types`: Assert each pane is a proper `Widget` subclass, not `Static`.
-  - [ ] `test_tui_css_grid`: Assert the CSS includes `grid-size: 2 2`.
+  - [x] `test_tui_has_four_panes`: Assert `TachyonDash` has exactly 4 widget panes (overview, agents, alerts, metrics).
+  - [x] `test_tui_widget_types`: Assert each pane is a proper `Widget` subclass, not `Static`.
+  - [x] `test_tui_css_grid`: Assert the CSS includes `grid-size: 2 2`.
 - **ADR**: ADR-0070: TUI Widget Architecture.
 
 ### [INT-11] TUI: Header Bar with Ambient Status [x]
@@ -198,8 +198,8 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - Update every 2 seconds via the same refresh cycle.
   - Show the first 8 chars of the Merkle root for compactness.
 - **Acceptance Tests**:
-  - [ ] `test_header_shows_pqc_status`: Assert the header widget contains "PQC" text.
-  - [ ] `test_header_shows_daemon_status`: Assert header contains "OPERATIONAL" or "OFFLINE".
+  - [x] `test_header_shows_pqc_status`: Assert the header widget contains "PQC" text.
+  - [x] `test_header_shows_daemon_status`: Assert header contains "OPERATIONAL" or "OFFLINE".
 - **ADR**: Not required.
 
 ### [INT-12] TUI: Agent Heartbeat Pane (Dynamic) [x]
@@ -213,8 +213,8 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - Each agent row should be clickable (future: drill into Agent Control Panel, INT-20+).
   - Show agent count: "📊 AGENT HEARTBEAT (12)".
 - **Acceptance Tests**:
-  - [ ] `test_heartbeat_shows_all_agents`: Assert ≥10 agent names are rendered.
-  - [ ] `test_heartbeat_color_coding`: Assert RUNNING agents get green styling.
+  - [x] `test_heartbeat_shows_all_agents`: Assert ≥10 agent names are rendered.
+  - [x] `test_heartbeat_color_coding`: Assert RUNNING agents get green styling.
 - **ADR**: Not required.
 
 ### [INT-13] TUI: Alert Stream with Transit Badges [x]
@@ -229,9 +229,9 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - Show timestamp, severity, short message. Truncate long messages with "…".
   - Maximum render: last 100 events (configurable).
 - **Acceptance Tests**:
-  - [ ] `test_alert_stream_transit_badge`: Emit a transit event, verify `[T]` prefix appears.
-  - [ ] `test_alert_stream_severity_colors`: Emit HIGH and INFO events, verify different styling.
-  - [ ] `test_alert_stream_auto_scroll`: Emit 50 events, verify the last event is visible.
+  - [x] `test_alert_stream_transit_badge`: Emit a transit event, verify `[T]` prefix appears.
+  - [x] `test_alert_stream_severity_colors`: Emit HIGH and INFO events, verify different styling.
+  - [x] `test_alert_stream_auto_scroll`: Emit 50 events, verify the last event is visible.
 - **ADR**: Not required.
 
 ### [INT-14] TUI: Policy Metrics Pane [x]
@@ -245,8 +245,8 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - Show transit vs internal split: `Internal: 86% | Transit: 14%`.
   - If no data, show "No traffic data yet" in dim text.
 - **Acceptance Tests**:
-  - [ ] `test_metrics_pane_renders`: Assert the metrics widget renders without error.
-  - [ ] `test_metrics_shows_verdict_distribution`: With seeded data, verify ALLOW/DENY percentages appear.
+  - [x] `test_metrics_pane_renders`: Assert the metrics widget renders without error.
+  - [x] `test_metrics_shows_verdict_distribution`: With seeded data, verify ALLOW/DENY percentages appear.
 - **ADR**: Not required.
 
 ### [INT-15] TUI: Hotkey Navigation & Command Bar [x]
@@ -261,9 +261,9 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - Command bar: simple text input at the bottom. Typing `tt airlock approve CVE-2026-9999` should work.
   - Use Textual's built-in `Input` widget for the command bar.
 - **Acceptance Tests**:
-  - [ ] `test_hotkey_quit`: Simulate `q` keypress, verify app exits cleanly.
-  - [ ] `test_hotkey_refresh`: Simulate `r` keypress, verify data refresh is triggered.
-  - [ ] `test_command_bar_toggle`: Simulate `` ` `` keypress, verify command bar appears/hides.
+  - [x] `test_hotkey_quit`: Simulate `q` keypress, verify app exits cleanly.
+  - [x] `test_hotkey_refresh`: Simulate `r` keypress, verify data refresh is triggered.
+  - [x] `test_command_bar_toggle`: Simulate `` ` `` keypress, verify command bar appears/hides.
 - **ADR**: Not required.
 
 ---
@@ -283,8 +283,8 @@ _Goal: Enable secure remote interaction and improve CLI observability._
   - Use Rich `Table` with pagination (default 20 events, `--limit N` flag).
   - Color `transit` rows in cyan, `internal` rows in default white.
 - **Acceptance Tests**:
-  - [ ] `test_bus_explore_command`: Invoke `tt bus explore --limit 5` and verify tabular output.
-  - [ ] `test_bus_explore_empty`: Verify graceful "No events" message when bus is empty.
+  - [x] `test_bus_explore_command`: Invoke `tt bus explore --limit 5` and verify tabular output.
+  - [x] `test_bus_explore_empty`: Verify graceful "No events" message when bus is empty.
 - **ADR**: Not required.
 
 ### [INT-21] CLI: `tt traffic` — Transit Traffic Inspector [x]
@@ -296,7 +296,7 @@ _Goal: Enable secure remote interaction and improve CLI observability._
   - Show: total requests (last 60s), verdict breakdown, top 5 blocked external agents.
   - Use Rich `Table` + `Panel`.
 - **Acceptance Tests**:
-  - [ ] `test_traffic_command_output`: Verify the command produces structured output.
+  - [x] `test_traffic_command_output`: Verify the command produces structured output.
 - **ADR**: Not required.
 
 ### [INT-22] Remote Access: Signed Command Relay [x]
@@ -312,9 +312,9 @@ _Goal: Enable secure remote interaction and improve CLI observability._
   - Verify hybrid signature (Ed25519 + ML-DSA-65) before execution.
   - Log every relay attempt (success or failure) to `ForensicStore`.
 - **Acceptance Tests**:
-  - [ ] `test_signed_relay_valid`: Submit a properly signed command, verify execution.
-  - [ ] `test_signed_relay_replay`: Reuse a nonce, verify DENY with "REPLAY_DETECTED" error.
-  - [ ] `test_signed_relay_forged`: Submit with invalid signature, verify DENY.
+  - [x] `test_signed_relay_valid`: Submit a properly signed command, verify execution.
+  - [x] `test_signed_relay_replay`: Reuse a nonce, verify DENY with "REPLAY_DETECTED" error.
+  - [x] `test_signed_relay_forged`: Submit with invalid signature, verify DENY.
 - **ADR**: ADR-0067 already exists.
 
 ### [INT-23] Remote Access: WebSocket Authentication [x]
@@ -326,8 +326,8 @@ _Goal: Enable secure remote interaction and improve CLI observability._
   - Client sends a signed handshake message on connect. Server validates signature before accepting.
   - Invalid handshakes get disconnected immediately with a 4403 close code.
 - **Acceptance Tests**:
-  - [ ] `test_websocket_auth_valid`: Connect with valid certificate, verify accepted.
-  - [ ] `test_websocket_auth_invalid`: Connect without certificate, verify rejected (4403).
+  - [x] `test_websocket_auth_valid`: Connect with valid certificate, verify accepted.
+  - [x] `test_websocket_auth_invalid`: Connect without certificate, verify rejected (4403).
 - **ADR**: ADR-0071: WebSocket Authentication Protocol.
 
 ---
@@ -337,13 +337,13 @@ _Goal: Enable secure remote interaction and improve CLI observability._
 ### [INT-30] Stress Test: TUI Under High Event Load [x]
 - **Goal**: Saturate the EventBus with 1000 events/sec and verify TUI stability (no crashes, no memory leaks, render latency <16ms).
 - **Acceptance Tests**:
-  - [ ] `test_tui_stress_1000_eps`: Emit 1000 events in 1 second, verify TUI does not crash and memory stays <100MB.
+  - [x] `test_tui_stress_1000_eps`: Emit 1000 events in 1 second, verify TUI does not crash and memory stays <100MB.
 
 ### [INT-31] Security: Negative Auth Tests [x]
 - **Goal**: Comprehensive negative testing of all authenticated endpoints.
 - **Acceptance Tests**:
-  - [ ] `test_relay_expired_certificate`: Verify expired certificates are rejected.
-  - [ ] `test_relay_revoked_certificate`: Verify revoked certificates (in CRL) are rejected.
+  - [x] `test_relay_expired_certificate`: Verify expired certificates are rejected.
+  - [x] `test_relay_revoked_certificate`: Verify revoked certificates (in CRL) are rejected.
 
 ### [INT-32] Accessibility: Colorblind-Safe Palette [x]
 - **Goal**: Ensure all severity indicators are distinguishable without relying solely on red/green color.
@@ -351,12 +351,12 @@ _Goal: Enable secure remote interaction and improve CLI observability._
   - Add text labels alongside colors: `✓ OK`, `⚠ WARN`, `✗ FAIL`.
   - Use shapes/icons as secondary indicators.
 - **Acceptance Tests**:
-  - [ ] `test_accessibility_labels`: Verify all status indicators have text labels, not just colors.
+  - [x] `test_accessibility_labels`: Verify all status indicators have text labels, not just colors.
 
 ### [INT-33] Documentation: Full INTERFACES.md Sync [x]
 - **Goal**: After all phases are complete, perform a comprehensive audit of `docs/INTERFACES.md` to ensure it perfectly reflects the implemented state.
 - **Acceptance Tests**:
-  - [ ] `test_interfaces_md_component_count`: Parse `docs/INTERFACES.md` and verify the component table has ≥8 rows (matching actual file count).
+  - [x] `test_interfaces_md_component_count`: Parse `docs/INTERFACES.md` and verify the component table has ≥8 rows (matching actual file count).
 
 ---
 
