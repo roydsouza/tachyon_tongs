@@ -14,12 +14,13 @@ SUBSTRATE_URL = "http://127.0.0.1:60461/api/v1"
 class TacticalOverview(Static):
     """Widget for Substrate health and traffic metrics."""
     def update_metrics(self, health: dict, traffic: dict) -> None:
-        status_color = "green" if health.get("status") == "active" else "yellow"
-        integrity = "[green]VERIFIED[/green]" if health.get("integrity_verified") else "[red]COMPROMISED[/red]"
+        status_val = health.get("status", "offline").upper()
+        status_label = " [OK]" if status_val == "ACTIVE" else ""
+        integrity = "[green]VERIFIED [OK][/green]" if health.get("integrity_verified") else "[red]COMPROMISED [FAIL][/red]"
         
         self.update(
             f"[bold blue]🛰️ TACTICAL OVERVIEW[/bold blue]\n\n"
-            f"Status:    [{status_color}]{health.get('status', 'offline').upper()}[/{status_color}]\n"
+            f"Status:    [{status_color}]{status_val}{status_label}[/{status_color}]\n"
             f"Integrity: {integrity}\n"
             f"Uptime:    [cyan]{health.get('uptime_seconds', 0)}s[/cyan]\n\n"
             f"[bold blue]🚦 TRAFFIC SUMMARY[/bold blue]\n\n"
@@ -35,8 +36,9 @@ class AgentInventory(Static):
         lines = ["[bold blue]🤖 ACTIVE AGENTS[/bold blue]\n"]
         for a in agents:
             status = a.get("status", "idle").upper()
+            status_text = f"{status} [OK]" if status == "RUNNING" else f"{status} [WAIT]"
             color = "green" if status == "RUNNING" else "yellow"
-            lines.append(f"- [bold]{a['name']:<12}[/bold] [{color}]{status:<8}[/{color}] [cyan]{a.get('last_action', 'Idle')}[/cyan]")
+            lines.append(f"- [bold]{a['name']:<12}[/bold] [{color}]{status_text:<12}[/{color}] [cyan]{a.get('last_action', 'Idle')}[/cyan]")
         self.update("\n".join(lines))
 
 class HeraldLog(Log):
@@ -49,12 +51,15 @@ class HeraldLog(Log):
         agent = event.get("agent_id", "system")
         
         color = "white"
+        prefix = ""
         if any(x in topic for x in ["VIOLATION", "FAILURE", "BLOCKED", "ERROR"]):
             color = "red"
+            prefix = "[!] "
         elif "SIGNATURE" in topic:
             color = "cyan"
+            prefix = "[*] "
             
-        self.write_line(f"[{ts}] {badge}[{color}]{topic:<15}[/{color}] | {agent:<12} | {event.get('action')}")
+        self.write_line(f"[{ts}] {badge}[{color}]{prefix}{topic:<15}[/{color}] | {agent:<12} | {event.get('action')}")
 
 class AirlockQueue(Static):
     """Widget for pending patches and quarantine status."""

@@ -33,7 +33,7 @@ def test_schema_import_integrity():
     
     req = ToolRequest(
         agent_id="test-agent",
-        tool="test-tool",
+        action="test-tool",
         parameters={"key": "value"}
     )
     assert req.agent_id == "test-agent"

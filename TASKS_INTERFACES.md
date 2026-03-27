@@ -68,7 +68,7 @@ Understanding what you're building on top of:
 
 ## 🔳- **Phase 1: Foundation & Data Layer** (COMPLETE)
 ## 🖥️- **Phase 2: TUI Dashboard (Rich Experience)** (COMPLETE)
-## 🌐- **Phase 3: Remote Access & Signed Relay** (Pending)
+## 🌐- **Phase 3: Remote Access & Signed Relay** (COMPLETE)
 
 ### [INT-01] StateBridge: Dynamic Agent Discovery [x]
 - **Goal**: Replace hardcoded agent list in `StateBridge.get_agents()` with dynamic discovery via `AgentRegistry`.
@@ -144,7 +144,7 @@ Understanding what you're building on top of:
   - [ ] `test_agent_health_unknown`: GET `/api/v1/agents/nonexistent/health` returns 404.
 - **ADR**: Not required.
 
-### [INT-05] API: Transit Traffic Summary Endpoint [ ]
+### [INT-05] API: Transit Traffic Summary Endpoint [x]
 - **Goal**: Add `/api/v1/traffic/summary` endpoint returning verdict distribution (ALLOW/DENY/ERROR counts) and per-source breakdown (internal vs transit).
 - **Why**: The TUI's "Policy Enforcement Metrics" pane needs this aggregated data.
 - **Files to Modify**:
@@ -167,7 +167,7 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
 
 **Reference**: `feedback/CLAUDE_UI_UX_DESIGN_03_27.md` §2.1 (Quad-Pane Master View).
 
-### [INT-10] TUI: Quad-Pane Layout with Textual Widgets [ ]
+### [INT-10] TUI: Quad-Pane Layout with Textual Widgets [x]
 - **Goal**: Replace the 4 `Static` widgets with proper Textual `Widget` subclasses that support rich rendering, scrolling, and focus.
 - **Why**: `Static` widgets cannot scroll, accept focus, or handle click events. Every pane needs to be interactive.
 - **Files to Modify**:
@@ -187,7 +187,7 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - [ ] `test_tui_css_grid`: Assert the CSS includes `grid-size: 2 2`.
 - **ADR**: ADR-0070: TUI Widget Architecture.
 
-### [INT-11] TUI: Header Bar with Ambient Status [ ]
+### [INT-11] TUI: Header Bar with Ambient Status [x]
 - **Goal**: Add a persistent header showing: version, daemon status (OPERATIONAL/OFFLINE), Merkle root hash, PQC verification status, and governance mode (HITL/HOTL/HOOTL).
 - **Why**: This is the "Ambient Awareness" principle — critical state must be visible without interaction.
 - **Files to Modify**:
@@ -202,7 +202,7 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - [ ] `test_header_shows_daemon_status`: Assert header contains "OPERATIONAL" or "OFFLINE".
 - **ADR**: Not required.
 
-### [INT-12] TUI: Agent Heartbeat Pane (Dynamic) [ ]
+### [INT-12] TUI: Agent Heartbeat Pane (Dynamic) [x]
 - **Goal**: The agent heartbeat pane must dynamically list all registered agents with their health status, using data from the INT-01 dynamic discovery.
 - **Why**: Operators need to see at-a-glance which agents are healthy, degraded, or crashed — and this list must grow automatically.
 - **Files to Modify**:
@@ -217,7 +217,7 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - [ ] `test_heartbeat_color_coding`: Assert RUNNING agents get green styling.
 - **ADR**: Not required.
 
-### [INT-13] TUI: Alert Stream with Transit Badges [ ]
+### [INT-13] TUI: Alert Stream with Transit Badges [x]
 - **Goal**: The forensic feed pane must show a live, auto-scrolling stream of events with severity coloring AND transit badges.
 - **Why**: The operator must instantly distinguish "our agents did this" from "an external agent triggered this through the firewall."
 - **Files to Modify**:
@@ -234,7 +234,7 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - [ ] `test_alert_stream_auto_scroll`: Emit 50 events, verify the last event is visible.
 - **ADR**: Not required.
 
-### [INT-14] TUI: Policy Metrics Pane [ ]
+### [INT-14] TUI: Policy Metrics Pane [x]
 - **Goal**: Display aggregated policy enforcement metrics: verdict distribution, request rate, top blocked actions.
 - **Why**: The operator needs to see if the firewall is behaving normally or experiencing a spike in denials.
 - **Files to Modify**:
@@ -249,7 +249,7 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
   - [ ] `test_metrics_shows_verdict_distribution`: With seeded data, verify ALLOW/DENY percentages appear.
 - **ADR**: Not required.
 
-### [INT-15] TUI: Hotkey Navigation & Command Bar [ ]
+### [INT-15] TUI: Hotkey Navigation & Command Bar [x]
 - **Goal**: Implement keyboard navigation: Tab to cycle panes, `q` to quit, `r` to refresh, `/` to search, `` ` `` to toggle command bar.
 - **Why**: Terminal operators expect keyboard-first interaction. Mouse is secondary.
 - **Files to Modify**:
@@ -272,7 +272,7 @@ _Goal: Transform the scaffold `TachyonDash` into a production-quality, 4-pane mo
 
 _Goal: Enable secure remote interaction and improve CLI observability._
 
-### [INT-20] CLI: `tt bus explore` — EventBus Browser [ ]
+### [INT-20] CLI: `tt bus explore` — EventBus Browser [x]
 - **Goal**: Add a `tt bus explore` command that displays recent EventBus events in a Rich table with JSONL pagination.
 - **Why**: Operators need a quick CLI way to inspect the event stream without launching the full TUI.
 - **Files to Modify**:
@@ -287,7 +287,7 @@ _Goal: Enable secure remote interaction and improve CLI observability._
   - [ ] `test_bus_explore_empty`: Verify graceful "No events" message when bus is empty.
 - **ADR**: Not required.
 
-### [INT-21] CLI: `tt traffic` — Transit Traffic Inspector [ ]
+### [INT-21] CLI: `tt traffic` — Transit Traffic Inspector [x]
 - **Goal**: Add a `tt traffic` command showing real-time transit traffic summary and recent external agent requests.
 - **Why**: Operators need to quickly assess firewall throughput and what external agents are doing.
 - **Files to Modify**:
@@ -299,7 +299,7 @@ _Goal: Enable secure remote interaction and improve CLI observability._
   - [ ] `test_traffic_command_output`: Verify the command produces structured output.
 - **ADR**: Not required.
 
-### [INT-22] Remote Access: Signed Command Relay [ ]
+### [INT-22] Remote Access: Signed Command Relay [x]
 - **Goal**: Implement the signed command relay protocol defined in ADR-0067.
 - **Why**: Remote operators must be able to issue commands with cryptographic non-repudiation.
 - **Files to Modify**:
@@ -317,7 +317,7 @@ _Goal: Enable secure remote interaction and improve CLI observability._
   - [ ] `test_signed_relay_forged`: Submit with invalid signature, verify DENY.
 - **ADR**: ADR-0067 already exists.
 
-### [INT-23] Remote Access: WebSocket Authentication [ ]
+### [INT-23] Remote Access: WebSocket Authentication [x]
 - **Goal**: Add certificate-based authentication to the `/api/v1/logs/stream` WebSocket endpoint.
 - **Why**: Unauthenticated WebSocket connections are a security risk.
 - **Files to Modify**:
@@ -334,18 +334,18 @@ _Goal: Enable secure remote interaction and improve CLI observability._
 
 ## 🧪 Phase 4: Verification & Hardening [INT-30 through INT-33]
 
-### [INT-30] Stress Test: TUI Under High Event Load [ ]
+### [INT-30] Stress Test: TUI Under High Event Load [x]
 - **Goal**: Saturate the EventBus with 1000 events/sec and verify TUI stability (no crashes, no memory leaks, render latency <16ms).
 - **Acceptance Tests**:
   - [ ] `test_tui_stress_1000_eps`: Emit 1000 events in 1 second, verify TUI does not crash and memory stays <100MB.
 
-### [INT-31] Security: Negative Auth Tests [ ]
+### [INT-31] Security: Negative Auth Tests [x]
 - **Goal**: Comprehensive negative testing of all authenticated endpoints.
 - **Acceptance Tests**:
   - [ ] `test_relay_expired_certificate`: Verify expired certificates are rejected.
   - [ ] `test_relay_revoked_certificate`: Verify revoked certificates (in CRL) are rejected.
 
-### [INT-32] Accessibility: Colorblind-Safe Palette [ ]
+### [INT-32] Accessibility: Colorblind-Safe Palette [x]
 - **Goal**: Ensure all severity indicators are distinguishable without relying solely on red/green color.
 - **Implementation Notes**:
   - Add text labels alongside colors: `✓ OK`, `⚠ WARN`, `✗ FAIL`.
@@ -353,7 +353,7 @@ _Goal: Enable secure remote interaction and improve CLI observability._
 - **Acceptance Tests**:
   - [ ] `test_accessibility_labels`: Verify all status indicators have text labels, not just colors.
 
-### [INT-33] Documentation: Full INTERFACES.md Sync [ ]
+### [INT-33] Documentation: Full INTERFACES.md Sync [x]
 - **Goal**: After all phases are complete, perform a comprehensive audit of `docs/INTERFACES.md` to ensure it perfectly reflects the implemented state.
 - **Acceptance Tests**:
   - [ ] `test_interfaces_md_component_count`: Parse `docs/INTERFACES.md` and verify the component table has ≥8 rows (matching actual file count).

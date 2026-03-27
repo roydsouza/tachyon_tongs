@@ -22,7 +22,16 @@ class TelemetryBus:
             from tachyon.core.forensics import ForensicStore
             cls._instance.log_path = log_path or os.path.join(mem_dir, "telemetry.jsonl")
             cls._instance.forensic_store = ForensicStore()
+            import threading
+            cls._instance._lock = threading.Lock()
+            cls._instance._log_file = None
         return cls._instance
+
+    def _get_log_file(self):
+        """Returns a persistent file handle for the telemetry log."""
+        if self._log_file is None:
+            self._log_file = open(self.log_path, "a", buffering=1) # Line-buffered
+        return self._log_file
 
     def emit_event(
         self, 
@@ -65,7 +74,8 @@ class TelemetryBus:
         # 2. Legacy JSONL (Atomic Append)
         event_str = json.dumps(event) + "\n"
         try:
-            with open(self.log_path, "a") as f:
+            with self._lock:
+                f = self._get_log_file()
                 fcntl.flock(f, fcntl.LOCK_EX)
                 try:
                     f.write(event_str)

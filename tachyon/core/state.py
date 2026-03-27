@@ -208,9 +208,17 @@ class StateManager:
                     sensor_id TEXT PRIMARY KEY,
                     public_key_b64 TEXT,
                     last_nonce INTEGER DEFAULT 0,
+                    status TEXT DEFAULT 'ACTIVE',
+                    expires_at TEXT,
                     added_at TEXT
                 )
             ''')
+            # Migration: Add status and expires_at if missing
+            try:
+                conn.execute("ALTER TABLE sensor_trust ADD COLUMN status TEXT DEFAULT 'ACTIVE'")
+                conn.execute("ALTER TABLE sensor_trust ADD COLUMN expires_at TEXT")
+            except sqlite3.OperationalError:
+                pass
             conn.commit()
 
     def is_event_processed(self, event_id: str) -> bool:
@@ -233,15 +241,23 @@ class StateManager:
                         return True
                 return False
 
-    def register_sensor(self, sensor_id: str, public_key_b64: str):
+    def register_sensor(self, sensor_id: str, public_key_b64: str, status: str = "ACTIVE", expires_at: Optional[str] = None):
         """Registers a new remote sensor for signed relay commands."""
         with self._lock:
             with sqlite3.connect(self.db_path) as conn:
                 conn.execute('''
-                    INSERT OR REPLACE INTO sensor_trust (sensor_id, public_key_b64, last_nonce, added_at)
-                    VALUES (?, ?, 0, ?)
-                ''', (sensor_id, public_key_b64, datetime.now().isoformat()))
+                    INSERT OR REPLACE INTO sensor_trust (sensor_id, public_key_b64, last_nonce, status, expires_at, added_at)
+                    VALUES (?, ?, 0, ?, ?, ?)
+                ''', (sensor_id, public_key_b64, status, expires_at, datetime.now().isoformat()))
                 conn.commit()
+
+    def get_sensor_trust(self, sensor_id: str) -> Optional[Dict[str, Any]]:
+        """Retrieves the full trust record for a registered sensor."""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.execute("SELECT * FROM sensor_trust WHERE sensor_id = ?", (sensor_id,))
+            row = cursor.fetchone()
+            return dict(row) if row else None
 
     def get_sensor_key(self, sensor_id: str) -> Optional[str]:
         """Retrieves the public key for a registered sensor."""

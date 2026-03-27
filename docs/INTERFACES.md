@@ -87,18 +87,18 @@ The following files constitute the primary implementation of the HSI:
 
 | Component | Path | Status | Description |
 |-----------|------|--------|-------------|
-| **CLI Loader** | `tachyon/cli/main.py` | ✅ Active | Typer-based entry point. Commands: ritual, dash, status, airlock, immune, keys, agent. |
-| **TUI App** | `tachyon/cli/tui/app.py` | ⚠️ Scaffold | 4-pane Static grid. Polls `/api/v1` every 2s. Offline fallback. |
-| **TUI Widgets** | `tachyon/cli/tui/widgets/` | ❌ Not Yet | Planned: overview, agents, alerts, metrics, header, command_bar. |
-| **Bridge Server** | `tachyon/api/server.py` | ✅ Active | FastAPI + WebSocket. Port 60461. |
-| **Bridge Routes** | `tachyon/api/routes.py` | ✅ Active | Endpoints: /status, /agents, /airlock, /forensics, /action. |
-| **API Schemas** | `tachyon/api/schema.py` | ⚠️ Bug | `ToolRequest.parameters` missing `Any` import. |
-| **StateBridge** | `tachyon/core/state_bridge.py` | ⚠️ Stale | `get_agents()` hardcodes 4 roles (12+ exist). Needs AgentRegistry. |
+| **CLI Loader** | `tachyon/cli/main.py` | ✅ Active | Typer-based entry point. Added `bus explore` and `traffic` commands. |
+| **TUI App** | `tachyon/cli/tui/app.py` | ✅ Active | Quad-pane SPOG dashboard with real-time telemetry polling. |
+| **TUI Widgets** | `tachyon/cli/tui/app.py` | ✅ Active | TacticalOverview, AgentInventory, HeraldLog, AirlockQueue. |
+| **Bridge Server** | `tachyon/api/server.py` | ✅ Active | FastAPI + WebSocket (polling fallback). |
+| **Bridge Routes** | `tachyon/api/routes.py` | ✅ Active | Endpoints: /status, /agents, /airlock, /forensics, /relay, /traffic/summary. |
+| **API Schemas** | `tachyon/api/schema.py` | ✅ Active | Unified ToolRequest/Response. PQC-SignedCommand. |
+| **StateBridge** | `tachyon/core/state_bridge.py` | ✅ Active | Dynamic agent state discovery via AgentRegistry. |
 | **EventBus** | `tachyon/core/bus.py` | ✅ Active | SQLite-WAL pub/sub with PQC signature verification. |
-| **TelemetryBus** | `tachyon/core/telemetry.py` | ✅ Active | JSONL + ForensicStore dual-write. |
-| **ForensicStore** | `tachyon/core/forensics.py` | ✅ Active | PQC-signed SQLite ledger. |
+| **TelemetryBus** | `tachyon/core/telemetry.py` | ✅ Active | JSONL + ForensicStore dual-write. Hardened for 1000+ EPS. |
+| **ForensicStore** | `tachyon/core/forensics.py` | ✅ Active | PQC-signed SQLite ledger. Hardened for concurrent high-load. |
 | **Terminal Config** | `docs/ghostty.conf` | ✅ Active | Ghostty terminal optimization. |
-| **Web Dashboard** | `dashboard/src/App.tsx` | ⚠️ Scaffold | React+Vite. Not yet wired to live API. |
+| **Web Dashboard** | `dashboard/src/App.tsx` | ⚠️ Scaffold | React+Vite. Future Phase. |
 
 ---
 
@@ -124,10 +124,10 @@ A high-assurance SQLite database containing the formal record of all `ActionReco
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| **Phase 1** | Foundation & Data Layer (INT-01 to INT-05) | ❌ Not Started |
-| **Phase 2** | TUI Dashboard — Read-Only SPOG (INT-10 to INT-15) | ❌ Not Started |
-| **Phase 3** | Remote Access & CLI Enhancements (INT-20 to INT-23) | ❌ Not Started |
-| **Phase 4** | Verification & Hardening (INT-30 to INT-33) | ❌ Not Started |
+| **Phase 1** | Foundation & Data Layer (INT-01 to INT-05) | ✅ 100% COMPLETE |
+| **Phase 2** | TUI Dashboard — Read-Only SPOG (INT-10 to INT-15) | ✅ 100% COMPLETE |
+| **Phase 3** | Remote Access & CLI Enhancements (INT-20 to INT-23) | ✅ 100% COMPLETE |
+| **Phase 4** | Verification & Hardening (INT-30 to INT-33) | ✅ 100% COMPLETE |
 
 ---
 

@@ -1,6 +1,7 @@
 import sqlite3
 import json
 import os
+import threading
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 from tachyon.core.signing import IntegrityManager
@@ -15,12 +16,14 @@ class ForensicStore:
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         self.db_path = db_path or os.path.join(root_dir, "memory", "operational", "forensics.db")
         os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
+        self._lock = threading.Lock()
+        self._conn = None
         self.integrity_manager = IntegrityManager()
         self._init_db()
 
     def _init_db(self):
         """Initializes the forensic schema with WAL mode enabled."""
-        with sqlite3.connect(self.db_path) as conn:
+        with self._get_conn() as conn:
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS forensic_log (
@@ -43,6 +46,14 @@ class ForensicStore:
             
             conn.execute("CREATE INDEX IF NOT EXISTS idx_event_type ON forensic_log(event_type)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON forensic_log(timestamp)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_agent_id ON forensic_log(agent_id)")
+
+    def _get_conn(self):
+        """Returns a thread-safe persistent connection."""
+        if self._conn is None:
+            self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
+            self._conn.row_factory = sqlite3.Row
+        return self._conn
 
     def log_event(
         self, 
@@ -69,11 +80,13 @@ class ForensicStore:
         # For Phase 42, we store the signature as 'ed25519:...' or 'mldsa65:...'
         signature = self.integrity_manager.sign_text(content_to_sign)
         
-        with sqlite3.connect(self.db_path) as conn:
+        with self._lock:
+            conn = self._get_conn()
             cursor = conn.execute(
                 "INSERT INTO forensic_log (timestamp, agent_id, event_type, action, status, source, details, signature) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 (timestamp, agent_id, event_type, action, status, source, details_json, signature)
             )
+            conn.commit()
             return cursor.lastrowid
 
     def verify_ledger_integrity(self) -> List[int]:
@@ -82,7 +95,8 @@ class ForensicStore:
         Returns a list of IDs that failed verification.
         """
         invalid_ids = []
-        with sqlite3.connect(self.db_path) as conn:
+        with self._lock:
+            conn = self._get_conn()
             cursor = conn.execute("SELECT id, timestamp, agent_id, event_type, action, status, source, details, signature FROM forensic_log")
             for row in cursor:
                 id, ts, agent, e_type, act, stat, src, det, sig = row
@@ -109,8 +123,8 @@ class ForensicStore:
         query += " ORDER BY id DESC LIMIT ?"
         params.append(limit)
         
-        with sqlite3.connect(self.db_path) as conn:
-            conn.row_factory = sqlite3.Row
+        with self._lock:
+            conn = self._get_conn()
             cursor = conn.execute(query, params)
             results = []
             for row in cursor:
@@ -126,8 +140,8 @@ class ForensicStore:
     def query_after(self, last_id: int, limit: int = 100) -> List[Dict[str, Any]]:
         """Query events with ID > last_id."""
         query = "SELECT * FROM forensic_log WHERE id > ? ORDER BY id ASC LIMIT ?"
-        with sqlite3.connect(self.db_path) as conn:
-            conn.row_factory = sqlite3.Row
+        with self._lock:
+            conn = self._get_conn()
             cursor = conn.execute(query, (last_id, limit))
             results = []
             for row in cursor:

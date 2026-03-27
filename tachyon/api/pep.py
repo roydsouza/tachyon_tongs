@@ -33,9 +33,23 @@ class PEPLayer:
         state = StateManager()
         
         # 1. Authority Verification
-        pubkey_blob = state.get_sensor_key(command.signer_id)
-        if not pubkey_blob:
+        trust_record = state.get_sensor_trust(command.signer_id)
+        if not trust_record:
             return ToolResponse(request_id="NA", status="DENIED", selected_model="None", error=f"Untrusted Sensor: {command.signer_id}")
+        
+        # CRL Gating
+        if trust_record.get("status") == "REVOKED":
+             return ToolResponse(request_id="NA", status="DENIED", selected_model="None", error=f"Sensor REVOKED: {command.signer_id}")
+             
+        # Expiry Gating
+        if trust_record.get("expires_at"):
+             from datetime import datetime, timezone
+             try:
+                 expiry = datetime.fromisoformat(trust_record["expires_at"])
+                 if datetime.now(timezone.utc) > expiry:
+                      return ToolResponse(request_id="NA", status="DENIED", selected_model="None", error=f"Sensor EXPIRED: {command.signer_id}")
+             except Exception:
+                  pass # Invalid format, assume safe or log error
 
         # 2. Replay Protection
         if not state.check_nonce(command.signer_id, command.nonce):
@@ -43,6 +57,7 @@ class PEPLayer:
 
         # 3. Cryptographic Verification
         try:
+            pubkey_blob = trust_record.get("public_key_b64", "")
             ed_pk = None
             pqc_pk = None
             for part in pubkey_blob.split("|"):
