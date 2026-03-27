@@ -25,6 +25,16 @@
 
 ## 🔳 Active & Priority: Dashboard & TUI Evolution
 
+### [INT-00] Architecture: docs/INTERFACES.md & Component Audit [ ]
+- **Goal**: Establish the definitive architectural guide for human-substrate interaction.
+- **Requirements**:
+  - Document CLI/TUI/Bridge topology.
+  - Audit all interface-related files (`main.py`, `app.py`, `daemon.py`).
+  - List all user-facing forensic records (`ALERT.md`, `SYNC_LOG.md`, `forensics.db`).
+- **Acceptance Criteria**:
+  - [ ] `docs/INTERFACES.md` created and PQC-signed.
+  - [ ] Integration test verifies existence and accessibility of all components.
+
 ### [INT-01] Textual TUI: Real-Time Event Stream Visualizer [ ]
 - **Goal**: Create a high-fidelity terminal dashboard for the `TachyonEventBus`.
 - **Requirements**:
