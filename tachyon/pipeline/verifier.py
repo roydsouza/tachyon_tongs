@@ -1,27 +1,39 @@
-"""
-Tachyon Tongs: Stage 4 Verifier Node
-The final defense-in-depth layer. Checks the Analyzer's output for hidden exploits
-like Sandbox Escapes or Malicious Markdown links before returning control.
-"""
 import re
+from typing import Any, Dict
+from agents._core.base import BaseAgentPlugin
+from agents._core.registry import AgentRegistry
 
 class VerificationFailedError(Exception):
+    """Raised when the VerifierAgent detects contamination (SF-02, SF-01)."""
     pass
 
-class VerifierAgent:
-    """Stage 4: The Verifier. Evaluates Stage 3 JSON/Dict outputs."""
-    
-    def __init__(self):
-        # Known indicators of compromised LLM output attempting a sandbox escape
-        self.banned_substrings = [
-            "#!/bin/bash",
-            "curl -X POST",
-            "import os; os.system"
+@AgentRegistry.register("verifier")
+class VerifierAgent(BaseAgentPlugin):
+    """
+    Verifier Agent: Implements recursive forensic scans on payloads (M-04).
+    Standardized to raise VerificationFailedError on failure (SF-02).
+    """
+    def __init__(self, agent_id: str, config: Dict[str, Any]):
+        super().__init__(agent_id, "Verifier", config)
+        self.banned_patterns = [
+            "rm -rf", "chmod 777", "powershell", "curl", "wget", "/etc/passwd",
+            "netcat", "nc -e", "/dev/tcp", "os.system", "subprocess.run",
+            "#!/bin/bash", "cat /etc/shadow"
         ]
         
+    def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """Provides high-assurance verification as an agent action."""
+        if action == "verify_data":
+            try:
+                self.verify(parameters.get("payload", {}))
+                return {"status": "SUCCESS", "verified": True}
+            except VerificationFailedError as e:
+                return {"status": "DENIED", "error": str(e)}
+        return {"status": "ERROR", "error": f"Unknown action: {action}"}
+
     def _check_string(self, text: str) -> bool:
         """Helper to scan a single string for banned artifacts."""
-        for banned in self.banned_substrings:
+        for banned in self.banned_patterns: # Changed from banned_substrings to banned_patterns
             if banned in text:
                 return False
                 

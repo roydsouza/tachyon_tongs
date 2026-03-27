@@ -8,6 +8,17 @@ import json
 import os
 import requests
 
+from dataclasses import dataclass
+
+@dataclass
+class FetchResult:
+    """Structured fetch result object (SF-03)."""
+    status: str
+    url: str
+    result: Optional[str] = None
+    error: Optional[str] = None
+    latency_ms: float = 0.0
+
 class SecurityViolationError(Exception):
     pass
 
@@ -113,38 +124,42 @@ class SafeFetch:
                              return False
         return True
 
-    def fetch(self, url: str, intent: str = "DEFAULT") -> dict:
+    def fetch(self, url: str, intent: str = "DEFAULT") -> FetchResult:
         """
         The capability-wrapped fetch command.
-        Returns a dict with status and content/error.
+        Returns a structured FetchResult object (SF-03).
         """
+        import time
+        start = time.perf_counter()
+        
         # 1. Domain Check
-        if not self._evaluate_intent(url):
-            raise SecurityViolationError(f"Intent Gate blocked access to unauthorized domain in URL: {url}")
-            
-        # 2. Open Redirect Check (H-05)
-        if not self._check_redirect_bypasses(url):
-            raise SecurityViolationError(f"Redirect to untrusted domain detected in URL: {url}")
-        
-        req = urllib.request.Request(
-            url, 
-            data=None, 
-            headers={
-                'User-Agent': f'Tachyon-Tongs-{self.agent_id}/1.0'
-            }
-        )
-        
         try:
-            with urllib.request.urlopen(req, timeout=10) as response:
-                return {
-                    "status": "SUCCESS",
-                    "result": response.read().decode('utf-8', errors='ignore')
+            if not self._evaluate_intent(url):
+                raise SecurityViolationError(f"Intent Gate blocked access to unauthorized domain in URL: {url}")
+                
+            # 2. Open Redirect Check (H-05)
+            if not self._check_redirect_bypasses(url):
+                raise SecurityViolationError(f"Redirect to untrusted domain detected in URL: {url}")
+            
+            req = urllib.request.Request(
+                url, 
+                data=None, 
+                headers={
+                    'User-Agent': f'Tachyon-Tongs-{self.agent_id}/1.0'
                 }
+            )
+            
+            with urllib.request.urlopen(req, timeout=10) as response:
+                content = response.read().decode('utf-8', errors='ignore')
+                latency = (time.perf_counter() - start) * 1000.0
+                return FetchResult(status="SUCCESS", url=url, result=content, latency_ms=latency)
+                
+        except SecurityViolationError as e:
+             latency = (time.perf_counter() - start) * 1000.0
+             return FetchResult(status="BLOCKED", url=url, error=str(e), latency_ms=latency)
         except Exception as e:
-            return {
-                "status": "ERROR",
-                "error": f"Error fetching URL: {str(e)}"
-            }
+             latency = (time.perf_counter() - start) * 1000.0
+             return FetchResult(status="ERROR", url=url, error=str(e), latency_ms=latency)
 
 def safe_fetch(url: str, agent_id: str = "default", allowed_domains: list = None, denylist: list = None) -> dict:
     """Convenience wrapper for SafeFetch."""

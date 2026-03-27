@@ -10,6 +10,7 @@ class RemoteSingularityPDP(PolicyEngine):
     """
     def __init__(self, server_url: str = "http://localhost:8001"):
         self.server_url = server_url
+        self.last_error = None # SF-01: Track reason for denial
 
     def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
         """
@@ -25,8 +26,10 @@ class RemoteSingularityPDP(PolicyEngine):
             if response.status_code == 200:
                 data = response.json()
                 verdict_enum = Verdict[data["verdict"]]
+                self.last_error = data.get("reason") # SF-01: Track the reason
                 return PolicyVerdict(verdict_enum, data["reason"], data["engine"])
             else:
+                self.last_error = f"HTTP_{response.status_code}"
                 return PolicyVerdict(
                     Verdict.DENY, 
                     f"META-PDP ERROR: Server returned HTTP {response.status_code}", 

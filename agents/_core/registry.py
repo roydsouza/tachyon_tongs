@@ -4,6 +4,10 @@ import importlib.util
 from typing import Dict, Type, Optional
 from agents._core.base import BaseAgentPlugin
 
+class RegistrationError(Exception):
+    """Raised when an agent plugin fails to register correctly (SF-04)."""
+    pass
+
 class AgentRegistry:
     """
     Central registry for Tachyon Tongs agent plugins.
@@ -14,6 +18,8 @@ class AgentRegistry:
     @classmethod
     def register(cls, name: str):
         def wrapper(plugin_class: Type[BaseAgentPlugin]):
+            if name in cls._plugins:
+                raise RegistrationError(f"Duplicate agent ID registered: {name}")
             cls._plugins[name] = plugin_class
             return plugin_class
         return wrapper
@@ -41,10 +47,18 @@ class AgentRegistry:
                     if os.path.exists(module_path):
                         spec = importlib.util.spec_from_file_location(plugin_module_name, module_path)
                         module = importlib.util.module_from_spec(spec)
-                        spec.loader.exec_module(module)
+                        if spec and spec.loader:
+                            spec.loader.exec_module(module)
+                        else:
+                            raise RegistrationError(f"Module spec loader missing for {plugin_module_name}")
                 except Exception as e:
-                    print(f"[AgentRegistry] Failed to load plugin {agent_name} from {root}: {e}")
+                    # Always write forensic alert
                     _write_load_failure_alert(agent_name, str(e))
+                    # In production/strict mode, fail-loud
+                    if os.environ.get("TACHYON_STRICT_MODE") == "1":
+                         raise RegistrationError(f"Critical agent load failure: {agent_name} -> {e}")
+                    else:
+                         print(f"[AgentRegistry] WARNING: Failed to load plugin {agent_name}: {e}")
 
     @classmethod
     def get_plugin(cls, name: str) -> Optional[Type[BaseAgentPlugin]]:

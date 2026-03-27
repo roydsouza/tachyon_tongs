@@ -9,19 +9,20 @@ description = "Autonomous Agentic Firewall & Security Substrate"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "fastapi",
-    "uvicorn",
-    "requests",
-    "pydantic",
-    "mlx-lm",
-    "cryptography",
-    "textual",
-    "typer",
-    "rich",
-    "httpx",
-    "pyyaml",
-    "pytest",
-    "pyobjc-framework-Security; sys_platform == 'darwin'",
+    "fastapi>=0.104.0",
+    "uvicorn>=0.23.2",
+    "requests>=2.31.0",
+    "pydantic>=2.4.2",
+    "mlx-lm>=0.0.12",
+    "cryptography>=41.0.5",
+    "textual>=0.41.0",
+    "typer>=0.9.0",
+    "rich>=13.6.0",
+    "httpx>=0.25.1",
+    "pyyaml>=6.0.1",
+    "pytest>=7.4.3",
+    "psutil>=5.9.6",
+    "pyobjc-framework-Security>=10.0; sys_platform == 'darwin'",
 ]
 
 [project.scripts]

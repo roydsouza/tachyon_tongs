@@ -292,41 +292,25 @@
 
 ### 🔵 LOW SEVERITY & OBSERVABILITY
 
-#### [L-01] Inefficient Unicode Boundary Markers
-- **Diagnosis**: Non-printable markers (`\u0001`) are fragile.
-- **Fix**: Use structured JSON or unique string boundaries (e.g., `<<<UNTRUSTED_BEGIN>>>`).
+- [x] **[L-01] Inefficient Unicode Boundary Markers** (Replaced with JSON)
 
-#### [L-02] No Structured Logging for Security Events
-- **Diagnosis**: Use of `print()` makes event correlation difficult.
-- **Fix**: Implement `structlog` for all security-critical paths in `IntegrityManager` and `PolicyEngine`.
+- [x] **[L-02] No Structured Logging for Security Events** (LogContext Implemented)
 
-#### [L-03] Hardcoded Timeouts Causes False Positives
-- **Diagnosis**: Fixed 50ms sleeps don't scale with load.
-- **Fix**: Implement adaptive timeouts based on `psutil.cpu_percent()`.
+- [x] **[L-03] Hardcoded Timeouts Causes False Positives** (AdaptiveTimeout Implemented)
 
-#### [L-04] Missing Policy Latency Telemetry
-- **Diagnosis**: No metrics on evaluation time hides performance degradation attacks.
-- **Fix**: Emit `policy_evaluation_latency` metrics to the TelemetryBus.
+- [x] **[L-04] Missing Policy Latency Telemetry** (Latency Tracking Implemented)
 
 ---
 
 ### 🔍 SILENT FAILURES & TECH DEBT
 
-#### [SF-01] Policy Engine Integrity Failure Suppression
-- **Diagnosis**: Tamper detection returns `DENY` but doesn't log a persistent incident or alert operator.
-- **Fix**: Log to `ForensicLedger` and emit `POLICY_TAMPER_ATTEMPT` on verification failure.
+- [x] **[SF-01] Policy Engine Integrity Failure Suppression** (Tamper Alerts Implemented)
 
-#### [SF-02] Verifier Logic: Return vs. Raise
-- **Diagnosis**: Verification failures return `False` but don't always raise, allowing callers to ignore them.
-- **Fix**: Standardize on `IntegrityError` being raised by default.
+- [x] **[SF-02] Verifier Logic: Return vs. Raise** (VerificationFailedError Implemented)
 
-#### [SF-03] SafeFetch Content Confusion
-- **Diagnosis**: Returning "FETCH_BLOCKED" as a string confuses analyzers.
-- **Fix**: Implement a structured `FetchResult` object with explicit status, content, and error fields.
+- [x] **[SF-03] SafeFetch Content Confusion** (FetchResult Implemented)
 
-#### [SF-04] Agent Registry Fail-Silent
-- **Diagnosis**: Duplicate IDs or malformed configs are caught and printed but don't stop the agent.
-- **Fix**: Implement "Fail-Loud" on registration errors; emit `AGENT_REGISTRATION_FAILURE`.
+- [x] **[SF-04] Agent Registry Fail-Silent** (Fail-Loud Registry Implemented)
 
 #### [TD-01] Excessive Mocking / Low Test Fidelity
 - **Diagnosis**: Over-reliance on mocks hides integration bugs.
@@ -335,8 +319,7 @@
 #### [TD-02] Inconsistent Error Handling Patterns
 - **Fix**: Standardize on the **Result monad pattern** for cross-layer communication.
 
-#### [TD-03] No Dependency Pinning
-- **Fix**: Transition `pyproject.toml` to exact version pinning (`==`) for all core security dependencies.
+- [x] **[TD-03] No Dependency Pinning** (Pinned in pyproject.toml)
 
 #### [TD-04] Missing Chaos Engineering
 - **Fix**: Implement test cases for disk-full, network-partition, and clock-skew scenarios.

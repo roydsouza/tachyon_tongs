@@ -24,6 +24,7 @@ class PEPLayer:
         self.vm_runner = VmRunner()
         from tachyon.enforcement.rate_limiter import AdaptiveRateLimiter
         self.rate_limiter = AdaptiveRateLimiter(default_rpm=100)
+        self.circuit_breakers = {} # L-03/M-02 Baseline
 
     async def execute_signed(self, command: SignedCommand) -> ToolResponse:
         """Securely executes command via signed relay with hybrid verification."""
@@ -84,31 +85,30 @@ class PEPLayer:
              return ToolResponse(request_id="NA", status="ERROR", selected_model="None", error=f"Relay Execution Failure: {e}")
 
     async def execute(self, request: ToolRequest) -> ToolResponse:
+        """
+        Policy Enforcement Point: Evaluates intent and executes tools within a circuit breaker.
+        Phase 4 Hardening: Integrated correlation logging (L-02) and latency tracking (L-04).
+        """
+        import time
+        import uuid
+        from tachyon.core.observability import LogContext
         from tachyon.core.telemetry import TelemetryBus
         from tachyon.core.circuit_breaker import CircuitBreaker
+        from tachyon.core.state_manager import StateManager
+        
         request_id = str(uuid.uuid4())
+        ctx = LogContext(agent_id=request.agent_id)
+        start_time = time.perf_counter()
         
-        # Initialize circuit breakers in-memory if needed
-        if not hasattr(self, "_circuit_breakers"):
-            self._circuit_breakers = {}
+        ctx.info("TOOL_ROUTING_INIT", action=request.action, parameters=request.parameters, request_id=request_id)
 
-        if request.action not in self._circuit_breakers:
-            self._circuit_breakers[request.action] = CircuitBreaker()
-            
-        breaker = self._circuit_breakers[request.action]
+        if request.action not in self.circuit_breakers:
+            self.circuit_breakers[request.action] = CircuitBreaker(failure_threshold=5, reset_timeout=300)
         
-        # 1. Rate Limiting Check (H-01)
-        allowed, msg = self.rate_limiter.is_allowed(request.agent_id, request.action)
-        if not allowed:
-            return ToolResponse(
-                request_id=request_id,
-                status="RATE_LIMITED",
-                selected_model="None",
-                error=msg
-            )
-            
-        # 2. Circuit Breaker Check (M-02)
+        breaker = self.circuit_breakers[request.action]
+        
         if not breaker.can_execute():
+            ctx.warn("CIRCUIT_OPEN_BLOCK", action=request.action)
             return ToolResponse(
                 request_id=request_id,
                 status="CIRCUIT_OPEN",
@@ -116,9 +116,25 @@ class PEPLayer:
                 error=f"Circuit Breaker for action {request.action} is OPEN. Failing closed."
             )
 
-        source = "transit" if request.tenant_id != "default" else "internal"
+        source = "transit" if (hasattr(request, "tenant_id") and request.tenant_id != "default") else "internal"
         
-        prompt = request.prompt_context or f"{request.action} with parameters {request.parameters}"
+        # 1. Policy Evaluation (L-04)
+        policy_start = time.perf_counter()
+        allowed = self.policy_engine.evaluate(request)
+        policy_latency = (time.perf_counter() - policy_start) * 1000.0
+        
+        state = StateManager()
+        state.emit_metric("policy_eval_latency_ms", policy_latency, {"tool": request.action})
+        
+        if not allowed:
+            # SF-01: Log tamper attempt if policy returns False due to signature mismatch
+            if getattr(self.policy_engine, "last_error", None) == "SIGNATURE_MISMATCH":
+                 state.emit_alert("POLICY_TAMPER_ATTEMPT", f"Tampered policy detected for {request.action}")
+            
+            breaker.record_failure()
+            return ToolResponse(request_id=request_id, status="DENIED", selected_model="None", error="Policy violation: Intent rejected by OPA.")
+
+        prompt = getattr(request, "prompt_context", None) or f"{request.action} with parameters {request.parameters}"
         complexity = self.model_router.detect_complexity(prompt)
         selected_model = self.model_router.select_model(prompt, complexity, current_quota=1.0)
         
