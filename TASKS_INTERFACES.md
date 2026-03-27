@@ -12,14 +12,10 @@
 ---
 
 ## 📋 Ground Rules for the Implementing Agent
-
-1. All interface logic must be verified against the core `TachyonEventBus` for event integrity.
-2. Every UI component **MUST** handle signed events and display their cryptographic status (e.g., "PQC VERIFIED").
-3. Follow the TDAD workflow: **write the failing test first**, then implement the interface/logic, then verify.
-4. All remote access implementations must use post-quantum encrypted tunnels or signed request-response loops.
-5. Update this file immediately when starting (`[/]`) and completing (`[x]`) each task.
-6. Update `SYNC_LOG.md` after completing each task with the detail level specified in the Handoff section.
-7. **AUTO-COMMIT**: Every completed task must be followed by a git push to origin main.
+> **GROUND RULES for INTERFACE DEVELOPMENT**
+> 1.  **Forensic First**: Any user-facing change must have a corresponding test path and signed ADR.
+> 2.  **UX Protocol**: Any model/agent performing UX work MUST read `docs/INTERFACES.md` and follow the `UX-001` protocol defined in `.agent/rules/UX-001.md`.
+> 3.  **State Integrity**: Every completed task must update the "Current Implementation" audit in `docs/INTERFACES.md`.
 
 ---
 
@@ -38,11 +34,14 @@
 ### [INT-01] Textual TUI: Real-Time Event Stream Visualizer [ ]
 - **Goal**: Create a high-fidelity terminal dashboard for the `TachyonEventBus`.
 - **Requirements**:
-  - Filter by topic/severity.
-  - Interactive "View Certificate" details for PQC signatures.
-  - Auto-refresh with non-blocking async bus subscription.
+  - Phase 1: Core monitoring dashboard (read-only).
+  - Phase 2: Interactive controls (policy override, agent pause/resume).
+  - Phase 3: Forensic timeline explorer.
+  - Phase 4: Collaborative mode (multi-operator coordination).
+  - Ambient Awareness: PQC and health status visible at a glance.
 - **Acceptance Criteria**:
-  - [ ] Test script that emits 10 events and asserts they appear in the TUI state.
+  - [ ] `tt dash` initializes a multi-pane Textual app.
+  - [ ] Live telemetry feed updates without blocking the UI.
 
 ### [INT-02] Remote Access: Signed Command Relay [ ]
 - **Goal**: Enable secure remote triggering of agent actions via signed JSON bundles.

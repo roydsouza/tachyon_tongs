@@ -28,3 +28,12 @@ def test_remote_access_adr_presence():
     
     state = StateManager()
     assert state.integrity.verify_integrity(adr_file), "ADR-0067 must pass integrity audit."
+
+def test_ux_governance_presence():
+    """Verify that UX-001 rule and ux-interface workflow are present."""
+    root_dir = os.getcwd()
+    rule_file = os.path.join(root_dir, ".agent/rules/UX-001.md")
+    workflow_file = os.path.join(root_dir, ".agent/workflows/ux-interface.md")
+    
+    assert os.path.exists(rule_file), "UX-001 rule must exist."
+    assert os.path.exists(workflow_file), "ux-interface workflow must exist."

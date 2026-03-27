@@ -26,7 +26,19 @@ The **StateBridge** enables external visibility and remote command relay. It act
 
 ---
 
-## 🔍 2. Interface Component Audit (2026-03-27)
+## 🎨 2. Design Principles (SPOG Architecture)
+
+To establish a "Single Pane of Glass" (SPOG) management interface, all interface components must adhere to the following fundamental principles:
+
+1.  **Ambient Awareness**: Critical information (health, alerts, PQC status) must be visible at a glance without requiring user interaction.
+2.  **Progressive Disclosure**: Detailed information should be available on-demand (e.g., clicking an alert or agent node) without cluttering the primary operational views.
+3.  **Zero-Latency Control**: High-risk actions, such as policy hot-swapping and agent action overrides, must be implemented with a latency target of **<100ms**.
+4.  **Forensic Completeness**: Every manual and automated interaction via any interface tier must be traceable, auditable, and cryptographically anchored in `forensics.db`.
+5.  **Multi-Modal Interaction**: Interaction models must prioritize keyboard-first workflows (TUI/CLI) while maintaining secondary accessibility for mouse/web-based stakeholders.
+
+---
+
+## 🔍 3. Interface Component Audit (2026-03-27)
 
 The following files constitute the primary implementation of the HSI:
 
