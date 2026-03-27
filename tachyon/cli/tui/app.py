@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer, Static, DataTable, Log
+from textual.widgets import Header, Footer, Static, DataTable, Log, Input
 from textual.containers import Container, Grid, Vertical, Horizontal
 from textual.reactive import reactive
 from textual.message import Message
@@ -15,6 +15,7 @@ class TacticalOverview(Static):
     """Widget for Substrate health and traffic metrics."""
     def update_metrics(self, health: dict, traffic: dict) -> None:
         status_val = health.get("status", "offline").upper()
+        status_color = "green" if status_val == "ACTIVE" else "yellow"
         status_label = " [OK]" if status_val == "ACTIVE" else ""
         integrity = "[green]VERIFIED [OK][/green]" if health.get("integrity_verified") else "[red]COMPROMISED [FAIL][/red]"
         

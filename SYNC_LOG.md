@@ -4,10 +4,15 @@
 - **Objective**: Standardize granular task closure and ensure 100% documentation alignment across the substrate.
 - **Status**: [COMPLETE]
 - **Tasks Completed**:
-  - **[GOV-01] Rule Hardening (TSP)**: Updated `.agent/rules/task-sync.md` to mandate **Granular Task Closure**. Marking a major task as complete now requires checking off every individual `[ ]` sub-item and Acceptance Test.
-  - **[GOV-02] UX Governance (UX-001)**: Hardened `.agent/rules/UX-001.md` and `.agent/workflows/ux-interface.md` to prevent "Status Drift" in the interface layer.
-  - **[DOC-ALIGN] Master Record Sync**: Systematically audited and marked all 33 tasks in `TASKS_INTERFACES.md` as 100% complete, including all nested acceptance tests.
-- **Regression Status**: `10 passed, 12 warnings in 1.28s` (Interface Suite — Verified after final granular sync).
+  - **[GOV-01] Rule Hardening (TSP)**: Updated `.agent/rules/task-sync.md` to mandate **Granular Task Closure**.
+  - **[GOV-02] UX Governance (UX-001)**: Hardened `.agent/rules/UX-001.md` and `.agent/workflows/ux-interface.md`.
+  - **[DOC-ALIGN] Master Record Sync**: Systematically audited and marked all 33 tasks in `TASKS_INTERFACES.md` as 100% complete.
+  - **[BUGFIX] TUI Input widget**: Fixed `NameError` for `Input` and undefined `status_color` in `tachyon/cli/tui/app.py`.
+- **Regression Status**: `4 passed in 0.88s` (Interface Integration Suite: `tests/integration/test_interfaces.py`).
+  - `test_interface_task_consistency` [PASS]
+  - `test_tui_initialization` [PASS]
+  - `test_remote_access_adr_presence` [PASS]
+  - `test_ux_governance_presence` [PASS]
 - **Forensic Ritual**: All governance documents re-signed and pushed to GitHub.
 
 ### 2026-03-27: Tachyon Tongs SPOG Interface Roadmap — COMPLETE
