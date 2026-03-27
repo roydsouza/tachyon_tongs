@@ -230,63 +230,63 @@
 - **Diagnosis**: The Mutant Lock pattern suppresses alerts during mutations, creating a window for malicious changes to slip through unnoticed.
 - **Fix**: Implement lock expiration (5 min), log suppressed alerts to a forensic channel, and alert on excessive suppressions (>10).
 - **Acceptance Criteria**:
-  - [ ] `test_mutant_locked_forensics`: Verify suppressed alerts appear in the forensic audit ledger even if the live alert is silenced.
+  - [x] `test_mutant_locked_forensics`: Verify suppressed alerts appear in the forensic audit ledger even if the live alert is silenced.
 
 #### [M-02] No Circuit Breaker Pattern in PEP Pipeline
 - **Location**: `tachyon/api/pep.py:3629-3686`
 - **Diagnosis**: Lack of circuit breakers causes cascade failures when downstream services (Singularity, Sandbox) fail.
 - **Fix**: Implement `CircuitBreaker` on all downstream policy evaluations with a fail-closed policy.
 - **Acceptance Criteria**:
-  - [ ] `test_pep_circuit_breaker`: Mock 5 consecutive failures and assert the circuit opens and rejects subsequent requests immediately.
+  - [x] `test_pep_circuit_breaker`: Mock 5 consecutive failures and assert the circuit opens and rejects subsequent requests immediately.
 
 #### [M-03] Unsafe Deserialization Risk (Agent Communication)
 - **Location**: Inter-agent message passing
 - **Diagnosis**: Potential use of `pickle` or unsanitized deserialization allows arbitrary code execution between agents.
 - **Fix**: Explicitly ban `pickle` across the substrate. Enforce `pydantic` schema validation for all bus messages.
 - **Acceptance Criteria**:
-  - [ ] `test_message_schema_validation`: Send a message with missing mandatory fields and assert it is rejected by the bus.
+  - [x] `test_message_schema_validation`: Send a message with missing mandatory fields and assert it is rejected by the bus.
 
 #### [M-04] Verifier Node Bypass via Content-Type Confusion
 - **Location**: `tachyon/pipeline/verifier.py:3548-3583`
 - **Diagnosis**: Verifier only checks string values in Analyzer output, ignoring nested lists or dicts containing malicious payloads.
 - **Fix**: Implement recursive value checking in `Verifier.verify()`.
 - **Acceptance Criteria**:
-  - [ ] `test_verifier_nested_payload`: Assert that a banned string hidden inside a list `["#!/bin/bash"]` is caught.
+  - [x] `test_verifier_nested_payload`: Assert that a banned string hidden inside a list `["#!/bin/bash"]` is caught.
 
 #### [M-05] Model Router Complexity Detection Manipulation
 - **Location**: `tachyon/core/routing.py`
 - **Diagnosis**: Attackers can use repetition or keywords to force expensive model selection, causing resource exhaustion.
 - **Fix**: Normalize prompt repetition, use entropy-based padding detection, and select models based on semantic indicators.
 - **Acceptance Criteria**:
-  - [ ] `test_model_router_padding_resiliency`: Verify that a "SIMPLE" query padded with 1000 "ANALYZE" keywords still routes to a fast model.
+  - [x] `test_model_router_padding_resiliency`: Verify that a "SIMPLE" query padded with 1000 "ANALYZE" keywords still routes to a fast model.
 
 #### [M-06] Pathogen Agent Sandbox & Safety Gaps
 - **Location**: `agents/pathogen/`
 - **Diagnosis**: Pathogen-generated exploits could harm the production substrate if not properly isolated.
 - **Fix**: Move Pathogen execution to an isolated VM/container and implement static analysis on all generated exploits.
 - **Acceptance Criteria**:
-  - [ ] `test_pathogen_exploit_safety`: Verify that exploits containing `rm -rf /` are flagged and quarantined during generation.
+  - [x] `test_pathogen_exploit_safety`: Verify that exploits containing `rm -rf /` are flagged and quarantined during generation.
 
 #### [M-07] SQL Injection Risk in Whitelist Queries
 - **Location**: `tachyon/core/state.py`
 - **Diagnosis**: Potential for string interpolation in domain/package whitelist queries.
 - **Fix**: Ensure 100% coverage of parameterized queries for all DB interactions.
 - **Acceptance Criteria**:
-  - [ ] `test_sql_injection_bypass`: Provide a domain like `'evil.com' OR '1'='1` and verify the query correctly fails to find a match.
+  - [x] `test_sql_injection_bypass`: Provide a domain like `'evil.com' OR '1'='1` and verify the query correctly fails to find a match.
 
 #### [M-08] Missing Input Validation on Agent Role Names
 - **Location**: `tachyon/core/signing.py:3528`
 - **Diagnosis**: `role` parameter used in path construction allows path traversal attacks (`../../etc/passwd`).
 - **Fix**: Validate `role` against an allowlist and sanitize/canonicalize paths before access.
 - **Acceptance Criteria**:
-  - [ ] `test_role_path_traversal`: Assert `derive_agent_key` raises `ValueError` for roles containing `/` or `..`.
+  - [x] `test_role_path_traversal`: Assert `derive_agent_key` raises `ValueError` for roles containing `/` or `..`.
 
 #### [M-09] Herald Notification Injection
 - **Location**: `agents/herald/agent.py`
 - **Diagnosis**: Unsanitized alert content in Signal notifications allows multi-line injection and link spoofing.
 - **Fix**: Strip newlines, truncate URLs, and enforce message length limits in Herald notifications.
 - **Acceptance Criteria**:
-  - [ ] `test_herald_notification_cleanup`: Assert that a notification containing `\n\n[CRITICAL]` is flattened to a single line.
+  - [x] `test_herald_notification_cleanup`: Assert that a notification containing `\n\n[CRITICAL]` is flattened to a single line.
 
 ---
 
