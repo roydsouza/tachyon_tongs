@@ -17,7 +17,7 @@ Follow these steps for any task involving TUI, CLI, Dashboard, or Operator UX:
     - **ADR**: If architectural changes were made, add a signed ADR to `docs/adr/`.
 5. **State Alignment**:
     - **Update**: Reflect the new component state in `docs/INTERFACES.md`.
-    - **Mark**: Mark the task as complete `[x]` in `TASKS_INTERFACES.md`.
+    - **Granular Mark**: Mark the task as complete `[x]` in `TASKS_INTERFACES.md` AND ensure every sub-item (Goal, Files, Tests) is also checked off.
 6. **Forensic Checkpoint**:
     - **Re-sign**: Run `python3 scripts/forensics/resign_docs.py`.
     - **Sync**: Update `SYNC_LOG.md` and push to GitHub.
