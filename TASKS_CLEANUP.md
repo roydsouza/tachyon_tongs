@@ -131,6 +131,210 @@
   - [x] Auditor tests pass in both sync and async contexts. (PASS: `test_auditor.py`)
 
 ---
+---
+
+## 🛡️ VULNERABILITY REMEDIATION (Audit Report — 2026-03-27)
+
+> [!IMPORTANT]
+> **AUDIT MANDATE**: The following 31 issues were identified in the `feedback/CLAUDE_AUDIT_REPORT_03_27.md`. These represent critical security vulnerabilities and architectural gaps that must be resolved to achieve full substrate hardening.
+
+### 🔴 CRITICAL SEVERITY: Immediate Action Required
+
+#### [C-01] Race Condition in Signature Verification (TOCTOU)
+- **Location**: `tachyon/core/signing.py:3623-3695`
+- **Diagnosis**: A 50-150ms retry window in `IntegrityManager.verify_integrity` creates a TOCTOU window where an attacker can swap the file content after sig-check but before execution.
+- **Fix**: Implement atomic verification: Read file → hash → verify in a single operation with a `FileLock`. Include content SHA-256 in signature metadata.
+- **Acceptance Criteria**:
+  - [ ] `test_signature_toctou_race`: Concurrent thread swaps file during sleep window; verify it raises `IntegrityError`.
+
+#### [C-02] InputSanitizer Bypass via Unicode Normalization Collisions
+- **Location**: `tachyon/core/sanitizer.py:3436-3464`
+- **Diagnosis**: `NFKC` normalization before pattern matching allows bypass via homographs and zero-width injections.
+- **Fix**: Normalize before matching, reject if normalization changes content, and move zero-width removal from `SanitizerNode` to `InputSanitizer`.
+- **Acceptance Criteria**:
+  - [ ] `test_unicode_normalization_bypass`: Payloads using full-width or decomposed Unicode must be caught by both pre/post normalization checks.
+
+#### [C-03] LRU Cache Poisoning in RegoPolicyEngine
+- **Location**: `tachyon/policy/engines/rego_engine.py:3873-3876`
+- **Diagnosis**: Cache keys include attacker-controlled serialized parameters, enabling cache eviction DoS and `DENY` verdict bypass via parameter pollution.
+- **Fix**: Implement cache key normalization (filtering only security-relevant keys) and rate-limit cache misses per agent.
+- **Acceptance Criteria**:
+  - [ ] `test_cache_poisoning_mitigation`: Assert that adding irrelevant parameters to a request does not create a new cache entry.
+
+---
+
+### 🟠 HIGH SEVERITY: Critical Defense-in-Depth
+
+#### [H-01] No Rate Limiting at PEP Layer Enables Agent Flooding
+- **Location**: `tachyon/api/pep.py:3629-3686`
+- **Diagnosis**: The PEP has zero rate limiting, allowing a rogue agent to exhaust LLM resources or overwhelm HITL operators.
+- **Fix**: Deploy `RateLimiter` at the PEP layer with per-agent windows and penalty multipliers.
+- **Acceptance Criteria**:
+  - [ ] `test_pep_rate_limiting`: Send 101 requests within 60s; assert the 101st returns `RATE_LIMITED`.
+
+#### [H-02] Whitelist TOCTOU in RegoPolicyEngine
+- **Location**: `tachyon/policy/engines/rego_engine.py:3888-3920`
+- **Diagnosis**: Whitelist checks against the DB lack transaction isolation, allowing race-condition entries to be inserted between check and execution.
+- **Fix**: Use database transactions with row-level locking (`BEGIN IMMEDIATE`) for whitelist evaluations.
+- **Acceptance Criteria**:
+  - [ ] `test_whitelist_transaction_isolation`: Verify that a concurrent insert of a whitelisted domain does not affect a check currently in flight.
+
+#### [H-03] AlignmentPDP Semantic Drift Detection Bypass
+- **Location**: `tachyon/policy/checkers/alignment_pdp.py:3685-3746`
+- **Diagnosis**: Keyword-weighted vectorization is trivially bypassable via synonym substitution and padding attacks.
+- **Fix**: Transition from keyword frequency to real sentence embeddings (e.g., `all-MiniLM-L6-v2`) and add an adversarial classifier.
+- **Acceptance Criteria**:
+  - [ ] `test_semantic_drift_resiliency`: Assert that synonym-swapped malicious intents still trigger high similarity scores.
+
+#### [H-04] PII Scanner Misses Advanced Exfiltration (Base64/Hex/Entropy)
+- **Location**: `tachyon/pipeline/pii_scanner.py:3395-3426`
+- **Diagnosis**: Simple regex patterns miss encoded secrets (Base64, Hex) and chunked exfiltration attempts.
+- **Fix**: Implement recursive scanning for Base64/Hex candidates and add Shannon entropy analysis for high-randomness data.
+- **Acceptance Criteria**:
+  - [ ] `test_encoded_pii_detection`: Assert that `sk-ant-` tokens encoded in Base64 or Hex are detected.
+
+#### [H-05] SafeFetch Domain Whitelist Bypasses
+- **Location**: `tachyon/enforcement/safe_fetch.py`
+- **Diagnosis**: Subdomain wildcarding is missing, and open redirects on trusted domains (e.g., google.com/url?q=...) are not blocked.
+- **Fix**: Implement strict subdomain matching and parameter-based redirect detection. Add content-type validation (e.g., scanning PDFs).
+- **Acceptance Criteria**:
+  - [ ] `test_safefetch_redirect_block`: Assert that URLs containing redirect parameters (`?q=`, `?url=`) are blocked.
+
+#### [H-06] Signature Stripping Attack in Hybrid Signing
+- **Location**: `tachyon/core/keys/hybrid.py`
+- **Diagnosis**: Concatenated signature format allows attackers to strip the PQC component, forcing a fallback to potentially forged Ed25519 signatures.
+- **Fix**: Enforce a structured JSON signature format with mandatory PQC components and an internal checksum of both signatures.
+- **Acceptance Criteria**:
+  - [ ] `test_signature_stripping_rejection`: Manually strip the `mldsa65` component and assert `verify()` raises `ValueError`.
+
+#### [H-07] Agent Identity Confusion in Delegation Chain
+- **Location**: `tachyon/core/signing.py:3528-3579`
+- **Diagnosis**: No binding between certificates and the executing process; any agent can attempt to load an elevated identity from the keychain.
+- **Fix**: Implement process identity binding (`psutil` check on cmdline patterns) and certificate chain verification.
+- **Acceptance Criteria**:
+  - [ ] `test_identity_confusion_block`: Force an agent with role `scout` to attempt loading `engineer` keys; assert failure.
+
+---
+
+### 🟡 MEDIUM SEVERITY: Reliability & Robustness
+
+#### [M-01] Mutant Lock Suppresses Critical Security Alerts
+- **Location**: `tachyon/core/signing.py:3645-3694`
+- **Diagnosis**: The Mutant Lock pattern suppresses alerts during mutations, creating a window for malicious changes to slip through unnoticed.
+- **Fix**: Implement lock expiration (5 min), log suppressed alerts to a forensic channel, and alert on excessive suppressions (>10).
+- **Acceptance Criteria**:
+  - [ ] `test_mutant_locked_forensics`: Verify suppressed alerts appear in the forensic audit ledger even if the live alert is silenced.
+
+#### [M-02] No Circuit Breaker Pattern in PEP Pipeline
+- **Location**: `tachyon/api/pep.py:3629-3686`
+- **Diagnosis**: Lack of circuit breakers causes cascade failures when downstream services (Singularity, Sandbox) fail.
+- **Fix**: Implement `CircuitBreaker` on all downstream policy evaluations with a fail-closed policy.
+- **Acceptance Criteria**:
+  - [ ] `test_pep_circuit_breaker`: Mock 5 consecutive failures and assert the circuit opens and rejects subsequent requests immediately.
+
+#### [M-03] Unsafe Deserialization Risk (Agent Communication)
+- **Location**: Inter-agent message passing
+- **Diagnosis**: Potential use of `pickle` or unsanitized deserialization allows arbitrary code execution between agents.
+- **Fix**: Explicitly ban `pickle` across the substrate. Enforce `pydantic` schema validation for all bus messages.
+- **Acceptance Criteria**:
+  - [ ] `test_message_schema_validation`: Send a message with missing mandatory fields and assert it is rejected by the bus.
+
+#### [M-04] Verifier Node Bypass via Content-Type Confusion
+- **Location**: `tachyon/pipeline/verifier.py:3548-3583`
+- **Diagnosis**: Verifier only checks string values in Analyzer output, ignoring nested lists or dicts containing malicious payloads.
+- **Fix**: Implement recursive value checking in `Verifier.verify()`.
+- **Acceptance Criteria**:
+  - [ ] `test_verifier_nested_payload`: Assert that a banned string hidden inside a list `["#!/bin/bash"]` is caught.
+
+#### [M-05] Model Router Complexity Detection Manipulation
+- **Location**: `tachyon/core/routing.py`
+- **Diagnosis**: Attackers can use repetition or keywords to force expensive model selection, causing resource exhaustion.
+- **Fix**: Normalize prompt repetition, use entropy-based padding detection, and select models based on semantic indicators.
+- **Acceptance Criteria**:
+  - [ ] `test_model_router_padding_resiliency`: Verify that a "SIMPLE" query padded with 1000 "ANALYZE" keywords still routes to a fast model.
+
+#### [M-06] Pathogen Agent Sandbox & Safety Gaps
+- **Location**: `agents/pathogen/`
+- **Diagnosis**: Pathogen-generated exploits could harm the production substrate if not properly isolated.
+- **Fix**: Move Pathogen execution to an isolated VM/container and implement static analysis on all generated exploits.
+- **Acceptance Criteria**:
+  - [ ] `test_pathogen_exploit_safety`: Verify that exploits containing `rm -rf /` are flagged and quarantined during generation.
+
+#### [M-07] SQL Injection Risk in Whitelist Queries
+- **Location**: `tachyon/core/state.py`
+- **Diagnosis**: Potential for string interpolation in domain/package whitelist queries.
+- **Fix**: Ensure 100% coverage of parameterized queries for all DB interactions.
+- **Acceptance Criteria**:
+  - [ ] `test_sql_injection_bypass`: Provide a domain like `'evil.com' OR '1'='1` and verify the query correctly fails to find a match.
+
+#### [M-08] Missing Input Validation on Agent Role Names
+- **Location**: `tachyon/core/signing.py:3528`
+- **Diagnosis**: `role` parameter used in path construction allows path traversal attacks (`../../etc/passwd`).
+- **Fix**: Validate `role` against an allowlist and sanitize/canonicalize paths before access.
+- **Acceptance Criteria**:
+  - [ ] `test_role_path_traversal`: Assert `derive_agent_key` raises `ValueError` for roles containing `/` or `..`.
+
+#### [M-09] Herald Notification Injection
+- **Location**: `agents/herald/agent.py`
+- **Diagnosis**: Unsanitized alert content in Signal notifications allows multi-line injection and link spoofing.
+- **Fix**: Strip newlines, truncate URLs, and enforce message length limits in Herald notifications.
+- **Acceptance Criteria**:
+  - [ ] `test_herald_notification_cleanup`: Assert that a notification containing `\n\n[CRITICAL]` is flattened to a single line.
+
+---
+
+### 🔵 LOW SEVERITY & OBSERVABILITY
+
+#### [L-01] Inefficient Unicode Boundary Markers
+- **Diagnosis**: Non-printable markers (`\u0001`) are fragile.
+- **Fix**: Use structured JSON or unique string boundaries (e.g., `<<<UNTRUSTED_BEGIN>>>`).
+
+#### [L-02] No Structured Logging for Security Events
+- **Diagnosis**: Use of `print()` makes event correlation difficult.
+- **Fix**: Implement `structlog` for all security-critical paths in `IntegrityManager` and `PolicyEngine`.
+
+#### [L-03] Hardcoded Timeouts Causes False Positives
+- **Diagnosis**: Fixed 50ms sleeps don't scale with load.
+- **Fix**: Implement adaptive timeouts based on `psutil.cpu_percent()`.
+
+#### [L-04] Missing Policy Latency Telemetry
+- **Diagnosis**: No metrics on evaluation time hides performance degradation attacks.
+- **Fix**: Emit `policy_evaluation_latency` metrics to the TelemetryBus.
+
+---
+
+### 🔍 SILENT FAILURES & TECH DEBT
+
+#### [SF-01] Policy Engine Integrity Failure Suppression
+- **Diagnosis**: Tamper detection returns `DENY` but doesn't log a persistent incident or alert operator.
+- **Fix**: Log to `ForensicLedger` and emit `POLICY_TAMPER_ATTEMPT` on verification failure.
+
+#### [SF-02] Verifier Logic: Return vs. Raise
+- **Diagnosis**: Verification failures return `False` but don't always raise, allowing callers to ignore them.
+- **Fix**: Standardize on `IntegrityError` being raised by default.
+
+#### [SF-03] SafeFetch Content Confusion
+- **Diagnosis**: Returning "FETCH_BLOCKED" as a string confuses analyzers.
+- **Fix**: Implement a structured `FetchResult` object with explicit status, content, and error fields.
+
+#### [SF-04] Agent Registry Fail-Silent
+- **Diagnosis**: Duplicate IDs or malformed configs are caught and printed but don't stop the agent.
+- **Fix**: Implement "Fail-Loud" on registration errors; emit `AGENT_REGISTRATION_FAILURE`.
+
+#### [TD-01] Excessive Mocking / Low Test Fidelity
+- **Diagnosis**: Over-reliance on mocks hides integration bugs.
+- **Fix**: Implement a separate integration test suite using real PQC keys and SQLite backends.
+
+#### [TD-02] Inconsistent Error Handling Patterns
+- **Fix**: Standardize on the **Result monad pattern** for cross-layer communication.
+
+#### [TD-03] No Dependency Pinning
+- **Fix**: Transition `pyproject.toml` to exact version pinning (`==`) for all core security dependencies.
+
+#### [TD-04] Missing Chaos Engineering
+- **Fix**: Implement test cases for disk-full, network-partition, and clock-skew scenarios.
+
+---
 
 ## 🔳 Active & Priority: Signal Purification & Stabilization
 
