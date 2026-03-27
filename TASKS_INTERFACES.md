@@ -25,7 +25,7 @@
 
 ## 🔳 Active & Priority: Dashboard & TUI Evolution
 
-### [INT-00] Architecture: docs/INTERFACES.md & Component Audit [ ]
+### [INT-00] Architecture: docs/INTERFACES.md & Component Audit [x]
 - **Goal**: Establish the definitive architectural guide for human-substrate interaction.
 - **Requirements**:
   - Document CLI/TUI/Bridge topology.
