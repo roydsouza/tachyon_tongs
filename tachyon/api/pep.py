@@ -85,7 +85,17 @@ class PEPLayer:
 
     async def execute(self, request: ToolRequest) -> ToolResponse:
         from tachyon.core.telemetry import TelemetryBus
+        from tachyon.core.circuit_breaker import CircuitBreaker
         request_id = str(uuid.uuid4())
+        
+        # Initialize circuit breakers in-memory if needed
+        if not hasattr(self, "_circuit_breakers"):
+            self._circuit_breakers = {}
+
+        if request.action not in self._circuit_breakers:
+            self._circuit_breakers[request.action] = CircuitBreaker()
+            
+        breaker = self._circuit_breakers[request.action]
         
         # 1. Rate Limiting Check (H-01)
         allowed, msg = self.rate_limiter.is_allowed(request.agent_id, request.action)
@@ -96,6 +106,16 @@ class PEPLayer:
                 selected_model="None",
                 error=msg
             )
+            
+        # 2. Circuit Breaker Check (M-02)
+        if not breaker.can_execute():
+            return ToolResponse(
+                request_id=request_id,
+                status="CIRCUIT_OPEN",
+                selected_model="None",
+                error=f"Circuit Breaker for action {request.action} is OPEN. Failing closed."
+            )
+
         source = "transit" if request.tenant_id != "default" else "internal"
         
         prompt = request.prompt_context or f"{request.action} with parameters {request.parameters}"
@@ -103,12 +123,11 @@ class PEPLayer:
         selected_model = self.model_router.select_model(prompt, complexity, current_quota=1.0)
         
         try:
-            # High-assurance tool routing (Legacy safe_fetch mapping)
+            # High-assurance tool routing
             if request.action == "safe_fetch":
                 url = request.parameters.get("url")
                 intent = request.parameters.get("intent", "DEFAULT")
                 
-                # Logic from enforcement/daemon.py
                 allowed_domains = []
                 if intent == "RESEARCH":
                     allowed_domains = ["arxiv.org", "scholar.google.com"]
@@ -128,23 +147,25 @@ class PEPLayer:
                 bridge.register_patch(patch_id, summary, status)
                 result = {"status": "SUCCESS", "result": f"Patch {patch_id} staged in Airlock."}
             elif request.action == "SAFE_MATH":
-                # Tier 1: WASM Isolation
                 wasm_path = "tachyon/sandbox/tools/safe_math.wasm"
                 val1 = request.parameters.get("val1", 0)
                 val2 = request.parameters.get("val2", 0)
                 calc_result = self.wasm_runner.run_tool(wasm_path, "add", val1, val2)
                 result = {"status": "SUCCESS", "result": {"value": calc_result, "tier": 1}}
             elif request.action == "AUTONOMIC_RECOVERY":
-                # Tier 0: MicroVM Isolation for high-risk recovery
                 self.vm_runner.provision_vm()
                 vm_cmd = request.parameters.get("command", "echo 'Substrate Secure'")
                 vm_result = self.vm_runner.execute_command(vm_cmd)
                 result = {"status": "SUCCESS", "result": {"output": vm_result, "tier": 0}}
             else:
-                # Generic action routing (Legacy Native Sandbox)
                 result = {"status": "SUCCESS", "result": f"Action {request.action} verified by Singularity."}
                 
+            # M-02: Record Success
+            breaker.record_success()
+
         except Exception as e:
+            # M-02: Record Failure
+            breaker.record_failure()
             result = {"status": "FALLBACK_SUCCESS", "result": "Recovered via Flash", "error": str(e)}
 
         # Log the action result to the telemetry bus

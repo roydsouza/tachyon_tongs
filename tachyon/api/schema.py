@@ -7,8 +7,33 @@ between the Substrate Daemon and the Command Bridge (CLI/TUI/NeoVIM).
 
 from enum import Enum
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
+import yaml
+
+def safe_load_yaml(stream):
+    """Secure YAML loader that always uses SafeLoader (M-03)."""
+    return yaml.load(stream, Loader=yaml.SafeLoader)
+
+def check_no_pickle(v: Any):
+    """
+    Recursively checks for common pickle magic numbers or bytecode in payloads (M-03).
+    Pickle protocol markers often start with \x80 (128).
+    """
+    if isinstance(v, str):
+        # Heuristics for both literal bytes and stringified escapes
+        if "\x80" in v or "\\x80" in v or "cos\n" in v: 
+             raise ValueError("Security Violation: Potential Pickle payload detected.")
+    elif isinstance(v, bytes):
+        if v.startswith(b"\x80"):
+             raise ValueError("Security Violation: Potential Pickle payload detected.")
+    elif isinstance(v, dict):
+        for val in v.values():
+            check_no_pickle(val)
+    elif isinstance(v, list):
+        for item in v:
+            check_no_pickle(item)
+    return v
 
 class SubstrateStatus(str, Enum):
     OPERATIONAL = "operational"
@@ -89,6 +114,11 @@ class ToolRequest(BaseModel):
     parameters: Dict[str, Any]
     tenant_id: Optional[str] = "default"
     prompt_context: Optional[str] = None
+
+    @field_validator("parameters", "prompt_context")
+    @classmethod
+    def validate_no_pickle(cls, v):
+        return check_no_pickle(v)
 
 class ToolResponse(BaseModel):
     request_id: str

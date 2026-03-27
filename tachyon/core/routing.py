@@ -76,15 +76,37 @@ class ModelRouter:
 
     def detect_complexity(self, prompt: str) -> float:
         """
-        Rudimentary complexity detection based on prompt analysis.
-        (Placeholder for a more sophisticated LLM-based or heuristic-based algorithm)
+        Hardened complexity detection (M-05).
+        Includes repetition normalization and entropy-based noise detection.
         """
-        prompt_lower = prompt.lower()
-        score = 0.1 # Lower baseline for simple tasks
+        if not prompt: return 0.0
         
+        prompt_lower = prompt.lower()
+        score = 0.1 
+        
+        # 1. Repetition Normalization (M-05)
+        # Bypasses via repetitive gibberish intended to inflate complexity
+        words = prompt_lower.split()
+        if len(words) > 10:
+            unique_ratio = len(set(words)) / len(words)
+            if unique_ratio < 0.3:
+                # High repetition detected, penalized complexity (likely spam/bypass)
+                return 0.05
+        
+        # 2. Entropy-based Complexity (M-05)
+        import math
+        from collections import Counter
+        prob = [count/len(prompt) for count in Counter(prompt).values()]
+        entropy = -sum(p * math.log2(p) for p in prob)
+        
+        # High entropy (>4.5) indicates high information density or encrypted/obfuscated payload
+        if entropy > 4.5:
+             score += 0.3
+        
+        # 3. Keyword Heuristics
         keywords_high = ["adr", "architectural", "refactor", "regression", "root cause", "attestation", "pqc", "immune"]
         for kw in keywords_high:
             if kw in prompt_lower:
-                score += 0.4 # Significant jump for high-intel keywords
+                score += 0.4 
                 
         return min(score, 1.0)

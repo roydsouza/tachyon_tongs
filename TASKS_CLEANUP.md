@@ -215,6 +215,16 @@
 
 ### 🟡 MEDIUM SEVERITY: Reliability & Robustness
 
+- [x] **[M-01] Mutant Lock Service Reliability Gap**: Suppresses critical security alerts without audit trail.
+- [x] **[M-02] No Circuit Breaker Pattern in PEP Pipeline**: Cascade failures in tool services (e.g., safe_fetch) can hang the substrate.
+- [x] **[M-03] Unsafe Deserialization Risk**: Implicit support for `pickle` or unsanitized `yaml.load` in bus messages.
+- [x] **[M-04] Verifier Node Bypass via Nested Payloads**: Stage 4 check only validates top-level strings.
+- [x] **[M-05] Model Router Complexity Detection**: Bypass via redundant/gibberish token injection.
+- [x] **[M-06] Pathogen Agent Sandbox**: Execution of generated exploits without isolated containerization (Tier 2 mismatch).
+- [x] **[M-07] SQL Injection Risk (Internal State)**: Potential for unsanitized agent-id or reason strings in `state.py`.
+- [x] **[M-08] Role Name Input Validation**: Path traversal in agent identity loading (e.g., `../../etc/passwd`).
+- [x] **[M-09] Herald Notification Header Injection**: No sanitization of Signal/Slack notification payloads (Newline injection).
+
 #### [M-01] Mutant Lock Suppresses Critical Security Alerts
 - **Location**: `tachyon/core/signing.py:3645-3694`
 - **Diagnosis**: The Mutant Lock pattern suppresses alerts during mutations, creating a window for malicious changes to slip through unnoticed.

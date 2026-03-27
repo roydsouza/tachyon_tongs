@@ -35,22 +35,25 @@ class VerifierAgent:
 
     def verify(self, analyzer_output: dict) -> dict:
         """
-        Scans all string values in the Analyzer's output dictionary.
+        Scans all values in the Analyzer's output recursively (M-04).
         Raises VerificationFailedError if contamination is found.
         """
-        # If the Analyzer already failed intentionally (e.g., due to bounds), pass the error through
         if analyzer_output.get("status") == "error":
             return analyzer_output
             
-        # Scan the payload
-        for key, value in analyzer_output.items():
-            if isinstance(value, str):
-                if not self._check_string(value):
-                    raise VerificationFailedError(f"Contamination detected in Analyzer output field: {key}")
-            elif isinstance(value, list):
-                for item in value:
-                    if isinstance(item, str) and not self._check_string(item):
-                        raise VerificationFailedError(f"Contamination detected in Analyzer output list: {key}")
+        def _recursive_scan(data: Any, path: str = ""):
+            if isinstance(data, str):
+                if not self._check_string(data):
+                    raise VerificationFailedError(f"Contamination detected in Analyzer output field: {path}")
+            elif isinstance(data, dict):
+                for k, v in data.items():
+                    _recursive_scan(v, f"{path}.{k}" if path else k)
+            elif isinstance(data, list):
+                for i, v in enumerate(data):
+                    _recursive_scan(v, f"{path}[{i}]")
+
+        # Start the recursive scan
+        _recursive_scan(analyzer_output)
 
         # If clean, add a verification seal
         analyzer_output["verified"] = True

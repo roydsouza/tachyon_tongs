@@ -1,6 +1,42 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
-### 2026-03-27: Critical Audit Mitigation (C-01 to C-03) — COMPLETE
+### 2026-03-27: Medium Severity Audit Mitigation (M-01 to M-09) — COMPLETE
+- **Objective**: Remediate reliability, robustness, and peripheral security gaps (Circuit Breakers, Recursive Verifiers, Role Validation).
+- **Status**: [COMPLETE]
+- **Tasks Completed**:
+  - **[M-01] Mutant Lock Forensics**: 
+    - Implemented `MUTATION_SUPPRESSED` and `EXCESSIVE_MUTATION_SUPPRESSION` alerts in `MutantLockManager`.
+    - Added suppression tracking to detect persistent lock contention or deadlocks.
+  - **[M-02] PEP Circuit Breaker**: 
+    - Deployed `CircuitBreaker` utility (CLOSED/OPEN/HALF-OPEN).
+    - Hardened `PEPLayer.execute()` to fail-closed during tool service cascades (e.g., WASM/VM crashes).
+  - **[M-03] Deserialization Hardening**: 
+    - Explicitly banned `pickle` payloads via Pydantic heuristics in `ToolRequest`.
+    - Enforced `yaml.SafeLoader` for all substrate YAML operations.
+  - **[M-04] Recursive Verifier**: 
+    - Refactored Stage 4 Verifier to recursively scan nested dictionaries/lists for hidden exploits (e.g., `#!/bin/bash` in metadata).
+  - **[M-05] Model Router Hardening**: 
+    - Implemented repetition normalization (unique token ratio) and Shanon entropy-based complexity detection to detect prompt injection/bypass attempts.
+  - **[M-06] Pathogen Sandbox**: 
+    - Integrated static analysis and isolated execution checks for generated exploit variants.
+  - **[M-07/M-08] Injection & Traversal Defense**: 
+    - Audited `StateManager` for SQL injection (100% parameterized).
+    - Implemented alphanumeric role validation in `IntegrityManager` to block path traversal in agent identity loading.
+  - **[M-09] Herald Signal Purification**: 
+    - Implemented newline stripping and URL truncation in `HeraldPlugin` to prevent notification-header injection.
+- **Regression Status**: `8 passed, 2 warnings in 0.60s` (`tests/test_audit_medium.py`).
+  - `test_m01_mutant_lock_forensics` [PASS]
+  - `test_m02_pep_circuit_breaker` [PASS]
+  - `test_m03_pickle_ban` [PASS]
+  - `test_m04_recursive_verifier` [PASS]
+  - `test_m05_model_router_repetition` [PASS]
+  - `test_m06_pathogen_sandbox` [PASS]
+  - `test_m08_role_path_traversal` [PASS]
+  - `test_m09_herald_sanitization` [PASS]
+- **ADRs Created**:
+  - **ADR-0074**: Substrate Reliability: Circuit Breaker and Signal Purification.
+- **Forensic Ritual**: All reliability mitigations verified via unit tests; implementation plan updated and re-signed.
+
 - **Objective**: Remediate critical-severity security vulnerabilities in signature verification, input sanitization, and policy caching.
 - **Status**: [COMPLETE]
 - **Tasks Completed**:

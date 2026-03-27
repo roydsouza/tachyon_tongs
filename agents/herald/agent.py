@@ -51,10 +51,35 @@ class HeraldPlugin(BaseAgentPlugin):
                     # Mark as relayed FIRST to avoid double-processing during repairs
                     from tachyon.core.state import StateManager
                     StateManager().mark_event_relayed(dispatcher.dispatcher_id, event["id"])
-                    dispatcher.dispatch(event)
+                    # M-09: Sanitize before dispatching to external channels
+                    sanitized_event = self._sanitize_event(event)
+                    dispatcher.dispatch(sanitized_event)
             return {"status": "SUCCESS", "relayed_count": len(new_events)}
 
         return {"status": "ERROR", "message": f"Unknown action: {action}"}
+
+    def _sanitize_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+        """Signal Purification: Strips newlines and truncates URLs (M-09)."""
+        import re
+        clean_event = event.copy()
+        summary = str(clean_event.get("summary", ""))
+        
+        # 1. Flatten newlines to prevent multi-line injection in Signal/Slack
+        summary = summary.replace("\n", " | ").replace("\r", "")
+        
+        # 2. Truncate long URLs to prevent buffer overflow/obfuscation (limit to 256 chars)
+        def _truncate_url(match):
+            url = match.group(0)
+            return url[:253] + "..." if len(url) > 256 else url
+            
+        summary = re.sub(r'https?://[^\s<>"]+|www\.[^\s<>"]+', _truncate_url, summary)
+        
+        # 3. Overall length limit
+        if len(summary) > 2000:
+             summary = summary[:1997] + "..."
+             
+        clean_event["summary"] = summary
+        return clean_event
 
     def _collect_all(self) -> List[Dict[str, Any]]:
         all_events = []

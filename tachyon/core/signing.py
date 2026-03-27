@@ -57,11 +57,11 @@ class IntegrityManager:
 
     def derive_agent_key(self, role: str, save_to_disk: bool = False) -> tuple:
         """
-        Derives a per-agent Ed25519 key from the Root Key and issue a 
-        Hybrid-Signed Delegation Certificate binding it to the role.
-        
-        Returns: Tuple of (ed25519.Ed25519PrivateKey, dict[Certificate])
+        Derives a per-agent Ed25519 key and issues a delegation certificate (M-08: Validated).
         """
+        if not role.isalnum() and "_" not in role:
+            raise SecurityViolationError(f"Invalid Agent Role: {role}. Must be alphanumeric.")
+            
         if not self._private_key:
             raise RuntimeError("Cannot derive agent key without a loaded Root Key.")
             
@@ -71,9 +71,11 @@ class IntegrityManager:
 
     def load_agent_identity(self, role: str) -> Optional[Dict[str, Any]]:
         """
-        Attempts to load a delegated identity (Key + Cert) from disk.
-        If successful, re-initializes the signer to use the agent's sub-key.
+        Attempts to load a delegated identity (Key + Cert) from disk (M-08: Validated).
         """
+        if not role.isalnum() and "_" not in role:
+            raise SecurityViolationError(f"Invalid Agent Role: {role}. Must be alphanumeric.")
+
         import json
         import base64
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
