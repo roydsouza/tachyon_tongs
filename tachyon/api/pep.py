@@ -22,6 +22,8 @@ class PEPLayer:
         self.model_router = ModelRouter()
         self.wasm_runner = WasmRunner()
         self.vm_runner = VmRunner()
+        from tachyon.enforcement.rate_limiter import AdaptiveRateLimiter
+        self.rate_limiter = AdaptiveRateLimiter(default_rpm=100)
 
     async def execute_signed(self, command: SignedCommand) -> ToolResponse:
         """Securely executes command via signed relay with hybrid verification."""
@@ -84,6 +86,16 @@ class PEPLayer:
     async def execute(self, request: ToolRequest) -> ToolResponse:
         from tachyon.core.telemetry import TelemetryBus
         request_id = str(uuid.uuid4())
+        
+        # 1. Rate Limiting Check (H-01)
+        allowed, msg = self.rate_limiter.is_allowed(request.agent_id, request.action)
+        if not allowed:
+            return ToolResponse(
+                request_id=request_id,
+                status="RATE_LIMITED",
+                selected_model="None",
+                error=msg
+            )
         source = "transit" if request.tenant_id != "default" else "internal"
         
         prompt = request.prompt_context or f"{request.action} with parameters {request.parameters}"

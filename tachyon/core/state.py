@@ -532,11 +532,25 @@ class StateManager:
         """Stub for legacy transactional calls."""
         pass
 
+    def get_db_connection(self):
+        """Returns a new SQLite connection with WAL mode enabled."""
+        conn = sqlite3.connect(self.db_path)
+        conn.execute("PRAGMA journal_mode=WAL")
+        return conn
+
     def is_package_whitelisted(self, package_name: str) -> bool:
-        """Checks if a package is present in the authorized whitelist."""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.execute("SELECT 1 FROM package_whitelist WHERE package_name = ?", (package_name,))
-            return cursor.fetchone() is not None
+        """Checks if a package is whitelisted using a transaction for isolation (H-02)."""
+        # Phase 22.2: Use BEGIN IMMEDIATE for row-level locking consistency
+        with self.get_db_connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            try:
+                cursor = conn.execute("SELECT 1 FROM package_whitelist WHERE package_name = ?", (package_name,))
+                result = cursor.fetchone() is not None
+                conn.commit()
+                return result
+            except Exception:
+                conn.rollback()
+                return False
 
     def sync_whitelist_from_manifest(self, manifest_path: str = "docs/adr/MANIFEST.json"):
         """Syncs the DB whitelist with the Merkle manifest."""

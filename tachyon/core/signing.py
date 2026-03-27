@@ -12,6 +12,10 @@ from cryptography.exceptions import InvalidSignature
 # Phase 25.3: Suppress liboqs version mismatch (Using 0.15.0-dev on M5)
 warnings.filterwarnings("ignore", category=UserWarning, module="oqs")
 
+class SecurityViolationError(Exception):
+    """Raised when a core security boundary is breached."""
+    pass
+
 # Local substrate constants
 KEY_LABEL = "Tachyon Root Key"
 KEY_APPLICATION_TAG = "com.tachyon.substrate.root.v1"
@@ -79,6 +83,30 @@ class IntegrityManager:
         if not os.path.exists(path):
              return None
              
+        # H-07 Fix: Process Identity Binding
+        def _verify_process_authority(role: str) -> bool:
+            """Verifies that the current process is authorized to assume the role (H-07)."""
+            import sys
+            if os.environ.get("TACHYON_TEST_MODE") == "1":
+                return True # Allow identity switching in test environment
+            
+            # Check command line arguments for the agent-id or role
+            cmd_line = " ".join(sys.argv).lower()
+            if role.lower() in cmd_line:
+                return True
+                
+            # Check environment variable
+            if os.environ.get("TACHYON_AGENT_ROLE", "").lower() == role.lower():
+                return True
+                
+            return False
+
+        if not _verify_process_authority(role):
+            err = f"Identity mismatch: Process not authorized to assume role '{role}'."
+            from tachyon.core.state import StateManager
+            StateManager().emit_alert("IDENTITY_SPOOFING_ATTEMPT", err)
+            raise SecurityViolationError(err)
+
         try:
             with open(path, "r") as f:
                 identity = json.load(f)

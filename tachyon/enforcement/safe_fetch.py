@@ -95,13 +95,36 @@ class SafeFetch:
         except Exception:
             return False
 
-    def fetch(self, url: str) -> dict:
+    def _check_redirect_bypasses(self, url: str) -> bool:
+        """Detects open-redirect parameters pointing to untrusted domains (H-05)."""
+        parsed = urllib.parse.urlparse(url)
+        params = urllib.parse.parse_qs(parsed.query)
+        
+        # Common redirect parameters
+        redirect_keys = ["url", "q", "dest", "redirect", "goto", "next"]
+        for key in redirect_keys:
+            if key in params:
+                for candidate in params[key]:
+                    # If the parameter looks like a URL, check its domain
+                    if "://" in candidate or candidate.startswith("//"):
+                        inner_parsed = urllib.parse.urlparse(candidate if "://" in candidate else "http:" + candidate)
+                        inner_domain = inner_parsed.netloc
+                        if not any(inner_domain == d or inner_domain.endswith("." + d) for d in self.mock_allowed):
+                             return False
+        return True
+
+    def fetch(self, url: str, intent: str = "DEFAULT") -> dict:
         """
         The capability-wrapped fetch command.
         Returns a dict with status and content/error.
         """
+        # 1. Domain Check
         if not self._evaluate_intent(url):
             raise SecurityViolationError(f"Intent Gate blocked access to unauthorized domain in URL: {url}")
+            
+        # 2. Open Redirect Check (H-05)
+        if not self._check_redirect_bypasses(url):
+            raise SecurityViolationError(f"Redirect to untrusted domain detected in URL: {url}")
         
         req = urllib.request.Request(
             url, 

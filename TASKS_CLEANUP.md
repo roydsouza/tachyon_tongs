@@ -167,49 +167,49 @@
 - **Diagnosis**: The PEP has zero rate limiting, allowing a rogue agent to exhaust LLM resources or overwhelm HITL operators.
 - **Fix**: Deploy `RateLimiter` at the PEP layer with per-agent windows and penalty multipliers.
 - **Acceptance Criteria**:
-  - [ ] `test_pep_rate_limiting`: Send 101 requests within 60s; assert the 101st returns `RATE_LIMITED`.
+  - [x] `test_pep_rate_limiting`: Send 101 requests within 60s; assert the 101st returns `RATE_LIMITED`.
 
 #### [H-02] Whitelist TOCTOU in RegoPolicyEngine
 - **Location**: `tachyon/policy/engines/rego_engine.py:3888-3920`
 - **Diagnosis**: Whitelist checks against the DB lack transaction isolation, allowing race-condition entries to be inserted between check and execution.
 - **Fix**: Use database transactions with row-level locking (`BEGIN IMMEDIATE`) for whitelist evaluations.
 - **Acceptance Criteria**:
-  - [ ] `test_whitelist_transaction_isolation`: Verify that a concurrent insert of a whitelisted domain does not affect a check currently in flight.
+  - [x] `test_whitelist_transaction_isolation`: Verify that a concurrent insert of a whitelisted domain does not affect a check currently in flight.
 
 #### [H-03] AlignmentPDP Semantic Drift Detection Bypass
 - **Location**: `tachyon/policy/checkers/alignment_pdp.py:3685-3746`
 - **Diagnosis**: Keyword-weighted vectorization is trivially bypassable via synonym substitution and padding attacks.
 - **Fix**: Transition from keyword frequency to real sentence embeddings (e.g., `all-MiniLM-L6-v2`) and add an adversarial classifier.
 - **Acceptance Criteria**:
-  - [ ] `test_semantic_drift_resiliency`: Assert that synonym-swapped malicious intents still trigger high similarity scores.
+  - [x] `test_semantic_drift_resiliency`: Assert that synonym-swapped malicious intents still trigger high similarity scores.
 
 #### [H-04] PII Scanner Misses Advanced Exfiltration (Base64/Hex/Entropy)
 - **Location**: `tachyon/pipeline/pii_scanner.py:3395-3426`
 - **Diagnosis**: Simple regex patterns miss encoded secrets (Base64, Hex) and chunked exfiltration attempts.
 - **Fix**: Implement recursive scanning for Base64/Hex candidates and add Shannon entropy analysis for high-randomness data.
 - **Acceptance Criteria**:
-  - [ ] `test_encoded_pii_detection`: Assert that `sk-ant-` tokens encoded in Base64 or Hex are detected.
+  - [x] `test_encoded_pii_detection`: Assert that `sk-ant-` tokens encoded in Base64 or Hex are detected.
 
 #### [H-05] SafeFetch Domain Whitelist Bypasses
 - **Location**: `tachyon/enforcement/safe_fetch.py`
 - **Diagnosis**: Subdomain wildcarding is missing, and open redirects on trusted domains (e.g., google.com/url?q=...) are not blocked.
 - **Fix**: Implement strict subdomain matching and parameter-based redirect detection. Add content-type validation (e.g., scanning PDFs).
 - **Acceptance Criteria**:
-  - [ ] `test_safefetch_redirect_block`: Assert that URLs containing redirect parameters (`?q=`, `?url=`) are blocked.
+  - [x] `test_safefetch_redirect_block`: Assert that URLs containing redirect parameters (`?q=`, `?url=`) are blocked.
 
 #### [H-06] Signature Stripping Attack in Hybrid Signing
 - **Location**: `tachyon/core/keys/hybrid.py`
 - **Diagnosis**: Concatenated signature format allows attackers to strip the PQC component, forcing a fallback to potentially forged Ed25519 signatures.
 - **Fix**: Enforce a structured JSON signature format with mandatory PQC components and an internal checksum of both signatures.
 - **Acceptance Criteria**:
-  - [ ] `test_signature_stripping_rejection`: Manually strip the `mldsa65` component and assert `verify()` raises `ValueError`.
+  - [x] `test_signature_stripping_rejection`: Manually strip the `mldsa65` component and assert `verify()` raises `ValueError`.
 
 #### [H-07] Agent Identity Confusion in Delegation Chain
 - **Location**: `tachyon/core/signing.py:3528-3579`
 - **Diagnosis**: No binding between certificates and the executing process; any agent can attempt to load an elevated identity from the keychain.
 - **Fix**: Implement process identity binding (`psutil` check on cmdline patterns) and certificate chain verification.
 - **Acceptance Criteria**:
-  - [ ] `test_identity_confusion_block`: Force an agent with role `scout` to attempt loading `engineer` keys; assert failure.
+  - [x] `test_identity_confusion_block`: Force an agent with role `scout` to attempt loading `engineer` keys; assert failure.
 
 ---
 

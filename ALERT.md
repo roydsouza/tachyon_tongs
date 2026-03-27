@@ -2,6 +2,41 @@
 
 This file tracks critical violations and integrity failures. The newest alerts appear at the top.
 
+## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-27 16:20:22
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Identity mismatch: Process not authorized to assume role 'engineer'.
+
+---
+
+## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-27 16:20:07
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Identity mismatch: Process not authorized to assume role 'engineer'.
+
+---
+
+## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-27 16:19:38
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Identity mismatch: Process not authorized to assume role 'engineer'.
+
+---
+
+## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-27 16:19:01
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Identity mismatch: Process not authorized to assume role 'engineer'.
+
+---
+
+## [SUPPLY_CHAIN_VIOLATION] 2026-03-27 16:17:07
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Unauthorized fetch attempted to domain 'scholar.google.com' by agent 'default'. Blocked by Supply Chain Whitelist.
+
+---
+
 ## [QUARANTINE_VIOLATION] 2026-03-26 21:51:21
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**

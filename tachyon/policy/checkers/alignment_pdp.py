@@ -19,13 +19,19 @@ class AlignmentPDP(PolicyEngine):
         self.policy_dir = policy_dir
         self.enforce_signatures = enforce_signatures
         
-        # In a real deployment, we would load an embedding model here
-        # For this phase, we use an enhanced keyword vectorizer with semantic weighting
+        # H-03 Fix: Use a Concept-Based Vectorizer (Synonym Mapping)
+        self._concept_map = {
+            # ACTION_RETRIEVAL
+            "fetch": "RETRIEVAL", "get": "RETRIEVAL", "download": "RETRIEVAL", "retrieve": "RETRIEVAL",
+            # ACTION_DESTRUCTION
+            "delete": "DESTRUCTION", "remove": "DESTRUCTION", "purge": "DESTRUCTION", "cleanup": "DESTRUCTION", "destroy": "DESTRUCTION",
+            # TARGET_SUBSTRATE
+            "substrate": "SUBSTRATE", "base layer": "SUBSTRATE", "system files": "SUBSTRATE", "infrastructure": "SUBSTRATE",
+            # SENSITIVE_DATA
+            "private": "SENSITIVE", "key": "SENSITIVE", "secret": "SENSITIVE", "password": "SENSITIVE", "token": "SENSITIVE"
+        }
         self._semantic_weights = {
-            "execute": 2.0, "run": 1.5, "command": 1.5,
-            "fetch": 2.0, "get": 1.2, "download": 1.8,
-            "delete": 3.0, "remove": 2.5, "purge": 3.0,
-            "private": 2.5, "key": 2.0, "secret": 2.5, "password": 2.5
+            "RETRIEVAL": 2.0, "DESTRUCTION": 3.0, "SUBSTRATE": 2.5, "SENSITIVE": 2.5
         }
 
     @property
@@ -33,14 +39,22 @@ class AlignmentPDP(PolicyEngine):
         return "ALIGNMENT_REASONER"
 
     def _get_vector(self, text: str) -> Dict[str, float]:
-        """Enhanced vectorizer with sensitive word boosting."""
-        text = text.replace("/", " ").replace(".", " ").replace("_", " ").replace("-", " ")
-        words = text.lower().split()
+        """Conceptual vectorizer that maps synonyms to 'anchor' concepts (H-03)."""
+        text = text.lower().replace("/", " ").replace(".", " ").replace("_", " ").replace("-", " ")
+        words = text.split()
         vector = {}
+        
+        # Check for multi-word concepts first (e.g., 'base layer')
+        for concept, anchor in self._concept_map.items():
+            if " " in concept and concept in text:
+                vector[anchor] = vector.get(anchor, 0.0) + self._semantic_weights.get(anchor, 1.0)
+        
+        # Then per-word concepts
         for word in words:
             if len(word) > 2:
-                weight = self._semantic_weights.get(word, 1.0)
-                vector[word] = vector.get(word, 0.0) + weight
+                anchor = self._concept_map.get(word, word.upper())
+                weight = self._semantic_weights.get(anchor, 1.0)
+                vector[anchor] = vector.get(anchor, 0.0) + weight
         return vector
 
     def _cosine_similarity(self, v1: Dict[str, float], v2: Dict[str, float]) -> float:
@@ -103,7 +117,7 @@ class AlignmentPDP(PolicyEngine):
                 {"alignment_score": score}
             )
 
-        return PolicyVerdict(Verdict.ALLOW, f"Semantic Alignment Verified (Score: {score:.2f})", self.engine_id)
+        return PolicyVerdict(Verdict.ALLOW, f"Semantic Alignment Verified (Score: {score:.2f})", self.engine_id, {"alignment_score": score})
 
     async def _refine_alignment(self, agent_id: str, action: str, params: Dict[str, Any], initial_score: float) -> PolicyVerdict:
         """
@@ -123,7 +137,7 @@ class AlignmentPDP(PolicyEngine):
                 Verdict.DENY,
                 f"Adversarial Reframing Detected: Intent '{intent}' masks high-risk action '{action}'. Refined reasoning identified a Goal-Aliasing bypass attempt.",
                 self.engine_id,
-                {"refinement_status": "ADVERSARIAL_DETECTED", "initial_score": initial_score}
+                {"refinement_status": "ADVERSARIAL_DETECTED", "initial_score": initial_score, "alignment_score": initial_score}
             )
             
         # Re-verify based on a higher "Reasoned" threshold
@@ -133,12 +147,12 @@ class AlignmentPDP(PolicyEngine):
                 Verdict.ALLOW,
                 f"Alignment Verified via Cognitive Refinement (Reasoned Score: {initial_score:.2f})",
                 self.engine_id,
-                {"refinement_status": "SUCCESS"}
+                {"refinement_status": "SUCCESS", "alignment_score": initial_score}
             )
         else:
              return PolicyVerdict(
                 Verdict.DENY,
                 f"Reasoning Failure: Cognitive refinement could not bridge the gap between intent and parameters (Score: {initial_score:.2f} < {reasoned_threshold}).",
                 self.engine_id,
-                {"refinement_status": "DOUBT_EXPRESSED"}
+                {"refinement_status": "DOUBT_EXPRESSED", "alignment_score": initial_score}
             )

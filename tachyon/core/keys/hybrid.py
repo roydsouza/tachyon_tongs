@@ -73,6 +73,8 @@ class HybridSigner:
                  continue
                  
             alg, sig_hex = part.split(":", 1)
+            if not sig_hex:
+                raise ValueError(f"CRITICAL: Signature value missing for algorithm '{alg}' (Possible stripping attack).")
             sig_bytes = bytes.fromhex(sig_hex)
             
             if alg == "ed25519":
