@@ -59,6 +59,10 @@ def run_global_migration():
             if fpath.endswith("ROOT_MANIFEST.json") or fpath.endswith("manifest.json"):
                 continue
                 
+            # Skip signature sidecars to prevent recursive double-signing
+            if fpath.endswith(".sig.json"):
+                continue
+                
             migrate_and_sign(state, fpath)
 
 if __name__ == "__main__":
