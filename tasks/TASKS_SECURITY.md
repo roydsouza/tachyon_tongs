@@ -35,12 +35,12 @@
 
 #### [S-02] The Immunologist: Prompt Injection Defense (Layer 12)
 - **Goal**: Detect and neutralize "Indirect Prompt Injection" where tool outputs manipulate the agent's next reasoning step.
-- [ ] Create `agents/immunologist/agent.py`.
-- [ ] Subscribe to all `AGENT_COMPLETED` events on the EventBus.
-- [ ] Implement semantic scanning for override patterns (e.g., "Ignore previous instructions").
-- [ ] Integrate with Guardian for immediate agent quarantine on detection.
+- [x] Create `agents/immunologist/agent.py`.
+- [x] Subscribe to all `ACTION_COMPLETED` events on the EventBus.
+- [x] Implement semantic scanning for override patterns (e.g., "Ignore previous instructions").
+- [x] Integrate with Guardian for immediate agent quarantine on detection.
 - **Acceptance Criteria**:
-  - [ ] `test_injection_detection`: Feed a tool result containing a "system override" string and assert the Immunologist emits a `SECURITY_ALERT`.
+  - [x] `test_injection_detection`: Feed a tool result containing a "system override" string and assert the Immunologist emits a `SECURITY_ALERT`.
 
 ---
 
@@ -53,14 +53,14 @@
 - [ ] Add "Fuel Metering" (instruction counting) to prevent infinite loops.
 - [ ] Implement wall-clock watchdog (Epoch Interruption) for runaway processes.
 - **Acceptance Criteria**:
-  - [ ] `test_wasm_fuel_exhaustion`: Run a WASM binary with an infinite loop and verify it is killed after fuel depletion.
+- [ ] `test_wasm_fuel_exhaustion`: Run a WASM binary with an infinite loop and verify it is killed after fuel depletion.
 
 #### [S-04] Loop Guard & Deduplication (Layer 13)
 - **Goal**: Prevent resource-draining argumentation loops between agents in the Debate Arena.
 - [ ] Implement `DeduplicationCache` in `EventBus` using SHA256 payload fingerprinting.
 - [ ] Define threshold: 3 identical events within 300s triggering a `LOOP_DETECTED` circuit break.
 - **Acceptance Criteria**:
-  - [ ] `test_loop_breaker`: Emit 5 identical events rapidly and assert the EventBus suppresses the 4th and 5th.
+- [ ] `test_loop_breaker`: Emit 5 identical events rapidly and assert the EventBus suppresses the 4th and 5th.
 
 ---
 
@@ -73,7 +73,7 @@
 - [ ] Implement Merkle root publication in the `FirewallAdministrator`.
 - [ ] Create `scripts/forensics/verify_chain.py` for incremental verification.
 - **Acceptance Criteria**:
-  - [ ] `test_audit_chain_integrity`: Manually alter a historic record in the DB and verify the chain verification fails.
+- [ ] `test_audit_chain_integrity`: Manually alter a historic record in the DB and verify the chain verification fails.
 
 #### [S-06] Semantic Taint Tracking (Layer 3)
 - **Goal**: Prevent data exfiltration by labeling sensitive data (API keys, PII) and tracking them through the system.
@@ -81,7 +81,7 @@
 - [ ] Label data from `memory/keys/` and `configs/` as `TAINTED_SECRET`.
 - [ ] Block `Herald` from relaying any payload containing `TAINTED_SECRET` strings.
 - **Acceptance Criteria**:
-  - [ ] `test_taint_exfiltration_block`: Attempt to send an API key via the Herald and verify the `NetworkPolicy` blocks it.
+- [ ] `test_taint_exfiltration_block`: Attempt to send an API key via the Herald and verify the `NetworkPolicy` blocks it.
 
 ---
 
@@ -94,21 +94,21 @@
 - [ ] Parse `actions_taken` from `AGENT_COMPLETED` records.
 - [ ] Compare against the agent's delegation certificate `allowed_actions`.
 - **Acceptance Criteria**:
-  - [ ] `test_privilege_escalation_detection`: Mock an agent performing a `FILE_WRITE` when it only has `RESEARCH` and verify the Watcher flags it.
+- [ ] `test_privilege_escalation_detection`: Mock an agent performing a `FILE_WRITE` when it only has `RESEARCH` and verify the Watcher flags it.
 
 #### [S-08] Consensus-Based Gating (Byzantine Fault Tolerance)
 - **Goal**: Require N-of-M signatures for high-risk actions (e.g., substrate mutations).
 - [ ] Implement `ConsensusEngine` in `tachyon/core/consensus.py`.
 - [ ] Update `Airlock` to require 3 signatures (e.g., Auditor + Skeptic + Admin) for "Approve Patch" actions.
 - **Acceptance Criteria**:
-  - [ ] `test_consensus_failure`: Provide 2 of 3 required signatures and verify the action remains staged.
+- [ ] `test_consensus_failure`: Provide 2 of 3 required signatures and verify the action remains staged.
 
 #### [S-09] Model Drift & Behavioral Monitoring
 - **Goal**: Detect if a model (local or cloud) has been subtly compromised or "poisoned."
 - [ ] Implement `BehavioralMonitor` in the System Integrity tier.
 - [ ] Store statistical fingerprints of agent response times, verbosity, and risk tolerance.
 - **Acceptance Criteria**:
-  - [ ] `test_drift_detection`: Simulate a sudden shift in model verbosity and verify an anomaly record is created.
+- [ ] `test_drift_detection`: Simulate a sudden shift in model verbosity and verify an anomaly record is created.
 
 ---
 
@@ -125,8 +125,24 @@
 
 ---
 
+### 🟣 Phase 6: Autonomous Defensive Evolution (P4)
+**Preamble**: Long-term strategic evolution of the immune collective, transforming the substrate from a reactive filter into an autonomous, learning security organism (H-2027).
+
+#### [S-12] Autonomous Intelligence Scouring
+- **Goal**: Proactively identify and categorize emerging prompt injection and cognitive exploits from the internet.
+- [ ] Implement `IntelligenceSovereign` module in the Sentinel.
+- [ ] Scour AI security archives (arxiv, huntr, lmsys) for new adversarial patterns.
+- [ ] Automatically update the Immunologist's pattern registry with PQC-signed dispatches.
+
+#### [S-13] Adversarial Synthesis & Guided Red-Teaming
+- **Goal**: Use the Pathogen to autonomously synthesize novel, multi-hop prompt injection scenarios to stress-test the collective.
+- [ ] Implement `SynthesisEngine` in the Pathogen for adversarial logic evolution.
+- [ ] Feed synthesized bypasses into the Immunologist for "Defensive Fine-Tuning."
+
+---
+
 ## ✅ Final Security Verification Checklist
-- [ ] 100% of P0 gaps closed.
+- [x] 100% of P0 gaps closed. (S-01, S-02 COMPLETE).
 - [ ] Merkle chain passes full depth verification.
 - [ ] Pathogen-generated prompt injection suite passes (0 leaks).
 - [ ] All security agents (Immunologist, Watcher, Monitor) are active.

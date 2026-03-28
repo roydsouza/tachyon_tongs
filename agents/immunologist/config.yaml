@@ -1,0 +1,8 @@
+# Tachyon Tongs: The Immunologist Configuration
+agent_id: "immunologist-001"
+plugin_name: "Immunologist"
+quarantine_mode: false
+graduated: true
+scan_interval: 5 # Seconds between backplane loop sweeps for ACTION_COMPLETED events
+# Capability Set: Registry-only for recruitment; no direct tools needed for scanning
+allowed_actions: ["scan_artifact"]
