@@ -1,5 +1,23 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-28: Substrate Architectural Reorganization — COMPLETE
+- **Objective**: Decouple the project root from coordination and administrative assets to achieve 100% repository hygiene and structural clarity.
+- **Status**: [COMPLETE]
+- **Tasks Completed**:
+  - **Coordination Layer Migration**:
+    - Moved `TASKS_*.md`, `TASKS.md`, and `SYNC_LOG.md` (and V2 signatures) to the `tasks/` directory.
+    - Updated `/push` workflow and `SYST_HYGIENE.md` rules to enforce the new topology.
+  - **Administrative Layer Migration**:
+    - Moved `ADMIN.md`, `ALERT.md`, `CHEATSHEET.md`, `ERROR.md`, and `RUN_LOG.md` (and V2 signatures) to the `admin/` directory.
+    - Updated `StateManager` (`emit_alert`, `log_run`) and `HeraldPlugin` to utilize the new `admin/` paths.
+  - **Exploitation Catalog Consolidation**:
+    - Purged legacy root-level `EXPLOITATION_CATALOG.md` in favor of the standardized `exploits/CATALOG.md`.
+    - Updated `SDLC-001` rules and `Sentinel` threat-intel workflows.
+  - **Test Suite Hardening**:
+    - Updated `tests/test_herald_aggregation.py` to use `tempfile.TemporaryDirectory`, eliminating orphan SQLite sidecars (`-wal`, `-shm`) from the root.
+- **Forensic Ritual**: All migrated documentation re-signed via `resign_docs.py` (V2 Structured Signatures) and anchored to the `main` branch.
+- **Root State**: Root directory now contains only foundational configuration (`.yaml`, `.toml`) and the primary `README.md`.
+
 ### 2026-03-28: Tech Debt Resolution & Substrate Resilience (TD-01, TD-02, TD-04) — COMPLETE
 - **Objective**: Standardize agent results, eliminate mock-dependency in core security tests, and harden substrate against environmental chaos.
 - **Status**: [COMPLETE]
