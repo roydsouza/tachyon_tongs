@@ -49,18 +49,18 @@
 
 #### [S-03] WASM Sandboxing & Fuel Metering (Layer 1/11/15)
 - **Goal**: Move Tier 1 execution to a WASM environment with deterministic resource limits.
-- [ ] Implement `WasmSandbox` using `wasmtime` or `wasmer`.
-- [ ] Add "Fuel Metering" (instruction counting) to prevent infinite loops.
-- [ ] Implement wall-clock watchdog (Epoch Interruption) for runaway processes.
+- [x] Implement `WasmSandbox` using `wasmtime` or `wasmer`.
+- [x] Add "Fuel Metering" (instruction counting) to prevent infinite loops.
+- [x] Implement wall-clock watchdog (Epoch Interruption) for runaway processes.
 - **Acceptance Criteria**:
-- [ ] `test_wasm_fuel_exhaustion`: Run a WASM binary with an infinite loop and verify it is killed after fuel depletion.
+  - [x] `test_wasm_fuel_exhaustion`: Run a WASM binary with an infinite loop and verify it is killed after fuel depletion.
 
 #### [S-04] Loop Guard & Deduplication (Layer 13)
 - **Goal**: Prevent resource-draining argumentation loops between agents in the Debate Arena.
-- [ ] Implement `DeduplicationCache` in `EventBus` using SHA256 payload fingerprinting.
-- [ ] Define threshold: 3 identical events within 300s triggering a `LOOP_DETECTED` circuit break.
+- [x] Implement `DeduplicationCache` in `EventBus` using SHA256 payload fingerprinting.
+- [x] Define threshold: 3 identical events within 300s triggering a `LOOP_DETECTED` circuit break.
 - **Acceptance Criteria**:
-- [ ] `test_loop_breaker`: Emit 5 identical events rapidly and assert the EventBus suppresses the 4th and 5th.
+  - [x] `test_loop_breaker`: Emit 5 identical events rapidly and assert the EventBus suppresses the 4th and 5th.
 
 ---
 

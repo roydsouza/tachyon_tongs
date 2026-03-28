@@ -1,6 +1,8 @@
 import os
 import json
 import sqlite3
+import hashlib
+import time
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 
@@ -21,6 +23,12 @@ class TachyonEventBus:
         self.db_path = db_path
         self._init_db()
         self.im = integrity_manager
+        
+        # S-04 Loop Guard: Sliding-window event tracking
+        # Key: hash(topic:payload), Value: list of timestamps
+        self._event_cache: Dict[str, List[float]] = {}
+        self.LOOP_WINDOW_SEC = 300
+        self.LOOP_THRESHOLD = 3
 
     def _get_connection(self):
         """Returns a SQLite connection with WAL mode enabled."""
@@ -71,6 +79,27 @@ class TachyonEventBus:
         """
         timestamp = timestamp or datetime.now().isoformat()
         payload_json = json.dumps(payload, sort_keys=True, separators=(',', ':'))
+        
+        # 1. S-04 Loop Guard Check
+        event_key = hashlib.sha256(f"{topic}:{payload_json}".encode('utf-8')).hexdigest()
+        now = time.time()
+        
+        # Clean stale events from cache
+        if event_key in self._event_cache:
+            self._event_cache[event_key] = [t for t in self._event_cache[event_key] if now - t < self.LOOP_WINDOW_SEC]
+            
+            if len(self._event_cache[event_key]) >= self.LOOP_THRESHOLD:
+                # Trigger circuit breaker
+                from tachyon.core.state import StateManager
+                msg = f"LOOP DETECTED: Suppressing identical event flood on topic '{topic}' from Agent '{agent_id}'."
+                StateManager().emit_alert("SECURITY_ALERT_LOOP", msg)
+                return -1 # Event suppressed
+            
+            self._event_cache[event_key].append(now)
+        else:
+            self._event_cache[event_key] = [now]
+
+        # 2. Persistence
         certificate_json = json.dumps(certificate) if certificate else None
         
         with self._get_connection() as conn:
