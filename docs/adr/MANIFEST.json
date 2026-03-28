@@ -82,6 +82,8 @@
     "0078-the-immunologist-cognitive-defense.md": "d7e4a860040372dd26434ea050fcc27caf89e61cc78b8d57cadcee17e52c9659",
     "0079-agent-onboarding-ritual.md": "4b13687d70491a584e9f26cb6d0d7079d4430e11efbac1be3d463fc6f30feddd",
     "0080-wasm-fuel-metering-and-epoch-interruption.md": "89ee061fa8da70ea11cfff4f8cc6112c9fae6d2b5e8b95e8487fd3fe8534d94f",
-    "0081-eventbus-loop-guard-circuit-breaker.md": "95d89ee1d4321529aef2c0cfed62c0f0d62bf9ba39f37d69e6ae03e42811ff53"
+    "0081-eventbus-loop-guard-circuit-breaker.md": "95d89ee1d4321529aef2c0cfed62c0f0d62bf9ba39f37d69e6ae03e42811ff53",
+    "0082-merkle-audit-trail-architecture.md": "5cfd27e5936001736f72bdc6112f6b70b87d32a7a79717a55e0cee6d7a6b8e74",
+    "0083-semantic-taint-tracking-policy.md": "e9e9137672c01efe55ffe7bb614ed0fdf6399b5dab2b76d422be1e3a874e3756"
   }
 }

@@ -59,22 +59,30 @@ class HeraldPlugin(BaseAgentPlugin):
         return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)
 
     def _sanitize_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
-        """Signal Purification: Strips newlines and truncates URLs (M-09)."""
+        """Signal Purification: Strips newlines, truncates URLs, and performs Taint Check (M-09/S-06)."""
         import re
+        from tachyon.enforcement.taint import TaintPolicy
+        policy = TaintPolicy()
+        
         clean_event = event.copy()
         summary = str(clean_event.get("summary", ""))
         
-        # 1. Flatten newlines to prevent multi-line injection in Signal/Slack
+        # 1. S-06: Taint Tracking (Check before flattening/truncation)
+        if policy.is_tainted(summary):
+            policy.audit_taint_violation(self.agent_id, event.get("topic", "UNKNOWN"), summary[:100])
+            summary = policy.redact_taint(summary)
+        
+        # 2. Flatten newlines to prevent multi-line injection
         summary = summary.replace("\n", " | ").replace("\r", "")
         
-        # 2. Truncate long URLs to prevent buffer overflow/obfuscation (limit to 256 chars)
+        # 3. Truncate long URLs
         def _truncate_url(match):
             url = match.group(0)
             return url[:253] + "..." if len(url) > 256 else url
             
         summary = re.sub(r'https?://[^\s<>"]+|www\.[^\s<>"]+', _truncate_url, summary)
         
-        # 3. Overall length limit
+        # 4. Overall length limit
         if len(summary) > 2000:
              summary = summary[:1997] + "..."
              

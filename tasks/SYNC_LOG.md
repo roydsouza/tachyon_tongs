@@ -1,6 +1,25 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
-### 2026-03-28: Phase 1 Security Evolution & Agent Onboarding Governance — COMPLETE
+### 2026-03-28: Phase 3: Forensic Persistence & Audit Chain — COMPLETE
+- **Objective**: Harden the substrate's execution history via cryptographic hash-chaining and implement semantic data protection to prevent secret exfiltration.
+- **Status**: [COMPLETE]
+- **Tasks Completed**:
+  - **[S-05] Merkle Audit Trail**:
+    - Extended `forensic_events` schema with `previous_hash` and `hash` columns.
+    - Implemented SHA256 linkage logic in `StateManager.log_forensic_event`.
+    - Created `scripts/forensics/verify_chain.py` for high-assurance history validation.
+    - Verified via `tests/test_audit_taint.py::test_audit_chain_integrity` (Tamper detection confirmed).
+  - **[S-06] Semantic Taint Tracking**:
+    - Implemented `TaintPolicy` engine in `tachyon/enforcement/taint.py` with secret regex registry.
+    - Integrated mandatory taint scanning into `HeraldPlugin._sanitize_event`.
+    - Verified via `tests/test_audit_taint.py::test_herald_exfiltration_block` (Secret redaction confirmed).
+- **Forensic Ritual**:
+  - Authored and signed **ADR-0082** (Merkle Audit Trail) and **ADR-0083** (Semantic Taint Tracking).
+  - Synchronized `docs/adr/MANIFEST.json`.
+  - Re-signed all updated documentation via `resign_docs.py`.
+- **Roadmap Status**: [S-05] and [S-06] marked as complete in `TASKS_SECURITY.md`. Evolution Protocol [FER-001] now governs all substrate growth.
+
+### 2026-03-28: Forensic Evolution Governance & Phase 2 Anchoring — COMPLETE
 - **Objective**: Harden the substrate against SSRF, DNS Rebinding, and Prompt Injection while codifying the "Definition of Done" for new agent recruitment.
 - **Status**: [COMPLETE]
 - **Tasks Completed**:

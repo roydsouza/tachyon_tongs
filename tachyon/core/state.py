@@ -17,6 +17,10 @@ class StateManager:
 
     def __new__(cls, db_path=None):
         with cls._lock:
+            # Phase 40: Allow singleton reset in test mode for isolated DB tests
+            if os.environ.get("TACHYON_TEST_MODE") == "1" and db_path:
+                cls._instance = None
+
             if cls._instance is None:
                 cls._instance = super(StateManager, cls).__new__(cls)
                 
@@ -191,16 +195,24 @@ class StateManager:
                 )
             ''')
             
-            # 10. forensic_events (Chronicle Backbone)
+            # 10. forensic_events (Chronicle Backbone) (ADR-0082: Merkle Linkage)
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS forensic_events (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     agent_id TEXT,
                     topic TEXT,
                     details TEXT,
-                    timestamp TEXT
+                    timestamp TEXT,
+                    previous_hash TEXT,
+                    hash TEXT
                 )
             ''')
+            # Migration: Add previous_hash and hash if missing
+            try:
+                conn.execute("ALTER TABLE forensic_events ADD COLUMN previous_hash TEXT")
+                conn.execute("ALTER TABLE forensic_events ADD COLUMN hash TEXT")
+            except sqlite3.OperationalError:
+                pass
             
             # 11. sensor_trust (Remote Sensor Keys & Anti-Replay)
             conn.execute('''
@@ -718,15 +730,25 @@ class StateManager:
     # --- Chronicle Support (ADR-0063) ---
 
     def log_forensic_event(self, agent_id: str, topic: str, details: str):
-        """Log a high-signal event for temporal analysis by Chronicle."""
+        """Log a high-signal event for temporal analysis by Chronicle. (ADR-0082: Merkle Linked)."""
+        import hashlib
         with self._lock:
             with sqlite3.connect(self.db_path) as conn:
-                # Use UTC isoformat for temporal consistency
+                # 1. Retrieve the hash of the last record to form the chain
+                cursor = conn.execute("SELECT hash FROM forensic_events ORDER BY id DESC LIMIT 1")
+                row = cursor.fetchone()
+                previous_hash = row[0] if row else "0" * 64
+                
+                # 2. Compute current record hash
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                raw_payload = f"{agent_id}|{topic}|{details}|{timestamp}|{previous_hash}"
+                current_hash = hashlib.sha256(raw_payload.encode('utf-8')).hexdigest()
+                
+                # 3. Insert record into the linked chain
                 conn.execute('''
-                    INSERT INTO forensic_events (agent_id, topic, details, timestamp)
-                    VALUES (?, ?, ?, ?)
-                ''', (agent_id, topic, details, timestamp))
+                    INSERT INTO forensic_events (agent_id, topic, details, timestamp, previous_hash, hash)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ''', (agent_id, topic, details, timestamp, previous_hash, current_hash))
                 conn.commit()
 
     def get_agent_trajectories(self, agent_id: str, limit: int = 50) -> list:

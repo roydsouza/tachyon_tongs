@@ -69,19 +69,19 @@
 
 #### [S-05] Merkle Audit Trail (Layer 2)
 - **Goal**: Link all `ActionRecord` entries into a Merkle hash-chain.
-- [ ] Extend `ActionRecord` schema with `previous_record_hash`.
-- [ ] Implement Merkle root publication in the `FirewallAdministrator`.
-- [ ] Create `scripts/forensics/verify_chain.py` for incremental verification.
+- [x] Extend `ActionRecord` schema with `previous_record_hash`.
+- [x] Implement Merkle root publication in the `FirewallAdministrator`.
+- [x] Create `scripts/forensics/verify_chain.py` for incremental verification.
 - **Acceptance Criteria**:
-- [ ] `test_audit_chain_integrity`: Manually alter a historic record in the DB and verify the chain verification fails.
+- [x] `test_audit_chain_integrity`: Manually alter a historic record in the DB and verify the chain verification fails.
 
 #### [S-06] Semantic Taint Tracking (Layer 3)
 - **Goal**: Prevent data exfiltration by labeling sensitive data (API keys, PII) and tracking them through the system.
-- [ ] Implement `TaintPolicy` in the `StateManager/ToolRouter`.
-- [ ] Label data from `memory/keys/` and `configs/` as `TAINTED_SECRET`.
-- [ ] Block `Herald` from relaying any payload containing `TAINTED_SECRET` strings.
+- [x] Implement `TaintPolicy` in the `StateManager/ToolRouter`.
+- [x] Label data from `memory/keys/` and `configs/` as `TAINTED_SECRET`.
+- [x] Block `Herald` from relaying any payload containing `TAINTED_SECRET` strings.
 - **Acceptance Criteria**:
-- [ ] `test_taint_exfiltration_block`: Attempt to send an API key via the Herald and verify the `NetworkPolicy` blocks it.
+- [x] `test_taint_exfiltration_block`: Attempt to send an API key via the Herald and verify the `NetworkPolicy` blocks it.
 
 ---
 

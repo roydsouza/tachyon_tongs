@@ -2,6 +2,34 @@
 
 This file tracks critical violations and integrity failures. The newest alerts appear at the top.
 
+## [SECURITY_ALERT_TAINT] 2026-03-28 09:33:36
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> EXFILTRATION ATTEMPT: Agent 'herald-001' attempted to relay tainted content on topic 'STATUS_UPDATE'.
+
+---
+
+## [SECURITY_ALERT_TAINT] 2026-03-28 09:33:09
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> EXFILTRATION ATTEMPT: Agent 'herald-001' attempted to relay tainted content on topic 'STATUS_UPDATE'.
+
+---
+
+## [SECURITY_ALERT_TAINT] 2026-03-28 09:32:50
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> EXFILTRATION ATTEMPT: Agent 'herald-001' attempted to relay tainted content on topic 'STATUS_UPDATE'.
+
+---
+
+## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-28 09:32:17
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Identity mismatch: Process not authorized to assume role 'herald'.
+
+---
+
 ## [SECURITY_ALERT_LOOP] 2026-03-28 09:15:18
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**
