@@ -1,0 +1,7 @@
+{
+  "version": "2.0",
+  "hash": "sha256:db9a470d4d3a49650bc51b1947523d5cced1079fdd87634eb9d5b798cf55266f",
+  "signature": "ed25519:17c5c1d83a685ed11c753bbd71fdafdf8f77ba2a0a111aa39313ddaabe7e27a44ddc2b2d814da76f83fc4d4094b6d1b2e00673a794a1cabf61248ef19117a60f",
+  "timestamp": "2026-03-27T20:41:43.859222",
+  "algorithm": "hybrid-pqc"
+}
