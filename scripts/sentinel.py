@@ -126,7 +126,7 @@ def main():
     parser.add_argument("--manual", action="store_true", help="Trigger a manual execution run.")
     parser.add_argument("--cron", action="store_true", help="Trigger a scheduled (cron) execution run.")
     parser.add_argument("--harvest", action="store_true", help="Download and localize raw exploit payloads to intelligence/exploits/.")
-    parser.add_argument("--log-file", type=str, default="RUN_LOG.md", help="Specify custom log file path.")
+    parser.add_argument("--log-file", type=str, default="admin/RUN_LOG.md", help="Specify custom log file path.")
     parser.add_argument("--verbose", type=int, choices=[0, 1, 2], default=2, help="Set verbosity level (0=Normal, 1=Details, 2=Full Content).")
     
     args = parser.parse_args()

@@ -6,7 +6,7 @@ description: Update SYNC_LOG.md and push all changes to GitHub.
 
 Follow these steps to safely synchronize the mission state:
 
-1. **Update SYNC_LOG.md**: Ensure a new entry is added to `~/antigravity/tachyon_tongs/SYNC_LOG.md` summarizing the session's achievements and decisions.
+1. **Update SYNC_LOG.md**: Ensure a new entry is added to `tasks/SYNC_LOG.md` summarizing the session's achievements and decisions.
 2. **Commit Changes**: Use the `run_command` tool to stage and commit all changes.
 // turbo
 3. **Execute Push**: Push the committed changes to the remote repository.

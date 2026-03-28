@@ -16,7 +16,7 @@ class HeraldPlugin(BaseAgentPlugin):
         from .collectors.engine import FileLogCollector, AirlockCollector, TaskCollector, ForensicCollector
         self.collectors = [
             ForensicCollector(), # High-Assurance SQL Ledger
-            FileLogCollector("ALERT.md", r"## \[(.*?)\] (.*?)\n"),
+            FileLogCollector("admin/ALERT.md", r"## \[(.*?)\] (.*?)\n"),
             FileLogCollector("logs/EVOLUTION.md", r"## \[(.*?)\] (.*?)\n"),
             AirlockCollector(),
             TaskCollector("tasks/TASKS_CLEANUP.md")

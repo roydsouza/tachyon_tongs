@@ -7,7 +7,7 @@ Active
 To maintain 100% architectural purity in the Tachyon Tongs substrate by preventing file clutter, stale test artifacts, and unmanaged temporary data.
 
 ## Rules
-1.  **Root Purity**: The project root directory MUST remain clean. Only core configuration (`.yaml`, `README.md`, `TASKS.md`, `SYNC_LOG.md`) and package roots are permitted.
+1.  **Root Purity**: The project root directory MUST remain clean. Only core configuration (`.yaml`, `README.md`) and package roots are permitted. All task and sync logs must reside in `tasks/`.
 2.  **Test Isolation**: ALL permanent tests must reside in the `tests/` directory.
 3.  **Transient Data**: Any temporary files, reproduction scripts, or transient test databases MUST be written to `tests/tmp/` (preferred) or the global `tmp/` directory.
 4.  **No "test_*" in Root**: Files prefixed with `test_` or `repro_` (including SQLite `.db`, `.db-wal`, `.db-shm` sidecars) are strictly prohibited in the root directory.

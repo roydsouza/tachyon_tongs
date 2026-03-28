@@ -29,8 +29,9 @@ def test_herald_aggregation_logic(state):
     """Verify Herald collects events from multiple sources."""
     herald = HeraldPlugin("test-herald", {})
     
-    # 1. Mock an alert in ALERT.md
-    with open("ALERT.md", "w") as f:
+    # 1. Mock an alert in admin/ALERT.md
+    os.makedirs("admin", exist_ok=True)
+    with open("admin/ALERT.md", "w") as f:
         f.write("# 🚨 Alerts\n\n## [TEST_ALERT] 2026-03-22 20:00:00\n> [!CAUTION]\n> Test message\n\n---\n\n")
     
     # 2. Mock a task in tasks/TASKS_CLEANUP.md
@@ -60,7 +61,8 @@ def test_herald_deduplication(state):
     herald = HeraldPlugin("test-herald", {})
     
     # 1. Mock alert
-    with open("ALERT.md", "w") as f:
+    os.makedirs("admin", exist_ok=True)
+    with open("admin/ALERT.md", "w") as f:
         f.write("## [DEDUP_TEST] 2026-03-22 20:00:00\nContent\n\n")
     
     # 2. Relay first time

@@ -81,11 +81,13 @@ Import 5,700+ skills from the [ClawHub](docs/CLAWS.md) ecosystem.
 The Tachyon Tongs filesystem is designed for high-assurance modularity:
 
 ```text
+├── admin/              # Administrative Layer (ADMIN.md, ALERT.md, RUN_LOG.md)
 ├── agents/             # The Immune Cell Collective (Pathogen, Sentinel, etc.)
 ├── daemons/            # macOS LaunchAgent & System Daemon configurations
 ├── docs/               # Architecture, ADRs, and API documentation
 ├── exploits/           # Master CATALOG.md and raw research payloads.
-├── logs/               # ALERT.md, RUN_LOG.md, and EVOLUTION.md (Forensic ledgers).
+├── logs/               # EVOLUTION.md (Forensic architect logs).
+├── tasks/              # Coordination Layer (SYNC_LOG.md, TASKS_*.md)
 ├── memory/             # tachyon_state.db (Operational DB) and archive/ (Pruned logs).
 ├── policies/           # OPA-Rego policies and Enforcer configurations.
 ├── libs/               # Architecture-specific binaries (e.g., liboqs.dylib for PQC).
@@ -107,7 +109,7 @@ Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture
 ---
 
 ## 🤖 The Agent Collective
-*   🔭 **The Sentinel**: Discovers and signs novel AI exploits into the [EXPLOITATION_CATALOG.md](EXPLOITATION_CATALOG.md).
+*   🔭 **The Sentinel**: Discovers and signs novel AI exploits into the [exploits/CATALOG.md](exploits/CATALOG.md).
 *   🧪 **The Sentry**: Unified active probing and passive semantic honeypotting for early intrusion detection.
 *   🧬 **The Forge (Synthesizer/Mutator)**: Adversarial architect generating synthetic zero-day scenarios and stress-testing substrate logic via the **Pathogen** engine.
 *   🦠 **The Pathogen**: Red-team mutation engine for autonomously evolving exploit variants to find bypasses.
@@ -154,10 +156,10 @@ The **Event-Horizon Command Bridge** provides a NeoVIM-first interface for subst
 *   🦞 **[CLAWS.md](docs/CLAWS.md)**: The Claw ecosystem and safe import bridge.
 *   🗺️ **[ROADMAP.md](docs/ROADMAP.md)**: Phased evolution roadmap.
 *   🔑 **[KEYS.md](docs/KEYS.md)**: Hybrid PQC key taxonomy.
-*   📻 **[SYNC_LOG.md](SYNC_LOG.md)**: Inverse-chronological record of all agentic breakthroughs.
-*   🚀 **[TASKS_BOOTSTRAP.md](TASKS_BOOTSTRAP.md)**: Completed foundation tasks.
-*   🧹 **[TASKS_CLEANUP.md](TASKS_CLEANUP.md)**: Active engineering sprint backlog.
-*   💡 **[TASKS_ENHANCEMENTS.md](TASKS_ENHANCEMENTS.md)**: Future strategic additions.
+*   📻 **[tasks/SYNC_LOG.md](tasks/SYNC_LOG.md)**: Inverse-chronological record of all agentic breakthroughs.
+*   🚀 **[tasks/TASKS_BOOTSTRAP.md](tasks/TASKS_BOOTSTRAP.md)**: Completed foundation tasks.
+*   🧹 **[tasks/TASKS_CLEANUP.md](tasks/TASKS_CLEANUP.md)**: Active engineering sprint backlog.
+*   💡 **[tasks/TASKS_ENHANCEMENTS.md](tasks/TASKS_ENHANCEMENTS.md)**: Future strategic additions.
 *   📜 **[ADRs](docs/adr/)**: Complete history of signed Architectural Decision Records.
 
 ---
@@ -174,6 +176,6 @@ Tachyon Tongs serves as a laboratory for evaluating promising avenues in publish
 ## 📈 Roadmap & Task Tracking
 
 Tachyon Tongs follows a phased evolution model to ensure substrate stability and forensic integrity. We track our progress across three distinct horizons:
-- **Bootstrap**: The "getting off the ground" phase, covering core framework establishment. (See [TASKS_BOOTSTRAP.md](TASKS_BOOTSTRAP.md))
-- **Cleanup**: The "putting things in order" phase, focusing on refinement and hardening. (See [TASKS_CLEANUP.md](TASKS_CLEANUP.md))
-- **Enhancements**: The "future-proofing" phase, outlining long-term strategic additions. (See [TASKS_ENHANCEMENTS.md](TASKS_ENHANCEMENTS.md))
+*   **Bootstrap**: The "getting off the ground" phase, covering core framework establishment. (See [tasks/TASKS_BOOTSTRAP.md](tasks/TASKS_BOOTSTRAP.md))
+*   **Cleanup**: The "putting things in order" phase, focusing on refinement and hardening. (See [tasks/TASKS_CLEANUP.md](tasks/TASKS_CLEANUP.md))
+*   **Enhancements**: The "future-proofing" phase, outlining long-term strategic additions. (See [tasks/TASKS_ENHANCEMENTS.md](tasks/TASKS_ENHANCEMENTS.md))

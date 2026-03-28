@@ -288,7 +288,7 @@ class StateManager:
             return base64.b64decode(value[4:]).decode()
         return value
 
-    def log_run(self, run_data, duration, limit=25, log_file="RUN_LOG.md"):
+    def log_run(self, run_data, duration, limit=25, log_file="admin/RUN_LOG.md"):
         """Atomically log a run execution and export it to Markdown."""
         sites_list = []
         site_results = run_data.get('site_results', {})
@@ -432,8 +432,8 @@ class StateManager:
             return # Suppress loud alerts
             
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        alert_path = os.path.join(root_dir, "ALERT.md")
-        if not os.path.exists(alert_path): alert_path = "ALERT.md"
+        alert_path = os.path.join(root_dir, "admin", "ALERT.md")
+        if not os.path.exists(alert_path): alert_path = "admin/ALERT.md"
             
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         alert_block = f"## [{alert_type}] {timestamp}\n> [!CAUTION]\n> **CRITICAL SECURITY ALERT:**\n> {message}\n\n---\n\n"
