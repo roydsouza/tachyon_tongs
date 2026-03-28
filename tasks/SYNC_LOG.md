@@ -1,5 +1,24 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-28: Phase 1 Security Evolution & Agent Onboarding Governance — COMPLETE
+- **Objective**: Harden the substrate against SSRF, DNS Rebinding, and Prompt Injection while codifying the "Definition of Done" for new agent recruitment.
+- **Status**: [COMPLETE]
+- **Tasks Completed**:
+  - **[S-01] SSRF Protection & Network Hygiene**:
+    - Implemented `NetworkPolicy` engine in `tachyon/enforcement/network.py`.
+    - Upgraded `SafeFetch` with DNS-before-connect and manual redirect verification (Max 3 hops).
+    - Verified via `tests/test_ssrf_mitigation.py` (6 passed).
+  - **[S-02] The Immunologist: Prompt Injection Defense**:
+    - Recruited `agents/immunologist/agent.py` for real-time EventBus scanning.
+    - Implemented high-fidelity regex and heuristic scanning for adversarial system-overrides.
+    - Verified via `tests/test_immunologist.py` (4 passed).
+  - **Governance & Onboarding**:
+    - Codified `.agent/rules/AGENT_GOVERNANCE.md` (Mandatory 5-step ritual).
+    - Implemented `/add-agent` workflow in `.agent/workflows/add-agent.md`.
+    - Retroactively documented the Immunologist in `docs/AGENTS.md`, `README.md`, and its own guide.
+- **Forensic Ritual**: All documentation re-signed via structured V2.0 signatures and pushed to `main`.
+- **Roadmap Status**: [S-01] and [S-02] marked as complete in `TASKS_SECURITY.md`. Phase 6 (Autonomous Defensive Evolution) added to strategic plan.
+
 ### 2026-03-28: Substrate Architectural Reorganization — COMPLETE
 - **Objective**: Decouple the project root from coordination and administrative assets to achieve 100% repository hygiene and structural clarity.
 - **Status**: [COMPLETE]

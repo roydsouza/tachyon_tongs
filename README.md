@@ -111,6 +111,7 @@ Tachyon Tongs implements a high-assurance, defense-in-depth agentic architecture
 ## 🤖 The Agent Collective
 *   🔭 **The Sentinel**: Discovers and signs novel AI exploits into the [exploits/CATALOG.md](exploits/CATALOG.md).
 *   🧪 **The Sentry**: Unified active probing and passive semantic honeypotting for early intrusion detection.
+*   🛡️ **The Immunologist**: Defensive semantic sentinel monitoring the EventBus to neutralize prompt injection attacks.
 *   🧬 **The Forge (Synthesizer/Mutator)**: Adversarial architect generating synthetic zero-day scenarios and stress-testing substrate logic via the **Pathogen** engine.
 *   🦠 **The Pathogen**: Red-team mutation engine for autonomously evolving exploit variants to find bypasses.
 *   🛠️ **The Engineer**: Self-synthesizes infrastructure patches and policy mutations.

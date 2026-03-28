@@ -13,6 +13,7 @@ This document serves as the central directory for all specialized agents operati
 - **[Healer (The Somatic Repair)](../agents/healer/docs/AGENT_HEALER.md)**: Autonomous self-repair agent that coordinates patch application and integrity remediation.
 - **[Herald (The Command Conduit)](../agents/herald/docs/AGENT_HERALD.md)**: The Mouth & Ear. Custom agent that aggregates notifications and manages NeoVIM/CLI state.
 - **[Horizon Scout (The Competitive Intel)](../agents/scout/docs/AGENT_SCOUT.md)**: Continuous web-scouring for external threat research and competitive moats.
+- **[Immunologist (The Defensive Sentinel)](../agents/immunologist/docs/AGENT_IMMUNOLOGIST.md)**: Semantic scanning and prompt injection neutralization (Layer 12).
 - **[Pathogen (The Proactive AdversARY)](../agents/pathogen/docs/AGENT_PATHOGEN.md)**: Red-team mutation engine for proactive, template-driven stress-testing (Phase 38).
 - **[Sentinel (The Autoresearch Node)](../agents/sentinel/docs/AGENT_SENTINEL.md)**: Autonomous reconnaissance and high-signal vulnerability synthesis (Phase 39).
 - **[Synthesizer (The Policy Architect)](../agents/synthesizer/docs/AGENT_SYNTHESIZER.md)**: Translates analyzed threats into signed OPA-Rego or Cedar policies.
