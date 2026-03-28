@@ -8,22 +8,22 @@ HeraldPlugin = herald_mod.HeraldPlugin
 
 @pytest.fixture
 def state():
-    db_path = "test_herald.db"
-    if os.path.exists(db_path):
-        os.remove(db_path)
-    os.environ["TACHYON_DB_PATH"] = db_path
-    from tachyon.core.state import StateManager
-    StateManager._instance = None
-    manager = StateManager(db_path)
-    import sqlite3
-    with sqlite3.connect(db_path) as conn:
-        conn.execute("CREATE TABLE IF NOT EXISTS patches (id TEXT, summary TEXT, status TEXT, cve_id TEXT)")
-        conn.execute("CREATE TABLE IF NOT EXISTS relayed_events (dispatcher_id TEXT, event_id TEXT, relayed_at TEXT, PRIMARY KEY (dispatcher_id, event_id))")
-        conn.execute("CREATE TABLE IF NOT EXISTS forensic_events (id INTEGER PRIMARY KEY, agent_id TEXT, action TEXT, status TEXT, details TEXT, timestamp TEXT, event_type TEXT)")
-        conn.commit()
-    yield manager
-    if os.path.exists(db_path):
-        os.remove(db_path)
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = os.path.join(tmpdir, "test_herald.db")
+        os.environ["TACHYON_DB_PATH"] = db_path
+        from tachyon.core.state import StateManager
+        StateManager._instance = None
+        manager = StateManager(db_path)
+        import sqlite3
+        with sqlite3.connect(db_path) as conn:
+            conn.execute("CREATE TABLE IF NOT EXISTS patches (id TEXT, summary TEXT, status TEXT, cve_id TEXT)")
+            conn.execute("CREATE TABLE IF NOT EXISTS relayed_events (dispatcher_id TEXT, event_id TEXT, relayed_at TEXT, PRIMARY KEY (dispatcher_id, event_id))")
+            conn.execute("CREATE TABLE IF NOT EXISTS forensic_events (id INTEGER PRIMARY KEY, agent_id TEXT, action TEXT, status TEXT, details TEXT, timestamp TEXT, event_type TEXT)")
+            conn.commit()
+        yield manager
+        # Purge singleton again to prevent pollution
+        StateManager._instance = None
 
 def test_herald_aggregation_logic(state):
     """Verify Herald collects events from multiple sources."""
