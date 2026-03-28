@@ -54,6 +54,6 @@ async def relay_command(command: SignedCommand):
 @router.post("/auth/exchange", response_model=Dict[str, str])
 async def exchange_keys(request: AuthExchangeRequest):
     """Register remote sensor public keys for trusted relay"""
-    from tachyon.core.state_manager import StateManager
+    from tachyon.core.state import StateManager
     StateManager().register_sensor(request.sensor_id, request.public_key_b64)
     return {"status": "SUCCESS", "sensor_id": request.sensor_id}

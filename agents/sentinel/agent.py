@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from agents._core.base import BaseAgentPlugin
 from agents._core.registry import AgentRegistry
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 
 class NVDClient:
     """
@@ -91,12 +91,37 @@ class SentinelPlugin(BaseAgentPlugin):
         self.state_manager = StateManager()
         self.nvd = NVDClient(agent_id, self.bus)
         self.nvd.certificate = self.certificate
+        
+        # S-12: IntelligenceSovereign Upgrade
+        from agents.sentinel.intelligence import IntelligenceSovereign
+        self.intelligence = IntelligenceSovereign(agent_id, self.bus, self.certificate)
 
     def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
         from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "hunt":
             return self._action_hunt(parameters)
+        if action == "scour":
+            return self._action_scour(parameters)
         return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)
+
+    def _action_scour(self, parameters: Dict[str, Any]) -> TachyonResult:
+        """
+        [S-12] Autonomous Intelligence Scour: Searches archives for emerging exploits.
+        """
+        from tachyon.core.results import TachyonResult
+        source = parameters.get("source", "all")
+        findings = self.intelligence.scour_archives(source)
+        
+        if findings:
+            dispatch = self.intelligence.generate_dispatch(findings)
+            self.intelligence.dispatch_to_immunologist(dispatch)
+            
+            return TachyonResult.success({
+                "status": "DISPATCHED",
+                "findings_count": len(findings),
+                "ids": [f["id"] for f in findings]
+            })
+        return TachyonResult.success("No new intelligence found.")
 
     def _action_hunt(self, parameters: Dict[str, Any]) -> TachyonResult:
         """

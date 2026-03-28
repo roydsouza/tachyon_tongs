@@ -8,7 +8,7 @@ from tachyon.api.schema import ToolRequest
 from tachyon.policy.checkers.alignment_pdp import AlignmentPDP
 from tachyon.pipeline.pii_scanner import PIIScanner
 from tachyon.enforcement.safe_fetch import SafeFetch, SecurityViolationError as SafeFetchError
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 from tachyon.core.signing import IntegrityManager, SecurityViolationError as SigningError
 
 # --- H-01: PEP Rate Limiting ---

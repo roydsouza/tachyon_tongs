@@ -8,7 +8,7 @@ from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from tachyon.core.research import ResearchSynthesizer
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 
 class TestAutoresearchSynthesis(unittest.TestCase):
     def setUp(self):

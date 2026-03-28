@@ -7,7 +7,7 @@ import shutil
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from tachyon.integrations.claw_translator import ClawTranslator
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 
 def main():
     parser = argparse.ArgumentParser(description="Tachyon Tongs: Claw Ecosystem Import Utility")

@@ -7,7 +7,7 @@ def verify_substrate():
     client = TachyonClient(agent_id="AshaAgent", tenant_id="alpha-tenant")
     
     if not client.health_check():
-        print("❌ [Verification] Substrate Daemon is NOT running. Please start it with: ./venv/bin/python src/substrate_daemon.py")
+        print("❌ [Verification] Substrate Daemon is NOT running. Please start it with: ./venv/bin/python tachyon/enforcement/daemon.py")
         sys.exit(1)
     
     print("✅ [Verification] Substrate reached. Requesting safe_fetch for 'https://nvd.nist.gov'...")

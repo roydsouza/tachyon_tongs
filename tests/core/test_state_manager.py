@@ -2,7 +2,7 @@ import pytest
 import os
 import sqlite3
 import threading
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 
 @pytest.fixture
 def state_manager():

@@ -5,6 +5,7 @@ import threading
 import base64
 import fcntl
 from datetime import datetime
+from typing import Dict, Any, List, Optional
 
 class StateManager:
     """
@@ -16,10 +17,14 @@ class StateManager:
     _lock = threading.Lock()
 
     def __new__(cls, db_path=None):
-        with cls._lock:
             # Phase 40: Allow singleton reset in test mode for isolated DB tests
             if os.environ.get("TACHYON_TEST_MODE") == "1" and db_path:
                 cls._instance = None
+                # Force reload of core dependencies that might hold old state
+                import sys
+                for mod in ["tachyon.core.signing", "tachyon.core.alert_limiter", "tachyon.core.lock_manager"]:
+                    if mod in sys.modules:
+                        del sys.modules[mod]
 
             if cls._instance is None:
                 cls._instance = super(StateManager, cls).__new__(cls)
@@ -207,6 +212,18 @@ class StateManager:
                     hash TEXT
                 )
             ''')
+            # 11. sensor_trust (S-05: High-Assurance Identity)
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS sensor_trust (
+                    sensor_id TEXT PRIMARY KEY,
+                    public_key_b64 TEXT,
+                    last_nonce INTEGER DEFAULT 0,
+                    status TEXT,
+                    expires_at TEXT,
+                    added_at TEXT
+                )
+            ''')
+            
             # Migration: Add previous_hash and hash if missing
             try:
                 conn.execute("ALTER TABLE forensic_events ADD COLUMN previous_hash TEXT")
@@ -214,23 +231,28 @@ class StateManager:
             except sqlite3.OperationalError:
                 pass
             
-            # 11. sensor_trust (Remote Sensor Keys & Anti-Replay)
+            # 12. consensus_votes (S-08: Byzantine Gating)
             conn.execute('''
-                CREATE TABLE IF NOT EXISTS sensor_trust (
-                    sensor_id TEXT PRIMARY KEY,
-                    public_key_b64 TEXT,
-                    last_nonce INTEGER DEFAULT 0,
-                    status TEXT DEFAULT 'ACTIVE',
-                    expires_at TEXT,
-                    added_at TEXT
+                CREATE TABLE IF NOT EXISTS consensus_votes (
+                    action_id TEXT,
+                    signer_id TEXT,
+                    signature TEXT,
+                    timestamp TEXT,
+                    PRIMARY KEY (action_id, signer_id)
                 )
             ''')
-            # Migration: Add status and expires_at if missing
-            try:
-                conn.execute("ALTER TABLE sensor_trust ADD COLUMN status TEXT DEFAULT 'ACTIVE'")
-                conn.execute("ALTER TABLE sensor_trust ADD COLUMN expires_at TEXT")
-            except sqlite3.OperationalError:
-                pass
+
+            # 13. behavioral_fingerprints (S-09: Drift Monitoring)
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS behavioral_fingerprints (
+                    agent_id TEXT,
+                    action TEXT,
+                    avg_latency_ms REAL,
+                    avg_tokens INTEGER,
+                    samples INTEGER,
+                    PRIMARY KEY (agent_id, action)
+                )
+            ''')
             conn.commit()
 
     def is_event_processed(self, event_id: str) -> bool:
@@ -376,7 +398,7 @@ class StateManager:
                             threat.get('mitigation_patch')
                         ))
                     except sqlite3.Error as e:
-                        print(f"[StateManager] Failed to insert threat {threat.get('id')}: {e}")
+                        pass
                 conn.commit()
             self.export_catalog(catalog_file)
 
@@ -444,8 +466,13 @@ class StateManager:
             return # Suppress loud alerts
             
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        # Phase 40: Redirect alerting in test mode to avoid repo pollution
+        if os.environ.get("TACHYON_TEST_MODE") == "1":
+            root_dir = os.path.dirname(self.db_path)
+            
         alert_path = os.path.join(root_dir, "admin", "ALERT.md")
-        if not os.path.exists(alert_path): alert_path = "admin/ALERT.md"
+        if not os.path.exists(os.path.dirname(alert_path)):
+            os.makedirs(os.path.dirname(alert_path), exist_ok=True)
             
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         alert_block = f"## [{alert_type}] {timestamp}\n> [!CAUTION]\n> **CRITICAL SECURITY ALERT:**\n> {message}\n\n---\n\n"

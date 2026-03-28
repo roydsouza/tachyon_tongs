@@ -57,10 +57,11 @@ class DelegationCertificateAuthority:
         with open(self.crl_path, "w") as f:
             json.dump({"revoked_fingerprints": revoked}, f, indent=2)
 
-    def derive_and_issue(self, role: str, expiry_days: int = 30, save_to_disk: bool = False) -> Tuple[ed25519.Ed25519PrivateKey, Dict[str, Any]]:
+    def derive_and_issue(self, role: str, expiry_days: int = 30, save_to_disk: bool = False, allowed_actions: Optional[List[str]] = None) -> Tuple[ed25519.Ed25519PrivateKey, Dict[str, Any]]:
         """
         Derives an agent-specific Ed25519 sub-key using HKDF and issues a 
         Hybrid-Signed JSON certificate proving its legitimacy.
+        Now includes 'allowed_actions' for the Watcher ACV (S-07).
         """
         if not self.im._private_key:
             raise RuntimeError("Cannot issue certificate without a loaded Root Key.")
@@ -84,12 +85,17 @@ class DelegationCertificateAuthority:
         issue_time = datetime.now()
         expiry_time = issue_time + timedelta(days=expiry_days)
         
+        # S-07: Default actions if none provided
+        if not allowed_actions:
+            allowed_actions = ["RESEARCH", "STATUS_CHECK", "EMIT_SIGNAL"]
+
         payload = {
-            "version": "1.0",
+            "version": "1.1", # Updated for allowed_actions
             "subject": {
                 "role": role,
                 "fingerprint": fingerprint,
-                "public_key_b64": base64.b64encode(pub_bytes).decode('ascii')
+                "public_key_b64": base64.b64encode(pub_bytes).decode('ascii'),
+                "allowed_actions": allowed_actions
             },
             "issuer": "Tachyon_Hybrid_Root",
             "issued_at": issue_time.isoformat(),

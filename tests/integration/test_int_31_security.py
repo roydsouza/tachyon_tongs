@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi.testclient import TestClient
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from tachyon.api.server import app
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 
 class TestSecurityHardening(unittest.TestCase):
     def setUp(self):

@@ -160,8 +160,8 @@ class BaseAgentPlugin(ABC):
             self._subscriptions[topic] = []
         self._subscriptions[topic].append(callback)
 
-    def start_backplane_loop(self, interval_sec: int = 5):
-        """Start the background thread listening for EventBus signals."""
+    def start_backplane_loop(self, interval_sec: float = 0.5):
+        """Spawns the autonomous processing thread for event-driven logic."""
         if self._loop_thread and self._loop_thread.is_alive():
             return
             
@@ -174,36 +174,45 @@ class BaseAgentPlugin(ABC):
         )
         self._loop_thread.start()
 
-    def stop_backplane_loop(self):
-        """Stop the backplane listener."""
+    def stop_backplane_loop(self, timeout: float = 2.0):
+        """Signals the background thread to stop and waits for it to join."""
         self._stop_event.set()
         if self._loop_thread:
-            self._loop_thread.join(timeout=2)
+            self._loop_thread.join(timeout=timeout)
 
-    def _backplane_loop(self, interval_sec: int):
-        """Internal loop to fetch and route events."""
+    def _backplane_loop(self, interval: float = 0.5):
+        """Internal loop that fetches subscribed events and executes callbacks."""
         while not self._stop_event.is_set():
             try:
                 # Fetch new events for all subscribed topics
                 for topic in self._subscriptions.keys():
+                    if self._stop_event.is_set(): break
                     events = self.bus.fetch_events(topic=topic, after_id=self._last_event_id)
                     for event in events:
+                        if self._stop_event.is_set(): break
                         # Update high-water mark
                         self._last_event_id = max(self._last_event_id, event['id'])
                         
                         # Phase 33: Automatic Event Verification
-                        # verify_event checks the PQC signature and delegation chain
                         is_valid = self.bus.verify_event(event['id'])
                         
                         payload = json.loads(event['payload_json'])
                         
                         if is_valid:
-                            # Route to callbacks
+                            # Route to callbacks with context (S-07: Pass full event for auditing)
+                            event_data = {
+                                "payload": payload,
+                                "agent_id": event.get("agent_id"),
+                                "topic": event.get("topic"),
+                                "timestamp": event.get("timestamp"),
+                                "certificate_json": event.get("certificate_json") 
+                            }
                             for callback in self._subscriptions.get(topic, []):
-                                callback(payload)
+                                callback(event_data)
             except Exception as e:
                 # Phase 46: Fail-Loud Escalation (ADR-0061)
                 msg = f"Agent {self.agent_id} ({self.plugin_name}) backplane loop CRASHED: {e}"
+                from tachyon.core.state import StateManager
                 StateManager().emit_alert("AGENT_BACKPLANE_CRASH", msg)
                 
                 try:
@@ -216,7 +225,7 @@ class BaseAgentPlugin(ABC):
                 except Exception:
                     pass # Bus itself may be broken; don't recurse
                 
-            self._stop_event.wait(interval_sec)
+            self._stop_event.wait(interval)
 
     @abstractmethod
     def execute_action(self, action: str, parameters: Dict[str, Any]) -> Union[TachyonResult, Dict[str, Any]]:

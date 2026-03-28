@@ -2,6 +2,20 @@
 
 This file tracks critical violations and integrity failures. The newest alerts appear at the top.
 
+## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-28 10:22:45
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Identity mismatch: Process not authorized to assume role 'herald'.
+
+---
+
+## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-28 10:21:49
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Identity mismatch: Process not authorized to assume role 'herald'.
+
+---
+
 ## [SECURITY_ALERT_TAINT] 2026-03-28 09:33:36
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**

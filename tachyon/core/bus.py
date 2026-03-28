@@ -152,10 +152,12 @@ class TachyonEventBus:
             im = self.im or IntegrityManager(use_hardware=False) # Local verify
             ca = DelegationCertificateAuthority(im)
             
+            # 1. Reconstruct signed content
+            agent_id = row['agent_id']
+            
             # 3. Validate Certificate
             is_cert_valid, reason = ca.validate_certificate(certificate)
             if not is_cert_valid:
-                print(f"[EventBus] Certificate validation failed: {reason}")
                 return False
             
             # 4. Extract Agent Public Key from Certificate

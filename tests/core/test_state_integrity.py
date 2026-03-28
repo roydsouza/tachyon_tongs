@@ -2,7 +2,7 @@ import pytest
 import os
 import hmac
 import hashlib
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 
 @pytest.fixture
 def clean_state():

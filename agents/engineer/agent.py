@@ -16,7 +16,7 @@ class EngineerPlugin(BaseAgentPlugin):
     def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
         from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "apply_and_test":
-            from tachyon.core.state_manager import StateManager
+            from tachyon.core.state import StateManager
             state = StateManager()
             
             # Phase 29.2: Acquire Mutant Lock to suppress Guardian alerts during patching

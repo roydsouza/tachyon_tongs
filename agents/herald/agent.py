@@ -59,9 +59,10 @@ class HeraldPlugin(BaseAgentPlugin):
         return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)
 
     def _sanitize_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
-        """Signal Purification: Strips newlines, truncates URLs, and performs Taint Check (M-09/S-06)."""
+        """Signal Purification: Strips newlines, truncates URLs, and performs Taint Check (M-09/S-06/S-11)."""
         import re
         from tachyon.enforcement.taint import TaintPolicy
+        from tachyon.enforcement.entropy import EntropyAnalyzer
         policy = TaintPolicy()
         
         clean_event = event.copy()
@@ -72,17 +73,35 @@ class HeraldPlugin(BaseAgentPlugin):
             policy.audit_taint_violation(self.agent_id, event.get("topic", "UNKNOWN"), summary[:100])
             summary = policy.redact_taint(summary)
         
-        # 2. Flatten newlines to prevent multi-line injection
+        # 2. S-11: Exfiltration Noise Detection (Shannon Entropy)
+        if EntropyAnalyzer.is_suspicious(summary, threshold=5.8):
+            # Flag the event but don't redact it yet (let humans/monitors decide)
+            clean_event["is_suspicious"] = True
+            clean_event["entropy_bits"] = round(EntropyAnalyzer.calculate(summary), 2)
+            
+            # Emit high-signal alert
+            self.bus.emit_event(
+                topic="HERALD_SUSPICIOUS_ENTROPY",
+                agent_id=self.agent_id,
+                payload={
+                    "original_topic": event.get("topic", "UNKNOWN"),
+                    "entropy": clean_event["entropy_bits"],
+                    "summary_preview": summary[:100]
+                },
+                certificate=self.certificate
+            )
+
+        # 3. Flatten newlines to prevent multi-line injection
         summary = summary.replace("\n", " | ").replace("\r", "")
         
-        # 3. Truncate long URLs
+        # 4. Truncate long URLs
         def _truncate_url(match):
             url = match.group(0)
             return url[:253] + "..." if len(url) > 256 else url
             
         summary = re.sub(r'https?://[^\s<>"]+|www\.[^\s<>"]+', _truncate_url, summary)
         
-        # 4. Overall length limit
+        # 5. Overall length limit
         if len(summary) > 2000:
              summary = summary[:1997] + "..."
              

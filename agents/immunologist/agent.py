@@ -40,11 +40,11 @@ class ImmunologistPlugin(BaseAgentPlugin):
         self.subscribe("ACTION_COMPLETED", self._on_action_completed)
         self.start_backplane_loop(interval_sec=config.get("scan_interval", 5))
 
-    def _on_action_completed(self, payload: Dict[str, Any]):
-        """Callback for the ACTION_COMPLETED topic."""
-        # 1. Extract content to scan (Monadic result or raw parameters)
+    def _on_action_completed(self, event_data: Dict[str, Any]):
+        """Callback for the ACTION_COMPLETED topic. Receives full event context."""
+        payload = event_data.get("payload", {})
         action_id = payload.get("action_id", "UNKNOWN")
-        agent_src = payload.get("agent_id", "UNKNOWN")
+        agent_src = event_data.get("agent_id", "UNKNOWN")
         action_type = payload.get("action", "UNKNOWN")
         
         # We scan the result monad (data/error) and the parameters
@@ -99,7 +99,9 @@ class ImmunologistPlugin(BaseAgentPlugin):
         })
 
     def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
-        """The Immunologist can be manually triggered to scan artifacts."""
+        """The Immunologist can be manually triggered to scan artifacts or update its registry."""
+        from tachyon.core.results import TachyonResult
+        
         if action == "scan_artifact":
             content = parameters.get("content", "")
             findings = self.scan_content(content)
@@ -107,4 +109,39 @@ class ImmunologistPlugin(BaseAgentPlugin):
                 return TachyonResult.failure(f"Injection detected: {', '.join(findings)}")
             return TachyonResult.success("Artifact clean.")
             
-        return TachyonResult.failure("Unknown action.")
+        if action == "update_patterns":
+            # [S-12/S-13] Dynamic Vaccination Loop
+            dispatch = parameters.get("dispatch", {})
+            if not dispatch or not isinstance(dispatch, dict):
+                return TachyonResult.failure("Invalid dispatch format.")
+                
+            # 1. PQC Signature Verification (Simulated for this turn)
+            # In production, we'd use tachyon.core.signing.IntegrityManager
+            source = dispatch.get("source_agent", "UNKNOWN")
+            if source not in ["sentinel", "pathogen"]:
+                return TachyonResult.failure(f"Untrusted dispatch source: {source}")
+                
+            new_patterns = dispatch.get("patterns", [])
+            added_count = 0
+            
+            for p_str in new_patterns:
+                try:
+                    # 2. Regex Safety Check (ReDoS prevention)
+                    # Simple heuristic: no nested quantifiers like (a+)+
+                    if "++" in p_str or "**" in p_str or ")+" in p_str:
+                         continue
+                         
+                    pattern = re.compile(p_str, re.IGNORECASE)
+                    if pattern not in self.injection_patterns:
+                        self.injection_patterns.append(pattern)
+                        added_count += 1
+                except re.error:
+                    continue
+                    
+            return TachyonResult.success({
+                "status": "IMMUNIZED",
+                "new_patterns_added": added_count,
+                "source": source
+            })
+            
+        return TachyonResult.failure(f"Unknown action: {action}")

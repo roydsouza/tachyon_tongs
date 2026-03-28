@@ -45,6 +45,9 @@ class AgentRegistry:
                     # Use importlib.util to support hyphenated paths
                     module_path = os.path.join(root, "agent.py")
                     if os.path.exists(module_path):
+                        # [S-10] Agent Provenance Verification
+                        _verify_agent_hash(agents_dir, module_path)
+                        
                         spec = importlib.util.spec_from_file_location(plugin_module_name, module_path)
                         module = importlib.util.module_from_spec(spec)
                         if spec and spec.loader:
@@ -67,6 +70,53 @@ class AgentRegistry:
     @classmethod
     def list_plugins(cls) -> list:
         return list(cls._plugins.keys())
+
+def _verify_agent_hash(agents_dir: str, module_path: str):
+    """Calculates and verifies the SHA256 hash of an agent implementation [S-10]."""
+    import hashlib
+    import json
+    
+    # Calculate current hash
+    with open(module_path, "rb") as f:
+        content = f.read()
+    current_hash = hashlib.sha256(content).hexdigest()
+    
+    # Load SBOM
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(agents_dir), ".."))
+    # In some contexts, agents_dir might be just 'agents', resolve to root correctly
+    if os.path.basename(agents_dir) == "agents":
+        root_dir = os.path.dirname(agents_dir)
+        
+    hashes_path = os.path.join(root_dir, "metadata", "agent_hashes.json")
+    
+    # Fallback to absolute workspace path if relative lookup fails
+    if not os.path.exists(hashes_path):
+        hashes_path = "/Users/rds/antigravity/tachyon_tongs/metadata/agent_hashes.json"
+
+    if not os.path.exists(hashes_path):
+        # In strict mode, missing SBOM is a failure
+        if os.environ.get("TACHYON_STRICT_MODE") == "1":
+            raise RegistrationError(f"SBOM Missing: No agent_hashes.json found at {hashes_path}")
+        return
+
+    with open(hashes_path, "r") as f:
+        sbom = json.load(f)
+        
+    # Relative path for SBOM lookup (e.g. agents/sentinel/agent.py)
+    rel_module_path = os.path.relpath(module_path, root_dir)
+    
+    expected_hash = sbom.get(rel_module_path)
+    if not expected_hash:
+        if os.environ.get("TACHYON_STRICT_MODE") == "1":
+            raise RegistrationError(f"Provenance Failure: Agent {rel_module_path} not found in SBOM.")
+        return
+
+    if current_hash != expected_hash:
+        raise RegistrationError(
+            f"PROVENANCE_VIOLATION: Hash mismatch for {rel_module_path}.\n"
+            f"Expected: {expected_hash}\n"
+            f"Actual:   {current_hash}"
+        )
 
 def _write_load_failure_alert(agent_name: str, error: str):
     """Helper to record critical agent load failures when the EventBus is unavailable."""

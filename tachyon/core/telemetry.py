@@ -4,6 +4,7 @@ import json
 import time
 from datetime import datetime
 from typing import Dict, Any, Optional
+import threading
 
 class TelemetryBus:
     """
@@ -14,18 +15,18 @@ class TelemetryBus:
     _instance = None
     
     def __new__(cls, log_path=None):
-        if cls._instance is None:
-            cls._instance = super(TelemetryBus, cls).__new__(cls)
-            root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-            mem_dir = os.path.join(root_dir, "memory", "operational")
-            os.makedirs(mem_dir, exist_ok=True)
-            from tachyon.core.forensics import ForensicStore
-            cls._instance.log_path = log_path or os.path.join(mem_dir, "telemetry.jsonl")
-            cls._instance.forensic_store = ForensicStore()
-            import threading
-            cls._instance._lock = threading.Lock()
-            cls._instance._log_file = None
-        return cls._instance
+        with threading.Lock(): # Temporary lock for instance check
+            if cls._instance is None:
+                cls._instance = super(TelemetryBus, cls).__new__(cls)
+                root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+                mem_dir = os.path.join(root_dir, "memory", "operational")
+                os.makedirs(mem_dir, exist_ok=True)
+                from tachyon.core.forensics import ForensicStore
+                cls._instance.log_path = log_path or os.path.join(mem_dir, "telemetry.jsonl")
+                cls._instance.forensic_store = ForensicStore()
+                cls._instance._lock = threading.Lock()
+                cls._instance._log_file = None
+            return cls._instance
 
     def _get_log_file(self):
         """Returns a persistent file handle for the telemetry log."""

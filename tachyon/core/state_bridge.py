@@ -9,7 +9,7 @@ import sqlite3
 import json
 from datetime import datetime
 from typing import List
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 from tachyon.api.schema import (
     SubstrateHealth, SubstrateStatus, AgentDetail, AgentStatus, 
     PatchProposal, PatchStatus, ForensicAlert, AgentHealth, TrafficSummary
@@ -194,7 +194,7 @@ class StateBridge:
                     INSERT OR REPLACE INTO patches (id, cve_id, summary, status, timestamp, additions, deletions, debate_status)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
-                    f"patch-{patch_id}", 
+                    patch_id, 
                     patch_id, 
                     summary, 
                     status, 

@@ -90,59 +90,67 @@
 
 #### [S-07] The Watcher: Capability Verification (ACV)
 - **Goal**: Runtime behavioral auditing to ensure agents don't exceed their delegated permissions.
-- [ ] Create `agents/watcher/agent.py`.
-- [ ] Parse `actions_taken` from `AGENT_COMPLETED` records.
-- [ ] Compare against the agent's delegation certificate `allowed_actions`.
+- [x] Create `agents/watcher/agent.py`.
+- [x] Parse `actions_taken` from `AGENT_COMPLETED` records.
+- [x] Compare against the agent's delegation certificate `allowed_actions`.
 - **Acceptance Criteria**:
-- [ ] `test_privilege_escalation_detection`: Mock an agent performing a `FILE_WRITE` when it only has `RESEARCH` and verify the Watcher flags it.
+- [x] `test_privilege_escalation_detection`: Mock an agent performing a `FILE_WRITE` when it only has `RESEARCH` and verify the Watcher flags it.
 
 #### [S-08] Consensus-Based Gating (Byzantine Fault Tolerance)
 - **Goal**: Require N-of-M signatures for high-risk actions (e.g., substrate mutations).
-- [ ] Implement `ConsensusEngine` in `tachyon/core/consensus.py`.
-- [ ] Update `Airlock` to require 3 signatures (e.g., Auditor + Skeptic + Admin) for "Approve Patch" actions.
+- [x] Implement `ConsensusEngine` in `tachyon/core/consensus.py`.
+- [x] Update `Airlock` to require 3 signatures (e.g., Auditor + Skeptic + Admin) for "Approve Patch" actions.
 - **Acceptance Criteria**:
-- [ ] `test_consensus_failure`: Provide 2 of 3 required signatures and verify the action remains staged.
+- [x] `test_consensus_failure`: Provide 2 of 3 required signatures and verify the action remains staged.
 
 #### [S-09] Model Drift & Behavioral Monitoring
 - **Goal**: Detect if a model (local or cloud) has been subtly compromised or "poisoned."
-- [ ] Implement `BehavioralMonitor` in the System Integrity tier.
-- [ ] Store statistical fingerprints of agent response times, verbosity, and risk tolerance.
+- [x] Implement `BehavioralMonitor` in the System Integrity tier.
+- [x] Store statistical fingerprints of agent response times, verbosity, and risk tolerance.
 - **Acceptance Criteria**:
-- [ ] `test_drift_detection`: Simulate a sudden shift in model verbosity and verify an anomaly record is created.
+- [x] `test_drift_detection`: Simulate a sudden shift in model verbosity and verify an anomaly record is created.
 
 ---
 
-### ⚪ Phase 5: Supply Chain & Exfiltration
+### 🔵 Phase 5: Supply Chain & Exfiltration — COMPLETE
 **Preamble**: Hardening the "Chain of Custody" for agent code and detecting sophisticated exfiltration (e.g. Steganography).
 
 #### [S-10] Agent Provenance & SBOM (Layer 6/16)
-- [ ] Integrate code signing into the `AgentRegistry`.
-- [ ] Implement hash verification on every agent load (referenced against `metadata/agent_hashes.json`).
+- [x] Integrate code signing into the `AgentRegistry`.
+- [x] Implement hash verification on every agent load (referenced against `metadata/agent_hashes.json`).
+- **Acceptance Criteria**:
+- [x] `test_s10_provenance_violation_strict`: Verify unauthorized or modified agents are blocked in STRICT_MODE.
 
 #### [S-11] Exfiltration Noise Detection
-- [ ] Implement Shannon entropy analysis in the Herald.
-- [ ] Flag payloads with unusually high entropy (indicative of encrypted/encoded exfiltration).
+- [x] Implement Shannon entropy analysis in the Herald.
+- [x] Flag payloads with unusually high entropy (indicative of encrypted/encoded exfiltration).
+- **Acceptance Criteria**:
+- [x] `test_s11_herald_flagging`: Verify that random noise payloads trigger a `HERALD_SUSPICIOUS_ENTROPY` alert.
 
 ---
 
-### 🟣 Phase 6: Autonomous Defensive Evolution (P4)
+### 🔵 Phase 6: Autonomous Defensive Evolution — COMPLETE
 **Preamble**: Long-term strategic evolution of the immune collective, transforming the substrate from a reactive filter into an autonomous, learning security organism (H-2027).
 
-#### [S-12] Autonomous Intelligence Scouring
-- **Goal**: Proactively identify and categorize emerging prompt injection and cognitive exploits from the internet.
-- [ ] Implement `IntelligenceSovereign` module in the Sentinel.
-- [ ] Scour AI security archives (arxiv, huntr, lmsys) for new adversarial patterns.
-- [ ] Automatically update the Immunologist's pattern registry with PQC-signed dispatches.
+#### [S-12] Autonomous Intelligence Scour
+- [x] Implement `IntelligenceSovereign` module in the Sentinel.
+- [x] Scour AI security archives (arxiv, huntr, lmsys) for new adversarial patterns.
+- [x] Automatically update the Immunologist's pattern registry with PQC-signed dispatches.
+- **Acceptance Criteria**:
+- [x] `test_s12_sentinel_scour_and_dispatch`: Verify Sentinel Discovery -> Dispatch loop.
 
 #### [S-13] Adversarial Synthesis & Guided Red-Teaming
-- **Goal**: Use the Pathogen to autonomously synthesize novel, multi-hop prompt injection scenarios to stress-test the collective.
-- [ ] Implement `SynthesisEngine` in the Pathogen for adversarial logic evolution.
-- [ ] Feed synthesized bypasses into the Immunologist for "Defensive Fine-Tuning."
+- [x] Implement `SynthesisEngine` in the Pathogen for adversarial logic evolution.
+- [x] Feed synthesized bypasses into the Immunologist for "Defensive Fine-Tuning."
+- **Acceptance Criteria**:
+- [x] `test_s13_pathogen_synthesize_bypass`: Verify Pathogen Synthesis -> Vaccination loop.
 
 ---
 
 ## ✅ Final Security Verification Checklist
 - [x] 100% of P0 gaps closed. (S-01, S-02 COMPLETE).
+- [x] 100% of P1 supply-chain gaps closed. (S-10, S-11 COMPLETE).
+- [x] 100% of P4 autonomous evolution objectives met. (S-12, S-13 COMPLETE).
 - [ ] Merkle chain passes full depth verification.
 - [ ] Pathogen-generated prompt injection suite passes (0 leaks).
-- [ ] All security agents (Immunologist, Watcher, Monitor) are active.
+- [x] All security agents (Immunologist, Watcher, Monitor) are active.

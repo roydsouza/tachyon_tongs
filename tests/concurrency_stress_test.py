@@ -7,7 +7,7 @@ import random
 # Add root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 from tachyon.core.bus import TachyonEventBus
 
 def agent_worker(worker_id: int, num_ops: int):

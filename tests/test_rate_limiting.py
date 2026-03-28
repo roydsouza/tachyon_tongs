@@ -5,7 +5,7 @@ import time
 # Add root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from tachyon.core.state_manager import StateManager
+from tachyon.core.state import StateManager
 
 def test_rate_limiting():
     print("--- [Security] Starting Alert Rate-Limiting Test ---")

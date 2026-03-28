@@ -179,7 +179,7 @@ if __name__ == "__main__":
     
     # Save threats to the StateManager (this populates EXPLOITATION_CATALOG.md)
     if threats:
-        from tachyon.core.state_manager import StateManager
+        from tachyon.core.state import StateManager
         StateManager().log_exploitation(threats)
     
     print(f"\n📑 Intelligence Manifest (Consolidated):\n{json.dumps(threats, indent=2)}")
