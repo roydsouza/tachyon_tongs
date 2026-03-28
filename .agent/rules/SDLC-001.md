@@ -22,7 +22,7 @@ To combat LLM flakiness resulting from context drift, non-deterministic generati
    When proposing or writing large blocks of code, ensure you factor in:
    - Syntax validation
    - Type Checking (e.g static analysis)
-   - Security Validation (e.g using `bandit` or checking against `EXPLOITATION_CATALOG.md`)
+   - Security Validation (e.g using `bandit` or checking against `exploits/CATALOG.md`)
    - Pre-commit verification
 
 5. **Environment Constraints**:
