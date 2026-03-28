@@ -68,6 +68,18 @@
     "0062-graduated-supply-chain-defense.md": "d32105bd233e5c0bee994aa08faf47f5c7f0e44b529dbb8cb7c71d031c11203e",
     "0063-chronicle-temporal-oversight.md": "b1b27cdab4295ba9072fc92db0d828632097d6e716da2d69851ebf773dbe0f6d",
     "0064-automated-sbom-attestation.md": "b3aa83996644d9ff8d570b57f908b537948882c4f144a3cbd727a8043276c56e",
-    "0065-forensic-ui-integration.md": "40322b503716e2d6a939cce794b59beff614dd6a67d22d4e3dbe8f80b85ae3c4"
+    "0065-forensic-ui-integration.md": "40322b503716e2d6a939cce794b59beff614dd6a67d22d4e3dbe8f80b85ae3c4",
+    "0066-supply-chain-oracle-and-quarantine-auditor.md": "d30985690a9a3188ff1d0678492ace021dd1cdcc7293505eb6966cfc14e54c29",
+    "0067-signed-remote-access.md": "eb8191bfa572bfb236a850e12224b4db1257b167ef266ea59488171772dedc44",
+    "0068-dynamic-agent-discovery.md": "add16adb2b9a603fbd39b4a3e5f039185c7d9d9d5e4309a4f4bafedad288d019",
+    "0069-transit-traffic-identification.md": "c5c09f117c74c2f2f234f0aa13ff0e0e3fb103365428aea672d39d9d798aff06",
+    "0070-signed-relay-protocol.md": "2443d8f75b2eeca96ffc8442f85739a14818d07877ffb7d21a159ab1e7e74043",
+    "ADR-0072-atomic-signatures.md": "3ae865df9020a84db15bb3e72503e7df25a86f1f63f8e55c5fbb8959760e5f85",
+    "ADR-0073-defense-in-depth-hardening.md": "8d8e2665f3d4fcece14e5768ae1adeeb0bdc4b7507da0808656e38645c44a764",
+    "0075-tachyon-result-monad.md": "cc82e0e28d01ad836eca45cbdbe112e3797f57198628970f1915498dfac85740",
+    "0076-atomic-integrity-recovery.md": "f1b3371dd18031c73bfe6c6623b20652a59283c0e9dd8c947f8959a8422e5ef5",
+    "0077-network-hygiene-ssrf-defense.md": "d9ba894d5920b3132010b66f714893e082073c21b8c977208b5c0d435f1dd414",
+    "0078-the-immunologist-cognitive-defense.md": "d7e4a860040372dd26434ea050fcc27caf89e61cc78b8d57cadcee17e52c9659",
+    "0079-agent-onboarding-ritual.md": "4b13687d70491a584e9f26cb6d0d7079d4430e11efbac1be3d463fc6f30feddd"
   }
 }
