@@ -115,7 +115,7 @@ class TaskCollector(BaseCollector):
                         "id": event_id,
                         "type": "HITL_TASK",
                         "summary": line.strip()[6:],
-                        "source": "TASKS_CLEANUP.md"
+                        "source": os.path.basename(self.tasks_file)
                     })
         return events
 class ForensicCollector(BaseCollector):

@@ -19,7 +19,7 @@ class HeraldPlugin(BaseAgentPlugin):
             FileLogCollector("ALERT.md", r"## \[(.*?)\] (.*?)\n"),
             FileLogCollector("logs/EVOLUTION.md", r"## \[(.*?)\] (.*?)\n"),
             AirlockCollector(),
-            TaskCollector("TASKS_CLEANUP.md")
+            TaskCollector("tasks/TASKS_CLEANUP.md")
         ]
         self.dispatchers = [ConsoleDispatcher()]
         # Future: Add Slack/Signal dispatchers from config
