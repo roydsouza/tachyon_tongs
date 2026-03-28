@@ -25,13 +25,13 @@
 
 #### [S-01] SSRF Protection & Network Hygiene (Layer 5/8/9/14)
 - **Goal**: Prevent the Herald or any networked agent from accessing private IPs, cloud metadata, or falling victim to DNS rebinding.
-- [ ] Implement `NetworkPolicy` engine in `tachyon/enforcement/network.py`.
-- [ ] Add `validate_url` to Herald outbound paths (Block private ranges: `10.0.0.0/8`, `169.254.169.254`, etc.).
-- [ ] Implement DNS-before-connect (resolve hostname and verify IP before allowing the request).
-- [ ] Implement redirect limit (Max 3 hops) and Content-Type validation.
+- [x] Implement `NetworkPolicy` engine in `tachyon/enforcement/network.py`.
+- [x] Add `validate_url` to Herald outbound paths (Block private ranges: `10.0.0.0/8`, `169.254.169.254`, etc.).
+- [x] Implement DNS-before-connect (resolve hostname and verify IP before allowing the request).
+- [x] Implement redirect limit (Max 3 hops) and Content-Type validation.
 - **Acceptance Criteria**:
-  - [ ] `test_ssrf_metadata_block`: Attempt to fetch `http://metadata.google.internal` and assert rejection.
-  - [ ] `test_dns_rebinding_defense`: Simulate a DNS rebinding attack and verify the secondary IP check blocks the request.
+  - [x] `test_ssrf_metadata_block`: Attempt to fetch `http://metadata.google.internal` and assert rejection.
+  - [x] `test_dns_rebinding_defense`: Simulate a DNS rebinding attack and verify the secondary IP check blocks the request.
 
 #### [S-02] The Immunologist: Prompt Injection Defense (Layer 12)
 - **Goal**: Detect and neutralize "Indirect Prompt Injection" where tool outputs manipulate the agent's next reasoning step.

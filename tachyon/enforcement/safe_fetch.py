@@ -1,14 +1,13 @@
-"""
-Tachyon Tongs: Capability Firewall for HTTP Fetching
-Implements a strict intent-gate around the standard `urllib.request` library via Open Policy Agent (OPA).
-"""
 import urllib.request
 import urllib.parse
 import json
 import os
 import requests
-
+import time
+from typing import List, Optional, Tuple
 from dataclasses import dataclass
+
+from tachyon.enforcement.network import NetworkPolicy
 
 @dataclass
 class FetchResult:
@@ -22,6 +21,14 @@ class FetchResult:
 class SecurityViolationError(Exception):
     pass
 
+class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Custom handler to disable automatic redirects so we can re-verify at each hop."""
+    def http_error_301(self, req, fp, code, msg, headers): return None
+    def http_error_302(self, req, fp, code, msg, headers): return None
+    def http_error_303(self, req, fp, code, msg, headers): return None
+    def http_error_307(self, req, fp, code, msg, headers): return None
+    def http_error_308(self, req, fp, code, msg, headers): return None
+
 class SafeFetch:
     def __init__(self, agent_id: str = "default", rego_mock=False, allowed_domains=None, denylist=None):
         """
@@ -32,6 +39,7 @@ class SafeFetch:
         self.rego_mock = rego_mock
         self.allowed_domains = allowed_domains
         self.denylist = denylist
+        self.max_redirects = 3
         # Standardized Tachyon Tongs OPA Port is 9181
         self.opa_url = "http://localhost:9181/v1/data/authz/tools/allow_fetch"
 
@@ -48,10 +56,23 @@ class SafeFetch:
     def _evaluate_intent(self, target_url: str) -> bool:
         """Evaluates the payload against the intent policy via OPA and Reputation."""
         try:
+            # 1. Basic URL Validation (H-01)
+            if not NetworkPolicy.validate_url(target_url):
+                return False
+
             parsed = urllib.parse.urlparse(target_url)
-            domain = parsed.netloc
+            domain = parsed.netloc.split(':')[0] # Strip port if present
             
-            # 0. Integrated Supply Chain Whitelist Check (Phase 22 Hardening)
+            # 2. DNS-before-connect IP Validation (S-01)
+            ips = NetworkPolicy.resolve_safe(domain)
+            if not ips:
+                return False # Cannot resolve, block by default
+            
+            for ip in ips:
+                if NetworkPolicy.is_ip_private(ip):
+                    return False # Block private IP ranges
+
+            # 3. Integrated Supply Chain Whitelist Check (Phase 22 Hardening)
             if not self.rego_mock:
                 from tachyon.core.state import StateManager
                 if not StateManager().is_package_whitelisted(domain):
@@ -60,7 +81,7 @@ class SafeFetch:
                      StateManager().emit_alert("SUPPLY_CHAIN_VIOLATION", msg)
                      return False
 
-            # 1. Reputation Check (Overrides OPA if score is critical)
+            # 4. Reputation Check (Overrides OPA if score is critical)
             if domain in self.reputation_data:
                 score = self.reputation_data[domain].get("score", 1.0)
                 if score <= 0.3: # Critical threshold for blocking
@@ -126,40 +147,60 @@ class SafeFetch:
 
     def fetch(self, url: str, intent: str = "DEFAULT") -> FetchResult:
         """
-        The capability-wrapped fetch command.
+        The capability-wrapped fetch command with manual redirect handling.
         Returns a structured FetchResult object (SF-03).
         """
-        import time
-        start = time.perf_counter()
+        start_time = time.perf_counter()
+        current_url = url
+        hops = 0
         
-        # 1. Domain Check
+        # We manually handle redirects to ensure EVERY hop is validated (S-01)
+        opener = urllib.request.build_opener(NoRedirectHandler())
+        
         try:
-            if not self._evaluate_intent(url):
-                raise SecurityViolationError(f"Intent Gate blocked access to unauthorized domain in URL: {url}")
+            while hops <= self.max_redirects:
+                # 1. Validate the current URL/IP/Domain
+                if not self._evaluate_intent(current_url):
+                    raise SecurityViolationError(f"Security Gate blocked access to unauthorized or private host in URL: {current_url}")
+                    
+                # 2. Open Redirect Parameter Check (H-05)
+                if not self._check_redirect_bypasses(current_url):
+                    raise SecurityViolationError(f"Redirect parameter to untrusted domain detected in URL: {current_url}")
                 
-            # 2. Open Redirect Check (H-05)
-            if not self._check_redirect_bypasses(url):
-                raise SecurityViolationError(f"Redirect to untrusted domain detected in URL: {url}")
-            
-            req = urllib.request.Request(
-                url, 
-                data=None, 
-                headers={
-                    'User-Agent': f'Tachyon-Tongs-{self.agent_id}/1.0'
-                }
-            )
-            
-            with urllib.request.urlopen(req, timeout=10) as response:
-                content = response.read().decode('utf-8', errors='ignore')
-                latency = (time.perf_counter() - start) * 1000.0
-                return FetchResult(status="SUCCESS", url=url, result=content, latency_ms=latency)
+                req = urllib.request.Request(
+                    current_url, 
+                    headers={'User-Agent': f'Tachyon-Tongs-{self.agent_id}/1.0'}
+                )
+                
+                with opener.open(req, timeout=10) as response:
+                    code = response.getcode()
+                    
+                    # If it's a redirect, get the Location header and loop
+                    if code in [301, 302, 303, 307, 308]:
+                        new_url = response.headers.get('Location')
+                        if not new_url:
+                            break
+                        # Handle relative URLs
+                        current_url = urllib.parse.urljoin(current_url, new_url)
+                        hops += 1
+                        continue
+                    
+                    # If it's a success, return content
+                    content = response.read().decode('utf-8', errors='ignore')
+                    latency = (time.perf_counter() - start_time) * 1000.0
+                    return FetchResult(status="SUCCESS", url=current_url, result=content, latency_ms=latency)
+
+            if hops > self.max_redirects:
+                raise SecurityViolationError(f"Maximum redirect hops ({self.max_redirects}) exceeded.")
                 
         except SecurityViolationError as e:
-             latency = (time.perf_counter() - start) * 1000.0
-             return FetchResult(status="BLOCKED", url=url, error=str(e), latency_ms=latency)
+             latency = (time.perf_counter() - start_time) * 1000.0
+             return FetchResult(status="BLOCKED", url=current_url, error=str(e), latency_ms=latency)
         except Exception as e:
-             latency = (time.perf_counter() - start) * 1000.0
-             return FetchResult(status="ERROR", url=url, error=str(e), latency_ms=latency)
+             latency = (time.perf_counter() - start_time) * 1000.0
+             return FetchResult(status="ERROR", url=current_url, error=str(e), latency_ms=latency)
+        
+        return FetchResult(status="ERROR", url=url, error="Unknown fetch failure", latency_ms=0.0)
 
 def safe_fetch(url: str, agent_id: str = "default", allowed_domains: list = None, denylist: list = None) -> dict:
     """Convenience wrapper for SafeFetch."""
