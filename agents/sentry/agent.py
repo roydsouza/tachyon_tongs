@@ -66,11 +66,13 @@ class SentryPlugin(BaseAgentPlugin):
                 certificate=self.certificate
             )
 
-    def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
+        from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "scout":
-            return self.engine.scout(parameters)
+            res = self.engine.scout(parameters)
+            return TachyonResult.success(res)
         if action == "check_signals":
             # Manual trigger for bait and signal check
             self.check_signals()
-            return {"status": "SUCCESS", "message": "Signal check complete."}
-        return {"status": "error", "message": f"Unknown action: {action}"}
+            return TachyonResult.success({"message": "Signal check complete."})
+        return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)

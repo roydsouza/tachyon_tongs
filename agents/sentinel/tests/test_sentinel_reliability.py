@@ -5,11 +5,13 @@ from agents.sentinel.agent import SentinelPlugin, NVDClient
 def test_sentinel_signing_success():
     """TDAD: This test verifies that Sentinel now emits signed events."""
     mock_bus = MagicMock()
-    # Mock certificate
-    mock_bus.certificate = "MOCK-CERT"
-    config = {}
+    mock_im = MagicMock()
+    mock_im.load_agent_identity.return_value = "MOCK-CERT"
+    
+    config = {"integrity_manager": mock_im}
     sentinel = SentinelPlugin(agent_id="sentinel-test", config=config)
     sentinel.bus = mock_bus
+    sentinel.certificate = "MOCK-CERT"
     sentinel.nvd.bus = mock_bus
     
     # Trigger a hunt
@@ -28,8 +30,12 @@ def test_sentinel_signing_success():
 def test_sentinel_keyword_failure_emission():
     """TDAD: This test verifies that Sentinel now emits per-keyword failures."""
     mock_bus = MagicMock()
-    sentinel = SentinelPlugin(agent_id="sentinel-test", config={})
+    mock_im = MagicMock()
+    mock_im.load_agent_identity.return_value = "MOCK-CERT"
+    
+    sentinel = SentinelPlugin(agent_id="sentinel-test", config={"integrity_manager": mock_im})
     sentinel.bus = mock_bus
+    sentinel.certificate = "MOCK-CERT"
     sentinel.nvd.bus = mock_bus
     
     def mock_call(tool, args):
@@ -49,11 +55,15 @@ def test_sentinel_keyword_failure_emission():
 def test_sentinel_comm_failure_signing():
     """R-01: Verify that SENTINEL_COMM_FAILURE events are signed with the agent's certificate."""
     mock_bus = MagicMock()
+    mock_im = MagicMock()
+    mock_im.load_agent_identity.return_value = "AGENT-CERT"
+    
     # In the bug, the code tries to access mock_bus.certificate, which doesn't exist by default.
-    config = {}
+    config = {"integrity_manager": mock_im}
     sentinel = SentinelPlugin(agent_id="sentinel-test", config=config)
     sentinel.bus = mock_bus
-    agent_cert = sentinel.certificate # Use the real certificate recruited by the agent
+    agent_cert = "AGENT-CERT"
+    sentinel.certificate = agent_cert
     sentinel.nvd.bus = mock_bus
     sentinel.nvd.certificate = agent_cert
     # We need to ensure the NVD client has access to the certificate.

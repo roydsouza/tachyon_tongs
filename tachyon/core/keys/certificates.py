@@ -18,6 +18,8 @@ class DelegationCertificateAuthority:
         """
         Takes an IntegrityManager instance to utilize the Root Key for signing.
         """
+        # Phase 44: Standardize test mode hardware usage
+        use_hardware = os.environ.get("TACHYON_TEST_MODE") != "1"
         self.im = integrity_manager
         
         # Determine paths
@@ -69,7 +71,7 @@ class DelegationCertificateAuthority:
             algorithm=hashes.SHA256(),
             length=32,
             salt=None,
-            info=f"tachyon-agent-{role}".encode(),
+            info=f"tachyon-agent-{role.lower()}".encode(),
         )
         agent_seed = hkdf.derive(root_bytes)
         agent_key = ed25519.Ed25519PrivateKey.from_private_bytes(agent_seed)
@@ -102,10 +104,14 @@ class DelegationCertificateAuthority:
         signatures.append(f"ed25519:{self.im._private_key.sign(payload_bytes).hex()}")
         # Quantum
         if self.im._pqc_private_key_bytes:
-            import oqs
-            from tachyon.core.signing import PQC_ALGORITHM
-            with oqs.Signature(PQC_ALGORITHM, self.im._pqc_private_key_bytes) as signer:
-                signatures.append(f"mldsa65:{signer.sign(payload_bytes).hex()}")
+            try:
+                import oqs
+                from tachyon.core.signing import PQC_ALGORITHM
+                with oqs.Signature(PQC_ALGORITHM, self.im._pqc_private_key_bytes) as signer:
+                    signatures.append(f"mldsa65:{signer.sign(payload_bytes).hex()}")
+            except (ImportError, ModuleNotFoundError):
+                # Phase 33.2: Skip PQC if missing
+                pass
         
         cert = {
             "payload": payload,

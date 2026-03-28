@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:1938422011a02f9a52bafc7824c1e8a073f6b8304c21758ec1dbf9cbe058a847",
-  "signature": "hmac:45bc86c234b0ee29ad0c3eec5a036bd43e35fca6212286d819e38fc0b19e4ff5",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/README.md.sig"
-  }
+  "signature": "ed25519:4252a439ce496a45c5772bbacbab6751934f0d513bde1e6a6c8a67a66d15018545a9ffad57bdc83878399279c7683692b6ad6a630c7e0d89c82d96e3f7b61d0c",
+  "timestamp": "2026-03-27T20:29:57.627569",
+  "algorithm": "hybrid-pqc"
 }

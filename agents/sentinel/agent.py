@@ -92,15 +92,17 @@ class SentinelPlugin(BaseAgentPlugin):
         self.nvd = NVDClient(agent_id, self.bus)
         self.nvd.certificate = self.certificate
 
-    def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
+        from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "hunt":
             return self._action_hunt(parameters)
-        return {"status": "error", "message": f"Unknown action: {action}"}
+        return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)
 
-    def _action_hunt(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def _action_hunt(self, parameters: Dict[str, Any]) -> TachyonResult:
         """
         Stateful hunt action that utilizes the NVD Cursor.
         """
+        from tachyon.core.results import TachyonResult, TachyonStatus
         # 1. Signaling: Start
         self.bus.emit_event(
             topic="SENTINEL_SCAN_STARTED",
@@ -150,12 +152,11 @@ class SentinelPlugin(BaseAgentPlugin):
                 certificate=self.certificate
             )
 
-            return {
-                "status": "SUCCESS",
+            return TachyonResult.success({
                 "threats_discovered": discovered_ids,
                 "cursor_updated_to": new_cursor,
                 "synthesis": "OPERATIONAL"
-            }
+            })
 
         except Exception as e:
-            return {"status": "ERROR", "message": str(e)}
+            return TachyonResult.failure(str(e))

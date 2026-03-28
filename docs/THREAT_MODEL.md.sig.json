@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:891b492aa5c785b02b4d7bf892c90eb2c2a9a83f7f7e8e5b8c172849b9e4ace8",
-  "signature": "hmac:812c936c4d40678af63c3120ce1b27f04a562e3cce553b785d9fe59d99551e49",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/THREAT_MODEL.md.sig"
-  }
+  "signature": "ed25519:ae16c2e1ea6a164d2b4a4987788921a1eb3a21e170eaaecc7c80bae1f111d365670a36e2d1b63a1107f16068100b9237ecd6cd9108adc7893eaae6f9c904f406",
+  "timestamp": "2026-03-27T20:29:57.634232",
+  "algorithm": "hybrid-pqc"
 }

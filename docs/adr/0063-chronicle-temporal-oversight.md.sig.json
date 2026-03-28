@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:b1b27cdab4295ba9072fc92db0d828632097d6e716da2d69851ebf773dbe0f6d",
-  "signature": "hmac:c6ee0cf526b06412914e49b5181176998f6d7c741d7af9e54f3d475aa6b73cdf",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0063-chronicle-temporal-oversight.md.sig"
-  }
+  "signature": "ed25519:4f5b16dfcf50098b838bc5d3f977d4ca9866cfa883a114dc7ed299ac4b6e5e7db1ca38d226e6f716373e50a656bce39c16ef1e221e7a51489180dafdad9c410b",
+  "timestamp": "2026-03-27T20:29:57.658029",
+  "algorithm": "hybrid-pqc"
 }

@@ -5,12 +5,14 @@ from agents.auditor.agent import AuditorPlugin
 from tachyon.core.state import StateManager
 
 @pytest.fixture
-def auditor():
-    os.environ["TACHYON_TEST_MODE"] = "1"
-    # Reset StateManager instance for clean DB
-    StateManager._instance = None
-    state = StateManager(db_path="tests/tmp/test_auditor.db")
-    return AuditorPlugin(agent_id="test-auditor", plugin_name="Auditor", config={})
+def auditor(substrate_env):
+    # Use the shared high-fidelity test environment
+    # This ensures StateManager is already initialized with a test DB and keys
+    return AuditorPlugin(
+        agent_id="test-auditor", 
+        plugin_name="Auditor", 
+        config={"integrity_manager": substrate_env["im"]}
+    )
 
 def test_audit_supply_chain_integrity(auditor):
     # 1. Add a valid attestation
@@ -18,7 +20,7 @@ def test_audit_supply_chain_integrity(auditor):
     provenance = {"auth": "root"}
     import json
     provenance_str = json.dumps(provenance, sort_keys=True)
-    signature = auditor.state.integrity.sign_text(provenance_str)
+    signature = auditor.im.sign_text(provenance_str)
     auditor.oracle.attest_package(package_name, provenance, signature)
     
     # 2. Run audit
@@ -43,7 +45,7 @@ def test_audit_quarantine_violations(auditor):
     # 3. Create secure file
     good_file = os.path.join(quarantine_dir, "secure.py")
     with open(good_file, "w") as f: f.write("print('good')")
-    auditor.state.integrity.sign_document(good_file)
+    auditor.im.sign_document(good_file)
     
     # 4. Run audit
     res = auditor.audit_quarantine()

@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:7521aa0891737294c4976be3f2d9c15d22ec817f2be6341d194f85a6aaeb08ab",
-  "signature": "hmac:ebf8da7328057236af188c272333349d3fa7318a7d80d84b398e86b23f8ed616",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0033-agent-plugin-architecture.md.sig"
-  }
+  "signature": "ed25519:4ea6cad7a7577ff55f78f07a6ed1f1b4acc2d5448c5cd29b46acd00d7ef7d52409a5b1426eeb659704cf2066560059bf3c58d85698cebf894c24b306733ddc04",
+  "timestamp": "2026-03-27T20:29:57.682280",
+  "algorithm": "hybrid-pqc"
 }

@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:3e240c8579c0dedcb039ec1a7f1c4fce6bb930d4bb5736732688a3416aa95720",
-  "signature": "hmac:2378405490e6540e0e85dedd596f5a2b1d326d744f63617eac220c6699de587e",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0015-model-routing.md.sig"
-  }
+  "signature": "ed25519:be21101d8815604ed3c73f9b40195ee8765a5ca3132f7fc2ee366e6deba8d18ff3e0890e244303cca2a161ea5bff6f697ab408a5bb84ffef59f70b89a190ba08",
+  "timestamp": "2026-03-27T20:29:57.653344",
+  "algorithm": "hybrid-pqc"
 }

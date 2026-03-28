@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:40322b503716e2d6a939cce794b59beff614dd6a67d22d4e3dbe8f80b85ae3c4",
-  "signature": "hmac:843789005b160dbb180589d20254eab5ebace3ade843e8eb21ee4d356c830ecb",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0065-forensic-ui-integration.md.sig"
-  }
+  "signature": "ed25519:9a88a96c709bf81b427d47f5509aa61d27f0bbc90658f4d8575f22dcba1c39ef4227abec1e51c02bef9af7724f91f2be59a085d5a654e154516929965b664d0c",
+  "timestamp": "2026-03-27T20:29:57.662592",
+  "algorithm": "hybrid-pqc"
 }

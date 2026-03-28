@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:00a9eabb6ccee2b0b16c2667680b3f9fef943838b84868325808486ef9f6fdbd",
-  "signature": "hmac:cf2bf6357bb6addd471a2558851652dea64425edb9a9f90d90a56371fe130f0e",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0056-herald-drift-detection.md.sig"
-  }
+  "signature": "ed25519:bc8e05bcec17c78f1dada96c6babe910267e15119375e70a9cc089736460ed2e93060feecafee93809881a085aa3bac188263b5927a507653de68ff36e9bbf09",
+  "timestamp": "2026-03-27T20:29:57.643839",
+  "algorithm": "hybrid-pqc"
 }

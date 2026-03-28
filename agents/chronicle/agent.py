@@ -61,10 +61,12 @@ class ChroniclePlugin(BaseAgentPlugin):
         # 2. Perform realtime drift analysis
         self.engine.analyze_trajectory(actor)
 
-    def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
+        from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "analyze_drift":
             target = parameters.get("target_agent_id")
             if not target:
-                return {"status": "ERROR", "message": "Missing 'target_agent_id'"}
-            return self.engine.analyze_trajectory(target)
-        return {"status": "ERROR", "message": f"Unknown action: {action}"}
+                return TachyonResult.failure("Missing 'target_agent_id'")
+            res = self.engine.analyze_trajectory(target)
+            return TachyonResult.success(res)
+        return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)

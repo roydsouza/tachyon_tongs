@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:a4e5b5c622483d8f9071761f4b92cb5e4a45a98ecbf34787f667a9f568e3e46f",
-  "signature": "hmac:2a98873d27e870d8d8cc66cfab26ede8a7e47fe7be3225568b1d4c6833fb3d18",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0024-agent-consolidation.md.sig"
-  }
+  "signature": "ed25519:633729ae0d5f815e7205ed06783671571665a5dff16a4de8601331ae9c0cd09c2a0e7bf6103fb9c3797318495c30748e25a9298fa0f8d1478e38be8c14c7f006",
+  "timestamp": "2026-03-27T20:29:57.646208",
+  "algorithm": "hybrid-pqc"
 }

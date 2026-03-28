@@ -12,9 +12,9 @@ class SupplyChainOracle:
     Enforces SLSA Level 3 attestations for all substrate imports.
     Binds package provenance to the Hybrid Root.
     """
-    def __init__(self):
+    def __init__(self, integrity_manager: Optional[IntegrityManager] = None):
         self.state = StateManager()
-        self.integrity = IntegrityManager()
+        self.integrity = integrity_manager or IntegrityManager()
 
     def attest_package(self, package_name: str, provenance: Dict[str, Any], signature: str) -> bool:
         """

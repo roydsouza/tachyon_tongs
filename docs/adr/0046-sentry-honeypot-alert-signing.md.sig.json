@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:a971fc6f5f7fcbab09bfd8d4e97f7f1064718d79b65b94f0aa91be5bbf033a33",
-  "signature": "hmac:22c11c7e66d70ae2ca53559b9618798c188b005d8af429e2a5170159924da00c",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0046-sentry-honeypot-alert-signing.md.sig"
-  }
+  "signature": "ed25519:c3f4a7d99c781f91b68efb3491d2f4a4df4cb2e360c199e994f1984f4dd2583b0c49e375504922fdcc5511bb6cf3dfc5edb4b1e845886193e03acc39b14abc05",
+  "timestamp": "2026-03-27T20:29:57.683980",
+  "algorithm": "hybrid-pqc"
 }

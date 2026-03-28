@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:b3aa83996644d9ff8d570b57f908b537948882c4f144a3cbd727a8043276c56e",
-  "signature": "hmac:eaa753c449db9b14e798938a0330ee94f26d40f1cce7361eab19df744f3c4547",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0064-automated-sbom-attestation.md.sig"
-  }
+  "signature": "ed25519:1fdd59670bf14972f00b4c9f638fc106c3040461c5a23121f1355461249bfeae33fda41b1594114218a2335fb47bcd707914c5e0763b10128cdfcd204b438308",
+  "timestamp": "2026-03-27T20:29:57.679892",
+  "algorithm": "hybrid-pqc"
 }

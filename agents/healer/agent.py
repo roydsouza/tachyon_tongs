@@ -48,7 +48,9 @@ class HealerPlugin(BaseAgentPlugin):
         print(f"[{self.agent_id}] HEALER_TRIAGE: Triage started for violation reported by {sender}.")
         # Logic to trigger auto-reversion or deep-clean would go here
 
-    def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
+        from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "triage":
-            return self.engine.analyze_remediation(parameters)
-        return {"status": "error", "message": f"Unknown action: {action}"}
+            res = self.engine.analyze_remediation(parameters)
+            return TachyonResult.success(res)
+        return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)

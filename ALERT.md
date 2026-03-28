@@ -2,6 +2,48 @@
 
 This file tracks critical violations and integrity failures. The newest alerts appear at the top.
 
+## [QUARANTINE_VIOLATION] 2026-03-27 20:35:51
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Found 1 insecure artifacts in quarantine.
+
+---
+
+## [QUARANTINE_VIOLATION] 2026-03-27 20:35:06
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Found 1 insecure artifacts in quarantine.
+
+---
+
+## [QUARANTINE_VIOLATION] 2026-03-27 20:34:14
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Found 2 insecure artifacts in quarantine.
+
+---
+
+## [QUARANTINE_VIOLATION] 2026-03-27 20:33:49
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Found 3 insecure artifacts in quarantine.
+
+---
+
+## [QUARANTINE_VIOLATION] 2026-03-27 20:33:31
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Found 3 insecure artifacts in quarantine.
+
+---
+
+## [INTEGRITY_VIOLATION] 2026-03-27 18:47:50
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> INTEGRITY FAILURE: No detached signature found for /dev/null.
+
+---
+
 ## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-27 16:20:22
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**

@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:73817c85444baca87536887f1b411ba2f2635c5db84a4f5e8d9bc818128089db",
-  "signature": "hmac:340feaed82f03ca6374efd10e3ded0df85db654217c7c769d450a66930b8480d",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0057-mutant-lock-service-integration.md.sig"
-  }
+  "signature": "ed25519:a0e13e04693ac63ea9b56f66479cfa99bc57f85c3cadb29914e19706dc930abd18b1ab8e8134fd2786bb108a435a7c19ba681815c4df6cfdd291858254c3be01",
+  "timestamp": "2026-03-27T20:29:57.665825",
+  "algorithm": "hybrid-pqc"
 }

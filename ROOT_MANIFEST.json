@@ -1,6 +1,5 @@
 {
+  "root_public_key": "8f382edbb249f10eeb4c30ae8de3d40b212a83456271135bf6a5358148470458",
   "version": "1.0",
-  "root_public_key": "9014456f5a0fce170b4783295b8ce2fbea31135250f80cf74ce7f81f99f6412e",
-  "created_at": "2026-03-26T21:49:21.059904",
-  "attestation": "HARDWARE_BOUND_ED25519"
+  "comment": "Tachyon Tongs Root of Trust (Ed25519)"
 }

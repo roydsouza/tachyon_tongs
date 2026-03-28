@@ -25,13 +25,13 @@ class HeraldPlugin(BaseAgentPlugin):
         # Future: Add Slack/Signal dispatchers from config
 
     def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "aggregate_summary":
             all_events = self._collect_all()
-            return {
-                "status": "SUCCESS",
+            return TachyonResult.success({
                 "event_count": len(all_events),
                 "summary": all_events
-            }
+            })
         
         if action == "relay_new_events":
             new_events = self._get_new_events()
@@ -54,9 +54,9 @@ class HeraldPlugin(BaseAgentPlugin):
                     # M-09: Sanitize before dispatching to external channels
                     sanitized_event = self._sanitize_event(event)
                     dispatcher.dispatch(sanitized_event)
-            return {"status": "SUCCESS", "relayed_count": len(new_events)}
+            return TachyonResult.success({"relayed_count": len(new_events)})
 
-        return {"status": "ERROR", "message": f"Unknown action: {action}"}
+        return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)
 
     def _sanitize_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
         """Signal Purification: Strips newlines and truncates URLs (M-09)."""

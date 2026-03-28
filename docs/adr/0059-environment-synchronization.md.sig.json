@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:6b88dd53352d890d060d18cf72250369669982ca060f75af3a228bdca21a1991",
-  "signature": "hmac:9337ea6429d40d46c15c7211824a46df6d4ca4a7060a9d5c3e4236a2444c0277",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0059-environment-synchronization.md.sig"
-  }
+  "signature": "ed25519:a96e3e1e4101ede1a50e897de14eba6aa6f895f62d3e9d37babf48ed53a476c86141000c0ae1d7e1f16c12eec48887d899548d6015f625c65a24d967092bc505",
+  "timestamp": "2026-03-27T20:29:57.672211",
+  "algorithm": "hybrid-pqc"
 }

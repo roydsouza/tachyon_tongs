@@ -158,11 +158,19 @@ class IntegrityManager:
             "algorithm": "hybrid-pqc"
         }
         
+        import tempfile
         sig_path = f"{filepath}.sig.json"
-        with open(sig_path, 'w') as sf:
-            json.dump(sig_data, sf, indent=2)
-            sf.flush()
-            os.fsync(sf.fileno())
+        fd, tmp_sig_path = tempfile.mkstemp(dir=os.path.dirname(sig_path), prefix=".tmp_sig_")
+        try:
+            with os.fdopen(fd, 'w') as sf:
+                json.dump(sig_data, sf, indent=2)
+                sf.flush()
+                os.fsync(sf.fileno())
+            os.replace(tmp_sig_path, sig_path)
+        except Exception as e:
+            if os.path.exists(tmp_sig_path):
+                os.remove(tmp_sig_path)
+            raise e
 
         # Extract filename only in telemetry to limit size
         fname = os.path.basename(filepath)

@@ -70,7 +70,7 @@ class TachyonEventBus:
             certificate: The agent's delegation certificate (JSON)
         """
         timestamp = timestamp or datetime.now().isoformat()
-        payload_json = json.dumps(payload, sort_keys=True)
+        payload_json = json.dumps(payload, sort_keys=True, separators=(',', ':'))
         certificate_json = json.dumps(certificate) if certificate else None
         
         with self._get_connection() as conn:

@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:a2fc576163b871da328a2982c8ef9e1d84af312ce6e841ecd0860368724cc087",
-  "signature": "hmac:022dbe18dec3412ebd37b0e20657ea15158e8876b5045ef0e837b069fdde1724",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0003-standardize-directory-structure.md.sig"
-  }
+  "signature": "ed25519:540c44e6a3e751111eb6f4a0b74816684580fe663249386359d6190dabd8c9b0266c55e3257dca6b3cfd1ec89915fbdd7588e3776e609fe8147aba44c5a89f07",
+  "timestamp": "2026-03-27T20:29:57.635705",
+  "algorithm": "hybrid-pqc"
 }

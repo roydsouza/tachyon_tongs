@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:b0c548801d37a5b24011c97a9d44bae664d6c19b85c7d5f6f571bd96d52f520e",
-  "signature": "hmac:893ccde0f0d863464301ce29f7b8c59aea8f18f56102b91c6d627d0a4c8b4581",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0010-metadata-pdp-and-audit-ledger.md.sig"
-  }
+  "signature": "ed25519:57d5fc7d026e769e6431eedb0019a422311d5526cc514c69078b834dd4bed323e39a89f2073ce2f257ac4b9dac97c97a19e05a28f58250a4bff287330d8c3906",
+  "timestamp": "2026-03-27T20:29:57.696552",
+  "algorithm": "hybrid-pqc"
 }

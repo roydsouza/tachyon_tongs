@@ -1,5 +1,35 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+### 2026-03-28: Tech Debt Resolution & Substrate Resilience (TD-01, TD-02, TD-04) — COMPLETE
+- **Objective**: Standardize agent results, eliminate mock-dependency in core security tests, and harden substrate against environmental chaos.
+- **Status**: [COMPLETE]
+- **Tasks Completed**:
+  - **[TD-01] Integration Testing**:
+    - **Files Modified**: `tests/integration/test_substrate_loop.py` [NEW], `agents/_core/base.py`, `tachyon/core/keys/certificates.py`, `tachyon/core/keys/hybrid.py`.
+    - **Test Added**: `tests/integration/test_substrate_loop.py::test_full_security_loop_no_mocks`.
+    - **Test Result**: `PASS` (Verified with real PQC keys and live event bus).
+  - **[TD-02] Monadic Migration**:
+    - **Files Modified**: `tachyon/core/results.py` [NEW], `agents/guardian/agent.py`, `agents/healer/agent.py`, `agents/sentry/agent.py`, `agents/auditor/agent.py`, `agents/_core/base.py`.
+    - **Test Added**: `tests/integration/test_substrate_loop.py::test_result_monad_behavior`.
+    - **Test Result**: `PASS` (Verified status-propagation from Healer and Guardian).
+  - **[TD-04] Chaos Engineering**:
+    - **Files Modified**: `tests/chaos/test_resilience.py` [NEW], `tachyon/core/signing.py`, `tachyon/core/keys/operations.py`.
+    - **Test Added**: `tests/chaos/test_resilience.py::test_disk_full_resilience`, `test_database_corruption_resilience`.
+    - **Test Result**: `PASS` (Verified atomic sig-writes and fail-closed state corruption detection).
+- **Additional Issues Found**:
+  - `KeychainProvider` incorrectly enforced hardware-key checks in `TACHYON_TEST_MODE=1` (Fixed).
+  - `BaseAgentPlugin` was signing events with Root Key instead of recruited Delegated Identity (Fixed).
+  - `GuardianPlugin` was re-initializing `IntegrityManager`, losing test-mode overrides (Fixed).
+  - `liboqs` initialization error in `hybrid.py` caused hidden import failures (Fixed).
+- **Regression Status**: `4 passed, 2 warnings in 0.84s`.
+  - `test_full_security_loop_no_mocks` [PASS]
+  - `test_result_monad_behavior` [PASS]
+  - `test_disk_full_resilience` [PASS]
+  - `test_database_corruption_resilience` [PASS]
+- **ADR Created**:
+  - **ADR-0075**: Type-Safe TachyonResult Monad for Agentic Actions.
+  - **ADR-0076**: Atomic Integrity Recovery for Environmental Chaos.
+
 ### 2026-03-27: Medium Severity Audit Mitigation (M-01 to M-09) — COMPLETE
 - **Objective**: Remediate reliability, robustness, and peripheral security gaps (Circuit Breakers, Recursive Verifiers, Role Validation).
 - **Status**: [COMPLETE]

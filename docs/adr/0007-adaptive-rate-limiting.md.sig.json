@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:a2bc8d82d96f238a2a4ddc8f8e3495fe9626e2853212f644b9bd42b69d303bfd",
-  "signature": "hmac:d20257788c4bc0a40214eb6018e6b36b89ebc09df87fd19ea7c06b7ab1638ebe",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0007-adaptive-rate-limiting.md.sig"
-  }
+  "signature": "ed25519:a666b35a32b58245c1f18bd80e9c1dd3677b3ac2fbc764d3f5fe4a80341597d3f53f912fc70b30d15ef9a5d36f0fc3514381eaef05f8b4912cd06a820a8fb505",
+  "timestamp": "2026-03-27T20:29:57.685588",
+  "algorithm": "hybrid-pqc"
 }

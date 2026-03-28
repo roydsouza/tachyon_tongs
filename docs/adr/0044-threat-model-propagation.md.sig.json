@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:64c7d2111c6a9a4aced2ced2cf50c7c45686c4d98a2522f1dbaba40606e26570",
-  "signature": "hmac:495a3a5bacd735f72885be1df2d12e1d73077ee98ae9749f9f50cddbebfe4d2c",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0044-threat-model-propagation.md.sig"
-  }
+  "signature": "ed25519:a3f04ee0089716fdca2fb4c8f45145ccc79ac5593efb09d6a93c1665c38f465f8dcc6d777cf072a0821cea368dfb8352597d51f4c75a7d8fc914e7c4b909400f",
+  "timestamp": "2026-03-27T20:29:57.681494",
+  "algorithm": "hybrid-pqc"
 }

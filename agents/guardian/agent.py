@@ -11,18 +11,27 @@ class GuardianPlugin(BaseAgentPlugin):
     """
     def __init__(self, agent_id: str, config: Dict[str, Any]):
         super().__init__(agent_id, "Guardian", config)
-        self.integrity_manager = IntegrityManager()
-        self.im = self.integrity_manager # Phase 33 compatibility alias
+        self.integrity_manager = self.im
 
-    def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
+        from tachyon.core.results import TachyonResult, TachyonStatus
+        
         if action == "verify_file":
             filepath = parameters.get("filepath")
             if not filepath:
-                return {"status": "ERROR", "message": "filepath required"}
+                return TachyonResult.failure("filepath required")
             
             # Ensure absolute path for deterministic verification
             abs_path = os.path.abspath(filepath)
-            is_valid = self.integrity_manager.verify_integrity(abs_path)
+            try:
+                is_valid = self.integrity_manager.verify_integrity(abs_path)
+            except Exception as e:
+                # TD-02: Map exception to TachyonResult(status=DENIED)
+                return TachyonResult(
+                    status=TachyonStatus.DENIED,
+                    error=f"Integrity Violation: {str(e)}",
+                    data={"is_valid": False, "filepath": abs_path}
+                )
             
             # Mutant Lock Bypass: Check if mutation is authorized
             from tachyon.core.state import StateManager
@@ -31,19 +40,16 @@ class GuardianPlugin(BaseAgentPlugin):
             
             if not is_valid and is_authorized:
                 # Downgrade to informational warning instead of failure
-                return {
-                    "status": "WARNING",
-                    "is_valid": False,
-                    "authorized_mutation": True,
-                    "filepath": abs_path,
-                    "message": "Integrity mismatch detected, but authorized Mutant Lock is active. Suppression engaged."
-                }
+                return TachyonResult(
+                    status=TachyonStatus.SUCCESS, # Authorized error is still a success for the agent
+                    error="Integrity mismatch detected, but authorized Mutant Lock is active. Suppression engaged.",
+                    data={"is_valid": False, "authorized_mutation": True, "filepath": abs_path}
+                )
 
-            return {
-                "status": "SUCCESS" if is_valid else "FAILURE",
-                "is_valid": is_valid,
-                "filepath": abs_path
-            }
+            if is_valid:
+                return TachyonResult.success({"is_valid": True, "filepath": abs_path})
+            else:
+                return TachyonResult.failure(f"Integrity violation: {abs_path}", status=TachyonStatus.DENIED)
         
         if action == "verify_substrate":
             # Phase 30: Full substrate sweep using git ls-files
@@ -85,23 +91,22 @@ class GuardianPlugin(BaseAgentPlugin):
                     
                     if state.is_mutant_lock_active():
                         print("[Guardian Debug] Authorized mutation in progress. Suppressing alert.")
-                        return {
-                            "status": "WARNING",
-                            "violations": violations,
-                            "authorized_mutation": True,
-                            "message": "Integrity violations detected, but authorized Mutant Lock is active. Suppression engaged."
-                        }
+                        return TachyonResult(
+                            status=TachyonStatus.ERROR,
+                            error="Integrity violations detected, but authorized Mutant Lock is active. Suppression engaged.",
+                            data={"violations": violations, "authorized_mutation": True}
+                        )
                     
                     if len(violations) > 5:
                         msg += f" (and {len(violations) - 5} more)"
                         
                     state.emit_alert("STATE_COMPROMISED", msg)
-                    return {"status": "FAILURE", "violations": violations}
+                    return TachyonResult.failure(msg, status=TachyonStatus.FATAL, data={"violations": violations})
                 
-                return {"status": "SUCCESS", "checked_count": len(tracked_files)}
+                return TachyonResult.success({"checked_count": len(tracked_files)})
             except Exception as e:
                 from tachyon.core.state import StateManager
                 StateManager().emit_alert("GUARDIAN_ERROR", f"Failed full substrate sweep: {str(e)}")
-                return {"status": "ERROR", "message": str(e)}
+                return TachyonResult.failure(str(e))
         
-        return {"status": "ERROR", "message": f"Unknown action: {action}"}
+        return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)

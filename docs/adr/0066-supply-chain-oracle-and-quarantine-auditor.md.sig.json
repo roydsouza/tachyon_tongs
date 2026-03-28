@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:d30985690a9a3188ff1d0678492ace021dd1cdcc7293505eb6966cfc14e54c29",
-  "signature": "hmac:97960d56d8bb7381b1e6fa494abcd3b9ea469fe60842f6987962d1e3305b6058",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0066-supply-chain-oracle-and-quarantine-auditor.md.sig"
-  }
+  "signature": "ed25519:29b3abc46740d61849219aa46b9b789a1f5213a334b1b3c31a4366fc40df90d03382c3de7557b12d94b496daa5fd11d5ec7b67a154c3e6a2eac158b0e7f3db03",
+  "timestamp": "2026-03-27T20:29:57.675926",
+  "algorithm": "hybrid-pqc"
 }

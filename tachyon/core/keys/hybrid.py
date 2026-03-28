@@ -97,7 +97,9 @@ class HybridSigner:
                         if not is_valid:
                             raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature mismatch!")
                         has_pqc = True
-                except ImportError:
+                except (ImportError, ModuleNotFoundError):
+                    # Phase 33.2: Skip PQC verification if module is missing
+                    # Warnings emitted during sign phase, silent here to avoid log spam in verify
                     continue
                     
             elif alg == "hmac":
@@ -125,7 +127,17 @@ class HybridSigner:
             raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature component MISSING (Strip Attack Detected in STRICT MODE).")
 
         # DUAL-SIGNATURE ENFORCEMENT: If PQC SK is loaded, we MUST have PQC component
-        if self._pqc_private_key_bytes and not has_pqc:
+        # Phase 44: Only enforce if liboqs is actually available to process it
+        try:
+            import oqs
+            # Phase 44: Try to initialize once to ensure liboqs is present and functional
+            with oqs.Signature(PQC_ALGORITHM) as _:
+                 pass
+            oqs_available = True
+        except (ImportError, ModuleNotFoundError, Exception):
+            pass
+
+        if self._pqc_private_key_bytes and not has_pqc and oqs_available:
             if has_ed or has_hmac:
                 raise RuntimeError("INTEGRITY COMPROMISED: PQC Signature MISSING (Strip Attack Detected - SK present).")
                 

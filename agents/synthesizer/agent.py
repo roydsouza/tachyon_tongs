@@ -16,9 +16,12 @@ class SynthesizerPlugin(BaseAgentPlugin):
         self.cedar = CedarEngine()
         self.rego = RegoEngine()
 
-    def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
+        from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "synthesize_cedar":
-            return self.cedar.generate_policy(parameters.get("intent", ""))
+            res = self.cedar.generate_policy(parameters.get("intent", ""))
+            return TachyonResult(status=TachyonStatus.NOT_IMPLEMENTED, data=res)
         if action == "synthesize_rego":
-            return self.rego.generate_policy(parameters.get("intent", ""))
-        raise ValueError(f"Unknown action for Synthesizer: {action}")
+            res = self.rego.generate_policy(parameters.get("intent", ""))
+            return TachyonResult(status=TachyonStatus.NOT_IMPLEMENTED, data=res)
+        return TachyonResult.failure(f"Unknown action for Synthesizer: {action}", status=TachyonStatus.NOT_IMPLEMENTED)

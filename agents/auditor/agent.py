@@ -16,16 +16,21 @@ class AuditorPlugin(BaseAgentPlugin):
     """
     def __init__(self, agent_id: str, plugin_name: str, config: Dict[str, Any] = None):
         super().__init__(agent_id, plugin_name, config or {})
-        self.oracle = SupplyChainOracle()
+        # Use the same integrity manager for Oracle and State operations
+        self.oracle = SupplyChainOracle(integrity_manager=self.im)
         self.state = StateManager()
+        self.state.integrity = self.im
 
-    def execute_action(self, action: str, parameters: Dict[str, Any] = None) -> Dict[str, Any]:
+    def execute_action(self, action: str, parameters: Dict[str, Any] = None) -> TachyonResult:
+        from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "audit_supply_chain":
-            return self.audit_supply_chain()
+            res = self.audit_supply_chain()
+            return TachyonResult.success(res)
         elif action == "audit_quarantine":
-            return self.audit_quarantine()
+            res = self.audit_quarantine()
+            return TachyonResult.success(res)
         else:
-            return {"status": "ERROR", "message": f"Action '{action}' not recognized by Auditor."}
+            return TachyonResult.failure(f"Action '{action}' not recognized by Auditor.", status=TachyonStatus.NOT_IMPLEMENTED)
 
     def get_capabilities(self) -> List[str]:
         return ["audit_supply_chain", "audit_quarantine"]
@@ -64,17 +69,16 @@ class AuditorPlugin(BaseAgentPlugin):
         violations = []
         for root, _, files in os.walk(quarantine_dir):
             for f in files:
-                if f.endswith(".sig"): continue
+                # Support both V1 (.sig) and V2 (.sig.json) signature formats
+                if f.endswith(".sig") or f.endswith(".sig.json"): 
+                    continue
                 fpath = os.path.join(root, f)
                 
-                # Check for detached signature
-                if not os.path.exists(fpath + ".sig"):
-                    violations.append({"file": f, "reason": "MISSING_SIGNATURE"})
-                    continue
-                
-                # Verify signature
+                # Verify signature using the agent's pre-configured integrity manager
                 try:
-                    IntegrityManager().verify_integrity(fpath)
+                    is_valid = self.im.verify_integrity(fpath)
+                    if not is_valid:
+                        violations.append({"file": f, "reason": "INTEGRITY_FAILURE", "detail": "Verification returned False"})
                 except Exception as e:
                     violations.append({"file": f, "reason": "INTEGRITY_FAILURE", "detail": str(e)})
 

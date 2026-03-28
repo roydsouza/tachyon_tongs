@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:23e0a1a07089e3c9f7e0fcebcc3336aff8949cac9caa83787eceb7f7a5cb1837",
-  "signature": "hmac:0a057a3cda42c94f2c83e44df9a2d7c8ac3c2492931946f2158182df84d0c292",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0016-aggregate-security-hardening.md.sig"
-  }
+  "signature": "ed25519:f17d52b59543d3c9508286c9a8df87331ef7186a2578d874d99294c60ca5ad1ea2093e2ab5b60b844a9b4c6f19cb5980d52aff65c7ddbf3574978cae6ae7d003",
+  "timestamp": "2026-03-27T20:29:57.657326",
+  "algorithm": "hybrid-pqc"
 }

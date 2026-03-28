@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:7034b6555b7f09ae05a4432cce3eee0e4b098b76b0270da88412a9b4b56e0252",
-  "signature": "hmac:bc1de028680243e3bec78fa8b691fd5053d4599630211843141b424e2ac9f801",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0030-signal-purification-via-mutant-lock.md.sig"
-  }
+  "signature": "ed25519:6d0c1e72e35f971d7958908b450735e7257165ae0785907faa3f8da0251fa81bed38c527cf558ff852b43b6732c9bdd416f573bea6d7ed8999111a4ec3031c0b",
+  "timestamp": "2026-03-27T20:29:57.652445",
+  "algorithm": "hybrid-pqc"
 }

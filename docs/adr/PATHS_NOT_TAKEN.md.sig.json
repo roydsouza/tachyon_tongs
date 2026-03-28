@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:0b8ae14f747a97b8500fa9741a72770dd5b306e36f3b9bb6dd383517760c1138",
-  "signature": "hmac:002cf3495a5116773292638e35b391c3bc34052474b1bc4c6d36be94706717a0",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/PATHS_NOT_TAKEN.md.sig"
-  }
+  "signature": "ed25519:712e4b6c9b71419b93825bea15bfd3d4217263bbb135747147b38c5064e6453846f43b414d80fe7c687db8ac906aff6c7400ee1dac530671ded4cf7812addc01",
+  "timestamp": "2026-03-27T20:29:57.647799",
+  "algorithm": "hybrid-pqc"
 }

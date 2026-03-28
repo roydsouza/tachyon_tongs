@@ -68,21 +68,21 @@ class ScoutPlugin(BaseAgentPlugin):
             )
             print(f"[{self.agent_id}] Strategic insights emitted to EventBus.")
 
-    def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
+        from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "scout":
             intel = self.scour_web()
             self.analyze_and_persist(intel)
-            return {"status": "SUCCESS", "message": "Scouting and analysis complete."}
+            return TachyonResult.success({"message": "Scouting and analysis complete."})
         
         if action == "scout_network":
             target = parameters.get("target", "localhost")
-            return {
-                "status": "NOT_IMPLEMENTED",
-                "target": target,
-                "message": "Scout network reconnaissance is not yet implemented."
-            }
+            return TachyonResult(
+                status=TachyonStatus.NOT_IMPLEMENTED,
+                data={"target": target, "message": "Scout network reconnaissance is not yet implemented."}
+            )
         
-        return {"status": "ERROR", "message": f"Unknown action: {action}"}
+        return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)
 
     def get_metadata(self) -> Dict[str, Any]:
         metadata = super().get_metadata()

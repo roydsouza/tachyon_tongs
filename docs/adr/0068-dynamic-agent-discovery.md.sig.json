@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:add16adb2b9a603fbd39b4a3e5f039185c7d9d9d5e4309a4f4bafedad288d019",
-  "signature": "hmac:141306ec9b8751dd7592f1a87503301f5623683a64e250c93f24da0af355ea3e",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0068-dynamic-agent-discovery.md.sig"
-  }
+  "signature": "ed25519:ea2a0c2ee937ace16642c07f8b3c1813afbde9f08d49da0523596551c78ef2142d74d2aaeb4a09a48a22fe42211801efa2c646faae1affd960fb42e2a9404103",
+  "timestamp": "2026-03-27T20:29:57.644562",
+  "algorithm": "hybrid-pqc"
 }

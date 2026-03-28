@@ -13,7 +13,8 @@ class EngineerPlugin(BaseAgentPlugin):
         super().__init__(agent_id, "Engineer", config)
         self.patcher = AutoPatcher()
 
-    def execute_action(self, action: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
+        from tachyon.core.results import TachyonResult, TachyonStatus
         if action == "apply_and_test":
             from tachyon.core.state_manager import StateManager
             state = StateManager()
@@ -25,29 +26,32 @@ class EngineerPlugin(BaseAgentPlugin):
             )
             
             try:
-                result = self.patcher.apply_and_test(
+                result_raw = self.patcher.apply_and_test(
                     patch_files=parameters.get("patch_files", []),
                     test_file_path=parameters.get("test_path", "tests/integration/test_patch.py"),
                     test_content=parameters.get("test_code", ""),
                     cve_id=parameters.get("cve_id", "manual-patch")
                 )
                 
-                if result.get("status") == "SUCCESS":
+                if result_raw.get("status") == "SUCCESS":
                     self.bus.emit_event(
                         topic="ENGINEER_PATCH_COMPLETED",
                         agent_id=self.agent_id,
-                        payload={"cve_id": parameters.get("cve_id", "manual-patch"), "details": result.get("details")},
+                        payload={"cve_id": parameters.get("cve_id", "manual-patch"), "details": result_raw.get("details")},
                         certificate=self.certificate
                     )
+                    return TachyonResult.success(result_raw)
                 else:
+                    error_msg = result_raw.get("error", "Unknown Patch Error")
                     self.bus.emit_event(
                         topic="ENGINEER_TEST_FAILURE",
                         agent_id=self.agent_id,
-                        payload={"cve_id": parameters.get("cve_id", "manual-patch"), "error": result.get("error")},
+                        payload={"cve_id": parameters.get("cve_id", "manual-patch"), "error": error_msg},
                         certificate=self.certificate
                     )
-                return result
+                    return TachyonResult.failure(error_msg, data=result_raw)
             finally:
                 # Always release the lock to prevent blocking legitimate Guardian oversight
                 state.release_mutant_lock(lock_id)
-        raise ValueError(f"Unknown action for Engineer: {action}")
+        
+        return TachyonResult.failure(f"Unknown action for Engineer: {action}", status=TachyonStatus.NOT_IMPLEMENTED)

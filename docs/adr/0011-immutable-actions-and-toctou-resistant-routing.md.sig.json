@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:d8e4b5a891d4c468d7aa2455b77e8b9fefe5366f401cd62de52093709fddbf12",
-  "signature": "hmac:f20786afb12614a0a7b34af4c8272d3a9843d5a03c283f91363826ea38592cfc",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0011-immutable-actions-and-toctou-resistant-routing.md.sig"
-  }
+  "signature": "ed25519:25bba1161e7bf1eb0d9a904b6304b4992f28a4c1d6d38c3f16c19706e11ce2ba8e989adaa8d10138463286d949ea874265651c8e72b5bcca9788f5f8fc5cb708",
+  "timestamp": "2026-03-27T20:29:57.686944",
+  "algorithm": "hybrid-pqc"
 }

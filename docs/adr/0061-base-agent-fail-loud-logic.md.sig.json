@@ -1,11 +1,7 @@
 {
   "version": "2.0",
   "hash": "sha256:629b075eaf8e82b82dd44f72c4109780a5ef3b268bd875fdf284613fe6b9715d",
-  "signature": "hmac:4e21fa70a2c7bc612c171f1609400516b802da47c05a145dbccd3d262d45d48a",
-  "timestamp": "2026-03-27T16:00:00Z",
-  "algorithm": "hybrid-pqc",
-  "metadata": {
-    "migration": "v1_to_v2",
-    "original_sig": "/Users/rds/antigravity/tachyon_tongs/docs/adr/0061-base-agent-fail-loud-logic.md.sig"
-  }
+  "signature": "ed25519:ccb133579e435f9acda943e4ca65cfaafe5eae0f0bdfe16e59b47821e94131aeeb02b398131c92ba028aa0bb96e38237b51fc63135208dd763a294bdf637910d",
+  "timestamp": "2026-03-27T20:29:57.634985",
+  "algorithm": "hybrid-pqc"
 }
