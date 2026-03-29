@@ -2,12 +2,15 @@ import urllib.request
 import urllib.parse
 import json
 import os
+import logging
 import requests
 import time
 from typing import List, Optional, Tuple
 from dataclasses import dataclass
 
 from tachyon.enforcement.network import NetworkPolicy
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class FetchResult:
@@ -30,28 +33,58 @@ class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
     def http_error_308(self, req, fp, code, msg, headers): return None
 
 class SafeFetch:
-    def __init__(self, agent_id: str = "default", rego_mock=False, allowed_domains=None, denylist=None):
+    """
+    Capability-wrapped HTTP fetch with multi-layer security enforcement.
+    
+    TT-2026-003 FIX: rego_mock parameter REMOVED from constructor.
+    Mock mode is now ONLY activatable via TACHYON_TEST_MODE=1 env var.
+    
+    TT-2026-005 FIX: Alert delivery now has try/except fallback.
+    """
+    
+    def __init__(self, agent_id: str = "default", allowed_domains=None, denylist=None):
         """
         Initializes the SafeFetch capability firewall.
         Queries the local OPA server to enforce `tool_access.rego`.
+        
+        TT-2026-003: rego_mock parameter has been REMOVED.
+        Use TACHYON_TEST_MODE=1 environment variable for testing.
         """
         self.agent_id = agent_id
-        self.rego_mock = rego_mock
         self.allowed_domains = allowed_domains
         self.denylist = denylist
         self.max_redirects = 3
         # Standardized Tachyon Tongs OPA Port is 9181
         self.opa_url = "http://localhost:9181/v1/data/authz/tools/allow_fetch"
 
+        self._TEST_ALLOWED_DOMAINS = frozenset()
+
+        # TT-2026-003 FIX: Mock mode gated by environment variable ONLY
+        self.rego_mock = os.getenv("TACHYON_TEST_MODE") == "1"
+        if self.rego_mock:
+            logger.warning(
+                f"SafeFetch initialized in TEST MODE for agent '{agent_id}'. "
+                f"OPA validation is DISABLED. Never use this in production!"
+            )
+            # C-08: Load mock domains from fixture instead of hardcoding
+            fixture_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../tests/fixtures/mock_domains.json"))
+            if os.path.exists(fixture_path):
+                try:
+                    with open(fixture_path, "r") as f:
+                        self._TEST_ALLOWED_DOMAINS = frozenset(json.load(f))
+                    logger.info(f"[SafeFetch] Loaded {len(self._TEST_ALLOWED_DOMAINS)} mock domains from {fixture_path}")
+                except Exception as e:
+                    logger.error(f"[SafeFetch] Failed to load mock domains fixture: {e}")
+
         # Load Domain Reputation Config
         self.reputation_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../configs/domain_reputation.json"))
         self.reputation_data = {}
         if os.path.exists(self.reputation_path):
-            with open(self.reputation_path, "r") as f:
-                self.reputation_data = json.load(f)
-
-        # Hardcoded fallback for tests if rego_mock is explicitly True
-        self.mock_allowed = ["google.com", "cisa.gov", "github.com", "nvd.nist.gov", "arxiv.org", "huntr.ml", "lmsys.org", "owasp.org"]
+            try:
+                with open(self.reputation_path, "r") as f:
+                    self.reputation_data = json.load(f)
+            except Exception as e:
+                logger.error(f"[SafeFetch] Failed to load domain reputation config: {e}")
 
     def _evaluate_intent(self, target_url: str) -> bool:
         """Evaluates the payload against the intent policy via OPA and Reputation."""
@@ -72,14 +105,29 @@ class SafeFetch:
                 if NetworkPolicy.is_ip_private(ip):
                     return False # Block private IP ranges
 
-            # 3. Integrated Supply Chain Whitelist Check (Phase 22 Hardening)
+            # 3. Supply Chain Whitelist Check (always runs, TT-2026-005 hardened)
             if not self.rego_mock:
                 from tachyon.core.state import StateManager
-                if not StateManager().is_package_whitelisted(domain):
-                     # Phase 47: Fail-Loud Supply Chain Violation (ADR-0062)
-                     msg = f"Unauthorized fetch attempted to domain '{domain}' by agent '{self.agent_id}'. Blocked by Supply Chain Whitelist."
-                     StateManager().emit_alert("SUPPLY_CHAIN_VIOLATION", msg)
-                     return False
+                try:
+                    state_mgr = StateManager()
+                    if not state_mgr.is_package_whitelisted(domain):
+                        msg = (
+                            f"Unauthorized fetch attempted to domain '{domain}' "
+                            f"by agent '{self.agent_id}'. Blocked by Supply Chain Whitelist."
+                        )
+                        # TT-2026-005 FIX: Guaranteed alert delivery with fallback
+                        try:
+                            state_mgr.emit_alert("SUPPLY_CHAIN_VIOLATION", msg)
+                        except Exception as alert_err:
+                            logger.critical(
+                                f"ALERT DELIVERY FAILED: Supply chain violation for "
+                                f"domain '{domain}' by agent '{self.agent_id}': {alert_err}"
+                            )
+                        return False  # Always block regardless of alert success
+                except Exception as e:
+                    # StateManager itself failed — fail-closed
+                    logger.critical(f"[SafeFetch] StateManager failure during whitelist check: {e}")
+                    return False
 
             # 4. Reputation Check (Overrides OPA if score is critical)
             if domain in self.reputation_data:
@@ -88,15 +136,16 @@ class SafeFetch:
                     return False
 
             if self.rego_mock:
-                # If we explicitly pass allowed_domains, only check that list in mock mode.
+                # Test mode: check against explicit allowed_domains or test whitelist
                 if self.allowed_domains is not None:
                     return any(domain == d or domain.endswith("." + d) for d in self.allowed_domains)
                 
-                # Basic pastebin block for simulation
+                # Pastebin block for simulation
                 if domain.endswith("pastebin.com"): return False
-                for allowed in self.mock_allowed:
-                    if domain == allowed or domain.endswith("." + allowed): return True
-                return False
+                return any(
+                    domain == allowed or domain.endswith("." + allowed)
+                    for allowed in self._TEST_ALLOWED_DOMAINS
+                )
 
             # Production: Query the real OPA server
             payload = {
@@ -117,14 +166,19 @@ class SafeFetch:
                 result = response.json().get("result", False)
                 return result
             else:
+                # OPA returned non-200 — fail-closed
+                logger.error(f"[SafeFetch] OPA returned status {response.status_code}")
                 return False
                 
         except requests.exceptions.ConnectionError:
-            # Fallback to mock if OPA is down and we are in dev mode
+            # OPA is unreachable — fail-closed
             if self.rego_mock:
-                return True # Allow for local dev flow if intentional
+                logger.warning("[SafeFetch] OPA unreachable in test mode, allowing request")
+                return True
+            logger.error("[SafeFetch] OPA server unreachable, blocking request (fail-closed)")
             return False
-        except Exception:
+        except Exception as e:
+            logger.error(f"[SafeFetch] Unexpected error in _evaluate_intent: {e}")
             return False
 
     def _check_redirect_bypasses(self, url: str) -> bool:
@@ -137,11 +191,13 @@ class SafeFetch:
         for key in redirect_keys:
             if key in params:
                 for candidate in params[key]:
-                    # If the parameter looks like a URL, check its domain
                     if "://" in candidate or candidate.startswith("//"):
                         inner_parsed = urllib.parse.urlparse(candidate if "://" in candidate else "http:" + candidate)
                         inner_domain = inner_parsed.netloc
-                        if not any(inner_domain == d or inner_domain.endswith("." + d) for d in self.mock_allowed):
+                        if not any(
+                            inner_domain == d or inner_domain.endswith("." + d)
+                            for d in self._TEST_ALLOWED_DOMAINS
+                        ):
                              return False
         return True
 

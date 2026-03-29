@@ -7,8 +7,12 @@ from tachyon.enforcement.apple_sandbox import AppleSandbox
 class TestCompetitiveGap(unittest.TestCase):
     def setUp(self):
         self.sandbox = AppleSandbox()
-        # SafeFetch with mock=True loads our seeded reputation file
-        self.fetcher = SafeFetch(rego_mock=True)
+        # TT-2026-003: Test mode via env var, not constructor param
+        os.environ["TACHYON_TEST_MODE"] = "1"
+        self.fetcher = SafeFetch()
+    
+    def tearDown(self):
+        os.environ.pop("TACHYON_TEST_MODE", None)
 
     def test_domain_reputation_blocking(self):
         """Verify that high-risk domains are blocked by the reputation engine."""

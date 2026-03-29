@@ -1,5 +1,187 @@
 # 🔄 SYNC_LOG: Tachyon Tongs Pulse
 
+---
+
+## 🔑 HANDOFF TO GEMINI FLASH — 2026-03-28T22:54:00Z
+
+### What Just Happened
+A Red Team security audit by Claude (see `feedback/CLAUDE_SECURITY_AUDIT_03_28_1045.md`) found 12 vulnerabilities in the Tachyon Tongs substrate. We triaged all 12 into 4 priority phases in `tasks/TASKS_CLEANUP.md`. **Phase 1 (CRITICAL) and Phase 2 (HIGH) are now COMPLETE** — 9 of 12 tasks done. All tests pass. All hashes verified.
+
+### Current Substrate State
+- **Security Posture**: Fail-closed. The two existential threats (Mutant Lock bypass, SingularityPDP default ALLOW) have been permanently eliminated.
+- **Test Status**: All tests pass — Phase 5 (4/4), Phase 6 (3/3), SSRF (6/6), Alignment (2/2).
+- **SBOM**: All 14 agent hashes verified via `python3 scripts/calibrate_sbom.py --verify`.
+- **Forensic State**: All docs re-signed via `python3 scripts/forensics/resign_docs.py`.
+
+### What's Left For You (3 MEDIUM tasks + 2 ONGOING)
+
+Read the full task specs in `tasks/TASKS_CLEANUP.md` under "Phase 3" and "Phase 4" before starting.
+
+#### [C-07] Policy State Snapshotting — CVSS 6.8
+- **File**: `tachyon/enforcement/router.py`
+- **What**: The `ToolRouter.route()` method freezes request params at line 90 but does NOT snapshot the policy engine's internal state (Rego policies, thresholds, config). An attacker with filesystem access could swap policy files between freeze and evaluation.
+- **How to fix**:
+  1. Add a `get_state_snapshot() -> dict` method to the `PolicyEngine` ABC in `tachyon/policy/engine.py`. It should return a dict with: policy file hashes, threshold values, config version hash.
+  2. In `ToolRouter.route()`, call `snapshot = self.policy_engine.get_state_snapshot()` immediately after the request freeze on line 90.
+  3. Add a `evaluate_with_snapshot(agent_id, action, params, snapshot)` method to `PolicyEngine`, or pass the snapshot as a param to the existing `evaluate()`.
+  4. In `evaluate()`, compare the current state against the snapshot. If they differ, return `Verdict.DENY` with reason "Policy state changed during evaluation (TOCTOU)".
+- **Priority**: Medium. The race window is 10-50ms and requires direct filesystem access. The existing `ImmutableToolRequest` already prevents the more dangerous param-swapping variant.
+
+#### [C-08] Mock Whitelist Cleanup — CVSS 6.2
+- **File**: `tachyon/enforcement/safe_fetch.py`
+- **What**: The `_TEST_ALLOWED_DOMAINS` frozenset is a class-level constant in SafeFetch. It's already gated behind `TACHYON_TEST_MODE=1`, so it's not a direct security risk. But it could drift from actual OPA policy.
+- **How to fix** (OPTIONAL — consider keeping as-is since it's already env-var gated):
+  1. Move `_TEST_ALLOWED_DOMAINS` to `tests/fixtures/mock_domains.json`.
+  2. In SafeFetch `__init__`, load the fixture file only when `self.rego_mock` is True.
+  3. Update tests that rely on the test domain list.
+- **Priority**: Low. The C-04 fix already made this safe. Consider skipping.
+
+#### [C-09] Exception-to-DENIED Disambiguation — CVSS 4.2
+- **File**: `agents/guardian/agent.py` (lines 23-30 in current version)
+- **What**: When `verify_integrity()` throws an exception, the Guardian returns `TachyonStatus.DENIED` with `"verification_error": True` in the data payload (this was PARTIALLY fixed during C-01). Some callers may not check the `verification_error` field and treat all DENIED results the same.
+- **How to fix**:
+  1. Verify the current Guardian code — the C-01 fix already added `"verification_error": True` to the data payload for exception cases. Check if this is sufficient.
+  2. If not, consider splitting into `TachyonStatus.ERROR` (verification system itself crashed) vs `TachyonStatus.DENIED` (file actually failed verification). But be CAREFUL: the fail-closed mandate says errors must block, so both must result in block. The distinction is for forensic logging only.
+- **Priority**: Low. Already partially addressed.
+
+#### [C-11] Startup Health Check Script
+- **What**: Create `scripts/health_check.py` that validates the substrate is ready to run.
+- **How to fix**:
+  1. Create `scripts/health_check.py` that:
+     - Runs `python3 scripts/calibrate_sbom.py --verify` (exits non-zero on mismatch)
+     - Loads `configs/singularity_config.json` and tries to import each configured engine class
+     - Verifies all policy files in `policies/` have valid `.sig` files
+  2. Exit 0 if all checks pass, exit 1 with details if any fail.
+
+#### [C-12] Clear ALERT.md
+- **What**: Now that Phase 1+2 are verified, ALERT.md contains stale pre-remediation entries. Clear it.
+- **How to fix**:
+  1. Read current ALERT.md to note its format.
+  2. Truncate to a clean header (keep the format, just remove old entries).
+  3. Commit the clean state.
+- **THIS IS SAFE TO DO NOW** — Phase 1+2 are verified and all tests pass.
+
+### Mandatory Workflow After Any Code Changes
+After modifying ANY file in `agents/*/`, you MUST run:
+```bash
+python3 scripts/calibrate_sbom.py           # Recalibrate hashes
+python3 scripts/calibrate_sbom.py --verify   # Verify they match
+python3 scripts/forensics/resign_docs.py     # Re-sign all docs
+```
+
+### Tests to Run After Each Fix
+```bash
+export PYTHONPATH=$PYTHONPATH:.
+python3 tests/test_phase5_security.py       # 4 tests (core security)
+python3 tests/test_phase6_evolution.py       # 3 tests (evolution loop)
+TACHYON_TEST_MODE=1 python3 -m pytest tests/test_ssrf_mitigation.py -v  # 6 tests
+TACHYON_TEST_MODE=1 python3 -m pytest tests/test_audit_high.py -v       # 7 tests
+```
+
+### 🚫 DO NOT DO THESE THINGS
+1. **DO NOT reintroduce the Mutant Lock** in any form — no lock, no flag, no env var, no config — that suppresses integrity checks. The correct workflow for modifying agents is: edit → calibrate_sbom.py → resign_docs.py.
+2. **DO NOT use `print()` for error handling**. Use `logging.error()` or `logging.critical()`. Silent `print()` statements in production code have caused recurring blind spots.
+3. **DO NOT add `rego_mock` or any test-mode as a constructor parameter**. Test mode is ONLY via `os.getenv("TACHYON_TEST_MODE") == "1"`.
+4. **DO NOT swallow exceptions silently** (`except: pass` or `except: print()`). Every exception must either re-raise, return a DENY result, or log at `logging.critical()`.
+5. **DO NOT default to ALLOW** when engines are missing, configs are broken, or errors occur. The substrate is fail-closed: when in doubt, DENY.
+
+### Key Files Reference
+| File | Purpose |
+|------|---------|
+| `tasks/TASKS_CLEANUP.md` | Full task specs with remaining Phase 3/4 work |
+| `scripts/calibrate_sbom.py` | SBOM hash calibration (run after agent edits) |
+| `scripts/forensics/resign_docs.py` | Forensic re-signing ritual |
+| `metadata/agent_hashes.json` | Current verified agent hashes (14 agents) |
+| `tachyon/enforcement/router.py` | ToolRouter — target for C-07 |
+| `tachyon/policy/engine.py` | PolicyEngine ABC — target for C-07 |
+| `tachyon/enforcement/safe_fetch.py` | SafeFetch — target for C-08 |
+| `agents/guardian/agent.py` | Guardian — target for C-09 |
+| `tachyon/policy/singularity/__init__.py` | SingularityPDP + EmergencyPolicyEngine |
+| `tachyon/policy/checkers/alignment_pdp.py` | AlignmentPDP (recently expanded) |
+| `feedback/CLAUDE_SECURITY_AUDIT_03_28_1045.md` | Original audit report (981 lines) |
+| `configs/singularity_config.json` | Engine configuration |
+
+### Commit Format
+```
+fix(security): <summary> [TT-2026-XXX]
+```
+Example: `fix(security): add policy state snapshotting for TOCTOU prevention [TT-2026-006]`
+
+---
+### 2026-03-28: Security Audit Remediation — Phase 2 HIGH Fixes COMPLETE
+- **Objective**: Execute all HIGH-severity fixes (C-04, C-05, C-06) from the security audit triage.
+- **Status**: [COMPLETE — PHASE 2 HIGH]
+- **Fixes Applied**:
+  - **[C-04] Rego Mock Bypass — REMOVED**: `rego_mock` constructor param eliminated from `SafeFetch.__init__()`. Mock mode now ONLY activates via `TACHYON_TEST_MODE=1` env var. 7 test files updated to use env var instead of constructor param. Hardcoded `mock_allowed` list → class-level `_TEST_ALLOWED_DOMAINS` frozenset. All `print()` → `logging.error/warning()`.
+  - **[C-05] Alert Delivery — HARDENED**: Supply chain violation alert in SafeFetch wrapped in try/except. `logging.critical()` fires on delivery failure. Block decision (`return False`) always executes regardless of alert success.
+  - **[C-06] Alignment Adversarial Detection — EXPANDED**: `_detect_adversarial_reframing()` method with 4 pattern categories. Concept map expanded from ~15 to ~45+ entries. `POTENTIAL_EXFIL` concept with -5.0 negative weight added. Adversarial check runs BEFORE cosine similarity.
+- **Files Modified**:
+  - `tachyon/enforcement/safe_fetch.py` — Complete rewrite (C-04 + C-05)
+  - `tachyon/policy/checkers/alignment_pdp.py` — Complete rewrite (C-06)
+  - `tests/test_ssrf_mitigation.py` — env var migration
+  - `tests/test_audit_low.py` — env var migration
+  - `tests/test_audit_high.py` — env var migration + test fix
+  - `tests/enforcement/test_competitive_gap.py` — env var migration
+  - `tests/pipeline/test_pipeline.py` — env var migration
+  - `tasks/TASKS_CLEANUP.md` — Phase 2 marked complete
+- **Verification**: Phase 5 (4/4), Phase 6 (3/3), SSRF (6/6), Alignment (2/2) — ALL PASS. SBOM: 14/14 verified.
+- **Remaining Work (Phase 3 MEDIUM — for next session)**:
+  - [C-07] Policy state snapshotting for TOCTOU prevention
+  - [C-08] Remove hardcoded mock whitelist (now a class constant — may keep as-is)
+  - [C-09] Exception-to-DENIED mapping disambiguation
+  - [C-12] Clear ALERT.md (should be done now that Phase 1+2 are verified)
+
+### 2026-03-28: Security Audit Remediation — Phase 1 CRITICAL Fixes COMPLETE
+- **Objective**: Execute all CRITICAL-severity fixes (C-01, C-02, C-03) from the security audit triage, eliminate the Mutant Lock permanently, implement EmergencyPolicyEngine, fix silent exception swallowing, and automate SBOM calibration.
+- **Status**: [COMPLETE — PHASE 1 CRITICAL + RECURRING ISSUE FIXES]
+- **Fixes Applied**:
+  - **[C-01] Mutant Lock — REMOVED ENTIRELY**: Eliminated from `agents/guardian/agent.py`, `agents/engineer/agent.py`, and `tachyon/core/signing.py`. The concept no longer exists in any enforcement path. Debug `print()` statements replaced with `logging.error/critical()`. Alert delivery now has try/except fallback in all paths.
+  - **[C-02] SingularityPDP — Fail-Closed + EmergencyPolicyEngine**: Rewrote `tachyon/policy/singularity/__init__.py`. When all engines fail, the EmergencyPolicyEngine activates (allows only read-only ops like `health_check`, `get_status`, `verify_file`). Silent `print()` errors replaced with `logging.error()`. Failed engine details logged at CRITICAL level.
+  - **[C-03] Duplicate Syscall Call — Fixed**: Removed duplicate `log_and_evaluate()` in `tachyon/enforcement/router.py` line 104.
+  - **[RECURRING] SBOM Hash Drift — Automated**: Created `scripts/calibrate_sbom.py` with calibrate and `--verify` modes. All 14 agent hashes recalibrated and verified.
+  - **[RECURRING] Silent Exception Swallowing — Fixed**: In SingularityPDP._initialize_engines() and Guardian alert paths.
+  - **[RECURRING] Mutant Lock Regression — Permanently Prevented**: Engineering Guidance in TASKS_CLEANUP.md now lists Mutant Lock resurrection as an ABSOLUTE PROHIBITION with explicit alternative workflow.
+- **Files Modified**:
+  - `agents/guardian/agent.py` — Mutant Lock removed, fail-closed, logging added
+  - `agents/engineer/agent.py` — Mutant Lock removed, SBOM recalibration guidance added
+  - `tachyon/core/signing.py` — Mutant Lock bypass removed
+  - `tachyon/policy/singularity/__init__.py` — Complete rewrite with EmergencyPolicyEngine
+  - `tachyon/enforcement/router.py` — Duplicate call removed
+  - `metadata/agent_hashes.json` — Recalibrated for all 14 agents
+  - `scripts/calibrate_sbom.py` — NEW: SBOM automation tool
+  - `tasks/TASKS_CLEANUP.md` — Updated with completion status and engineering guidance
+- **Verification**: Phase 5 and Phase 6 regression tests: ALL PASS. SBOM verify: ALL 14 agents PASS. Forensic re-signing: COMPLETE.
+- **Remaining Work (Phase 2 HIGH — for next session)**:
+  - [C-04] Remove `rego_mock` constructor param from SafeFetch (TT-2026-003)
+  - [C-05] Harden alert delivery with fallback logging (TT-2026-005)
+  - [C-06] Expand AlignmentPDP adversarial detection (TT-2026-004)
+  - [C-12] Clear ALERT.md after Phase 2 completion
+
+### 2026-03-28: Security Audit Triage — TASKS_CLEANUP.md populated
+- **Objective**: Review Claude's Red Team Security Audit (3 feedback files), cross-reference with actual source code, extract all actionable findings into a phased remediation plan, and identify recurring issues.
+- **Status**: [COMPLETE — TRIAGE ONLY, REMEDIATION PENDING]
+- **Source Documents**:
+  - `feedback/CLAUDE_SECURITY_AUDIT_03_28_1045.md` (981 lines, full audit with PoC exploits)
+  - `feedback/CLAUDE_SECURITY_PATCHES_IMMEDIATE_03_28_1045.md` (437 lines, patch diffs)
+  - `feedback/CLAUDE_VULNERABILITY_TRIAGE_SUMMARY_03_28_1045.md` (127 lines, executive summary)
+- **Tasks Created**: 12 tasks across 4 phases in `tasks/TASKS_CLEANUP.md`:
+  - **Phase 1 (CRITICAL)**: [C-01] Mutant Lock fail-open (CVSS 9.8), [C-02] SingularityPDP default ALLOW (CVSS 9.1), [C-03] Duplicate syscall call (CVSS 5.5)
+  - **Phase 2 (HIGH)**: [C-04] Rego mock constructor injection (CVSS 8.6), [C-05] Silent alert failures (CVSS 7.5), [C-06] Alignment synonym tunneling (CVSS 7.9)
+  - **Phase 3 (MEDIUM)**: [C-07] TOCTOU policy state race (CVSS 6.8), [C-08] Hardcoded mock whitelist (CVSS 6.2), [C-09] Exception-to-DENIED ambiguity (CVSS 4.2)
+  - **Phase 4 (ONGOING)**: [C-10] SBOM automation, [C-11] Engine health check on startup, [C-12] ALERT.md cleardown
+- **Verification Method**: Every vulnerability ID was cross-referenced against the actual source files. All CRITICAL and HIGH findings are CONFIRMED present in the codebase as of this date.
+- **Recurring Issue Analysis**:
+  - ⚠️ **SBOM Hash Drift**: Herald, pathogen, sentinel, immunologist hashes in ALERT.md do NOT match `metadata/agent_hashes.json`. This was "fixed" during Phase 5 ([S-10]) but drifted again immediately because agent files were modified without recalibrating. Root cause: manual process, no automation.
+  - ⚠️ **Mutant Lock Anti-Pattern**: Identified as problematic in Phase 25 docs but never hardened. The Guardian still returns SUCCESS on integrity failure when the lock is active. This is the single most dangerous vulnerability in the substrate.
+  - ⚠️ **Silent Exception Swallowing**: The `SingularityPDP._initialize_engines()` pattern (print + continue) exists in multiple locations. This is a systemic code quality issue.
+- **Engineering Guidance Included**: TASKS_CLEANUP.md contains a dedicated Engineering Guidance section with 4 documented anti-patterns, corrected examples, and a verification checklist to ensure fixes stick.
+- **Handoff to Implementing Model**:
+  - Start with [C-01] and [C-02] — these are existential threats.
+  - [C-03] is a trivial one-line fix, do it first as a warm-up.
+  - After each agent file edit, run `sha256sum agents/<name>/agent.py` and update `metadata/agent_hashes.json`.
+  - After all Phase 1 fixes, run: `export PYTHONPATH=$PYTHONPATH:. && python3 -m pytest tests/ -v`
+  - Commit format: `fix(security): <summary> [TT-2026-XXX]`
+
 ### 2026-03-28: Phase 6: Autonomous Defensive Evolution — COMPLETE
 - **Objective**: Transform the substrate into a learning security organism through proactive scouring and adversarial synthesis loops.
 - **Status**: [COMPLETE]

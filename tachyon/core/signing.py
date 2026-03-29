@@ -189,13 +189,24 @@ class IntegrityManager:
         )
         return signature
 
+    def sign_archive(self, archive_path: str, identity: str = "tachyon-forensics-v1") -> str:
+        """
+        Signs a large binary archive (tar.gz) and generates a .sig.json sidecar.
+        Identical to sign_document but uses a forensic identity by default.
+        """
+        return self.sign_document(archive_path, identity=identity)
+
     def sign_text(self, text: str) -> str:
         """Sign a raw string and return the signature."""
         return self.signer.sign(text.encode('utf-8'))
 
-    def verify_text_signature(self, text: str, signature: str) -> bool:
-        """Verify a signature against a raw string."""
-        return self.signer.verify(text.encode('utf-8'), signature)
+    def get_file_hash(self, filepath: str) -> str:
+        """Returns the SHA-256 hex digest of a file."""
+        if not os.path.exists(filepath):
+            return ""
+        import hashlib
+        with open(filepath, 'rb') as f:
+            return hashlib.sha256(f.read()).hexdigest()
 
     def verify_integrity(self, filepath: str, enforce: bool = False) -> bool:
         """
@@ -252,11 +263,13 @@ class IntegrityManager:
         # No signature found
         if strict:
             err = f"INTEGRITY FAILURE: No detached signature found for {filepath}."
-            from tachyon.core.state import StateManager
-            state = StateManager()
-            if not state.is_mutant_lock_active():
-                state.emit_alert("INTEGRITY_VIOLATION", err)
-                raise RuntimeError(err)
+            try:
+                from tachyon.core.state import StateManager
+                StateManager().emit_alert("INTEGRITY_VIOLATION", err)
+            except Exception:
+                import logging
+                logging.critical(f"[IntegrityManager] ALERT DELIVERY FAILED: {err}")
+            raise RuntimeError(err)
         return False
 
     def verify_text_signature(self, text: str, signature: str) -> bool:

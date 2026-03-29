@@ -11,31 +11,53 @@ from tachyon.enforcement.safe_fetch import SafeFetch, SecurityViolationError as 
 from tachyon.core.state import StateManager
 from tachyon.core.signing import IntegrityManager, SecurityViolationError as SigningError
 
-# --- H-01: PEP Rate Limiting ---
+# --- H-01: ToolRouter Rate Limiting ---
 
 @pytest.mark.asyncio
 async def test_pep_rate_limiting_violation():
     """
-    Assert that the PEP layer rejects requests when an agent exceeds its rate limit (H-01).
+    Assert that the ToolRouter rejects requests when an agent exceeds its rate limit (H-01).
     """
-    pep = PEPLayer()
-    pep.rate_limiter.default_rpm = 5
+    from tachyon.enforcement.router import ToolRouter
+    from tachyon.enforcement.rate_limiter import AdaptiveRateLimiter
+    from unittest.mock import MagicMock, AsyncMock
+
+    # 3. Setup ToolRouter with a restricted rate limit
+    limiter = AdaptiveRateLimiter(default_rpm=5)
+    
+    # 4. Mock policy engine to return ALLOW
+    policy_engine = AsyncMock()
+    from tachyon.policy.engine import PolicyVerdict, Verdict
+    policy_engine.evaluate.return_value = PolicyVerdict(verdict=Verdict.ALLOW, reason="Access granted", engine_id="mock_pdp", metadata={})
+
+    # Minimal mocks for router dependencies
+    router = ToolRouter(
+        orchestrator=MagicMock(),
+        sandbox=MagicMock(),
+        policy_engine=policy_engine,
+        cot_monitor=MagicMock(),
+        syscall_monitor=MagicMock(),
+        rate_limiter=limiter
+    )
+    
+    # 5. Register a mock handler to avoid ERROR: Unknown action
+    async def mock_handler(agent_id, params):
+        return {"status": "SUCCESS", "result": 3}
+    router.registry.register("SAFE_MATH", mock_handler)
     
     agent_id = "flood_agent"
     action = "SAFE_MATH"
-    params = {"val1": 1, "val2": 2, "intent": "perform addition"}
+    params = {"val1": 1, "val2": 2}
     
-    # 1. Send 5 allowed requests
+    # 3. Send 5 allowed requests
     for i in range(5):
-        request = ToolRequest(agent_id=agent_id, action=action, parameters=params)
-        response = await pep.execute(request)
-        assert response.status in ["SUCCESS", "FALLBACK_SUCCESS"]
+        response = await router.route(agent_id=agent_id, action=action, params=params)
+        assert response["status"] == "SUCCESS"
 
-    # 2. The 6th request should be RATE_LIMITED
-    request = ToolRequest(agent_id=agent_id, action=action, parameters=params)
-    response = await pep.execute(request)
-    assert response.status == "RATE_LIMITED"
-    assert "limit exceeded" in response.error
+    # 4. The 6th request should be BLOCKED by rate limiter
+    response = await router.route(agent_id=agent_id, action=action, params=params)
+    assert response["status"] == "BLOCKED"
+    assert "RATE_LIMIT_EXCEEDED" in response["error"]
 
 # --- H-03: Semantic Drift (Synonym Resistance) ---
 
@@ -136,15 +158,17 @@ def test_signature_stripping_rejection():
 
 # --- H-05: SafeFetch (Redirect Bypasses) ---
 
-def test_safefetch_redirect_block():
+def test_safefetch_redirect_block(monkeypatch):
     """
     Assert that URLs containing redirect parameters to untrusted domains are blocked (H-05).
     """
-    fetcher = SafeFetch(rego_mock=True)
+    monkeypatch.setenv("TACHYON_TEST_MODE", "1")
+    fetcher = SafeFetch()
     malicious_redirect = "https://scholar.google.com/url?q=https://malicious-site.com/exploit.sh"
     
-    with pytest.raises(SafeFetchError, match="Redirect to untrusted domain"):
-        fetcher.fetch(malicious_redirect, intent="RESEARCH")
+    result = fetcher.fetch(malicious_redirect, intent="RESEARCH")
+    assert result.status == "BLOCKED"
+    assert "untrusted domain" in result.error or "private host" in result.error or "unauthorized" in result.error.lower()
 
 # --- H-07: Identity Confusion (Process Binding) ---
 

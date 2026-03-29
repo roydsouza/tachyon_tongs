@@ -2,6 +2,20 @@
 
 This file tracks critical violations and integrity failures. The newest alerts appear at the top.
 
+## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-28 16:03:13
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Identity mismatch: Process not authorized to assume role 'engineer'.
+
+---
+
+## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-28 15:59:41
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Identity mismatch: Process not authorized to assume role 'engineer'.
+
+---
+
 ## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-28 10:22:45
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**

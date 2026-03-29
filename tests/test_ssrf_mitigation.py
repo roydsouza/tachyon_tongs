@@ -1,11 +1,17 @@
 import pytest
+import os
 from unittest.mock import MagicMock
 from tachyon.enforcement.safe_fetch import SafeFetch, SecurityViolationError
 from tachyon.enforcement.network import NetworkPolicy
 
+@pytest.fixture(autouse=True)
+def enable_test_mode(monkeypatch):
+    """TT-2026-003: Enable test mode via env var, not constructor param."""
+    monkeypatch.setenv("TACHYON_TEST_MODE", "1")
+
 def test_localhost_block():
     """Verify that localhost/loopback is blocked (S-01)."""
-    fetcher = SafeFetch(agent_id="test-agent", rego_mock=True)
+    fetcher = SafeFetch(agent_id="test-agent")
     
     # Test IPv4 loopback
     result = fetcher.fetch("http://127.0.0.1:9181")
@@ -19,7 +25,7 @@ def test_localhost_block():
 
 def test_private_range_block():
     """Verify that RFC 1918 private ranges are blocked (S-01)."""
-    fetcher = SafeFetch(agent_id="test-agent", rego_mock=True)
+    fetcher = SafeFetch(agent_id="test-agent")
     
     # Test 10.x.x.x
     result = fetcher.fetch("http://10.0.0.1/api")
@@ -31,7 +37,7 @@ def test_private_range_block():
 
 def test_cloud_metadata_block():
     """Verify that Cloud Metadata service (169.254.169.254) is blocked (S-01)."""
-    fetcher = SafeFetch(agent_id="test-agent", rego_mock=True)
+    fetcher = SafeFetch(agent_id="test-agent")
     
     result = fetcher.fetch("http://169.254.169.254/computeMetadata/v1/")
     assert result.status == "BLOCKED"
@@ -42,7 +48,7 @@ def test_dns_rebinding_simulation(monkeypatch):
     Simulates a DNS rebinding scenario where a hostname resolves to both 
     a public and a private IP. The policy must block if ANY IP is private.
     """
-    fetcher = SafeFetch(agent_id="test-agent", rego_mock=True)
+    fetcher = SafeFetch(agent_id="test-agent")
     
     # Mock NetworkPolicy.resolve_safe to return a public and a private IP
     def mock_resolve(hostname):
@@ -58,7 +64,7 @@ def test_dns_rebinding_simulation(monkeypatch):
 
 def test_redirect_to_private_block(monkeypatch):
     """Verify that a redirect to a private IP is blocked (S-01)."""
-    fetcher = SafeFetch(agent_id="test-agent", rego_mock=True)
+    fetcher = SafeFetch(agent_id="test-agent")
     
     # We need to mock the actual network call to return a 302 redirect
     from unittest.mock import MagicMock
@@ -88,7 +94,7 @@ def test_redirect_to_private_block(monkeypatch):
 
 def test_max_redirects_exhaustion(monkeypatch):
     """Verify that infinite redirect loops are terminated (S-01)."""
-    fetcher = SafeFetch(agent_id="test-agent", rego_mock=True)
+    fetcher = SafeFetch(agent_id="test-agent")
     
     mock_response = MagicMock()
     mock_response.getcode.return_value = 302

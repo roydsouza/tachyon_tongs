@@ -22,9 +22,19 @@ class PolicyEngine(ABC):
     """
     
     @abstractmethod
-    async def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
+    def get_state_snapshot(self) -> Dict[str, Any]:
+        """
+        Returns a serializable snapshot of the engine's current state 
+        (file hashes, thresholds, config). Used for TOC/TOU mitigation.
+        """
+        pass
+
+    @abstractmethod
+    async def evaluate(self, agent_id: str, action: str, params: Dict[str, Any], snapshot: Optional[Dict[str, Any]] = None) -> PolicyVerdict:
         """
         Evaluate an action against the engine's policy set.
+        If a snapshot is provided, verification MUST encompass the consistency
+        between the snapshot and the current runtime state.
         """
         pass
 

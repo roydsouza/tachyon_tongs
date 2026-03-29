@@ -89,6 +89,9 @@ class ToolRouter:
         # 0. Freeze the request immediately to prevent TOCTOU
         request = ImmutableToolRequest(agent_id=agent_id, action=action, params=params)
 
+        # 0.5 Snapshot Policy State (C-07 TOCTOU defense)
+        snapshot = self.policy_engine.get_state_snapshot()
+
         # 1. Rate Limiting Check
         if self.rate_limiter:
             allowed, reason = self.rate_limiter.is_allowed(request.agent_id, request.action)
@@ -101,10 +104,9 @@ class ToolRouter:
 
         # 2. Statistical Behavioral Check
         self.syscall_monitor.log_and_evaluate(request.agent_id, request.action)
-        self.syscall_monitor.log_and_evaluate(request.agent_id, request.action)
         
-        # 4. Policy Enforcement Check (Pass the immutable request)
-        verdict = await self.policy_engine.evaluate(request.agent_id, request.action, request.params)
+        # 4. Policy Enforcement Check (Pass the immutable request and snapshot)
+        verdict = await self.policy_engine.evaluate(request.agent_id, request.action, request.params, snapshot=snapshot)
         if verdict.verdict != Verdict.ALLOW:
             self.telemetry.emit_event("TOOL_CALL", request.agent_id, request.action, "BLOCKED", {"reason": f"PDP_DENY: {verdict.reason}"})
             return {

@@ -15,43 +15,35 @@ class EngineerPlugin(BaseAgentPlugin):
 
     def execute_action(self, action: str, parameters: Dict[str, Any]) -> TachyonResult:
         from tachyon.core.results import TachyonResult, TachyonStatus
+        import logging
+        
         if action == "apply_and_test":
-            from tachyon.core.state import StateManager
-            state = StateManager()
-            
-            # Phase 29.2: Acquire Mutant Lock to suppress Guardian alerts during patching
-            lock_id = state.acquire_mutant_lock(
-                agent_id=self.agent_id,
-                reason=f"Applying patch for {parameters.get('cve_id', 'manual-patch')}"
+            # TT-2026-001 FIX: No Mutant Lock. Patches apply under full Guardian oversight.
+            # After patching, run: python3 scripts/calibrate_sbom.py
+            result_raw = self.patcher.apply_and_test(
+                patch_files=parameters.get("patch_files", []),
+                test_file_path=parameters.get("test_path", "tests/integration/test_patch.py"),
+                test_content=parameters.get("test_code", ""),
+                cve_id=parameters.get("cve_id", "manual-patch")
             )
             
-            try:
-                result_raw = self.patcher.apply_and_test(
-                    patch_files=parameters.get("patch_files", []),
-                    test_file_path=parameters.get("test_path", "tests/integration/test_patch.py"),
-                    test_content=parameters.get("test_code", ""),
-                    cve_id=parameters.get("cve_id", "manual-patch")
+            if result_raw.get("status") == "SUCCESS":
+                self.bus.emit_event(
+                    topic="ENGINEER_PATCH_COMPLETED",
+                    agent_id=self.agent_id,
+                    payload={"cve_id": parameters.get("cve_id", "manual-patch"), "details": result_raw.get("details")},
+                    certificate=self.certificate
                 )
-                
-                if result_raw.get("status") == "SUCCESS":
-                    self.bus.emit_event(
-                        topic="ENGINEER_PATCH_COMPLETED",
-                        agent_id=self.agent_id,
-                        payload={"cve_id": parameters.get("cve_id", "manual-patch"), "details": result_raw.get("details")},
-                        certificate=self.certificate
-                    )
-                    return TachyonResult.success(result_raw)
-                else:
-                    error_msg = result_raw.get("error", "Unknown Patch Error")
-                    self.bus.emit_event(
-                        topic="ENGINEER_TEST_FAILURE",
-                        agent_id=self.agent_id,
-                        payload={"cve_id": parameters.get("cve_id", "manual-patch"), "error": error_msg},
-                        certificate=self.certificate
-                    )
-                    return TachyonResult.failure(error_msg, data=result_raw)
-            finally:
-                # Always release the lock to prevent blocking legitimate Guardian oversight
-                state.release_mutant_lock(lock_id)
+                logging.info(f"[Engineer] Patch applied. Run 'python3 scripts/calibrate_sbom.py' to recalibrate SBOM.")
+                return TachyonResult.success(result_raw)
+            else:
+                error_msg = result_raw.get("error", "Unknown Patch Error")
+                self.bus.emit_event(
+                    topic="ENGINEER_TEST_FAILURE",
+                    agent_id=self.agent_id,
+                    payload={"cve_id": parameters.get("cve_id", "manual-patch"), "error": error_msg},
+                    certificate=self.certificate
+                )
+                return TachyonResult.failure(error_msg, data=result_raw)
         
         return TachyonResult.failure(f"Unknown action for Engineer: {action}", status=TachyonStatus.NOT_IMPLEMENTED)

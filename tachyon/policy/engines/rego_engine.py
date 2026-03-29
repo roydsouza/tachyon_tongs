@@ -18,11 +18,31 @@ class RegoPolicyEngine(PolicyEngine):
         self.integrity_manager = IntegrityManager()
         self.cache_size = cache_size
 
-    async def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
+    def get_state_snapshot(self) -> Dict[str, Any]:
+        """Snapshots all policy file hashes for TOCTOU verification."""
+        snapshot = {}
+        if os.path.exists(self.policy_dir):
+            for root, _, files in os.walk(self.policy_dir):
+                for file in files:
+                    if file.endswith(".rego"):
+                        path = os.path.join(root, file)
+                        snapshot[path] = self.integrity_manager.get_file_hash(path)
+        return snapshot
+
+    async def evaluate(self, agent_id: str, action: str, params: Dict[str, Any], snapshot: Optional[Dict[str, Any]] = None) -> PolicyVerdict:
         """
         Verifies policy integrity and then evaluates the action against the Rego rule set.
-        Uses internal hashing for LRU caching support.
+        If a snapshot is provided, it verifies that the current file hashes match the snapshot.
         """
+        # TOC/TOU Verification
+        if snapshot:
+            for path, expected_hash in snapshot.items():
+                if not os.path.exists(path):
+                    return PolicyVerdict(Verdict.DENY, f"TOCTOU VIOLATION: Policy file {path} vanished.", self.engine_id)
+                current_hash = self.integrity_manager.get_file_hash(path)
+                if current_hash != expected_hash:
+                    return PolicyVerdict(Verdict.DENY, f"TOCTOU VIOLATION: Policy file {path} modified during evaluation.", self.engine_id)
+
         # 1. Handle DLP specifically (no cache due to high dynamic content)
         if action == "outbound_dlp":
             from tachyon.pipeline.pii_scanner import PIIScanner

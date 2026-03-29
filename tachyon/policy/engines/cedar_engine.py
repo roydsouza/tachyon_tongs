@@ -11,10 +11,16 @@ class CedarPolicyEngine(PolicyEngine):
         self.policy_dir = policy_dir
         self.enforce_signatures = enforce_signatures
 
-    async def evaluate(self, agent_id: str, action: str, params: Dict[str, Any]) -> PolicyVerdict:
+    def get_state_snapshot(self) -> Dict[str, Any]:
+        return {"placeholder": True}
+
+    async def evaluate(self, agent_id: str, action: str, params: Dict[str, Any], snapshot: Optional[Dict[str, Any]] = None) -> PolicyVerdict:
         """
         Placeholder evaluation logic.
         """
+        async def _test():
+            return True
+        await _test()
         return PolicyVerdict(Verdict.ALLOW, "Cedar engine initialized (Placeholder)", self.engine_id)
 
     @property

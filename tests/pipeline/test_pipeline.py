@@ -1,13 +1,19 @@
 import unittest
+import os
 from tachyon.enforcement.safe_fetch import SafeFetch, SecurityViolationError
 from tachyon.pipeline.tri_stage_pipeline import FetcherNode, SanitizerNode, AnalyzerNode, run_pipeline, UNTRUSTED_CONTENT_START
 
 class TestTriStagePipeline(unittest.TestCase):
 
     def setUp(self):
-        self.firewall = SafeFetch(rego_mock=True)
+        # TT-2026-003: Test mode via env var, not constructor param
+        os.environ["TACHYON_TEST_MODE"] = "1"
+        self.firewall = SafeFetch()
         self.sanitizer = SanitizerNode()
         self.analyzer = AnalyzerNode()
+    
+    def tearDown(self):
+        os.environ.pop("TACHYON_TEST_MODE", None)
 
     # --- Capability Firewall Tests ---
     def test_safe_fetch_allows_cisa(self):

@@ -20,9 +20,10 @@ def test_l03_adaptive_timeout():
     assert timeout >= 0.05 # Should be at least 50ms
     assert timeout <= 0.25 # Should be reasonably capped at 5x
 
-def test_sf_03_safe_fetch_result():
+def test_sf_03_safe_fetch_result(monkeypatch):
     """Verify structured FetchResult from SafeFetch (SF-03)."""
-    fetcher = SafeFetch(agent_id="test", rego_mock=True)
+    monkeypatch.setenv("TACHYON_TEST_MODE", "1")
+    fetcher = SafeFetch(agent_id="test")
     # Blocked domain
     res = fetcher.fetch("http://pastebin.com/payload.sh")
     assert isinstance(res, FetchResult)

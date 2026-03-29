@@ -45,10 +45,15 @@ pytest -v path/to/tests/test_feature.py
 
 ## Step 7: Commit & Synchronize (Post-Work)
 1. Mark the completed task as `[x]` in `TASKS_CLEANUP.md`.
-2. Commit with format: `fix(<agent>): <one-line summary> [GW-<N>]`
-3. After completing a full priority tier, update `SYNC_LOG.md` with the detail level specified in the Handoff section of `TASKS_CLEANUP.md`.
+2. **Forensic Ritual**: Execute the mandatory substrate anchoring:
+   - `python3 scripts/calibrate_sbom.py`
+   - `python3 scripts/forensics/resign_docs.py`
+3. Commit with format: `fix(<agent>): <one-line summary> [GW-<N>]`
+4. After completing a full priority tier, update `SYNC_LOG.md` with the detail level specified in the Handoff section of `TASKS_CLEANUP.md`.
 // turbo
 ```bash
+python3 scripts/calibrate_sbom.py
+python3 scripts/forensics/resign_docs.py
 PAGER=cat MANPAGER=cat git add .
 PAGER=cat MANPAGER=cat git commit -m "fix(<agent>): <summary> [GW-<N>]"
 ```
