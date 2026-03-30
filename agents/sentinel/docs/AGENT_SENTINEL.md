@@ -8,6 +8,7 @@ The Sentinel Agent is the proactive reconnaissance arm of the Tachyon Tongs subs
 ### 1. Triggers
 - **Scheduled Sweeps**: Periodic background tasks to ingest new CVE/GHSA data.
 - **Autoresearch Action**: Triggered via `main.py --role sentinel --action hunt`.
+- **VX-15 NVD Operationalization**: Sentinel utilizes a local high-assurance mock database (`intelligence/NVD_LOCAL.db`) for consistent regression testing and offline intelligence synthesis.
 - **NVD Cursor**: Sentinel maintains a stateful cursor (`last_nvd_update`) in the StateManager to ensure incremental intelligence gathering.
 
 ### 2. High-Signal Synthesis (The ResearchSynthesizer)
@@ -25,3 +26,8 @@ The Sentinel utilizes the `ResearchSynthesizer` node to:
 - **Upstream**: Scrapes global vulnerability databases and ArXiv security research.
 - **Downstream**: Populates the **High-Signal `CATALOG.md`**, providing "Adversarial Guidance" for Pathogen and targets for the Synthesizer.
 - **CROWN JEWEL**: Creates the intelligence foundation for the **Adversarial Co-Evolution** loop.
+
+## 🧪 Acceptance (VX-15)
+- [x] **Local NVD Mock**: Successfully pulls vulnerability data from `NVD_LOCAL.db`.
+- [x] **Cursor Integrity**: Correctly updates `last_nvd_update` following a successful hunt.
+- [x] **Research Synthesis**: Generates high-signal `CATALOG.md` insights from raw CVE inputs.

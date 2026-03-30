@@ -17,6 +17,7 @@ The Canary reads its environment from standard substrate config, but maintains s
 
 ### 3. Capabilities
 - `scout(targets)`: Takes a list of `id` and `payload` pairs. Applies the `CanarySanitizer`, evaluates the "neutralization" status, and logs forensics.
+- `check_signals`: **VX-12 High-Assurance FIM**. Manually triggers a File Integrity Monitoring (FIM) check of sacrificial honeypot baits using SHA256 content hashing.
 - `harvest()`: Analyzes the `CANARY_LOG.md` to identify recurring bypass patterns and recommend substrate updates.
 
 ## Forensic Logging (`CANARY_LOG.md`)
@@ -32,3 +33,7 @@ The Canary maintains an append-only (prepended) log of every encounter. This log
 ## Integration
 - **Upstream**: Fed by `Sentinel` or `ExploitationCatalog`.
 - **Downstream**: Forensic output is harvested by `ImmuneManager` to trigger `Engineer` remediation tasks.
+
+## 🧪 Acceptance (VX-12)
+- [x] **Hash-Based FIM**: Detects content modification in sacrificial baits even if file timestamps (`atime/mtime`) are manipulated.
+- [x] **Fail-Loud Alerting**: Triggers `SECURITY_ALERT` on the EventBus upon bait tampering.

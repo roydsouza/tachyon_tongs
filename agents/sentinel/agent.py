@@ -4,9 +4,11 @@ import random
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 
+import os
 from agents._core.base import BaseAgentPlugin
 from agents._core.registry import AgentRegistry
 from tachyon.core.state import StateManager
+from tachyon.core.results import TachyonResult
 
 class NVDClient:
     """
@@ -38,12 +40,17 @@ class NVDClient:
                 mock_db = os.path.join(root_dir, "intelligence", "NVD_LOCAL.db")
                 
                 if os.path.exists(mock_db):
+                    print(f"[Sentinel] Found mock DB at {mock_db}")
                     with sqlite3.connect(mock_db) as conn:
                         conn.row_factory = sqlite3.Row
-                        cursor = conn.execute("SELECT id, summary, cvss FROM mock_cves WHERE keyword = ?", (arguments.get("keyword"),))
+                        kw = arguments.get("keyword")
+                        cursor = conn.execute("SELECT id, summary, cvss FROM mock_cves WHERE keyword = ?", (kw,))
                         rows = cursor.fetchall()
+                        print(f"[Sentinel] Search for '{kw}' returned {len(rows)} rows.")
                         if rows:
                             return {"status": "SUCCESS", "cves": [dict(r) for r in rows]}
+                else:
+                    print(f"[Sentinel] Mock DB NOT found at {mock_db}")
 
                 if i == retries - 1 and random.random() < 0.1: # Simulate rare failures
                      raise ConnectionError("NVD MCP Endpoint Unreachable (Possible Attack/Block)")

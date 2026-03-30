@@ -99,3 +99,95 @@ def test_vx13_state_integrity(state_manager):
     with open(alert_path, "r") as f:
         content = f.read()
         assert "STATE_INTEGRITY_FAILURE" in content
+
+def test_vx10_pep_fail_closed_expiry():
+    pep = PEPLayer()
+    from tachyon.api.schema import SignedCommand
+    
+    # 1. Test Expired Certificate
+    from datetime import datetime, timedelta, timezone
+    expired_date = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+    
+    # Mock StateManager trust record for an expired sensor
+    def mock_get_trust(sensor_id):
+        return {
+            "sensor_id": sensor_id,
+            "status": "ACTIVE",
+            "expires_at": expired_date,
+            "public_key_b64": "ed25519:MOCK_KEY"
+        }
+    
+    import unittest.mock as mock
+    with mock.patch("tachyon.core.state.StateManager.get_sensor_trust", side_effect=mock_get_trust):
+        cmd = SignedCommand(
+            signer_id="expired_sensor", 
+            nonce=1, 
+            command_body="{}", 
+            signature="SIG",
+            timestamp=datetime.now(timezone.utc)
+        )
+        import asyncio
+        loop = asyncio.new_event_loop()
+        res = loop.run_until_complete(pep.execute_signed(cmd))
+        assert res.status == "DENIED"
+        assert "EXPIRED" in res.error
+
+def test_vx11_herald_mark_relayed_success_only(monkeypatch):
+    from agents.herald.agent import HeraldPlugin
+    # Mock identity
+    monkeypatch.setattr("tachyon.core.signing.IntegrityManager.load_agent_identity", lambda self, role: {"certificate": "MOCK"})
+    
+    herald = HeraldPlugin("test_herald", {})
+    
+    # 1. Mock a failing dispatcher
+    class FailingDispatcher:
+        dispatcher_id = "fail_node"
+        def dispatch(self, event):
+            raise Exception("NETWORK_FLAP")
+            
+    herald.dispatchers = [FailingDispatcher()]
+    
+    # 2. Mock collector finding 1 new event
+    mock_event = {"id": "evt_001", "summary": "Test Event", "type": "INFO"}
+    monkeypatch.setattr(herald, "_get_new_events", lambda: [mock_event])
+    
+    # 3. Execute relay
+    herald.execute_action("relay_new_events", {})
+    
+    # 4. Verify NOT marked as relayed
+    from tachyon.core.state import StateManager
+    sm = StateManager()
+    assert not sm.is_event_relayed("fail_node", "evt_001")
+
+def test_vx15_sentinel_nvd_operational(state_manager, monkeypatch):
+    # Mock identity
+    monkeypatch.setattr("tachyon.core.signing.IntegrityManager.load_agent_identity", lambda self, role: {"certificate": "MOCK"})
+    from agents.sentinel.agent import SentinelPlugin
+    
+    # Initialize mock NVD DB
+    import sqlite3
+    db_path = "intelligence/NVD_LOCAL.db"
+    if os.path.exists(db_path):
+        os.remove(db_path)
+    os.makedirs("intelligence", exist_ok=True)
+    with sqlite3.connect(db_path) as conn:
+        conn.execute("CREATE TABLE mock_cves (id TEXT, summary TEXT, cvss REAL, keyword TEXT)")
+        # Sentinel searches for 'LLM' among others, ensure it matches
+        conn.execute("INSERT INTO mock_cves VALUES ('CVE-REGRESSION-001', 'Mock AI Vulnerability', 9.8, 'LLM')")
+        conn.commit()
+        
+    sentinel = SentinelPlugin("test_sentinel", {})
+    # Use absolute path to ensure the check in NVDClient finds the db
+    sentinel.nvd.keywords = ["LLM"] 
+    
+    # Run hunt
+    res = sentinel.execute_action("hunt", {"mode": "incremental"})
+    
+    if res.status != "SUCCESS":
+        pytest.fail(f"Hunt failed: {res.error}")
+        
+    assert "CVE-REGRESSION-001" in res.data["threats_discovered"], f"Expected CVE not in {res.data['threats_discovered']}"
+    
+    # Verify cursor update
+    cursor = state_manager.get_agent_state("test_sentinel", "last_nvd_update")
+    assert cursor is not None

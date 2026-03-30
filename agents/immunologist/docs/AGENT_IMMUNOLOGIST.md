@@ -29,6 +29,8 @@ The Immunologist operates as a "Passive Guardian," subscribing to completion eve
 ### 2. Semantic Scanning Engine
 The agent utilizes a multi-stage detection engine:
 - **Literal Pattern Match**: Constant-time regex checks for known override strings (e.g., "Ignore previous instructions", "forget all previous").
+- **VX-09 ReDoS Resistance**: Scans for complex quantifier chains (nested quantifiers like `(a+)+`) to prevent CPU-bound denial of service.
+- **VX-09 Resource Gating**: Enforces a strict 500-character input cap on semantic scanning payloads to maintain substrate responsiveness.
 - **Jailbreak Heuristics**: Detects "Do Anything Now" (DAN) style framing and role-play bypass attempts.
 - **Suspicious Content Detection**: Flags payloads containing suspicious keywords like `eval(`, `base64`, or `markdown override`.
 
@@ -47,6 +49,7 @@ Detection triggers a fail-loud response:
 
 ### 🧬 Specialized Actions
 - `scan_artifact`: Manually trigger a semantic scan on a provided text artifact or result payload.
+- `update_patterns`: **VX-03 High-Assurance Update**. Dynamically inject new detection patterns. Requires a PQC-signed `VACCINATION_DISPATCH` from a verified authority certificate.
 
 ---
 
@@ -54,5 +57,6 @@ Detection triggers a fail-loud response:
 
 Verification is handled via the `tests/test_immunologist.py` suite:
 - [x] **Literal Detection**: Detects "Ignore all previous instructions".
-- [x] **Override Detection**: Detects "NEW_SYSTEM_PROMPT:".
+- [x] **VX-09 ReDoS Filter**: Blocks nested quantifiers in dynamic patterns.
+- [x] **VX-03 Signed Update**: Fails update actions lacking verified PQC signatures.
 - [x] **False Positive Check**: Validates that benign security discussions are not blocked.

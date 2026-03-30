@@ -9,7 +9,7 @@
   "agents/immunologist/agent.py": "187a239abce96c999128a03ded773c3e659c24bcda5723e7b400d5865a979904",
   "agents/pathogen/agent.py": "09f36d65810323ac28c50eedf99547db622f35469eb9cb65c1694cd0f91b0447",
   "agents/scout/agent.py": "b82ceab97c6658a58a2577fca2550c35a6dfabb2abb8b92980eab08c3c2ec202",
-  "agents/sentinel/agent.py": "3e3078377cd1753cd22cb3822c4919e482826d003434dccfc3f5fa749502a7d6",
+  "agents/sentinel/agent.py": "38fb535b0bdbe4c4eb2c2be766a8ae55dd819671bea47d166fadaf7cbc34d188",
   "agents/sentry/agent.py": "cdfd60293497f77d3ed38bed131d915d46e74c460552bc91a7dc90d71b516c3c",
   "agents/synthesizer/agent.py": "356aaade15ad0670f4cdbea2636a1f241cbb8e85429f41645010d80e6dbd9773",
   "agents/watcher/agent.py": "eca52c09bcf0253ffb836527ed0ea58e91141b7395007a787a9cf20c3afc72fd"
