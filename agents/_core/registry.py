@@ -91,7 +91,9 @@ def _verify_agent_hash(agents_dir: str, module_path: str):
     
     # Fallback to absolute workspace path if relative lookup fails
     if not os.path.exists(hashes_path):
-        hashes_path = "/Users/rds/antigravity/tachyon_tongs/metadata/agent_hashes.json"
+        env_sbom_path = os.environ.get("TACHYON_SBOM_PATH")
+        if env_sbom_path:
+            hashes_path = env_sbom_path
 
     if not os.path.exists(hashes_path):
         # In strict mode, missing SBOM is a failure

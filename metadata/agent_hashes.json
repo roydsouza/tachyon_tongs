@@ -5,12 +5,12 @@
   "agents/engineer/agent.py": "45dcc7958669236cd4b836405df53e5e42a63a9c7d1e54bf1ec50bf42c7c2d4b",
   "agents/guardian/agent.py": "a4e163cc860c4f3988cc6038c5cb3f3c91e53307de9adc760a29ad60bcc0843e",
   "agents/healer/agent.py": "5609b1687459bc74e3052650d475722a1f5f99462c16f8db3b4aece8826f8358",
-  "agents/herald/agent.py": "8dd9edbbcd2450cba33d9cad1a46fe26ab2532a713a4a642559abaf4a28833b8",
-  "agents/immunologist/agent.py": "53e0b8b4d91aff396d6af75929ccd7f104714aca5c5270013b2e355b730faaa4",
-  "agents/pathogen/agent.py": "a37ab02009bf261afd66416454b22e4260f6560952af459b3ee91e520fe0dbbf",
+  "agents/herald/agent.py": "3d7732054b1c117a9305a9e80a2dd5b84f0e02eab91e17bf1365771a0b843885",
+  "agents/immunologist/agent.py": "187a239abce96c999128a03ded773c3e659c24bcda5723e7b400d5865a979904",
+  "agents/pathogen/agent.py": "09f36d65810323ac28c50eedf99547db622f35469eb9cb65c1694cd0f91b0447",
   "agents/scout/agent.py": "b82ceab97c6658a58a2577fca2550c35a6dfabb2abb8b92980eab08c3c2ec202",
-  "agents/sentinel/agent.py": "02b733ec4622808acbb10ee16f8b61c5e051c6d6549d4e480b55ee92678577a4",
-  "agents/sentry/agent.py": "3a760747b790bea8fe36901ff93aa2e6036daa1490e9a5e12dd3eb9f90236f47",
+  "agents/sentinel/agent.py": "3e3078377cd1753cd22cb3822c4919e482826d003434dccfc3f5fa749502a7d6",
+  "agents/sentry/agent.py": "cdfd60293497f77d3ed38bed131d915d46e74c460552bc91a7dc90d71b516c3c",
   "agents/synthesizer/agent.py": "356aaade15ad0670f4cdbea2636a1f241cbb8e85429f41645010d80e6dbd9773",
   "agents/watcher/agent.py": "eca52c09bcf0253ffb836527ed0ea58e91141b7395007a787a9cf20c3afc72fd"
 }

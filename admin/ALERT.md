@@ -2,6 +2,20 @@
 
 This file tracks critical violations and integrity failures. The newest alerts appear at the top.
 
+## [AGENT_BACKPLANE_CRASH] 2026-03-30 09:04:28
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Agent test_imm (Immunologist) backplane loop CRASHED: name 'List' is not defined
+
+---
+
+## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-30 09:04:00
+> [!CAUTION]
+> **CRITICAL SECURITY ALERT:**
+> Identity mismatch: Process not authorized to assume role 'immunologist'.
+
+---
+
 ## [IDENTITY_SPOOFING_ATTEMPT] 2026-03-28 16:03:13
 > [!CAUTION]
 > **CRITICAL SECURITY ALERT:**

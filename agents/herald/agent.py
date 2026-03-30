@@ -48,12 +48,15 @@ class HeraldPlugin(BaseAgentPlugin):
                         StateManager().log_evolution("SOMATIC_REPAIR", f"Herald resolved failure: {resolution}")
                 
                 for dispatcher in self.dispatchers:
-                    # Mark as relayed FIRST to avoid double-processing during repairs
-                    from tachyon.core.state import StateManager
-                    StateManager().mark_event_relayed(dispatcher.dispatcher_id, event["id"])
                     # M-09: Sanitize before dispatching to external channels
                     sanitized_event = self._sanitize_event(event)
-                    dispatcher.dispatch(sanitized_event)
+                    try:
+                        dispatcher.dispatch(sanitized_event)
+                        # VX-11: Mark as relayed ONLY after successful dispatch
+                        from tachyon.core.state import StateManager
+                        StateManager().mark_event_relayed(dispatcher.dispatcher_id, event["id"])
+                    except Exception as e:
+                        print(f"[{self.agent_id}] Dispatcher {dispatcher.dispatcher_id} failed: {e}")
             return TachyonResult.success({"relayed_count": len(new_events)})
 
         return TachyonResult.failure(f"Unknown action: {action}", status=TachyonStatus.NOT_IMPLEMENTED)

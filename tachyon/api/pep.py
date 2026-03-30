@@ -54,7 +54,7 @@ class PEPLayer:
                  if datetime.now(timezone.utc) > expiry:
                       return ToolResponse(request_id="NA", status="DENIED", selected_model="None", error=f"Sensor EXPIRED: {command.signer_id}")
              except Exception:
-                  pass # Invalid format, assume safe or log error
+                  return ToolResponse(request_id="NA", status="DENIED", selected_model="None", error="Sensor EXPIRED: Invalid expiry format (Fail-Closed).")
 
         # 2. Replay Protection
         if not state.check_nonce(command.signer_id, command.nonce):

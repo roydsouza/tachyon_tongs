@@ -187,3 +187,105 @@ def test_identity_confusion_prevention():
     finally:
         if old_test_mode:
             os.environ["TACHYON_TEST_MODE"] = old_test_mode
+
+# --- VX-04: Immunologist Registration ---
+
+def test_vx04_immunologist_registration():
+    """Assert AgentRegistry successfully resolves the previously missing Immunologist."""
+    from agents._core.registry import AgentRegistry
+    # AgentRegistry._plugins should contain "immunologist"
+    import agents.immunologist.agent  # Ensure module loads
+    plugin_class = AgentRegistry.get_plugin("immunologist")
+    assert plugin_class is not None, "Immunologist is missing from the AgentRegistry."
+    assert plugin_class.__name__ == "ImmunologistPlugin"
+
+# --- VX-05: Ephemeral Test Identities ---
+
+def test_vx05_ephemeral_test_identities(monkeypatch, tmp_path):
+    """Assert TEST_MODE key derivation refuses to save persistence to disk."""
+    import os
+    from tachyon.core.signing import IntegrityManager
+    
+    # Temporarily set test keys path to somewhere we can watch
+    test_key_dir = tmp_path / "keys"
+    test_key_dir.mkdir()
+    
+    # We must patch load_agent_identity since we want to only test derive_agent_key behavior
+    monkeypatch.setenv("TACHYON_TEST_MODE", "1")
+    im = IntegrityManager(use_hardware=False)
+    
+    # Monkeypatch the key_dir logic if accessible, or just verify base plugin logic.
+    # The actual requirement is that derived identities do NOT hit the disk.
+    # The patch changed `save_to_disk=True` to `save_to_disk=False` in base.py.
+    from agents._core.base import BaseAgentPlugin
+    
+    class DummyPlugin(BaseAgentPlugin):
+        def execute_action(self, action, parameters):
+            pass
+            
+    # Mock IM to see what base plugin passes to derive_agent_key
+    derived_with_disk = []
+    original_derive = im.derive_agent_key
+    
+    def mock_derive(role, save_to_disk=False):
+        if save_to_disk:
+            derived_with_disk.append(role)
+        return original_derive(role, save_to_disk=save_to_disk)
+        
+    monkeypatch.setattr(im, "derive_agent_key", mock_derive)
+    
+    # If production, it should crash.
+    monkeypatch.setenv("TACHYON_ENV", "production")
+    with pytest.raises(RuntimeError, match="SECURITY_VIOLATION: TEST_MODE cannot be enabled in production environments"):
+        DummyPlugin("agent_x", "Dummy", {"integrity_manager": im, "event_bus": None})
+        
+    # If not production, it should derive but NOT save to disk.
+    monkeypatch.setenv("TACHYON_ENV", "development")
+    agent = DummyPlugin("agent_x", "Dummy", {"integrity_manager": im, "event_bus": None})
+    assert len(derived_with_disk) == 0, "TEST_MODE derived keys were saved to disk!"
+
+# --- VX-06: Sandbox Hardening (AST Parsing) ---
+
+def test_vx06_ast_sandboxing_evasion():
+    """Assert AST execution evaluation blocks obfuscated __import__ evasion."""
+    from agents.pathogen.agent import PathogenPlugin
+    from unittest.mock import MagicMock
+    
+    agent = PathogenPlugin("pathogen_x", {"event_bus": MagicMock(), "integrity_manager": MagicMock()})
+    
+    # Traditional bypass
+    payload_1 = "__import__('os').system('id')"
+    res_1 = agent.execute_action("verify_variant", {"variant": payload_1})
+    assert res_1["status"] == "FAILED"
+    assert "Any import is dangerous" in res_1["reason"] or "Dangerous call" in res_1["reason"]
+
+    # Obfuscated eval
+    payload_2 = "eval('__import__(\\'os\\')')"
+    res_2 = agent.execute_action("verify_variant", {"variant": payload_2})
+    assert res_2["status"] == "FAILED"
+    assert "eval" in res_2["reason"] or "import" in res_2["reason"]
+
+# --- VX-07: Parameterize SBOM Resolver Directory ---
+
+def test_vx07_sbom_resolver(monkeypatch, tmp_path):
+    """Assert missing SBOM strictly fails without leaking local developer paths."""
+    from agents._core.registry import _verify_agent_hash, RegistrationError
+    import os
+    
+    monkeypatch.setenv("TACHYON_STRICT_MODE", "1")
+    fake_sbom_path = tmp_path / "fake_sbom.json"
+    monkeypatch.setenv("TACHYON_SBOM_PATH", str(fake_sbom_path))
+    
+    # Provide a fake module path
+    module_path = "agents/dummy/agent.py"
+    try:
+        os.makedirs(os.path.dirname(module_path), exist_ok=True)
+        with open(module_path, "w") as f:
+            f.write("pass")
+            
+        with pytest.raises(RegistrationError, match="SBOM Missing"):
+            _verify_agent_hash("agents", module_path)
+    finally:
+        if os.path.exists(module_path):
+            os.remove(module_path)
+

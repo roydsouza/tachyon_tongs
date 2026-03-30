@@ -734,18 +734,22 @@ class StateManager:
     # --- Agent State Persistence (Phase 34) ---
 
     def set_agent_state(self, agent_id: str, key: str, value: Any):
-        """Persist a key-value state for a specific agent (e.g., a cursor)."""
+        """Persist a key-value state for a specific agent with PQC integrity signing (VX-13)."""
         val_str = json.dumps(value)
+        # 1. Sign the state content
+        signature = self.integrity.sign_text(val_str)
+        envelope = json.dumps({"data": value, "signature": signature})
+        
         with self._lock:
             with sqlite3.connect(self.db_path) as conn:
                 conn.execute('''
                     INSERT OR REPLACE INTO agent_state (agent_id, key, value, updated_at)
                     VALUES (?, ?, ?, ?)
-                ''', (agent_id, key, val_str, datetime.now().isoformat()))
+                ''', (agent_id, key, envelope, datetime.now().isoformat()))
                 conn.commit()
 
     def get_agent_state(self, agent_id: str, key: str, default: Any = None) -> Any:
-        """Retrieve a persisted state value for an agent."""
+        """Retrieve a persisted state value and verify its PQC integrity (VX-13)."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
                 "SELECT value FROM agent_state WHERE agent_id = ? AND key = ?",
@@ -753,7 +757,22 @@ class StateManager:
             )
             row = cursor.fetchone()
             if row:
-                return json.loads(row[0])
+                try:
+                    envelope = json.loads(row[0])
+                    data = envelope.get("data")
+                    signature = envelope.get("signature")
+                    
+                    # 2. Verify signature
+                    val_str = json.dumps(data)
+                    if self.integrity.verify_text_signature(val_str, signature):
+                        return data
+                    else:
+                        self.emit_alert("STATE_INTEGRITY_FAILURE", f"Tampered agent_state detected for {agent_id}:{key}!")
+                        return default
+                except (json.JSONDecodeError, KeyError, TypeError):
+                    # Fallback for legacy unsigned state or corrupted format
+                    return json.loads(row[0])
+            return default
     # --- Chronicle Support (ADR-0063) ---
 
     def log_forensic_event(self, agent_id: str, topic: str, details: str):

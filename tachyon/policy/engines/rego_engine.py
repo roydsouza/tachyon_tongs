@@ -1,7 +1,7 @@
 import os
 import json
 import functools
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from tachyon.policy.engine import PolicyEngine, PolicyVerdict, Verdict
 from tachyon.core.signing import IntegrityManager
 

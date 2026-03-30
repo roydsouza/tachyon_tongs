@@ -44,8 +44,10 @@ class BaseAgentPlugin(ABC):
              
         # Phase 44: Self-Heal Identity for Tests
         if not self.certificate and os.environ.get("TACHYON_TEST_MODE") == "1":
+             if os.environ.get("TACHYON_ENV") == "production":
+                 raise RuntimeError("SECURITY_VIOLATION: TEST_MODE cannot be enabled in production environments.")
              print(f"[{self.agent_id}] TEST_MODE: Deriving missing identity for {self.plugin_name}...")
-             self.im.derive_agent_key(self.plugin_name.lower(), save_to_disk=True)
+             self.im.derive_agent_key(self.plugin_name.lower(), save_to_disk=False)
              # Retry load
              self.certificate = self.im.load_agent_identity(self.plugin_name.lower())
         
@@ -132,6 +134,7 @@ class BaseAgentPlugin(ABC):
             payload=record,
             certificate=self.certificate
         )
+        return result
         
     def emit_signed_event(self, topic: str, payload: Dict[str, Any]):
         """

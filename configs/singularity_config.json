@@ -11,7 +11,7 @@
             "enforce_signatures": true
         },
         "ALIGNMENT": {
-            "threshold": 0.5
+            "threshold": 0.7
         }
     }
 }

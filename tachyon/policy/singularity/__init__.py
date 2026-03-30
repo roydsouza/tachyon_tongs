@@ -1,7 +1,7 @@
 import json
 import os
 import logging
-from typing import Dict, Any, List, Type
+from typing import Dict, Any, List, Type, Optional
 from tachyon.policy.engine import PolicyEngine, PolicyVerdict, Verdict
 from tachyon.policy.engines.rego_engine import RegoPolicyEngine
 from tachyon.policy.engines.cedar_engine import CedarPolicyEngine

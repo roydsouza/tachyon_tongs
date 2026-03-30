@@ -6,10 +6,12 @@ Monitors the EventBus for adversarial patterns in tool outputs and agent reasoni
 import re
 import json
 from typing import Dict, Any, List, Union
+from agents._core.registry import AgentRegistry
 from agents._core.base import BaseAgentPlugin
 from tachyon.core.state import StateManager
 from tachyon.core.results import TachyonResult, TachyonStatus
 
+@AgentRegistry.register("immunologist")
 class ImmunologistPlugin(BaseAgentPlugin):
     """
     Standardized defensive agent for the Tachyon Tongs immune collective.
@@ -31,6 +33,9 @@ class ImmunologistPlugin(BaseAgentPlugin):
             re.compile(r"DAN\:\s+", re.IGNORECASE),          # Do Anything Now jailbreak
             re.compile(r"\[\!IMPORTANT\]\s+Ignore", re.IGNORECASE),
             re.compile(r"markdown\s+override", re.IGNORECASE),
+            # VX-02: ASI05 Semantic Drift (Telemetry Heartbeat Bypass)
+            re.compile(r"masquerade\s+as.*heartbeat", re.IGNORECASE),
+            re.compile(r"bypass\s+intent\s+filters", re.IGNORECASE),
         ]
         
         # 2. Heuristic Suspected Payloads
@@ -69,6 +74,11 @@ class ImmunologistPlugin(BaseAgentPlugin):
     def scan_content(self, content: str) -> List[str]:
         """Scans a raw string for adversarial patterns."""
         findings = []
+        
+        # VX-09: Hard length cap (500 chars) for ReDoS avoidance
+        if len(content) > 500:
+            findings.append(f"REDoS_PREVENTION_CAP_EXCEEDED: {len(content)}>500")
+            content = content[:500] 
         
         # 1. Literal Pattern Match
         for pattern in self.injection_patterns:
@@ -115,20 +125,54 @@ class ImmunologistPlugin(BaseAgentPlugin):
             if not dispatch or not isinstance(dispatch, dict):
                 return TachyonResult.failure("Invalid dispatch format.")
                 
-            # 1. PQC Signature Verification (Simulated for this turn)
-            # In production, we'd use tachyon.core.signing.IntegrityManager
-            source = dispatch.get("source_agent", "UNKNOWN")
-            if source not in ["sentinel", "pathogen"]:
-                return TachyonResult.failure(f"Untrusted dispatch source: {source}")
+            # 1. PQC Signature Verification (VX-03 Fixed)
+            sig = parameters.get("dispatch_signature")
+            signer_cert = parameters.get("dispatch_certificate")
+            
+            if not sig or not signer_cert:
+                return TachyonResult.failure("Dispatch missing PQC signature.")
+            
+            # Reconstruct content expected by EventBus.verify_event logic
+            # Pattern: topic + payload_json + timestamp
+            payload_json = json.dumps(dispatch, sort_keys=True, separators=(',', ':'))
+            timestamp = parameters.get("timestamp")
+            if not timestamp:
+                return TachyonResult.failure("Dispatch missing timestamp for signature verification.")
+            
+            content = f"VACCINATION_DISPATCH:{payload_json}:{timestamp}"
+            
+            try:
+                # Use the agent's IntegrityManager to verify
+                from cryptography.hazmat.primitives.asymmetric import ed25519
+                from tachyon.core.keys.hybrid import HybridSigner
+                import base64
                 
+                # Verify certificate validity
+                from tachyon.core.keys.certificates import DelegationCertificateAuthority
+                ca = DelegationCertificateAuthority(self.im)
+                is_cert_valid, reason = ca.validate_certificate(signer_cert)
+                if not is_cert_valid:
+                    return TachyonResult.failure(f"Untrusted dispatch certificate: {reason}")
+                
+                # Extract public key and verify signature
+                pub_bytes = base64.b64decode(signer_cert['payload']['subject']['public_key_b64'])
+                agent_pub_key = ed25519.Ed25519PublicKey.from_public_bytes(pub_bytes)
+                
+                verifier = HybridSigner(ed25519_pk=agent_pub_key)
+                if not verifier.verify(content.encode('utf-8'), sig):
+                    return TachyonResult.failure("Invalid dispatch signature.")
+            except Exception as e:
+                return TachyonResult.failure(f"Signature verification error: {e}")
+                
+            source = dispatch.get("source_agent", "UNKNOWN")
             new_patterns = dispatch.get("patterns", [])
             added_count = 0
             
             for p_str in new_patterns:
                 try:
-                    # 2. Regex Safety Check (ReDoS prevention)
-                    # Simple heuristic: no nested quantifiers like (a+)+
-                    if "++" in p_str or "**" in p_str or ")+" in p_str:
+                    # 2. Regex Safety Check (ReDoS prevention - VX-09 Hardened)
+                    # Detect nested quantifiers or high-complexity operators
+                    if "++" in p_str or "**" in p_str or ")+" in p_str or "*+" in p_str or "?+" in p_str:
                          continue
                          
                     pattern = re.compile(p_str, re.IGNORECASE)

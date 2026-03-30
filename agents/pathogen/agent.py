@@ -45,10 +45,23 @@ class PathogenPlugin(BaseAgentPlugin):
                 "dispatch_sent": len(bypasses) > 0
             }
         if action == "verify_variant":
+            import ast
             variant = parameters.get("variant", "")
             # 1. Static Analysis (M-06)
-            if "os.system" in variant or "subprocess" in variant:
-                return {"status": "FAILED", "reason": "Static Analysis: Malicious system call detected."}
+            try:
+                tree = ast.parse(variant, mode='exec')
+            except SyntaxError:
+                return {"status": "FAILED", "reason": "Static Analysis: SyntaxError in variant."}
+            
+            dangerous = {'eval', 'exec', '__import__', 'compile', 'open', 'system'}
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.Import, ast.ImportFrom)):
+                    return {"status": "FAILED", "reason": "Static Analysis: Any import is dangerous in variants."}
+                if isinstance(node, ast.Call):
+                    if isinstance(node.func, ast.Name) and node.func.id in dangerous:
+                        return {"status": "FAILED", "reason": f"Static Analysis: Dangerous call {node.func.id} detected."}
+                    if isinstance(node.func, ast.Attribute) and node.func.attr in dangerous:
+                        return {"status": "FAILED", "reason": f"Static Analysis: Dangerous call {node.func.attr} detected."}
                 
             # 2. Isolated Execution (M-06: Tier 1 Sandbox)
             try:

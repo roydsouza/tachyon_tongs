@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from tachyon.policy.engine import PolicyEngine, PolicyVerdict, Verdict
 
 class CedarPolicyEngine(PolicyEngine):
