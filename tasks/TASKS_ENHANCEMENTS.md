@@ -51,3 +51,15 @@
 - [ ] **Substrate Grafting**: Native support for running the firewall on non-macOS POSIX environments (Linux/BSD).
 - [ ] **Neural Network Integrity**: PQC-signed weight verification for federated model updates.
 - [ ] **Holographic Forensics**: 3D visualization of threat vectors and propagation paths in the TUI.
+
+---
+
+## 🔳 Phase 4: Ecosystem & Standard Interfaces (Medium Effort)
+*Goal: Ensure seamless interoperability with the broader AI agent ecosystem.*
+
+- [ ] **[INT] OpenAI-Compatible Interface**: Modify the core API to support the OpenAI Chat Completions standard (`/v1/chat/completions`).
+    - **Acceptance Criteria**: The firewall can act as a drop-in replacement for OpenAI endpoints, filtering and signing requests transparently.
+    - **Dependency**: `tachyon/api/routes.py` and `PEP` layer mapping.
+- [ ] **[VERIFY] Integration Testing (OpenAI SDK)**: Suite of tests using the official OpenAI Python SDK to verify compatibility.
+    - **Acceptance Criteria**: `pytest tests/integration/test_openai_compatibility.py` passes using the standard `OpenAI` client pointing to the proxy.
+    - **Dependency**: OpenAI-Compatible Interface implementation.

@@ -147,3 +147,42 @@ class SignedCommand(BaseModel):
     nonce: int         # Monotonic counter for replay protection
     timestamp: datetime
 
+# --- OPENAI COMPATIBILITY SCHEMAS ---
+
+class ChatCompletionMessage(BaseModel):
+    role: str
+    content: str
+    tool_calls: Optional[List[Dict[str, Any]]] = None
+
+class ChatCompletionRequest(BaseModel):
+    model: str
+    messages: List[ChatCompletionMessage]
+    stream: Optional[bool] = False
+    max_tokens: Optional[int] = None
+    temperature: Optional[float] = None
+    tools: Optional[List[Dict[str, Any]]] = None
+    
+    @field_validator("messages", "tools")
+    @classmethod
+    def validate_no_pickle(cls, v):
+        return check_no_pickle(v)
+
+class ChatCompletionChoiceMessage(BaseModel):
+    role: str = "assistant"
+    content: Optional[str] = None
+    tool_calls: Optional[List[Dict[str, Any]]] = None
+
+class ChatCompletionChoice(BaseModel):
+    index: int
+    message: ChatCompletionChoiceMessage
+    finish_reason: str = "stop"
+
+class ChatCompletionResponse(BaseModel):
+    id: str
+    object: str = "chat.completion"
+    created: int
+    model: str
+    choices: List[ChatCompletionChoice]
+    usage: Optional[Dict[str, int]] = None
+
+

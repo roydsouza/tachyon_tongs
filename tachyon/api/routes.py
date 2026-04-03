@@ -2,7 +2,8 @@ from fastapi import APIRouter
 from typing import List, Dict
 from tachyon.api.schema import (
     SubstrateHealth, AgentDetail, PatchProposal, ForensicAlert, 
-    AgentHealth, TrafficSummary, SignedCommand, AuthExchangeRequest
+    AgentHealth, TrafficSummary, SignedCommand, AuthExchangeRequest,
+    ChatCompletionRequest, ChatCompletionResponse
 )
 from tachyon.api.pep import PEPLayer, ToolRequest, ToolResponse
 from tachyon.core.state_bridge import StateBridge
@@ -57,3 +58,15 @@ async def exchange_keys(request: AuthExchangeRequest):
     from tachyon.core.state import StateManager
     StateManager().register_sensor(request.sensor_id, request.public_key_b64)
     return {"status": "SUCCESS", "sensor_id": request.sensor_id}
+
+from fastapi import Request
+@router.post("/chat/completions", response_model=ChatCompletionResponse)
+async def openai_chat_completions(request: ChatCompletionRequest, http_req: Request):
+    """Transparent OpenAI proxy endpoint guarded by SingularityPDP"""
+    # Extract identity from Bearer token
+    auth_header = http_req.headers.get("Authorization", "")
+    agent_id = "default_agent"
+    if auth_header.startswith("Bearer "):
+        agent_id = auth_header.split(" ")[1]
+        
+    return await pep.proxy_chat_completion(request, agent_id)

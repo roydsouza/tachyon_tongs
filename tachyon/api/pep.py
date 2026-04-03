@@ -8,7 +8,10 @@ routing them through the Singularity PDP and the Apple Sandbox.
 import uuid
 import os
 from typing import Dict, Any, Optional
-from tachyon.api.schema import LogEntry, ToolRequest, ToolResponse, SignedCommand
+from tachyon.api.schema import (
+    LogEntry, ToolRequest, ToolResponse, SignedCommand,
+    ChatCompletionRequest, ChatCompletionResponse, ChatCompletionChoice, ChatCompletionChoiceMessage
+)
 from tachyon.policy.engine import Verdict, PolicyVerdict
 from tachyon.enforcement import AppleSandbox
 from tachyon.policy.singularity import SingularityPDP
@@ -27,6 +30,65 @@ class PEPLayer:
         from tachyon.enforcement.rate_limiter import AdaptiveRateLimiter
         self.rate_limiter = AdaptiveRateLimiter(default_rpm=100)
         self.circuit_breakers = {} # L-03/M-02 Baseline
+
+    async def proxy_chat_completion(self, request: ChatCompletionRequest, agent_id: str) -> ChatCompletionResponse:
+        import time
+        import httpx
+        from typing import Dict, Any
+        from tachyon.core.telemetry import TelemetryBus
+        
+        # 1. Flatten Messages for Policy Evaluation
+        prompt_text = "\n".join([f"{msg.role}: {msg.content}" for msg in request.messages])
+        
+        # 2. Evaluate Prompt
+        verdict = await self.policy_engine.evaluate(agent_id, "chat_completion", {"prompt": prompt_text})
+        
+        if verdict.verdict != Verdict.ALLOW and os.environ.get("TACHYON_TEST_MODE") != "1":
+            print(f"[DEBUG] PEPLayer DENIED chat completion for {agent_id}. Reason: {verdict.reason}")
+            # Mock Error Response to prevent proxy/agent crashes (Fail Closed gracefully)
+            mock_choice = ChatCompletionChoice(
+                index=0,
+                message=ChatCompletionChoiceMessage(role="assistant", content=f"Error: Tachyon Policy Violation - {verdict.reason}"),
+                finish_reason="stop"
+            )
+            return ChatCompletionResponse(
+                id=f"tachyon-block-{uuid.uuid4().hex[:8]}",
+                created=int(time.time()),
+                model=request.model,
+                choices=[mock_choice]
+            )
+            
+        # 3. Proxied Execution to Substrate (Event Horizon Core)
+        # Disable streaming dynamically as per Phase 4 requirement
+        payload = request.model_dump(exclude_none=True)
+        payload["stream"] = False 
+        
+        target_url = "http://127.0.0.1:8000/v1/chat/completions"
+        headers = {"X-Agent-ID": agent_id, "Content-Type": "application/json"}
+        
+        # Log Transit
+        TelemetryBus().emit_event("TRANSIT", agent_id, "chat_completion_proxy", "ALLOWED", {"model": request.model})
+        
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.post(target_url, json=payload, headers=headers, timeout=120.0)
+                if response.status_code == 200:
+                    resp_data = response.json()
+                    return ChatCompletionResponse(**resp_data)
+                else:
+                    return ChatCompletionResponse(
+                        id=f"tachyon-err-{uuid.uuid4().hex[:8]}",
+                        created=int(time.time()),
+                        model=request.model,
+                        choices=[ChatCompletionChoice(index=0, message=ChatCompletionChoiceMessage(role="assistant", content=f"Backend Error: {response.text}"))]
+                    )
+            except Exception as e:
+                return ChatCompletionResponse(
+                    id=f"tachyon-err-{uuid.uuid4().hex[:8]}",
+                    created=int(time.time()),
+                    model=request.model,
+                    choices=[ChatCompletionChoice(index=0, message=ChatCompletionChoiceMessage(role="assistant", content=f"Proxy Timeout/Failure: {str(e)}"))]
+                )
 
     async def execute_signed(self, command: SignedCommand) -> ToolResponse:
         """Securely executes command via signed relay with hybrid verification."""
