@@ -1,3 +1,13 @@
+# 🛡️ Tachyon Tongs
+
+![Agentic Firewall Hero](assets/firewall_hero.png)
+
+```text
+// SHIELD_STATUS: ACTIVE
+// THREAT_LANDSCAPE: AGENTIC_INVERSION_DETECTED
+// DEFENSE_GEOMETRY: QUANTUM_WORMHOLE_GATEWAY
+```
+
 # Securing the Agentic Inversion: An Evolutionary, Post-Quantum Agentic Firewall for Cognitive Threats
 
 The internet is undergoing the **Agentic Inversion**: autonomous AI agents are projected 
