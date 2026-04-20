@@ -1,34 +1,12 @@
-# 🛡️ Tachyon Tongs
+# Tachyon Tongs: Forensic Analysis and Security Mitigation
 
-![Agentic Firewall Hero](assets/firewall_hero.png)
+Tachyon Tongs is a digital forensics and security mitigation suite designed for high-integrity environment auditing and response within the Antigravity station.
 
-```text
-// SHIELD_STATUS: ACTIVE
-// THREAT_LANDSCAPE: AGENTIC_INVERSION_DETECTED
-// DEFENSE_GEOMETRY: QUANTUM_WORMHOLE_GATEWAY
-```
-
-# Securing the Agentic Inversion: An Evolutionary, Post-Quantum Agentic Firewall for Cognitive Threats
-
-The internet is undergoing the **Agentic Inversion**: autonomous AI agents are projected 
-to outnumber human users by orders of magnitude, acting as proxies for scheduling, 
-DeFi execution, contract negotiation, and sensitive data operations. 
-This shift expands the attack surface into a behavioral and cognitive domain that 
-traditional static firewalls cannot address. 
-Agents are vulnerable to prompt injection, context manipulation, and high-velocity 
-polymorphic attacks capable of leaking private keys or draining accounts—threats 
-that evolve faster than signature-based or rule-driven defenses.
-
-
-**Tachyon Tongs** (see [White Paper](docs/WHITEPAPER.md)) is a local, adaptive agentic firewall that treats security as an evolutionary process. 
-It combines an air-gapped LLM (llama.cpp) for real-time reasoning, hybrid post-quantum signatures (Ed25519 + ML-DSA-65) 
-for cryptographic identity on every internal message, and an internal Pathogen-vs-Sentinel adversarial loop 
-for proactive vulnerability discovery and patching. Flexible governance modes—HITL (Human In The Loop), 
-HOTL (Human On The Loop), and HOOTL (Human Out Of The Loop) — these ensure 
-human oversight remains the ultimate authority via the Herald notification interface.
-
-Designed for zero-trust agentic environments, Tachyon Tongs provides the adaptive immune system 
-required to secure digital proxies before widespread compromise occurs.
+## Project Role & Relationships
+- **Function**: Operates as the laboratory for identifying and mitigating security threats within agentic and infrastructure layers.
+- **Support**: Informs the security guidelines implemented in the **[schwarzschild-assembly](../schwarzschild-assembly/)**.
+- **Evolution**: This project serves as the predecessor to the **[airlock](../airlock/)** agentic firewall; it will eventually be integrated or replaced as security protocols mature.
+- **Research**: Houses the initial experiments for the **[Darwin-Godel-Machine](../Darwin-Godel-Machine/)** and other autonomous security research strains.
 
 ---
 
