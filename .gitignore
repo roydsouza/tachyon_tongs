@@ -60,3 +60,10 @@ memory/keys/
 # Temporary Test Artifacts
 tmp/
 lib/
+
+# Forge/Crucible harness runtime state
+forge/lock.json
+forge/signals.jsonl
+crucible/lock.json
+crucible/signals.jsonl
+build-artifacts/

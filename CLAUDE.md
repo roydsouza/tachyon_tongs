@@ -60,3 +60,26 @@ Every architectural decision maps to `docs/THREAT_MODEL.md` (OWASP-2026-ASI taxo
 - **Testing:** Full regression suite required before marking any task done
 - **Documentation sync:** `THREAT_MODEL.md`, `WHITEPAPER.md`, ADR chain, and `SYNC_LOG.md` must stay in sync with implementation
 - **Tier:** Rigorous (signed ADRs, full test coverage, threat model updates, conventional commits)
+
+## 8. Governance Process
+
+Process law: `~/antigravity/agents/PROCESS.md` (read on every session open).
+
+Two complementary layers — both required:
+1. **Forge/Crucible gate** — session discipline, no-inflight enforcement, governance file guard
+2. **Signed ADR** — cryptographic provenance for every mutation (Ed25519 + ML-DSA-65, see `docs/SDLC.md`)
+
+| Gate command | When |
+|:-------------|:-----|
+| `python3 forge/gate.py session-start` | Start of every Forge session |
+| `python3 forge/gate.py lock <task-id>` | Before beginning a task |
+| `python3 forge/gate.py pre-submit` | Before filing to `crucible-inbox/` |
+| `python3 forge/gate.py unlock` | After CLEARED verdict received |
+| `python3 crucible/gate.py session-start` | Start of every Crucible session |
+| `python3 crucible/gate.py pre-verdict --scripts-run` | Before filing to `crucible-verdicts/` |
+
+**Escalation triggers (route to Claude Code via `analyst-inbox/`):**
+- Any change to `docs/THREAT_MODEL.md` or `docs/SDLC.md`
+- Any change to cryptographic key management or Secure Enclave integration
+- ADR chain discontinuities (missing predecessor hash)
+- Any change to `CLAUDE.md` or harness gate files
